@@ -8,7 +8,7 @@ if isdeployed == 0
     addpath('Functions');
 end
 warning off
-disp('hi')
+
 %% Header
 if Temp.isverbose == 1
     disp('===========================================================================');
