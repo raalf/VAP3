@@ -14,20 +14,20 @@ Width of each time step (sec):	deltime =	0.250000
 Convergence delta-span effic.:	deltae =	0.000000	(0 if onlytimestepping)
 
 Freestream velocity (leave value 1):	Uinf =		1.0
-AOA beginning, end, step size [deg]:	alpha=		5 5 1
+AOA beginning, end, step size [deg]:	alpha=		5 12 13
 Sideslip angle [deg]:			beta =		0.0
 Density:				density =	1.2250
 Kinematic viscosity:			nu =		1.460000e-05
 
-Reference area:			S =	3
-Reference span:			b =	3
+Reference area:			S =	11
+Reference span:			b =	14
 Mean aerodynamic chord:		cmac =	1
 Aircraft weight (N):		W =	2950
 CG location (x y z):		cg =	0.3656400000 0.000000000 0.000000000
 CMo of wing:			CMo =	-0.100000000
 
 No. of wings (max. 5):		wings =		1
-No. of panels:			panels =	3
+No. of panels:			panels =	2
 No. of chordwise lifting lines: m =		1
 No. of airfoils (max. 15):	airfoils =	9
 
@@ -38,26 +38,19 @@ Panel boundary conditions:
 
 Defines leading edge of wing, all measured in metres:
 
-Panel #:1. Number of spanwise elements (n) = 1. Airfoil number = 6
+Panel #:1. Number of spanwise elements (n) = 5. Airfoil number = 6
 Neighbouring panels (0 for none) left: 0 right: 2
 xleft	yleft	zleft	chord	epsilon	Bound.Cond.
 0.000000	0.000000	0.000000	1.000000	0.000000	10
 xright	yright	zright	chord	epsilon	Bound.Cond.
 0.000000	1.000000	0.000000	1.000000	0.000000	220
 
-Panel #:2. Number of spanwise elements (n) = 1. Airfoil number = 6
+Panel #:2. Number of spanwise elements (n) = 5. Airfoil number = 6
 Neighbouring panels (0 for none) left: 1 right: 0
 xleft	yleft	zleft	chord	epsilon	Bound.Cond.
 0.000000	1.000000	0.000000	1.000000	0.000000	220
 xright	yright	zright	chord	epsilon	Bound.Cond.
-0.000000	2.000000	0.000000	1.000000	0.000000	100
-
-Panel #:3. Number of spanwise elements (n) = 1. Airfoil number = 6
-Neighbouring panels (0 for none) left: 1 right: 0
-xleft	yleft	zleft	chord	epsilon	Bound.Cond.
-0.000000	1.000000	0.000000	1.000000	0.000000	220
-xright	yright	zright	chord	epsilon	Bound.Cond.
-0.000000	1.525321	0.850903	1.000000	0.000000	100
+0.000000	7.000000	1.000000	0.5000000	0.000000	100
 
 %<- special identifier
 Vertical tail information:

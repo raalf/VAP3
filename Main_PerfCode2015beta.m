@@ -1,4 +1,4 @@
-function [Aircraft, Conditions, FW, Output, Performance] = Main_PerfCode2015beta(Aircraft, Conditions, FW)
+function [Aircraft, Conditions, FW, Output, Performance] = Main_PerfCode2015beta()
 
 % clc
 % clear
@@ -8,11 +8,10 @@ if isdeployed == 0
     addpath('Functions');
 end
 warning off
-disp('hi')
 %% Header
 if Temp.isverbose == 1
     disp('===========================================================================');
-    disp('Versace Aero Performance (Based on FreeWake 2015)');
+    disp('VAP (Based on FreeWake 2015)');
     disp('Running Version 201x.xx  .                             .');
     disp('Includes stall model    //                             \\');
     disp('No trim solution       //                               \\');
@@ -38,16 +37,15 @@ end
 % load('Aircraft/designFour-Trouble.mat');
 % Conditions.Alpha = 8;
 
-% [FW, Aircraft, Conditions] = FWreader('input-LowTherm.txt');
-% Aircraft.Surface(1).Sym = 1;
-% Conditions.Alpha = 5;
-% Aircraft.Surface(6).Sym = 1;
-
 % FW.Relax = 1;
 % FW.Maxtime = 10;
 % FW.Deltae = 0;
 % Aircraft.Surface(3).Sym = 1;
 
+[FW, Aircraft, Conditions] = FWreader('input.txt');
+Aircraft.Surface(1).Sym = 1;
+
+Conditions.Alpha = 5;
 
 %% Creating temporary values used throughout the program calculations
 Temp.DBL_EPS = 1e-14;
