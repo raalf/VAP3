@@ -7,7 +7,7 @@ Master
 - Optimized to make use of MATLAB's features
 
 VAP1.0
-- Contains files as copied from the C++ version of FreeWake
+- Contains files as copied from the C++ version of FreeWake into MATLAB
 - Provides identical results to the C++ version of FreeWake, but runs slow
 
 
