@@ -53,7 +53,7 @@ flagPLOT = 1;
 %% Plotting Wing
 
 if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, vecDVECTLPT, vecDVENORM);
+    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, vecDVECTLPT, vecDVENORM);
 end
 
 %% Add boundary conditions to D-Matrix
