@@ -1,27 +1,25 @@
-clc
-clear
-
-VAP_MAIN;
+function [hFig2] = fcnPLOTBODY(verbose, valNELE, matDVE, matVLST, vecDVECTLPT, vecDVENORM)
 
 hFig2 = figure(2);
 clf(2);
 
 patch('Faces',matDVE,'Vertices',matVLST,'FaceColor','r')
-
-
-
-
-
-
-
 hold on
 
-patch('Faces',matDVE,'Vertices',[matVLST(:,1),-matVLST(:,2),matVLST(:,3)],'FaceColor','r')
-quiver3(vecDVECTLPT(:,1), vecDVECTLPT(:,2), vecDVECTLPT(:,3), vecDVENORM(:,1), vecDVENORM(:,2), vecDVENORM(:,3))
-
-hold off
 
 alpha(0.5)
+
+if verbose == 1
+    for ii = 1:valNELE
+        str = sprintf('%d',ii);
+        text(vecDVECTLPT(ii,1),vecDVECTLPT(ii,2),vecDVECTLPT(ii,3),str,'Color','k','FontSize',20);
+    end
+    
+    quiver3(vecDVECTLPT(:,1), vecDVECTLPT(:,2), vecDVECTLPT(:,3), vecDVENORM(:,1), vecDVENORM(:,2), vecDVENORM(:,3))
+    
+end
+
+hold off
 
 box on
 grid on

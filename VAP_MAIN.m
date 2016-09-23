@@ -33,11 +33,28 @@ strFILE = 'VAP input.txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnVAPREAD(strFILE);
 
+% strFILE = 'input.txt';
+% 
+% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+%     valINTERF] = fcnFWREAD(strFILE);
+
+flagPLOT = 1;
+
 %% Discretize geometry into DVEs
 
 [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
-    matVLST, matDVE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM);
+    matVLST, matDVE, valNELE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM);
+
+
+%% Plotting Wing
+
+if flagPLOT == 1
+    [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, vecDVECTLPT, vecDVENORM);
+end
 
 %% Add boundary conditions to D-Matrix
 

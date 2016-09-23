@@ -1,6 +1,6 @@
 function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
-    matVLST, matDVE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM)
+    matVLST, matDVE, valNELE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -36,23 +36,23 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 % matVLST
 % matDVE
 
-dveCount = sum(vecM.*vecN);
-vecDVECTLPT = nan(dveCount,3);
-vecDVEHVSPN = nan(dveCount,1);
-vecDVEHVCRD = nan(dveCount,1);
-vecDVELESWP = nan(dveCount,1);
-vecDVEMCSWP = nan(dveCount,1);
-vecDVETESWP = nan(dveCount,1);
-vecDVEROLL  = nan(dveCount,1);
-vecDVEPITCH = nan(dveCount,1);
-vecDVEYAW   = nan(dveCount,1);
-vecDVEAREA  = nan(dveCount,1);
-vecDVENORM  = nan(dveCount,3);
+valNELE = sum(vecM.*vecN);
+vecDVECTLPT = nan(valNELE,3);
+vecDVEHVSPN = nan(valNELE,1);
+vecDVEHVCRD = nan(valNELE,1);
+vecDVELESWP = nan(valNELE,1);
+vecDVEMCSWP = nan(valNELE,1);
+vecDVETESWP = nan(valNELE,1);
+vecDVEROLL  = nan(valNELE,1);
+vecDVEPITCH = nan(valNELE,1);
+vecDVEYAW   = nan(valNELE,1);
+vecDVEAREA  = nan(valNELE,1);
+vecDVENORM  = nan(valNELE,3);
 
-LECoordL    = nan(dveCount,3);
-LECoordR    = nan(dveCount,3);
-TECoordR    = nan(dveCount,3);
-TECoordL    = nan(dveCount,3);
+LECoordL    = nan(valNELE,3);
+LECoordR    = nan(valNELE,3);
+TECoordR    = nan(valNELE,3);
+TECoordL    = nan(valNELE,3);
 
 vecEnd = cumsum(vecN.*vecM);
 
@@ -214,7 +214,7 @@ end
 
 verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
 [matVLST,~,matDVE] = unique(verticeList,'rows');
-matDVE = reshape(matDVE,dveCount,4);
+matDVE = reshape(matDVE,valNELE,4);
 
 
 
