@@ -1,6 +1,8 @@
 clc
 clear
 
+tic
+
 disp('===========================================================================');
 disp('VAP (Based on FreeWake 2015)');
 disp('Running Version 2016.09  .                             .');
@@ -33,6 +35,10 @@ strFILE = 'VAP input.txt';
 
 %% Discretize geometry into DVEs
 
+[vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+    vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
+    matVLST, matDVE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM);
+
 %% Add boundary conditions to D-Matrix
 
 %% Add kinematic conditions to D-Matrix
@@ -40,17 +46,19 @@ strFILE = 'VAP input.txt';
 %% Create D-Resultant, solve D-Matrix
 
 %% Timestep to solution
-    %   Move wing
-    %   Generate new wake elements
-    %   Create W-Matrix and W-Resultant
-    %   Solve W-Matrix
-    %   Relaxation procedure (Relax, create W-Matrix and W-Resultant, solve W-Matrix)
-    %   Calculate surface normal forces
-    %   Calculate DVE normal forces
-    %   Calculate induced drag
-    %   Calculate cn, cl, cy, cdi
-    %   Calculate viscous effects
-    
+%   Move wing
+%   Generate new wake elements
+%   Create W-Matrix and W-Resultant
+%   Solve W-Matrix
+%   Relaxation procedure (Relax, create W-Matrix and W-Resultant, solve W-Matrix)
+%   Calculate surface normal forces
+%   Calculate DVE normal forces
+%   Calculate induced drag
+%   Calculate cn, cl, cy, cdi
+%   Calculate viscous effects
+
 %% Viscous wrapper
 
-    
+toc
+
+whos

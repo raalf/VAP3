@@ -1,16 +1,19 @@
-function [vecDVECTLPT,vecDVEHVSPN,vecDVEHVCRD,vecDVELESWP,vecDVEMCSWP,vecDVETESWP,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVEAREA,vecDVENORM,matVLST,matVIDX] = fcnGenerateDVEs(valPANELS, matGEOM, vecN, vecM)
-% % %   V0 - before fixing spanwise interp
-% % %   V1 - fixed vertical panel (90deg dihedral)
-% % %      - Reprogrammed the DVE interpolation method
-% % %  1.1 - Preallocate the memory for point matrices, do you know how memory is accessed?
-% % %   V2 - Rework the Leading Edge Vector
-% % %      - Caculate the Yaw angle of the DVE by assuming yaw=0 to rotate the xsi vector
-% % %      - Rotate DVE normal vector by local roll, pitch, and yaw using 'glob_star_3D'
-% % %      - Comptue LE Sweep
-% % %      - Project TE to DVE, Rotate adn Comptue TE Sweep
-% % %   V3 - Function overhaul for VAP2.0
-% %
-% % % Fixed how DVEs matrix is converted from 2D grid to 1D array. 16/01/2016 (Alton)
+function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+    vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
+    matVLST, matDVE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM)
+
+%   V0 - before fixing spanwise interp
+%   V1 - fixed vertical panel (90deg dihedral)
+%      - Reprogrammed the DVE interpolation method
+%  1.1 - Preallocate the memory for point matrices, do you know how memory is accessed?
+%   V2 - Rework the Leading Edge Vector
+%      - Caculate the Yaw angle of the DVE by assuming yaw=0 to rotate the xsi vector
+%      - Rotate DVE normal vector by local roll, pitch, and yaw using 'glob_star_3D'
+%      - Comptue LE Sweep
+%      - Project TE to DVE, Rotate adn Comptue TE Sweep
+%   V3 - Function overhaul for VAP2.0
+% 
+% Fixed how DVEs matrix is converted from 2D grid to 1D array. 16/01/2016 (Alton)
 
 % INPUT:
 % valPANELS
@@ -31,7 +34,7 @@ function [vecDVECTLPT,vecDVEHVSPN,vecDVEHVCRD,vecDVELESWP,vecDVEMCSWP,vecDVETESW
 % vecDVEAREA
 % vecDVENORM
 % matVLST
-% matVIDX
+% matDVE
 
 dveCount = sum(vecM.*vecN);
 vecDVECTLPT = nan(dveCount,3);
@@ -62,7 +65,7 @@ for i = 1:valPANELS;
     tLE = matGEOM(2,1:3,i);
 
     % Read panel corners
-    panel = reshape(fcnPanelCorners(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
+    panel = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
     panelX = [panel([1;4],1),panel([2;3],1)];
     panelY = [panel([1;4],2),panel([2;3],2)];
     panelZ = [panel([1;4],3),panel([2;3],3)];
@@ -210,8 +213,8 @@ for i = 1:valPANELS;
 end
 
 verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
-[matVLST,~,matVIDX] = unique(verticeList,'rows');
-matVIDX = reshape(matVIDX,dveCount,4);
+[matVLST,~,matDVE] = unique(verticeList,'rows');
+matDVE = reshape(matDVE,dveCount,4);
 
 
 

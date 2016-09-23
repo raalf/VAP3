@@ -1,4 +1,4 @@
-function [panel] = fcnPanelCorners(rLE,tLE,rchord,tchord,repsilon,tepsilon)
+function [panel] = fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon)
 %=========================================================================%
 %This function creates one panel for DesignTools.
 
