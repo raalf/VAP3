@@ -27,12 +27,12 @@ function [ xsi ] = fcnGLOBSTAR3D( x,nu,eps,psi )
     %third rotation:  xsi -> xsi*, rotation about zeta-axis by psi
     %all rotations follow right-hand rule
     %
-    cnu  = cosd(nu);
-    snu  = sind(nu);
-    ceps = cosd(eps);
-    seps = sind(eps);
-    cpsi = cosd(psi);
-    spsi = sind(psi);
+    cnu  = cos(nu);
+    snu  = sin(nu);
+    ceps = cos(eps);
+    seps = sin(eps);
+    cpsi = cos(psi);
+    spsi = sin(psi);
     %
     %the rotation matrix:
     % 	rot[0][0] = cpsi*ceps;

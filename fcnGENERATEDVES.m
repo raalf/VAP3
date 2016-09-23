@@ -21,7 +21,7 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 % vecN
 % vecM
  
-% OUTPUT:
+% OUTPUT: (ALL OUTPUT ANGLES ARE IN RADIAN)
 % vecDVECTLPT
 % vecDVEHVSPN
 % vecDVEHVCRD
@@ -134,18 +134,18 @@ for i = 1:valPANELS;
     % Roll in Degrees -arctan ( Y component / Z component of DVC normal vector)
     % atan2d is used here
     % roll(nu) right wing up positive
-    nu = -atan2d(DVE_norm(:,:,2),DVE_norm(:,:,3));
+    nu = -atan2(DVE_norm(:,:,2),DVE_norm(:,:,3));
     
     % Pitch in Degrees
     % arcsin ( X component of DVE normal vector )
-    epsilon = asind(DVE_norm(:,:,1));
+    epsilon = asin(DVE_norm(:,:,1));
     
     % Yaw in Degrees
     % xsi in local with roll picth, yaw set to zero.. but WHY?
     xsi_local = fcnGLOBSTAR3D( xsi_vec,nu,epsilon,zeros(vecM(i),vecN(i)) );
     % Magnitude of half chord vector
     xsi = (xsi_local(:,:,1).^2+xsi_local(:,:,2).^2+xsi_local(:,:,3).^2).^0.5;
-    psi = atand(xsi_local(:,:,2)./xsi_local(:,:,1));
+    psi = atan(xsi_local(:,:,2)./xsi_local(:,:,1));
     
     % Find eta. bring non-normalized LE_vec to local and half the Y component
     LE_vec_local = fcnGLOBSTAR3D( LE_vec,nu,epsilon,psi);
@@ -153,7 +153,7 @@ for i = 1:valPANELS;
     
     % Find Leading Edge Sweep
     % arctan(LE X local component/ LE Y local component)
-    phi_LE = atand(LE_vec_local(:,:,1)./LE_vec_local(:,:,2));
+    phi_LE = atan(LE_vec_local(:,:,1)./LE_vec_local(:,:,2));
     
     
     
@@ -169,7 +169,7 @@ for i = 1:valPANELS;
     % Rotate the Projected TE on DVE to local reference frame
     % arctan(Projected TE local X component/Projected TE local Y component)
     TE_vec_proj_local = fcnGLOBSTAR3D( TE_vec_proj,nu,epsilon,psi );
-    phi_TE = atand(TE_vec_proj_local(:,:,1)./TE_vec_proj_local(:,:,2));
+    phi_TE = atan(TE_vec_proj_local(:,:,1)./TE_vec_proj_local(:,:,2));
     
     
     % Compute DVE Mid-chord Sweep
