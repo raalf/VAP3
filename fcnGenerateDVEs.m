@@ -1,4 +1,4 @@
-function [vecDVECRNPT,vecDVECTLPT,vecDVEHVSPN,vecDVEHVCRD,vecDVELESWP,vecDVEMCSWP,vecDVETESWP,vecDVEROLL,vecDVEPITCH,vecDVEYAW ,vecDVEAREA,vecDVENORM] = fcnGenerateDVEs(valPANELS, matGEOM, vecN, vecM)
+function [vecDVECTLPT,vecDVEHVSPN,vecDVEHVCRD,vecDVELESWP,vecDVEMCSWP,vecDVETESWP,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVEAREA,vecDVENORM,matVLST,matVIDX] = fcnGenerateDVEs(valPANELS, matGEOM, vecN, vecM)
 % % %   V0 - before fixing spanwise interp
 % % %   V1 - fixed vertical panel (90deg dihedral)
 % % %      - Reprogrammed the DVE interpolation method
@@ -13,15 +13,28 @@ function [vecDVECRNPT,vecDVECTLPT,vecDVEHVSPN,vecDVEHVCRD,vecDVELESWP,vecDVEMCSW
 % % % Fixed how DVEs matrix is converted from 2D grid to 1D array. 16/01/2016 (Alton)
 
 % INPUT:
-
+% valPANELS
+% matGEOM
+% vecN
+% vecM
+ 
 % OUTPUT:
+% vecDVECTLPT
+% vecDVEHVSPN
+% vecDVEHVCRD
+% vecDVELESWP
+% vecDVEMCSWP
+% vecDVETESWP
+% vecDVEROLL
+% vecDVEPITCH
+% vecDVEYAW
+% vecDVEAREA
+% vecDVENORM
+% matVLST
+% matVIDX
 
-clear
-clc
-load('geom.mat');
 dveCount = sum(vecM.*vecN);
-vecDVECRNPT = nan(dveCount,1);
-vecDVECTLPT = nan(dveCount,1);
+vecDVECTLPT = nan(dveCount,3);
 vecDVEHVSPN = nan(dveCount,1);
 vecDVEHVCRD = nan(dveCount,1);
 vecDVELESWP = nan(dveCount,1);
@@ -31,36 +44,29 @@ vecDVEROLL  = nan(dveCount,1);
 vecDVEPITCH = nan(dveCount,1);
 vecDVEYAW   = nan(dveCount,1);
 vecDVEAREA  = nan(dveCount,1);
-vecDVENORM  = nan(dveCount,1);
+vecDVENORM  = nan(dveCount,3);
 
-
-showplot = 1;       %1 = show plot, 0 = hide plot
-debug = 1;          %1 = clear all the variables at the end, Only show final matrices
-%%
+LECoordL    = nan(dveCount,3);
+LECoordR    = nan(dveCount,3);
+TECoordR    = nan(dveCount,3);
+TECoordL    = nan(dveCount,3);
 
 vecEnd = cumsum(vecN.*vecM);
 
 
 for i = 1:valPANELS;
-    
-    X1 = matGEOM(1,1,i); Y1 = matGEOM(1,2,i); Z1 = matGEOM(1,3,i);
+
     rchord = matGEOM(1,4,i); repsilon = deg2rad(matGEOM(1,5,i));
-    
-    X2 = matGEOM(2,1,i); Y2 = matGEOM(2,2,i); Z2 = matGEOM(2,3,i);
     tchord = matGEOM(2,4,i); tepsilon = deg2rad(matGEOM(2,5,i));
-    
-    % rLE = [X1,Y1,Z1];
     rLE = matGEOM(1,1:3,i);
-    % tLE = [X2,Y2,Z2];
     tLE = matGEOM(2,1:3,i);
-    
-    
+
     % Read panel corners
     panel = reshape(fcnPanelCorners(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
     panelX = [panel([1;4],1),panel([2;3],1)];
     panelY = [panel([1;4],2),panel([2;3],2)];
     panelZ = [panel([1;4],3),panel([2;3],3)];
-    panelTE = [panel(end,:); panel(end-1,:)];
+    %     panelTE = [panel(end,:); panel(end-1,:)];
     
     % NChordwise and NSpanwise
     % Generate extra points to find control point
@@ -99,7 +105,7 @@ for i = 1:valPANELS;
     % DVE Parameters Calculation
     % Calculate Control Points, stored in 3D matrix
     CP = reshape([PX2(2:2:end,2:2:end),PY2(2:2:end,2:2:end),PZ2(2:2:end,2:2:end)],vecM(i),vecN(i),3);
-    CP_Right = reshape([PX2(2:2:end,3:2:end),PY2(2:2:end,3:2:end),PZ2(2:2:end,3:2:end)],vecM(i),vecN(i),3);
+    %     CP_Right = reshape([PX2(2:2:end,3:2:end),PY2(2:2:end,3:2:end),PZ2(2:2:end,3:2:end)],vecM(i),vecN(i),3);
     LE_Mid = reshape([PX2(1:2:end-1,2:2:end),PY2(1:2:end-1,2:2:end),PZ2(1:2:end-1,2:2:end)],vecM(i),vecN(i),3);
     TE_Right = reshape([PX2(3:2:end,3:2:end),PY2(3:2:end,3:2:end),PZ2(3:2:end,3:2:end)],vecM(i),vecN(i),3);
     TE_Left = reshape([PX2(3:2:end,1:2:end-2),PY2(3:2:end,1:2:end-2),PZ2(3:2:end,1:2:end-2)],vecM(i),vecN(i),3);
@@ -142,8 +148,6 @@ for i = 1:valPANELS;
     LE_vec_local = fcnGLOBSTAR3D( LE_vec,nu,epsilon,psi);
     eta = LE_vec_local(:,:,2)./2;
     
-    
-    
     % Find Leading Edge Sweep
     % arctan(LE X local component/ LE Y local component)
     phi_LE = atand(LE_vec_local(:,:,1)./LE_vec_local(:,:,2));
@@ -179,102 +183,35 @@ for i = 1:valPANELS;
     idxEnd = vecEnd(i);
     
     
-vecDVEAREA(idxStart:idxEnd) = reshape(Area',count,1);%Area(:);
-vecDVEHVSPN(idxStart:idxEnd) = reshape(eta',count,1);%eta(:);
-vecDVEHVCRD(idxStart:idxEnd) = reshape(xsi',count,1);%xsi(:);
-vecDVEROLL(idxStart:idxEnd) = reshape(nu',count,1);%nu(:);
-vecDVEPITCH(idxStart:idxEnd) = reshape(epsilon',count,1);%epsilon(:);
-vecDVEYAW(idxStart:idxEnd) = reshape(psi',count,1);%psi(:);
-% vecDVECTLPT(idxStart:idxEnd) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
-vecDVELESWP(idxStart:idxEnd) = reshape(phi_LE',count,1);%phi_LE(:);
-vecDVEMCSWP(idxStart:idxEnd) = reshape(phi_MID',count,1);%phi_MID(:);
-vecDVETESWP(idxStart:idxEnd) = reshape(phi_TE',count,1);%phi_TE(:);
-% vecDVENORM(idxStart:idxEnd) = reshape(permute(DVE_norm, [2 1 3]),count,3);%reshape(DVE_norm(:),count,3);    
+    vecDVEAREA(idxStart:idxEnd) = reshape(Area',count,1);%Area(:);
+    vecDVEHVSPN(idxStart:idxEnd) = reshape(eta',count,1);%eta(:);
+    vecDVEHVCRD(idxStart:idxEnd) = reshape(xsi',count,1);%xsi(:);
+    vecDVEROLL(idxStart:idxEnd) = reshape(nu',count,1);%nu(:);
+    vecDVEPITCH(idxStart:idxEnd) = reshape(epsilon',count,1);%epsilon(:);
+    vecDVEYAW(idxStart:idxEnd) = reshape(psi',count,1);%psi(:);
+    vecDVECTLPT(idxStart:idxEnd,:) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
+    vecDVELESWP(idxStart:idxEnd) = reshape(phi_LE',count,1);%phi_LE(:);
+    vecDVEMCSWP(idxStart:idxEnd) = reshape(phi_MID',count,1);%phi_MID(:);
+    vecDVETESWP(idxStart:idxEnd) = reshape(phi_TE',count,1);%phi_TE(:);
+    vecDVENORM(idxStart:idxEnd,:) = reshape(permute(DVE_norm, [2 1 3]),count,3);%reshape(DVE_norm(:),count,3);
     
     
+    LECoordL(idxStart:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count,3);%reshape(TE_Left_proj(:),count,3);
+    LECoordR(idxStart:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count,3);%reshape(TE_Right_proj(:),count,3);
+    TECoordR(idxStart:idxEnd,:) = reshape(permute(TE_Right_proj, [2 1 3]),count,3);%reshape(TE_Right_proj(:),count,3);
+    TECoordL(idxStart:idxEnd,:) = reshape(permute(TE_Left_proj, [2 1 3]),count,3);%reshape(TE_Left_proj(:),count,3);
     
     clear chordX chordY chordZ panelX panelY panelZ m n debug ...
-    X1 X2 Y1 Y2 Z1 Z2 AX1 AZ1 AX2 AZ2 C1 C2 e2 ...
-    chordbase count PX2 PY2 PZ2 rLE ...
-    panel paneldata i j M N ...
-    halfchord halfspan
+        X1 X2 Y1 Y2 Z1 Z2 AX1 AZ1 AX2 AZ2 C1 C2 e2 ...
+        chordbase count PX2 PY2 PZ2 rLE ...
+        panel paneldata i j M N ...
+        halfchord halfspan
     
 end
 
-
-
-% % % % % %% Formatting the output
-% % % % %
-% % % % % % out = [Name eta xsi nu eps psi xo(x y z) phiLE phiMID phiTE Area norm(x y z) u(x y z)]
-% % % % % ii = 1
-% % % % % name = [1:(vecN(n)*vecM(n))]';
-% % % % %
-% % % % % if ii > 1
-% % % % %     name = name + sum([FW.Panels(1:ii-1).n])*m;
-% % % % % end
-% % % % %
-% % % % % FW.Panels(ii).DVE.Index = name;
-% % % % % FW.Panels(ii).DVE.singfct = 0;
-% % % % % FW.Panels(ii).TECoord = panelTE;
-% % % % %
-% % % % % %% Version2 -> Reformat 2D vector to 1D
-% % % % % count = vecN(i)*vecM(i);
-% % % % %
-% % % % % FW.Panels(ii).DVE.area = reshape(Area',count,1);%Area(:);
-% % % % % FW.Panels(ii).DVE.eta = reshape(eta',count,1);%eta(:);
-% % % % % FW.Panels(ii).DVE.xsi = reshape(xsi',count,1);%xsi(:);
-% % % % % FW.Panels(ii).DVE.roll = reshape(nu',count,1);%nu(:);
-% % % % % FW.Panels(ii).DVE.pitch = reshape(epsilon',count,1);%epsilon(:);
-% % % % % FW.Panels(ii).DVE.yaw = reshape(psi',count,1);%psi(:);
-% % % % % FW.Panels(ii).DVE.xo = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
-% % % % % FW.Panels(ii).DVE.phiLE = reshape(phi_LE',count,1);%phi_LE(:);
-% % % % % FW.Panels(ii).DVE.phiMID = reshape(phi_MID',count,1);%phi_MID(:);
-% % % % % FW.Panels(ii).DVE.phiTE = reshape(phi_TE',count,1);%phi_TE(:);
-% % % % % FW.Panels(ii).DVE.norm = reshape(permute(DVE_norm, [2 1 3]),count,3);%reshape(DVE_norm(:),count,3);
-% % % % % FW.Panels(ii).DVE.TECoordL = reshape(permute(TE_Left_proj, [2 1 3]),count,3);%reshape(TE_Left_proj(:),count,3);
-% % % % % FW.Panels(ii).DVE.TECoordR = reshape(permute(TE_Right_proj, [2 1 3]),count,3);%reshape(TE_Right_proj(:),count,3);
-% % % % % FW.Panels(ii).DVE.LECoordL = reshape(permute(LE_Left, [2 1 3]),count,3);%reshape(TE_Left_proj(:),count,3);
-% % % % % FW.Panels(ii).DVE.LECoordR = reshape(permute(LE_Right, [2 1 3]),count,3);%reshape(TE_Right_proj(:),count,3);
-% % % % %
-% % % % % %%
-% % % % %
-% % % % % FW.Panels(ii).Edge1 = [FW.Panels(ii).DVE.Index(1):FW.Panels(ii).n:FW.Panels(ii).DVE.Index(end)]'; % Getting all elements in the chordwise direction (1 x m vector) at EDGE 1. This will come in handy later on when setting BC between panels
-% % % % % FW.Panels(ii).Edge2 = FW.Panels(ii).Edge1+FW.Panels(ii).n-1; % Getting all elements in the chordwise direction at EDGE 2 by adding the number of elements in the spanwise direction - 1
-% % % % %
-% % % % %
-% % % % %
-% % % % % %% ALL PLOTS
-% % % % % if showplot == 1
-% % % % %     clf
-% % % % %     figure(1)
-% % % % %     hold on
-% % % % %     axis equal
-% % % % %     surf(PX2(1:2:end,1:2:end),PY2(1:2:end,1:2:end),PZ2(1:2:end,1:2:end));
-% % % % %     colormap white
-% % % % %     scatter3(reshape(CP(:,:,1),n*m,1),reshape(CP(:,:,2),n*m,1),reshape(CP(:,:,3),n*m,1),'xg');
-% % % % %
-% % % % % %     quiver3(CP(:,:,1),CP(:,:,2),CP(:,:,3),HS_vec(:,:,1),HS_vec(:,:,2),HS_vec(:,:,3));
-% % % % % %     quiver3(LEmidpoint(:,:,1),LEmidpoint(:,:,2),LEmidpoint(:,:,3),LE_vec(:,:,1),LE_vec(:,:,2),LE_vec(:,:,3));
-% % % % %     quiver3(CP(:,:,1),CP(:,:,2),CP(:,:,3),DVE_norm(:,:,1),DVE_norm(:,:,2),DVE_norm(:,:,3));
-% % % % %
-% % % % %     % plot3(panel(:,1),panel(:,2),panel(:,3))
-% % % % %     % surf(panelX,panelY,panelZ)
-% % % % %     hold off
-% % % % % end
-% % % % %
-% % % % % %% Debug Mode
-% % % % % if debug~=1
-% % % % %     clear chordX chordY chordZ panelX panelY panelZ m n debug
-% % % % %     clear X1 X2 Y1 Y2 Z1 Z2 AX1 AZ1 AX2 AZ2 C1 C2 e2
-% % % % %     clear panel paneldata i j M N
-% % % % %     clear  halfchord halfspan
-% % % % % end
-% % % % %
-% % % % % % end
-
-
-
-
+verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
+[matVLST,~,matVIDX] = unique(verticeList,'rows');
+matVIDX = reshape(matVIDX,54,4);
 
 
 
