@@ -211,7 +211,7 @@ end
 
 verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
 [matVLST,~,matVIDX] = unique(verticeList,'rows');
-matVIDX = reshape(matVIDX,54,4);
+matVIDX = reshape(matVIDX,dveCount,4);
 
 
 
