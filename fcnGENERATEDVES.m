@@ -65,57 +65,11 @@ for i = 1:valPANELS;
     tLE = matGEOM(2,1:3,i);
 
     % Read panel corners
-    panel = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
-    panelX = [panel([1;4],1),panel([2;3],1)];
-    panelY = [panel([1;4],2),panel([2;3],2)];
-    panelZ = [panel([1;4],3),panel([2;3],3)];
-    %     panelTE = [panel(end,:); panel(end-1,:)];
+    % For DVE generation. Twist angle is handled along with dihedral angle
+    panel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
     
-    % NChordwise and NSpanwise
-    % Generate extra points to find control point
-    N = vecN(i)*2;
-    M = vecM(i)*2;
-    
-    % split Root Chord to chordwise elements
-    chordX(:,1) = linspace(panelX(1,1),panelX(2,1),M+1)';
-    chordY(:,1) = linspace(panelY(1,1),panelY(2,1),M+1)';
-    chordZ(:,1) = linspace(panelZ(1,1),panelZ(2,1),M+1)';
-    % split Tip Chord to chordwise elements
-    chordX(:,2) = linspace(panelX(1,2),panelX(2,2),M+1)';
-    chordY(:,2) = linspace(panelY(1,2),panelY(2,2),M+1)';
-    chordZ(:,2) = linspace(panelZ(1,2),panelZ(2,2),M+1)';
-    
-    % linspace spanwise elemenets at each chordwise station
-    
-    % Preallocate the memories for point matrices
-    PX2 = zeros(M+1,N+1);
-    PY2 = zeros(M+1,N+1);
-    PZ2 = zeros(M+1,N+1);
-    
-    for j = 1:M+1
-        if diff(chordY(1,:)) ~= 0    %if: panel is NOT vertical
-            spanwise = linspace(chordY(1,1),chordY(1,2),N+1);
-            chordbase = chordY(1,:);
-        else   %else: panel is vertical (SPECIAL CASE) (difference of Y coordinates is zero)
-            spanwise = linspace(chordZ(1,1),chordZ(1,2),N+1);
-            chordbase = chordZ(1,:);
-        end
-        PX2(j,:) = interp1(chordbase,chordX(j,:),spanwise); % X coordinates of all points
-        PY2(j,:) = interp1(chordbase,chordY(j,:),spanwise); % Y coordinates of all points
-        PZ2(j,:) = interp1(chordbase,chordZ(j,:),spanwise); % Z coordinates of all points
-    end
-    
-    % DVE Parameters Calculation
-    % Calculate Control Points, stored in 3D matrix
-    CP = reshape([PX2(2:2:end,2:2:end),PY2(2:2:end,2:2:end),PZ2(2:2:end,2:2:end)],vecM(i),vecN(i),3);
-    %     CP_Right = reshape([PX2(2:2:end,3:2:end),PY2(2:2:end,3:2:end),PZ2(2:2:end,3:2:end)],vecM(i),vecN(i),3);
-    LE_Mid = reshape([PX2(1:2:end-1,2:2:end),PY2(1:2:end-1,2:2:end),PZ2(1:2:end-1,2:2:end)],vecM(i),vecN(i),3);
-    TE_Right = reshape([PX2(3:2:end,3:2:end),PY2(3:2:end,3:2:end),PZ2(3:2:end,3:2:end)],vecM(i),vecN(i),3);
-    TE_Left = reshape([PX2(3:2:end,1:2:end-2),PY2(3:2:end,1:2:end-2),PZ2(3:2:end,1:2:end-2)],vecM(i),vecN(i),3);
-    
-    % Filter Leading Edge Point
-    LE_Left = reshape([PX2(1:2:end-2,1:2:end-2),PY2(1:2:end-2,1:2:end-2),PZ2(1:2:end-2,1:2:end-2)],vecM(i),vecN(i),3);
-    LE_Right = reshape([PX2(1:2:end-2,3:2:end),PY2(1:2:end-2,3:2:end),PZ2(1:2:end-2,3:2:end)],vecM(i),vecN(i),3);
+    % fcnPANEL2DVE takes four corners of a panel and outputs vertices of non-planer DVEs
+    [ CP, LE_Left, LE_Mid, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE( panel4corners, i, vecN, vecM );
     
     % Create eta vector for full leading edge
     % Non-normalized
@@ -180,7 +134,15 @@ for i = 1:valPANELS;
     Area = eta.*xsi.*4;
     
     
+    % Imaginary Wing for panel adjacencies. Twist of the panels are ignored 
+    % to ensure no gaps between panels on same wing.
+    impanel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,0,0),3,4)';
+    % fcnPANEL2DVE takes four corners of a panel and outputs vertices of non-planer DVEs
+    [ ~, imLEL, ~, imLER, imTEL, imTER ] = fcnPANEL2DVE( impanel4corners, i, vecN, vecM );
     
+    
+    
+    % WRITE RESULTS
     count = vecN(i)*vecM(i);
     idxStart = vecEnd(i)-count+1;
     idxEnd = vecEnd(i);
@@ -199,10 +161,16 @@ for i = 1:valPANELS;
     vecDVENORM(idxStart:idxEnd,:) = reshape(permute(DVE_norm, [2 1 3]),count,3);%reshape(DVE_norm(:),count,3);
     
     
+    
     LECoordL(idxStart:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count,3);%reshape(TE_Left_proj(:),count,3);
     LECoordR(idxStart:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count,3);%reshape(TE_Right_proj(:),count,3);
     TECoordR(idxStart:idxEnd,:) = reshape(permute(TE_Right_proj, [2 1 3]),count,3);%reshape(TE_Right_proj(:),count,3);
     TECoordL(idxStart:idxEnd,:) = reshape(permute(TE_Left_proj, [2 1 3]),count,3);%reshape(TE_Left_proj(:),count,3);
+    
+    P1(idxStart:idxEnd,:) = reshape(permute(imLEL, [2 1 3]),count,3);
+    P2(idxStart:idxEnd,:) = reshape(permute(imLER, [2 1 3]),count,3);
+    P3(idxStart:idxEnd,:) = reshape(permute(imTER, [2 1 3]),count,3);
+    P4(idxStart:idxEnd,:) = reshape(permute(imTEL, [2 1 3]),count,3);
     
     clear chordX chordY chordZ panelX panelY panelZ m n debug ...
         X1 X2 Y1 Y2 Z1 Z2 AX1 AZ1 AX2 AZ2 C1 C2 e2 ...
@@ -212,10 +180,36 @@ for i = 1:valPANELS;
     
 end
 
+% Solve ADJT DVE
+% Grab the non-planer vertex list to avoid the gaps between DVEs
+nonplanerVLST = [P1;P2;P3;P4];
+[matNPVLST,~,matNPVIDX] = unique(nonplanerVLST,'rows');
+matNPVIDX = reshape(matNPVIDX,valNELE,4);
+temp = sort([matNPVIDX(:,[1,2]);matNPVIDX(:,[2,3]);matNPVIDX(:,[3,4]);matNPVIDX(:,[4,1])],2); %sort to ensure the edge is align to same direction
+[ELST,~,j] = unique(temp,'rows','stable');
+EIDX = reshape(j,valNELE,4);
+clear temp ans j
+j = cat(2,[EIDX(:,1);EIDX(:,2);EIDX(:,3);EIDX(:,4)],repmat(1:valNELE,1,4)');
+[~,B] = sort(j(:,1),1);
+temp0 = j(B,:);
+[tempA,tempB,tempC] = unique(temp0(:,1));
+% maximum number of DVE on one edge
+max(diff(tempB));
+
+
+
+
+
+
+
+
 verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
 [matVLST,~,matDVE] = unique(verticeList,'rows');
 matDVE = reshape(matDVE,valNELE,4);
 
+
+% matDVE = matNPVIDX;
+% matVLST = matNPVLST;
 
 
 end
