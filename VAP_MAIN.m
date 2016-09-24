@@ -54,6 +54,7 @@ flagPLOT = 1;
 
 if flagPLOT == 1
     [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, vecDVECTLPT, vecDVENORM);
+    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 end
 
 %% Add boundary conditions to D-Matrix
