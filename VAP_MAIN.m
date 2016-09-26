@@ -47,13 +47,13 @@ flagPLOT = 1;
 
 [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
-    matVLST, matDVE, valNELE, matADJE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM);
+    matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
 
 %% Plotting Wing
 
 if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, vecDVECTLPT, vecDVENORM);
+    [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, vecDVECTLPT, vecDVENORM);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 end
 
@@ -79,4 +79,4 @@ end
 
 toc
 
-whos
+% whos
