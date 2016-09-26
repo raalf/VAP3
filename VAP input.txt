@@ -42,16 +42,16 @@ Airfoil number: 				vecAIRFOIL 	= 6
 Symmetry edge (0, 1 or 2): 		vecSYM 		= 0;
 xleft		yleft		zleft		chord		epsilon
 0.000000	1.000000	0.000000	1.000000	2.000000
-0.500000	2.000000	0.000000	0.800000	4.000000
+0.500000	2.000000	0.500000	0.800000	4.000000
 
 Panel #:3. 
 Number of spanwise elements:	vecN 		= 2. 
-Number of chordwise elements: 	vecM 		= 1.
+Number of chordwise elements: 	vecM 		= 2.
 Airfoil number: 				vecAIRFOIL 	= 7
 Symmetry edge (0, 1 or 2): 		vecSYM 		= 1;
 xleft		yleft		zleft		chord		epsilon
-6.000000	0.000000	0.000000	1.000000	0.000000
-6.500000	0.500000	0.000000	0.600000	0.000000
+0.000000	1.000000	0.000000	1.000000	2.000000
+0.500000	2.000000	-0.500000	0.800000	4.000000
 
 %<- special identifier
 Vertical tail information:

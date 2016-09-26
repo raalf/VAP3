@@ -1,6 +1,6 @@
 function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
-    matVLST, matDVE, valNELE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM)
+    matVLST, matDVE, valNELE, matADJE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -12,7 +12,7 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 %      - Comptue LE Sweep
 %      - Project TE to DVE, Rotate adn Comptue TE Sweep
 %   V3 - Function overhaul for VAP2.0
-% 
+%
 % Fixed how DVEs matrix is converted from 2D grid to 1D array. 16/01/2016 (Alton)
 
 % INPUT:
@@ -20,7 +20,7 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 % matGEOM
 % vecN
 % vecM
- 
+
 % OUTPUT: (ALL OUTPUT ANGLES ARE IN RADIAN)
 % vecDVECTLPT
 % vecDVEHVSPN
@@ -35,6 +35,8 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 % vecDVENORM
 % matVLST
 % matDVE
+% valNELE
+% matADJE
 
 valNELE = sum(vecM.*vecN);
 vecDVECTLPT = nan(valNELE,3);
@@ -58,12 +60,12 @@ vecEnd = cumsum(vecN.*vecM);
 
 
 for i = 1:valPANELS;
-
+    
     rchord = matGEOM(1,4,i); repsilon = deg2rad(matGEOM(1,5,i));
     tchord = matGEOM(2,4,i); tepsilon = deg2rad(matGEOM(2,5,i));
     rLE = matGEOM(1,1:3,i);
     tLE = matGEOM(2,1:3,i);
-
+    
     % Read panel corners
     % For DVE generation. Twist angle is handled along with dihedral angle
     panel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
@@ -134,7 +136,7 @@ for i = 1:valPANELS;
     Area = eta.*xsi.*4;
     
     
-    % Imaginary Wing for panel adjacencies. Twist of the panels are ignored 
+    % Imaginary Wing for panel adjacencies. Twist of the panels are ignored
     % to ensure no gaps between panels on same wing.
     impanel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,0,0),3,4)';
     % fcnPANEL2DVE takes four corners of a panel and outputs vertices of non-planer DVEs
@@ -180,36 +182,51 @@ for i = 1:valPANELS;
     
 end
 
-% Solve ADJT DVE
-% Grab the non-planer vertex list to avoid the gaps between DVEs
-nonplanerVLST = [P1;P2;P3;P4];
-[matNPVLST,~,matNPVIDX] = unique(nonplanerVLST,'rows');
-matNPVIDX = reshape(matNPVIDX,valNELE,4);
-temp = sort([matNPVIDX(:,[1,2]);matNPVIDX(:,[2,3]);matNPVIDX(:,[3,4]);matNPVIDX(:,[4,1])],2); %sort to ensure the edge is align to same direction
-[ELST,~,j] = unique(temp,'rows','stable');
-EIDX = reshape(j,valNELE,4);
-clear temp ans j
-j = cat(2,[EIDX(:,1);EIDX(:,2);EIDX(:,3);EIDX(:,4)],repmat(1:valNELE,1,4)');
-[~,B] = sort(j(:,1),1);
-temp0 = j(B,:);
-[tempA,tempB,tempC] = unique(temp0(:,1));
-% maximum number of DVE on one edge
-max(diff(tempB));
 
-
-
-
-
-
-
-
+% output matDVE, index list which describes the DVE coordinates along with
+% vertices location in matVLST
 verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
 [matVLST,~,matDVE] = unique(verticeList,'rows');
 matDVE = reshape(matDVE,valNELE,4);
 
 
-% matDVE = matNPVIDX;
-% matVLST = matNPVLST;
+
+
+
+
+% Solve ADJT DVE
+% Grab the non-planer vertex list to avoid the gaps between DVEs
+nonplanerVLST = [P1;P2;P3;P4];
+[~,~,matNPVIDX] = unique(nonplanerVLST,'rows');
+matNPVIDX = reshape(matNPVIDX,valNELE,4);
+temp = sort([matNPVIDX(:,[1,2]);matNPVIDX(:,[2,3]);matNPVIDX(:,[3,4]);matNPVIDX(:,[4,1])],2); %sort to ensure the edge is align to same direction
+[~,~,j] = unique(temp,'rows','stable');
+EIDX = reshape(j,valNELE,4);
+clear temp ans j
+%row: DVE# | Local Edge # | Glob. edge#
+j = [repmat([1:valNELE]',4,1),reshape(repmat(1:4,valNELE,1),valNELE*4,1),reshape(EIDX,valNELE*4,1)];
+[j1,~] = histc(j(:,3),unique(j(:,3)));
+j = [j,j1(j(:,3))-1];
+%Currently the procedure was done in two for loops. May be modified in
+%later days if performance improvement is required.
+matADJE = nan(sum(j(:,4)),3);
+k = j(j(:,4)~=0,:);
+c = 0;
+for i = 1:length(k(:,1))
+    for i2 = 1:k(i,4)
+        c = c+1;
+        currentdve = k(i,1);
+        currentlocaledge = k(i,2);
+        currentedge = k(i,3);
+        
+        dvefulllist = j(j(:,3)==currentedge,1);
+        dvefilterlist = dvefulllist(dvefulllist~=currentdve);
+        matADJE(c,:) = [currentdve currentlocaledge dvefilterlist(i2)];
+    end
+end
+%sort matADJE by dve#
+[~,B] = sort(matADJE(:,1));
+matADJE = matADJE(B,:);
 
 
 end

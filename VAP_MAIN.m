@@ -47,7 +47,7 @@ flagPLOT = 1;
 
 [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
-    matVLST, matDVE, valNELE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM);
+    matVLST, matDVE, valNELE, matADJE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM);
 
 
 %% Plotting Wing
