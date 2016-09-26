@@ -1,6 +1,6 @@
 function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
-    matVLST, matDVE, valNELE, matADJE] = fcnGENERATEDVES(valPANELS, matGEOM, vecN, vecM)
+    matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -37,6 +37,8 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 % matDVE
 % valNELE
 % matADJE
+% matDVE
+% matDVE
 
 valNELE = sum(vecM.*vecN);
 vecDVECTLPT = nan(valNELE,3);
@@ -50,7 +52,11 @@ vecDVEPITCH = nan(valNELE,1);
 vecDVEYAW   = nan(valNELE,1);
 vecDVEAREA  = nan(valNELE,1);
 vecDVENORM  = nan(valNELE,3);
+vecDVESYM   = zeros(valNELE,1);
+vecDVETIP   = zeros(valNELE,1);
 
+
+dve2panel   = nan(valNELE,1);
 LECoordL    = nan(valNELE,3);
 LECoordR    = nan(valNELE,3);
 TECoordR    = nan(valNELE,3);
@@ -162,7 +168,7 @@ for i = 1:valPANELS;
     vecDVETESWP(idxStart:idxEnd) = reshape(phi_TE',count,1);%phi_TE(:);
     vecDVENORM(idxStart:idxEnd,:) = reshape(permute(DVE_norm, [2 1 3]),count,3);%reshape(DVE_norm(:),count,3);
     
-    
+    dve2panel(idxStart:idxEnd,:) = [repmat(i,count,1)];
     
     LECoordL(idxStart:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count,3);%reshape(TE_Left_proj(:),count,3);
     LECoordR(idxStart:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count,3);%reshape(TE_Right_proj(:),count,3);
@@ -212,6 +218,37 @@ j = [j,j1(j(:,3))-1];
 matADJE = nan(sum(j(:,4)),3);
 k = j(j(:,4)~=0,:);
 c = 0;
+
+idx1 = (j(:,4)==0&(j(:,2)==2|j(:,2)==4));
+dveedge2panel = repmat(dve2panel,4,1);
+
+
+findTIPSYM = [j(idx1,:),dveedge2panel(idx1,:)];
+tempTIP = nan(length(findTIPSYM(:,1)),1);
+% If the panel has vecSYM = 1, those panels' local edge 4 has symmetry
+panelidx = find(vecSYM==1);
+symidx = (findTIPSYM(:,2)==4 & ismember(findTIPSYM(:,5),panelidx));
+tempTIP(symidx) = 1;
+dveidx = findTIPSYM(symidx,1);
+vecDVESYM(dveidx) = 4;
+
+
+% If the panel has vecSYM = 2, those panels' local edge 2 has symmetry
+panelidx = find(vecSYM==2);
+symidx = (findTIPSYM(:,2)==2 & ismember(findTIPSYM(:,5),panelidx));
+tempTIP(symidx) = 1;
+dveidx = findTIPSYM(symidx,1);
+vecDVESYM(dveidx) = 2;
+
+
+% If the edge is not touching another dve nor symmetry edge, 
+% Define it as wing tip
+tipidx = isnan(tempTIP);
+dveidx=  findTIPSYM(tipidx,1);
+vecDVETIP(dveidx) = findTIPSYM(tipidx,2);
+
+
+
 for i = 1:length(k(:,1))
     for i2 = 1:k(i,4)
         c = c+1;
@@ -227,6 +264,7 @@ end
 %sort matADJE by dve#
 [~,B] = sort(matADJE(:,1));
 matADJE = matADJE(B,:);
+
 
 
 end
