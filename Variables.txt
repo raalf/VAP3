@@ -33,7 +33,7 @@ valMINTIME - minimum number of timesteps
 valINTERF - interference drag value (%)
 
 From geometry generation:
-vecDVECTLPT - valNELE x 3 matrix of (x,y,z) locations of DVE control points
+vecCENTER - valNELE x 3 matrix of (x,y,z) locations of DVE control points
 vecDVEHVSPN - valNELE x 1 vector of DVE half spans
 vecDVEHVCRD - valNELE x 1 vector of DVE half chords
 vecDVELESWP - valNELE x 1 vector of DVE leading edge sweep (radians)

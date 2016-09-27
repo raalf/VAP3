@@ -1,6 +1,8 @@
 clc
 clear
 
+clf
+
 tic
 
 disp('===========================================================================');
@@ -45,7 +47,7 @@ flagPLOT = 1;
 
 %% Discretize geometry into DVEs
 
-[matDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+[matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
     matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
@@ -53,7 +55,7 @@ flagPLOT = 1;
 %% Plotting Wing
 
 if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matDVECTLPT, vecDVENORM);
+    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, vecDVENORM);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 end
 

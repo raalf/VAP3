@@ -1,4 +1,4 @@
-function [matDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
     matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
@@ -40,7 +40,7 @@ function [matDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 
 
 valNELE = sum(vecM.*vecN);
-matDVECTLPT = nan(valNELE,3);
+matCENTER = nan(valNELE,3);
 vecDVEHVSPN = nan(valNELE,1);
 vecDVEHVCRD = nan(valNELE,1);
 vecDVELESWP = nan(valNELE,1);
@@ -161,7 +161,7 @@ for i = 1:valPANELS;
     vecDVEROLL(idxStart:idxEnd) = reshape(nu',count,1);%nu(:);
     vecDVEPITCH(idxStart:idxEnd) = reshape(epsilon',count,1);%epsilon(:);
     vecDVEYAW(idxStart:idxEnd) = reshape(psi',count,1);%psi(:);
-    matDVECTLPT(idxStart:idxEnd,:) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
+    matCENTER(idxStart:idxEnd,:) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
     vecDVELESWP(idxStart:idxEnd) = reshape(phi_LE',count,1);%phi_LE(:);
     vecDVEMCSWP(idxStart:idxEnd) = reshape(phi_MID',count,1);%phi_MID(:);
     vecDVETESWP(idxStart:idxEnd) = reshape(phi_TE',count,1);%phi_TE(:);
@@ -231,14 +231,12 @@ tempTIP(symidx) = 1;
 dveidx = findTIPSYM(symidx,1);
 vecDVESYM(dveidx) = 4;
 
-
 % If the panel has vecSYM = 2, those panels' local edge 2 has symmetry
 panelidx = find(vecSYM==2);
 symidx = (findTIPSYM(:,2)==2 & ismember(findTIPSYM(:,5),panelidx));
 tempTIP(symidx) = 1;
 dveidx = findTIPSYM(symidx,1);
 vecDVESYM(dveidx) = 2;
-
 
 % If the edge is not touching another dve nor symmetry edge, 
 % Define it as wing tip
