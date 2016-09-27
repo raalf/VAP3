@@ -1,4 +1,4 @@
-function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+function [matDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
     matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
@@ -22,7 +22,7 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 % vecM
 
 % OUTPUT: (ALL OUTPUT ANGLES ARE IN RADIAN)
-% vecDVECTLPT
+% matDVECTLPT
 % vecDVEHVSPN
 % vecDVEHVCRD
 % vecDVELESWP
@@ -37,11 +37,10 @@ function [vecDVECTLPT, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDV
 % matDVE
 % valNELE
 % matADJE
-% matDVE
-% matDVE
+
 
 valNELE = sum(vecM.*vecN);
-vecDVECTLPT = nan(valNELE,3);
+matDVECTLPT = nan(valNELE,3);
 vecDVEHVSPN = nan(valNELE,1);
 vecDVEHVCRD = nan(valNELE,1);
 vecDVELESWP = nan(valNELE,1);
@@ -162,7 +161,7 @@ for i = 1:valPANELS;
     vecDVEROLL(idxStart:idxEnd) = reshape(nu',count,1);%nu(:);
     vecDVEPITCH(idxStart:idxEnd) = reshape(epsilon',count,1);%epsilon(:);
     vecDVEYAW(idxStart:idxEnd) = reshape(psi',count,1);%psi(:);
-    vecDVECTLPT(idxStart:idxEnd,:) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
+    matDVECTLPT(idxStart:idxEnd,:) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
     vecDVELESWP(idxStart:idxEnd) = reshape(phi_LE',count,1);%phi_LE(:);
     vecDVEMCSWP(idxStart:idxEnd) = reshape(phi_MID',count,1);%phi_MID(:);
     vecDVETESWP(idxStart:idxEnd) = reshape(phi_TE',count,1);%phi_TE(:);

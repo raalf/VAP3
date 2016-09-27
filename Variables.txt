@@ -1,0 +1,57 @@
+LIST OF ALL "GLOBAL" VARIABLES IN VAP2
+
+valNELE - total number of DVEs
+
+From input file:
+strFILE - file name of input text file in the local directory (or if not, with the appropriate path in the name)
+flagRELAX - 0 if fixed wake, 1 if relaxed
+flagSTEADY - 0 if unsteady, 1 if steady
+valAREA - projected wing area (m^2)
+valSPAN - tip-to-tip span (m)
+valCMAC - mean aerodynamic chord
+valWEIGHT - aircraft weight (N)
+seqALPHA - sequence of alphas to analyze
+seqBETA - sequence of betas to analyze
+valKINV - kinematic viscosity (1.46e-05 as standard)
+valDENSITY - fluid density, kg/m^3
+valPANELS - number of wing panels
+matGEOM - 2 x 5 x valPANELS matrix, with (x,y,z) coords of edge points, and chord and twist at each edge
+vecSYM - valPANELS x 1 vector of 0, 1, or 2 which denotes the panels with symmetry condition (1 or 2 being local edge number)
+vecAIRFOIL - valPANELS x 1 vector of airfoil numbers for the panels
+vecN - valPANELS x 1 vector of spanwise elements per DVE
+vecM - valPANELS x 1 vector of chordwise elements per DVE
+valVSPANELS - number of vertical stabilizer panels
+matVSGEOM - matrix with vertical tail geometry, if used
+valFPANELS - number of fuselage panels
+matFGEOM - matrix of fuselage geometry, if used
+valFTURB - fuselage panel number where turbulence occurs
+valFPWIDTH - width of fuselage panels
+valDELTAE - convergence criteria of change in span efficiency between timesteps
+valDELTIME - size of timestep (m)
+valMAXTIME - maximum number of timesteps
+valMINTIME - minimum number of timesteps
+valINTERF - interference drag value (%)
+
+From geometry generation:
+vecDVECTLPT - valNELE x 3 matrix of (x,y,z) locations of DVE control points
+vecDVEHVSPN - valNELE x 1 vector of DVE half spans
+vecDVEHVCRD - valNELE x 1 vector of DVE half chords
+vecDVELESWP - valNELE x 1 vector of DVE leading edge sweep (radians)
+vecDVEMCSWP - valNELE x 1 vector of DVE mid-chord sweep (radians)
+vecDVETESWP - valNELE x 1 vector of DVE trailing-edge sweep (radians)
+vecDVEROLL - valNELE x 1 vector of DVE roll angles (about x-axis) (radians)
+vecDVEPITCH - valNELE x 1 vector of DVE pitch angles (about y-axis) (radians)
+vecDVEYAW - valNELE x 1 vector of DVE yaw angles (about z-axis) (radians)
+vecDVEAREA - valNELE x 1 vector of DVE area
+vecDVENORM -  valNELE x 3 matrix of DVE normal vectors
+matVLST - ? x 3 list of unique vertices, columns are (x,y,z) values
+matDVE - matrix of which DVE uses which vertices from the above list
+matADJE - matADJE - ? x 3 adjacency matrix, where columns are: DVE | local edge | adjacent DVE
+vecDVESYM - valNELE x 1 vector of which DVEs have symmetry on which edge (0 for no symmetry, 2 for local edge 2, 4 for local edge 4)
+vecDVETIP - valNELE x 1 vector of which DVEs are at the wingtip. Similar format to vecDVESYM above
+
+From remainder of program:
+matD - valNELE*3 x valNELE*3 matrix of boundary conditions for the wing, where the upper 2/3rds are from the geometry, and the lower 1/3 is from flow tangency
+
+
+
