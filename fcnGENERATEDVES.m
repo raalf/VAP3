@@ -1,6 +1,7 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP, vecDVEWING] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
+    matVLST, matDVE, valNELE, matADJE, ...
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVETE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -59,7 +60,8 @@ P3          = nan(valNELE,3);
 P4          = nan(valNELE,3);
 vecDVESYM   = zeros(valNELE,1);
 vecDVETIP   = zeros(valNELE,1);
-vecDVEWING   = nan(valNELE,1);
+vecDVEWING  = nan(valNELE,1);
+vecDVETE    = zeros(valNELE,1);
 
 
 
@@ -293,6 +295,10 @@ dveidx=  findTIPSYM(tipidx,1);
 vecDVETIP(dveidx) = findTIPSYM(tipidx,2);
 
 
+% Get DVE index where TE appears if col2=3 & col4=0;
+% use matrix j, col1:dve, col2:Local.edge, col3:Glob.edge, col4:
+teIdx = j(j(:,2)==3&j(:,4)==0,1);
+vecDVETE(teIdx) = 3;
 
 for i = 1:length(k(:,1))
     for i2 = 1:k(i,4)
@@ -304,8 +310,10 @@ for i = 1:length(k(:,1))
         dvefulllist = j(j(:,3)==currentedge,1);
         dvefilterlist = dvefulllist(dvefulllist~=currentdve);
         matADJE(c,:) = [currentdve currentlocaledge dvefilterlist(i2)];
-    end
+    end  
 end
+
+
 %sort matADJE by dve#
 [~,tempB] = sort(matADJE(:,1));
 matADJE = matADJE(tempB,:);
