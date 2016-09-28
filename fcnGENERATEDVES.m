@@ -79,22 +79,16 @@ edge2wing = [[1:length(tempB)]',nan(length(tempB),1)];
 edge2wing(1,2) = 1;
 
 for n = 1:valPANELS
-    
     curPanelEdges = panelEdgesIdx(n,:)';
-    
     if max(edge2wing(curPanelEdges,2)) > 0
-        
         wingIdx = max(edge2wing(curPanelEdges,2));
     else
         wingIdx = max(edge2wing(:,2))+1;
     end
-    
     edge2wing(curPanelEdges,2)=wingIdx;
-    
 end
 temp1 = reshape(edge2wing(tempC,2),2,[]);
 panel2wing = temp1(1,:)';
-
 clear tempB tempC temp1
 
 
@@ -111,13 +105,13 @@ for i = 1:valPANELS;
     panel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
     
     % fcnPANEL2DVE takes four corners of a panel and outputs vertices of non-planer DVEs
-    [ CP, LE_Left, LE_Mid, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE( panel4corners, i, vecN, vecM );
+    [ CP, LE_Left, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE( panel4corners, i, vecN, vecM );
     
     % Imaginary Wing for panel adjacencies. Twist of the panels are ignored
     % to ensure no gaps between panels on same wing.
     impanel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,0,0),3,4)';
     % fcnPANEL2DVE takes four corners of a panel and outputs vertices of non-planer DVEs
-    [ ~, imLEL, ~, imLER, imTEL, imTER ] = fcnPANEL2DVE( impanel4corners, i, vecN, vecM );
+    [ ~, imLEL, imLER, imTEL, imTER ] = fcnPANEL2DVE( impanel4corners, i, vecN, vecM );
     
     % WRITE RESULTS
     count = vecN(i)*vecM(i);
@@ -136,7 +130,7 @@ for i = 1:valPANELS;
 
     % Write non-planer DVE coordinates
     P1(idxStart:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count,3);
-    P12(idxStart:idxEnd,:) = reshape(permute(LE_Mid, [2 1 3]),count,3);
+%     P12(idxStart:idxEnd,:) = reshape(permute(LE_Mid, [2 1 3]),count,3);
     P2(idxStart:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count,3);
     P3(idxStart:idxEnd,:) = reshape(permute(TE_Right, [2 1 3]),count,3);
     P4(idxStart:idxEnd,:) = reshape(permute(TE_Left, [2 1 3]),count,3);
@@ -154,95 +148,13 @@ end
 
 
 
-% Create eta vector for full leading edge
-% Non-normalized
-% (old method) LE_vec = LE_Right - LE_Left;
-leVec = P2-P1;
-
-% Create half chord xsi vector
-% Non-normalized
-% (old method) xsi_vec = LE_Mid - CP;
-xsiVec = P12-matCENTER;
-
-tempM = cross(leVec, xsiVec, 2);
-tempM_length = repmat(((tempM(:,1).^2+tempM(:,2).^2+tempM(:,3).^2).^0.5),1,3);
-matDVENORM = tempM./tempM_length;
-
-
-
-% Roll in Degrees -arctan ( Y component / Z component of DVC normal vector)
-% atan2d is used here
-% roll(nu) right wing up positive
-% (old method) nu = -atan2(DVE_norm(:,:,2),DVE_norm(:,:,3));
-vecDVEROLL = -atan2(matDVENORM(:,2),matDVENORM(:,3));
-
-
-% Pitch in Degrees
-% arcsin ( X component of DVE normal vector )
-% (old method) epsilon = asin(DVE_norm(:,:,1));
-vecDVEPITCH = asin(matDVENORM(:,1));
-
-
-% Yaw in Degrees
-% xsi in local with roll picth, yaw set to zero.. but WHY?
-% (old method) xsi_local = fcnGLOBSTAR3D( xsi_vec,nu,epsilon,zeros(vecM(i),vecN(i)) );
-xsiLocal = fcnGLOBSTAR(xsiVec,vecDVEROLL,vecDVEPITCH,zeros(valNELE,1));
-% % Magnitude of half chord vector
-% (old method) xsi = (xsi_local(:,:,1).^2+xsi_local(:,:,2).^2+xsi_local(:,:,3).^2).^0.5;
-vecDVEHVCRD = (xsiLocal(:,1).^2+xsiLocal(:,2).^2+xsiLocal(:,3).^2).^0.5;
-% (old method) psi = atan(xsi_local(:,:,2)./xsi_local(:,:,1));
-vecDVEYAW = atan(xsiLocal(:,2)./xsiLocal(:,1));
-% 
-% % Find eta. bring non-normalized LE_vec to local and half the Y component
-% (old method) LE_vec_local = fcnGLOBSTAR3D( LE_vec,nu,epsilon,psi);
-leVecLocal = fcnGLOBSTAR(leVec,vecDVEROLL,vecDVEPITCH,vecDVEYAW);
-% (old method) eta = LE_vec_local(:,:,2)./2;
-vecDVEHVSPN = leVecLocal(:,2)./2;
-% 
-% % Find Leading Edge Sweep
-% % arctan(LE X local component/ LE Y local component)
-% (old method) phi_LE = atan(LE_vec_local(:,:,1)./LE_vec_local(:,:,2));
-vecDVELESWP = atan(leVecLocal(:,1)./leVecLocal(:,2));
-% Find Trailing Edge Sweep
-% Project TE Points onto DVE plane
-% (TE_Left / TE_Right) (CP)                   (DVE_norm)
-% q(x,y,z) TE point | p(a,b,c) Control Point | n(d,e,f) DVE normal
-% q_proj = q - dot(q-p,n)*n
-% (old method) TE_Left_proj = TE_Left-repmat(dot(TE_Left-CP,DVE_norm,3),1,1,3).*DVE_norm;
-teLeftProj = P4 - repmat(dot(P4-matCENTER,matDVENORM,2),1,3).*matDVENORM;
-% (old method) TE_Right_proj = TE_Right-repmat(dot(TE_Right-CP,DVE_norm,3),1,1,3).*DVE_norm;
-teRightProj = P3 - repmat(dot(P3-matCENTER,matDVENORM,2),1,3).*matDVENORM;
-% (old method) TE_vec_proj = TE_Right_proj - TE_Left_proj;
-teVecProj = teRightProj-teLeftProj;
-
-% Rotate the Projected TE on DVE to local reference frame
-% arctan(Projected TE local X component/Projected TE local Y component)
-% (old method) TE_vec_proj_local = fcnGLOBSTAR3D( TE_vec_proj,nu,epsilon,psi );
-teVecProjLocal = fcnGLOBSTAR(teVecProj,vecDVEROLL,vecDVEPITCH,vecDVEYAW);
-% (old method) phi_TE = atan(TE_vec_proj_local(:,:,1)./TE_vec_proj_local(:,:,2));
-vecDVETESWP = atan(teVecProjLocal(:,1)./teVecProjLocal(:,2));
-
-
-% Compute DVE Mid-chord Sweep
-% Average of LE and TE Sweep
-% (old method) phi_MID = (phi_LE+phi_TE)./2;
-vecDVEMCSWP = (vecDVELESWP+vecDVETESWP)./2;
-
-% Calculating Area
-% (old method) Area = eta.*xsi.*4;
-vecDVEAREA = vecDVEHVCRD.*vecDVEHVSPN.*4;
-
-
-
-
-
-
-% output matDVE, index list which describes the DVE coordinates along with
-% vertices location in matVLST
-% (old method) verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
-verticeList = [P1;P2;teRightProj;teLeftProj];
-[matVLST,~,matDVE] = unique(verticeList,'rows');
-matDVE = reshape(matDVE,valNELE,4);
+% fcnDVECORNER2PARAM takes the corner and center points of each DVEs,
+% computes the parameters and compiles the matVLST and matDVE
+[ vecDVEHVSPN, vecDVEHVCRD, ...
+    vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
+    vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+    vecDVEAREA, matDVENORM, ...
+    matVLST, matDVE ] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 );
 
 
 
