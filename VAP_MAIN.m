@@ -25,21 +25,21 @@ disp(' ');
 
 %% Reading in geometry
 
-% strFILE = 'VAP input.txt';
+% strFILE = 'VAP christmas.txt';
+strFILE = 'VAP input.txt';
+[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+    valINTERF] = fcnVAPREAD(strFILE);
+% 
+% strFILE = 'input.txt';
 % 
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnVAPREAD(strFILE);
-
-strFILE = 'input.txt';
-
-[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnFWREAD(strFILE);
+%     valINTERF] = fcnFWREAD(strFILE);
 
 flagPLOT = 1;
 
@@ -83,7 +83,7 @@ for ai = 1:length(seqALPHA)
         [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
         
         matWAKEGEOM = [];
-        for valTIMESTEP = 1:valMAXTIME
+        for valTIMESTEP = 1:1%valMAXTIME
             %% Timestep to solution
             %   Move wing
             %   Generate new wake elements
@@ -97,7 +97,7 @@ for ai = 1:length(seqALPHA)
             %   Calculate viscous effects
             
             % Moving the wing
-            [matVLST, matCENTER, matNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE);
+            [matVLST, matCENTER, matNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE);
             
             % Generating new wake elements
             %             [matWAKEGEOM, WADJE, WELST, WVLST, WDVE, WNELE, WEATT, WEIDX, WELOC, WPLEX, WDVECT, WALIGN, WVATT, WVNORM, WCENTER] = fcnCREATEWAKE(valTIMESTEP, matNEWWAKE, matWAKEGEOM);
