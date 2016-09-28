@@ -61,13 +61,12 @@ end
 
 [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
 
+dvenum = [1 5 2]';
+fpg = [0 0 0; 2 2 4; 5 5 3];
+vecK = ones(valNELE,1);
+dvetype = [0 1 -3]';
 
-dvenum = [1 2]';
-fpg = [1 3 2; 2 2 4];
-vecK = [1 1]';
-dvetype = [2 2]';
-
-[a, b, c] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD);
+[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
 
 
 %% Add kinematic conditions to D-Matrix

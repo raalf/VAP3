@@ -1,4 +1,4 @@
-function [aloc, bloc, cloc] = fcnBOUNDIND(endpoints, phi, yaw, fpl)
+function [aloc, bloc, cloc] = fcnBOUNDIND(endpoints, phi, fpl)
 
 dbl_eps = 1e-14;
 
@@ -7,15 +7,12 @@ dbl_eps = 1e-14;
 
 eta_translation = mean(endpoints,3);
 
-hspan1 = abs(endpoints(:,1,2) - endpoints(:,1,1))./2;
-hspan2 = abs(endpoints(:,2,2) - endpoints(:,2,1))./2;
-
-hspan = hspan1.*cos(yaw) + hspan2.*sin(yaw);
+hspan = abs(endpoints(:,2,2) - endpoints(:,2,1))./2;
 
 fp_0 = fpl - eta_translation;
 
-eta_0 = fp_0(:,1).*cos(yaw) + fp_0(:,2).*sin(yaw);
-xsi_0 = fp_0(:,1).*sin(yaw) + fp_0(:,2).*cos(yaw);
+eta_0 = fp_0(:,2);
+xsi_0 = fp_0(:,1);
 zeta_0 = fp_0(:,3);
 
 %% General case
@@ -55,40 +52,38 @@ c1_zeta = G13.*(xsi_0 - eta_0.*tan(phi));
 % If the point lies on the bound vortex
 idx1 = (abs(xsi_0 - eta_0.*tan(phi)) <= dbl_eps & abs(zeta_0) <= dbl_eps);
 
-len1 = length(idx1);
+a1_xsi(idx1) = zeros(length(a1_xsi(idx1)),1);
+a1_eta(idx1) = zeros(length(a1_eta(idx1)),1);
+a1_zeta(idx1) = zeros(length(a1_zeta(idx1)),1);
 
-a1_xsi(idx1) = zeros(len1,1);
-a1_eta(idx1) = zeros(len1,1);
-a1_zeta(idx1) = zeros(len1,1);
+b1_xsi(idx1) = zeros(length(b1_xsi(idx1)),1);
+b1_eta(idx1) = zeros(length(b1_eta(idx1)),1);
+b1_zeta(idx1) = zeros(length(b1_zeta(idx1)),1);
 
-b1_xsi(idx1) = zeros(len1,1);
-b1_eta(idx1) = zeros(len1,1);
-b1_zeta(idx1) = zeros(len1,1);
-
-c1_xsi(idx1) = zeros(len1,1);
-c1_eta(idx1) = zeros(len1,1);
-c1_zeta(idx1) = zeros(len1,1);
+c1_xsi(idx1) = zeros(length(c1_xsi(idx1)),1);
+c1_eta(idx1) = zeros(length(c1_eta(idx1)),1);
+c1_zeta(idx1) = zeros(length(c1_zeta(idx1)),1);
 
 % If the point lies on the xsi-eta-zeta plane
 idx2 = abs(zeta_0) < dbl_eps;
 
-a1_xsi(idx2) = zeros(len1,1);
-a1_eta(idx2) = zeros(len1,1);
+a1_xsi(idx2) = zeros(length(a1_xsi(idx2)),1);
+a1_eta(idx2) = zeros(length(a1_eta(idx2)),1);
 
-b1_xsi(idx2) = zeros(len1,1);
-b1_eta(idx2) = zeros(len1,1);
+b1_xsi(idx2) = zeros(length(b1_xsi(idx2)),1);
+b1_eta(idx2) = zeros(length(b1_eta(idx2)),1);
 
-c1_xsi(idx2) = zeros(len1,1);
-c1_eta(idx2) = zeros(len1,1);
+c1_xsi(idx2) = zeros(length(c1_xsi(idx2)),1);
+c1_eta(idx2) = zeros(length(c1_eta(idx2)),1);
 
 % If the point lies in the plane defined by zeta-axis and bound vortex
 idx3 = abs(xsi_0 - eta_0.*tan(phi)) <= dbl_eps;
 
-a1_zeta(idx3) = zeros(len1,1);
+a1_zeta(idx3) = zeros(length(a1_zeta(idx3)),1);
 
-b1_zeta(idx3) = zeros(len1,1);
+b1_zeta(idx3) = zeros(length(b1_zeta(idx3)),1);
 
-c1_zeta(idx3) = zeros(len1,1);
+c1_zeta(idx3) = zeros(length(c1_zeta(idx3)),1);
 
 %% Output format
 aloc = [a1_xsi a1_eta a1_zeta];

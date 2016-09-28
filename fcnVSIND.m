@@ -1,18 +1,15 @@
-function [aloc, bloc, cloc] = fcnVSIND(endpoints, phi, yaw, fpl, k)
+function [aloc, bloc, cloc] = fcnVSIND(endpoints, phi, fpl, k)
 
 dbl_eps = 1e-14;
 
 eta_translation = mean(endpoints,3);
 
-hspan1 = abs(endpoints(:,1,2) - endpoints(:,1,1))./2;
-hspan2 = abs(endpoints(:,2,2) - endpoints(:,2,1))./2;
-
-hspan = hspan1.*cos(yaw) + hspan2.*sin(yaw);
+hspan = abs(endpoints(:,2,2) - endpoints(:,2,1))./2;
 
 fp_0 = fpl - eta_translation;
 
-eta_0 = fp_0(:,1).*cos(yaw) + fp_0(:,2).*sin(yaw);
-xsi_0 = fp_0(:,1).*sin(yaw) + fp_0(:,2).*cos(yaw);
+eta_0 = fp_0(:,2);
+xsi_0 = fp_0(:,1);
 zeta_0 = fp_0(:,3);
 
 len = length(eta_0(:,1));
@@ -232,16 +229,6 @@ cloc(idx_LE,1:2) = zeros(size(cloc(idx_LE,1:2)));
 bloc(idx_LE,3) = 0.5.*log((t1(idx_LE).^2 + k(idx_LE))./(t2(idx_LE).^2 + k(idx_LE)));
 % cl(idx_LE,3) = -4.*hspan(idx_LE) + eta_0(idx_LE).*2.*bl(idx_LE,3);
 cloc(idx_LE,3) = -(2.*eta_0(idx_LE).*bloc(idx_LE,3) - 2.*(t2(idx_LE) - t1(idx_LE)));
-
-%% Rotate 90 degrees to appropriate direction if needed
-
-tempb(:,2) = bloc(:,1).*cos(yaw) + bloc(:,2).*sin(yaw);
-tempb(:,1) = bloc(:,1).*sin(yaw) + bloc(:,2).*cos(yaw);
-bloc(:,1:2) = tempb;
-
-tempc(:,2) = cloc(:,1).*cos(yaw) + cloc(:,2).*sin(yaw);
-tempc(:,1) = cloc(:,1).*sin(yaw) + cloc(:,2).*cos(yaw);
-cloc(:,1:2) = tempc;
 
 end
 
