@@ -2,11 +2,13 @@ function [ vecDVEHVSPN, vecDVEHVCRD, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE ] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 )
+    matVLST, matDVE, valNELE ] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 )
 %FCNDVEPOINT2PARAM takes the corner and center points of each DVEs,computes the parameters and compiles the matVLST and matDVE
 %   Detailed explanation goes here
 
-NELE = length(matCENTER(:,1)); 
+
+
+valNELE = length(matCENTER(:,1)); 
 
 
 % Create eta vector for full leading edge
@@ -44,7 +46,7 @@ vecDVEPITCH = asin(matDVENORM(:,1));
 % Yaw in Degrees
 % xsi in local with roll picth, yaw set to zero.. but WHY?
 % (old method) xsi_local = fcnGLOBSTAR3D( xsi_vec,nu,epsilon,zeros(vecM(i),vecN(i)) );
-xsiLocal = fcnGLOBSTAR(xsiVec,vecDVEROLL,vecDVEPITCH,zeros(NELE,1));
+xsiLocal = fcnGLOBSTAR(xsiVec,vecDVEROLL,vecDVEPITCH,zeros(valNELE,1));
 % % Magnitude of half chord vector
 % (old method) xsi = (xsi_local(:,:,1).^2+xsi_local(:,:,2).^2+xsi_local(:,:,3).^2).^0.5;
 vecDVEHVCRD = (xsiLocal(:,1).^2+xsiLocal(:,2).^2+xsiLocal(:,3).^2).^0.5;
@@ -100,7 +102,7 @@ vecDVEAREA = vecDVEHVCRD.*vecDVEHVSPN.*4;
 % (old method) verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
 verticeList = [P1;P2;teRightProj;teLeftProj];
 [matVLST,~,matDVE] = unique(verticeList,'rows');
-matDVE = reshape(matDVE,NELE,4);
+matDVE = reshape(matDVE,valNELE,4);
 
 end
 

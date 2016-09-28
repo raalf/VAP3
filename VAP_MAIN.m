@@ -1,6 +1,6 @@
 clc
 clear
-
+clf
 tic
 
 disp('===========================================================================');
@@ -32,9 +32,9 @@ strFILE = 'VAP input.txt';
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnVAPREAD(strFILE);
-% 
+%
 % strFILE = 'input.txt';
-% 
+%
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
@@ -74,7 +74,7 @@ for ai = 1:length(seqALPHA)
     for bi = 1:length(seqBETA)
         valBETA = deg2rad(seqBETA(bi));
         
-        vecUINF = fcnUINFWING(valALPHA, valBETA);  
+        vecUINF = fcnUINFWING(valALPHA, valBETA);
         
         % Building wing resultant
         [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, vecUINF);
@@ -99,9 +99,20 @@ for ai = 1:length(seqALPHA)
             % Moving the wing
             [matVLST, matCENTER, matNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE);
             
+            
+            
+            matWCENTER = mean(matNEWWAKE,3);
+            [ vecWDVEHVSPN, vecWDVEHVCRD, ...
+                vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
+                vecWDVELESWP, vecWDVEMCSWP, vecWDVETESWP, ...
+                vecWDVEAREA, matWDVENORM, ...
+                matWVLST, matWDVE, valWNELE ] = fcnDVECORNER2PARAM(matWCENTER, matNEWWAKE(:,:,1), matNEWWAKE(:,:,2), matNEWWAKE(:,:,3), matNEWWAKE(:,:,4));
+            clf(2)
+            [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, matDVENORM);
+            [hFig2] = fcnPLOTBODY(0, 0, matWDVE, matWVLST, matWCENTER, matWDVENORM)
             % Generating new wake elements
             %             [matWAKEGEOM, WADJE, WELST, WVLST, WDVE, WNELE, WEATT, WEIDX, WELOC, WPLEX, WDVECT, WALIGN, WVATT, WVNORM, WCENTER] = fcnCREATEWAKE(valTIMESTEP, matNEWWAKE, matWAKEGEOM);
-                        
+            
         end
     end
 end

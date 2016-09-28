@@ -24,13 +24,12 @@ uinf = [uinf*cos(valALPHA)*cos(valBETA) uinf*sin(valBETA) uinf*sin(valALPHA)*cos
 translation = valDELTIME.*uinf;
 
 % Old trailing edge vertices
-old_te = permute(reshape(matVLST(matDVE(vecDVETE>0,4:-1:3),:)',3,2,[]),[2 1 3]);
+matNEWWAKE(:,:,4) = matVLST(matDVE(vecDVETE>0,4),:);
+matNEWWAKE(:,:,3) = matVLST(matDVE(vecDVETE>0,3),:);
 
 matVLST = matVLST - repmat(translation, length(matVLST(:,1)), 1);
 matCENTER = matCENTER - repmat(translation, length(matCENTER(:,1)), 1);
 
 % New trailing edge vertices
-new_te = permute(reshape(matVLST(matDVE(vecDVETE>0,4:-1:3),:)',3,2,[]),[2 1 3]);
-
-% These vertices will be used to calculate the wake HDVE geometry
-matNEWWAKE = cat(1, new_te, old_te);
+matNEWWAKE(:,:,1) = matVLST(matDVE(vecDVETE>0,4),:);
+matNEWWAKE(:,:,2) = matVLST(matDVE(vecDVETE>0,3),:);
