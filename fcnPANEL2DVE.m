@@ -1,4 +1,4 @@
-function [ CP, LE_Left, LE_Mid, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE( panel4corners, i, vecN, vecM )
+function [ CP, LE_Left, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE( panel4corners, i, vecN, vecM )
 %fcnPANEL2DVE Summary of this function goes here
 %   fcnPANEL2DVE takes four corners of a panel and outputs vertices of non-planer DVEs
 
