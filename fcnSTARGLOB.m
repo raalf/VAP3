@@ -10,7 +10,7 @@ function [xsi] = fcnSTARGLOB(points, roll, pitch, yaw)
 % OUTPUT:
 %   xsi - n x 3 matrix of "points" in global reference frame
 
-x = reshape(points,3,1,[]);
+x = permute(permute(points,[3,1,2]),[2,1,3]);
 
 [A,B,~] = size(x);
 
