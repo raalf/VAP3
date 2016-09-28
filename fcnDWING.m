@@ -136,6 +136,8 @@ if ~isempty(vecDVESYM) == 1
     len = length(idx10);
     locedge = vecDVESYM(idx10);
     
+    dgamma_sym = zeros(len,3);
+    
     % dgamma_sym = 0
     % B + 2*C*eta = 0 for right edge (local edge 2), though I doubt this one will be used
     % B - 2*C*eta = 0 for left edge (local edge 4)
