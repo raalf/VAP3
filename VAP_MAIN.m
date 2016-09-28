@@ -41,7 +41,7 @@ strFILE = 'VAP input.txt';
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
 %     valINTERF] = fcnFWREAD(strFILE);
 
-flagPLOT = 0;
+flagPLOT = 1;
 
 %% Discretize geometry into DVEs
 
