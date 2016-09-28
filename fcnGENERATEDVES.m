@@ -1,6 +1,6 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES2(valPANELS, matGEOM, vecSYM, vecN, vecM)
+    matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP, vecDVEWING] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -59,11 +59,41 @@ P3          = nan(valNELE,3);
 P4          = nan(valNELE,3);
 vecDVESYM   = zeros(valNELE,1);
 vecDVETIP   = zeros(valNELE,1);
-
+vecDVEWING   = nan(valNELE,1);
 
 
 
 vecEnd      = cumsum(vecN.*vecM);
+
+
+
+
+% Assign Wing to Panel
+panelEdges = reshape(permute(matGEOM,[1 3 2]),[],5);
+[~,tempB,tempC] = unique(panelEdges,'rows');
+panelEdgesIdx = reshape(tempC,2,[])';
+edge2wing = [[1:length(tempB)]',nan(length(tempB),1)];
+% Assign first edge to wing 1
+edge2wing(1,2) = 1;
+
+for n = 1:valPANELS
+    
+    curPanelEdges = panelEdgesIdx(n,:)';
+    
+    if max(edge2wing(curPanelEdges,2)) > 0
+        
+        wingIdx = max(edge2wing(curPanelEdges,2));
+    else
+        wingIdx = max(edge2wing(:,2))+1;
+    end
+    
+    edge2wing(curPanelEdges,2)=wingIdx;
+    
+end
+temp1 = reshape(edge2wing(tempC,2),2,[]);
+panel2wing = temp1(1,:)';
+
+clear tempB tempC temp1
 
 
 
@@ -94,8 +124,10 @@ for i = 1:valPANELS;
     
     
 
-    dve2panel(idxStart:idxEnd,:) = [repmat(i,count,1)];
+    dve2panel(idxStart:idxEnd,:) = repmat(i,count,1);
     
+    % Write DVE WING Index
+    vecDVEWING(idxStart:idxEnd,:) = repmat(panel2wing(i),count,1);
 
     % Write DVE CENTER POINT Coordinates
     matCENTER(idxStart:idxEnd,:) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
@@ -275,8 +307,8 @@ for i = 1:length(k(:,1))
     end
 end
 %sort matADJE by dve#
-[~,B] = sort(matADJE(:,1));
-matADJE = matADJE(B,:);
+[~,tempB] = sort(matADJE(:,1));
+matADJE = matADJE(tempB,:);
 
 
 
