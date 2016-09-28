@@ -41,19 +41,19 @@ strFILE = 'VAP input.txt';
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
 %     valINTERF] = fcnFWREAD(strFILE);
 
-flagPLOT = 1;
+flagPLOT = 0;
 
 %% Discretize geometry into DVEs
 
 [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
-    vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
+    vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
 
 %% Plotting Wing
 
 if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, vecDVENORM);
+    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, matDVENORM);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 end
 
@@ -61,29 +61,49 @@ end
 
 [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
 
-dvenum = [1 5 2]';
-fpg = [0 0 0; 2 2 4; 5 5 3];
-vecK = ones(valNELE,1);
-dvetype = [0 1 -3]';
-
-[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
-
-
 %% Add kinematic conditions to D-Matrix
 
-%% Create D-Resultant, solve D-Matrix
+vecK = zeros(valNELE,1) + 0.001; % Temporary singfct
+[matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
 
-%% Timestep to solution
-%   Move wing
-%   Generate new wake elements
-%   Create W-Matrix and W-Resultant
-%   Solve W-Matrix
-%   Relaxation procedure (Relax, create W-Matrix and W-Resultant, solve W-Matrix)
-%   Calculate surface normal forces
-%   Calculate DVE normal forces
-%   Calculate induced drag
-%   Calculate cn, cl, cy, cdi
-%   Calculate viscous effects
+
+%% Alpha Loop
+for ai = 1:length(seqALPHA)
+    valALPHA = deg2rad(seqALPHA(ai));
+    for bi = 1:length(seqBETA)
+        valBETA = deg2rad(seqBETA(bi));
+        
+        vecUINF = fcnUINFWING(valALPHA, valBETA);  
+        
+        % Building wing resultant
+        [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, vecUINF);
+        
+        % Solving for wing coefficients
+        [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
+        
+        matWAKEGEOM = [];
+        for valTIMESTEP = 1:valMAXTIME
+            %% Timestep to solution
+            %   Move wing
+            %   Generate new wake elements
+            %   Create W-Matrix and W-Resultant
+            %   Solve W-Matrix
+            %   Relaxation procedure (Relax, create W-Matrix and W-Resultant, solve W-Matrix)
+            %   Calculate surface normal forces
+            %   Calculate DVE normal forces
+            %   Calculate induced drag
+            %   Calculate cn, cl, cy, cdi
+            %   Calculate viscous effects
+            
+            % Moving the wing
+            [matVLST, matCENTER, matNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE);
+            
+            % Generating new wake elements
+            %             [matWAKEGEOM, WADJE, WELST, WVLST, WDVE, WNELE, WEATT, WEIDX, WELOC, WPLEX, WDVECT, WALIGN, WVATT, WVNORM, WCENTER] = fcnCREATEWAKE(valTIMESTEP, matNEWWAKE, matWAKEGEOM);
+                        
+        end
+    end
+end
 
 %% Viscous wrapper
 

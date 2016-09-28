@@ -11,8 +11,8 @@ Min. number of time steps: 		valMINTIME 	= 	7
 Width of each time step (sec):	valDELTIME 	=	0.250000
 Convergence delta-span effic.:	valDELTAE 	=	0.000000	(0 if only timestepping)
 
-AOA sequence: 			seqALPHA 	= 	2 5 6 8 9
-Sideslip angle [deg]:	seqBETA 	=	0.0 0.1 0.2
+AOA sequence: 			seqALPHA 	= 	5
+Sideslip angle [deg]:	seqBETA 	=	0.0
 Density:				valDENSITY 	= 	1.2250
 Kinematic viscosity:	valKINV		=	1.460000e-05
 

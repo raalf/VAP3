@@ -1,5 +1,5 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
-    vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, vecDVENORM, ...
+    vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matDVE, valNELE, matADJE, vecDVESYM, vecDVETIP] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
@@ -16,27 +16,28 @@ function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVET
 % Fixed how DVEs matrix is converted from 2D grid to 1D array. 16/01/2016 (Alton)
 
 % INPUT:
-% valPANELS
-% matGEOM
-% vecN
-% vecM
+%   valPANELS - number of wing panels
+%   matGEOM - 2 x 5 x valPANELS matrix, with (x,y,z) coords of edge points, and chord and twist at each edge
+%   vecN - valPANELS x 1 vector of spanwise elements per DVE
+%   vecM - valPANELS x 1 vector of chordwise elements per DVE
 
 % OUTPUT: (ALL OUTPUT ANGLES ARE IN RADIAN)
-% matDVECTLPT
-% vecDVEHVSPN
-% vecDVEHVCRD
-% vecDVELESWP
-% vecDVEMCSWP
-% vecDVETESWP
-% vecDVEROLL
-% vecDVEPITCH
-% vecDVEYAW
-% vecDVEAREA
-% vecDVENORM
-% matVLST
-% matDVE
-% valNELE
-% matADJE
+%   vecCENTER - valNELE x 3 matrix of (x,y,z) locations of DVE control points
+%   vecDVEHVSPN - valNELE x 1 vector of DVE half spans
+%   vecDVEHVCRD - valNELE x 1 vector of DVE half chords
+%   vecDVELESWP - valNELE x 1 vector of DVE leading edge sweep (radians)
+%   vecDVEMCSWP - valNELE x 1 vector of DVE mid-chord sweep (radians)
+%   vecDVETESWP - valNELE x 1 vector of DVE trailing-edge sweep (radians)
+%   vecDVEROLL - valNELE x 1 vector of DVE roll angles (about x-axis) (radians)
+%   vecDVEPITCH - valNELE x 1 vector of DVE pitch angles (about y-axis) (radians)
+%   vecDVEYAW - valNELE x 1 vector of DVE yaw angles (about z-axis) (radians)
+%   vecDVEAREA - valNELE x 1 vector of DVE area
+%   vecDVENORM -  valNELE x 3 matrix of DVE normal vectors
+%   matVLST - ? x 3 list of unique vertices, columns are (x,y,z) values
+%   matDVE - matrix of which DVE uses which vertices from the above list
+%   matADJE - matADJE - ? x 3 adjacency matrix, where columns are: DVE | local edge | adjacent DVE
+%   vecDVESYM - valNELE x 1 vector of which DVEs have symmetry on which edge (0 for no symmetry, 2 for local edge 2, 4 for local edge 4)
+%   vecDVETIP - valNELE x 1 vector of which DVEs are at the wingtip. Similar format to vecDVESYM above
 
 
 valNELE = sum(vecM.*vecN);
@@ -50,7 +51,7 @@ vecDVEROLL  = nan(valNELE,1);
 vecDVEPITCH = nan(valNELE,1);
 vecDVEYAW   = nan(valNELE,1);
 vecDVEAREA  = nan(valNELE,1);
-vecDVENORM  = nan(valNELE,3);
+matDVENORM  = nan(valNELE,3);
 vecDVESYM   = zeros(valNELE,1);
 vecDVETIP   = zeros(valNELE,1);
 
@@ -165,7 +166,7 @@ for i = 1:valPANELS;
     vecDVELESWP(idxStart:idxEnd) = reshape(phi_LE',count,1);%phi_LE(:);
     vecDVEMCSWP(idxStart:idxEnd) = reshape(phi_MID',count,1);%phi_MID(:);
     vecDVETESWP(idxStart:idxEnd) = reshape(phi_TE',count,1);%phi_TE(:);
-    vecDVENORM(idxStart:idxEnd,:) = reshape(permute(DVE_norm, [2 1 3]),count,3);%reshape(DVE_norm(:),count,3);
+    matDVENORM(idxStart:idxEnd,:) = reshape(permute(DVE_norm, [2 1 3]),count,3);%reshape(DVE_norm(:),count,3);
     
     dve2panel(idxStart:idxEnd,:) = [repmat(i,count,1)];
     

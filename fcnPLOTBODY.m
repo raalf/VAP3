@@ -15,10 +15,10 @@ if verbose == 1
         text(vecDVECTLPT(ii,1),vecDVECTLPT(ii,2),vecDVECTLPT(ii,3),str,'Color','k','FontSize',15);
     end
     
-    for ii = 1:length(matVLST(:,1))
-        str = sprintf('%d',ii);
-        text(matVLST(ii,1),matVLST(ii,2),matVLST(ii,3),str,'Color','g','FontSize',15);
-    end
+%     for ii = 1:length(matVLST(:,1))
+%         str = sprintf('%d',ii);
+%         text(matVLST(ii,1),matVLST(ii,2),matVLST(ii,3),str,'Color','g','FontSize',15);
+%     end
     
 %     quiver3(vecDVECTLPT(:,1), vecDVECTLPT(:,2), vecDVECTLPT(:,3), vecDVENORM(:,1), vecDVENORM(:,2), vecDVENORM(:,3))
     
