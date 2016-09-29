@@ -26,23 +26,23 @@ disp(' ');
 %% Reading in geometry
 
 % strFILE = 'VAP christmas.txt';
-strFILE = 'VAP input.txt';
-[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnVAPREAD(strFILE);
-valMAXTIME = 1;
-
-% strFILE = 'input.txt';
-%
+% strFILE = 'VAP input.txt';
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnFWREAD(strFILE);
+%     valINTERF] = fcnVAPREAD(strFILE);
+% valMAXTIME = 1;
 
-flagPLOT = 0;
+strFILE = 'input.txt';
+
+[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+    valINTERF] = fcnFWREAD(strFILE);
+
+flagPLOT = 1;
 
 %% Discretize geometry into DVEs
 
@@ -98,8 +98,11 @@ for ai = 1:length(seqALPHA)
         matWADJE = [];
         vecWDVEPANEL = [];
         valLENWADJE = 0;
+        vecWKGAM = [];
+        vecWDVESYM = [];
+        vecWDVETIP = [];
         
-        for valTIMESTEP = 1:valMAXTIME
+        for valTIMESTEP = 1:valMAXTIME+1
             %% Timestep to solution
             %   Move wing
             %   Generate new wake elements
@@ -114,17 +117,21 @@ for ai = 1:length(seqALPHA)
             
             % Moving the wing
             [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNPVLST);
-% tic
+            
+            % tic
+            
             % Generating new wake elements
             [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE] ...
+                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM] ...
                 = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                 vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNPVLST, vecDVEPANEL, ...
-                vecWDVEPANEL, vecSYM, valLENWADJE);
-            % Creating WD-Matrix
-            %             [matWD] = fcnWDWAKE(valWNELE, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP);
+                vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP);
             
-% eltime(valTIMESTEP) = toc;
+            % Creating and solving WD-Matrix
+            [matWD, vecWR] = fcnWDWAKE(valWNELE, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
+            [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
+            
+            % eltime(valTIMESTEP) = toc;
             
         end
     end

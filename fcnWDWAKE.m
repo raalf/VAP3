@@ -1,4 +1,4 @@
-function [matWD] = fcnWDWAKE(valWNELE, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP)
+function [matWD, matWR] = fcnWDWAKE(valWNELE, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM)
 % Creates the Wake D-matrix, for updating the vorticity coefficients 
 % for the wake to account for stretching.
 
@@ -38,22 +38,24 @@ idx5 = idx4(eqn_num); % Corresponding edge 4 DVE for every edge 2 DVE
 % !!!!ACROSS A SPLIT, DGAMMA IS CONSTANT FOR ALL PANELS!!!!
 
 % dgamma = B + 2*C*eta
-dgamma1 = [zeros(len,1) ones(len,1) 2.*vecWDVEHVSPN(idx3)];
+dgamma1 = [ones(len,1) 2.*vecWDVEHVSPN(idx3)];
 
 % dgamma2 = B - 2*C*eta
 % Multiplied by -1 as we bring it to the other side of the equal sign
-dgamma2 = [zeros(len,1) ones(len,1) -2.*vecWDVEHVSPN(idx5)].*-1;
+dgamma2 = [ones(len,1) -2.*vecWDVEHVSPN(idx5)].*-1;
 
 % Getting appropriate row and column numbers to assign the above
 % dgamma1 and dgamma2 into the D-matrix
-col1 = reshape([repmat((idx3.*3)-2,1,3) + repmat([0:2], len,1)]',[],1);
-col2 = reshape([repmat((idx5.*3)-2,1,3) + repmat([0:2], len,1)]',[],1);
-rows = reshape(repmat([1:len]',1,3)',[],1);
+col1 = reshape([repmat((idx3.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
+col2 = reshape([repmat((idx5.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
+rows = reshape(repmat([1:len]',1,2)',[],1);
 
-vort = zeros(len,valWNELE*3);
+vort = zeros(len,valWNELE*2);
 
 vort(sub2ind(size(vort),rows,col1)) = reshape(dgamma1',[],1);
 vort(sub2ind(size(vort),rows,col2)) = reshape(dgamma2',[],1);
+
+r_vort = zeros(len,1);
 
 % gamma1 = gamma2
 % A + B*eta + C*eta^2 = A - B*eta + C*eta^2
@@ -76,7 +78,7 @@ dsplit2 = matWADJE(idx2,3);
 dsplit2 = dsplit2(idx26);
 dsplit4 = idx4(idx26);
 
-circ = zeros(len,valWNELE*3);
+circ = zeros(len,valWNELE*2);
 count = 1;
 
 udsplit2 = unique(dsplit2);
@@ -85,15 +87,17 @@ for i = 1:length(udsplit2)
     idx = find(dsplit2 == udsplit2(i));
     len2 = length(idx);
     % DVE on left of split
-    gamma1s = [1 vecWDVEHVSPN(udsplit2(i)) vecWDVEHVSPN(udsplit2(i)).^2];
+    gamma1s = [vecWDVEHVSPN(udsplit2(i)) (2/3).*vecWDVEHVSPN(udsplit2(i)).^2];
     % DVEs on right of split
-    gamma2s = [ones(len2,1) -vecWDVEHVSPN(dsplit4(idx)) vecWDVEHVSPN(dsplit4(idx)).^2].*-1;
+    gamma2s = [-vecWDVEHVSPN(dsplit4(idx)) (2/3).*vecWDVEHVSPN(dsplit4(idx)).^2].*-1;
     
-    col1 = reshape([repmat((udsplit2(i).*3)-2,1,3) + repmat([0:2], 1, 1)]',[],1);
-    col2 = reshape([repmat((dsplit4(idx).*3)-2,1,3) + repmat([0:2], len2, 1)]',[],1);
+    col1 = reshape([repmat((udsplit2(i).*2)-1,1,2) + repmat([0:1], 1, 1)]',[],1);
+    col2 = reshape([repmat((dsplit4(idx).*2)-1,1,2) + repmat([0:1], len2, 1)]',[],1);
     
     circ(sub2ind(size(circ),repmat(count,length(col1),1),col1)) = reshape(gamma1s',[],1);
     circ(sub2ind(size(circ),repmat(count,length(col2),1),col2)) = reshape(gamma2s',[],1);
+    
+    r_circ(count,1) = sum(vecWKGAM(dsplit4(idx))) - vecWKGAM(udsplit2(i));
     
     count = count + 1;
 end
@@ -112,17 +116,19 @@ d2204 = d2204(idx27);
 
 len3 = length(d2204);
 
-gamma1 = [ones(len3,1) vecWDVEHVSPN(d2202) vecWDVEHVSPN(d2202).^2];
-gamma2 = [ones(len3,1) -vecWDVEHVSPN(d2204) vecWDVEHVSPN(d2204).^2].*-1;
+gamma1 = [vecWDVEHVSPN(d2202) (2/3).*vecWDVEHVSPN(d2202).^2];
+gamma2 = [-vecWDVEHVSPN(d2204) (2/3).*vecWDVEHVSPN(d2204).^2].*-1;
 
 % Getting appropriate row and column numbers to assign the above
 % gamma1 and gamma2 into the D-matrix
-col1 = reshape([repmat((d2202.*3)-2,1,3) + repmat([0:2], len3,1)]',[],1);
-col2 = reshape([repmat((d2204.*3)-2,1,3) + repmat([0:2], len3,1)]',[],1);
-rows = reshape(repmat([1:len3]',1,3)',[],1) + count-1;
+col1 = reshape([repmat((d2202.*2)-1,1,2) + repmat([0:1], len3,1)]',[],1);
+col2 = reshape([repmat((d2204.*2)-1,1,2) + repmat([0:1], len3,1)]',[],1);
+rows = reshape(repmat([1:len3]',1,2)',[],1) + count-1;
 
 circ(sub2ind(size(circ),rows,col1)) = reshape(gamma1',[],1);
 circ(sub2ind(size(circ),rows,col2)) = reshape(gamma2',[],1);
+
+r_circ(unique(rows),1) = vecWKGAM(d2204) - vecWKGAM(d2202);
 
 circ(~any(circ,2),:) = [];
 
@@ -136,23 +142,25 @@ if ~isempty(vecWDVESYM) == 1
     len = length(idx10);
     locedge = vecWDVESYM(idx10);
     
-    dgamma_sym = zeros(len,3);
+    dgamma_sym = zeros(len,2);
     
     % dgamma_sym = 0
     % B + 2*C*eta = 0 for right edge (local edge 2), though I doubt this one will be used
     % B - 2*C*eta = 0 for left edge (local edge 4)
     
-    dgamma_sym(locedge == 2,:) = [zeros(length(idx10(locedge == 2)),1) ones(length(idx10(locedge == 2)),1) 2.*vecWDVEHVSPN(idx10(locedge == 2))];
-    dgamma_sym(locedge == 4,:) = [zeros(length(idx10(locedge == 4)),1) ones(length(idx10(locedge == 4)),1) -2.*vecWDVEHVSPN(idx10(locedge == 4))];
+    dgamma_sym(locedge == 2,:) = [ones(length(idx10(locedge == 2)),1) 2.*vecWDVEHVSPN(idx10(locedge == 2))];
+    dgamma_sym(locedge == 4,:) = [ones(length(idx10(locedge == 4)),1) -2.*vecWDVEHVSPN(idx10(locedge == 4))];
     
     % Getting appropriate row and column numbers to assign the above
     % dgamma1 and dgamma2 into the D-matrix
-    col3 = reshape([repmat((idx10.*3)-2,1,3) + repmat([0:2], len,1)]',[],1);
-    rows = reshape(repmat([1:len]',1,3)',[],1);
+    col3 = reshape([repmat((idx10.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
+    rows = reshape(repmat([1:len]',1,2)',[],1);
     
-    vort_sym = zeros(len,valWNELE*3);
+    vort_sym = zeros(len,valWNELE*2);
     
     vort_sym(sub2ind(size(vort_sym),rows,col3)) = reshape(dgamma_sym',[],1);
+    
+    r_vort_sym = zeros(len,1);
     
 end
 % END vorticity equations at symmetry -----------------------------------------------------------------------------------
@@ -162,21 +170,24 @@ end
 [tip2,~] = find(vecWDVETIP == 2);
 [tip4,~] = find(vecWDVETIP == 4);
 
-gamma1t = [ones(length(tip2),1) vecWDVEHVSPN(tip2) vecWDVEHVSPN(tip2).^2];
-gamma2t = [ones(length(tip4),1) -vecWDVEHVSPN(tip4) vecWDVEHVSPN(tip4).^2];
+gamma1t = [vecWDVEHVSPN(tip2) (2/3).*vecWDVEHVSPN(tip2).^2];
+gamma2t = [-vecWDVEHVSPN(tip4) (2/3).*vecWDVEHVSPN(tip4).^2];
 gammat = [gamma1t; gamma2t];
 
-col1 = reshape([repmat((tip2.*3)-2,1,3) + repmat([0:2], length(tip2),1)]',[],1);
-col2 = reshape([repmat((tip4.*3)-2,1,3) + repmat([0:2], length(tip4),1)]',[],1);
+col1 = reshape([repmat((tip2.*2)-1,1,2) + repmat([0:1], length(tip2),1)]',[],1);
+col2 = reshape([repmat((tip4.*2)-1,1,2) + repmat([0:1], length(tip4),1)]',[],1);
 col = [col1; col2];
-rows = reshape(repmat([1:(length(tip2) + length(tip4))]',1,3)',[],1);
+rows = reshape(repmat([1:(length(tip2) + length(tip4))]',1,2)',[],1);
 
-circ_tip = zeros(length(tip2) + length(tip4), valWNELE*3);
+circ_tip = zeros(length(tip2) + length(tip4), valWNELE*2);
 circ_tip(sub2ind(size(circ_tip),rows,col)) = reshape(gammat',[],1);
+
+r_circ_tip = [-vecWKGAM(tip2); vecWKGAM(tip4)];
 
 % END Circulation equations at wingtip ----------------------------------------------------------------------------------
 
 matWD = [vort; circ; vort_sym; circ_tip];
+matWR = [r_vort; r_circ; r_vort_sym; r_circ_tip];
 
 end
 
