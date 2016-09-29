@@ -1,6 +1,6 @@
 clc
 clear
-clf
+
 tic
 
 disp('===========================================================================');
@@ -26,22 +26,22 @@ disp(' ');
 %% Reading in geometry
 
 % strFILE = 'VAP christmas.txt';
-% % strFILE = 'VAP input.txt';
-% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnVAPREAD(strFILE);
-
-strFILE = 'input.txt';
-
+strFILE = 'VAP input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnFWREAD(strFILE);
+    valINTERF] = fcnVAPREAD(strFILE);
+valMAXTIME = 1;
+% strFILE = 'input.txt';
+% 
+% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+%     valINTERF] = fcnFWREAD(strFILE);
 
-flagPLOT = 1;
+flagPLOT = 0;
 
 %% Discretize geometry into DVEs
 
@@ -49,14 +49,6 @@ flagPLOT = 1;
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVEWING, vecDVETE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
-
-
-%% Plotting Wing
-
-if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, matDVENORM);
-    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
-end
 
 %% Add boundary conditions to D-Matrix
 
@@ -83,7 +75,7 @@ for ai = 1:length(seqALPHA)
         [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
         
         matWAKEGEOM = [];
-        for valTIMESTEP = 1:1%valMAXTIME
+        for valTIMESTEP = 1:valMAXTIME
             %% Timestep to solution
             %   Move wing
             %   Generate new wake elements
@@ -99,26 +91,42 @@ for ai = 1:length(seqALPHA)
             % Moving the wing
             [matVLST, matCENTER, matNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE);
             
+tic;
+
+            % Generating the wake
+            [matWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
+                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER] ...
+                = fcnCREATEWAKE(matNEWWAKE, matWAKEGEOM);
             
             
-            matWCENTER = mean(matNEWWAKE,3);
-            [ vecWDVEHVSPN, vecWDVEHVCRD, ...
-                vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
-                vecWDVELESWP, vecWDVEMCSWP, vecWDVETESWP, ...
-                vecWDVEAREA, matWDVENORM, ...
-                matWVLST, matWDVE, valWNELE ] = fcnDVECORNER2PARAM(matWCENTER, matNEWWAKE(:,:,1), matNEWWAKE(:,:,2), matNEWWAKE(:,:,3), matNEWWAKE(:,:,4));
-            clf(2)
-            [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, matDVENORM);
-            [hFig2] = fcnPLOTBODY(0, 0, matWDVE, matWVLST, matWCENTER, matWDVENORM)
-            % Generating new wake elements
-            %             [matWAKEGEOM, WADJE, WELST, WVLST, WDVE, WNELE, WEATT, WEIDX, WELOC, WPLEX, WDVECT, WALIGN, WVATT, WVNORM, WCENTER] = fcnCREATEWAKE(valTIMESTEP, matNEWWAKE, matWAKEGEOM);
+            
+eltime(valTIMESTEP) = toc;
+elemets(valTIMESTEP) = valWNELE;
             
         end
     end
 end
 
+%% Plotting Wing
+
+if flagPLOT == 1
+    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER);
+    [hFig2] = fcnPLOTWAKE(1, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
+    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
+end
+
 %% Viscous wrapper
 
 toc
+
+% figure(1);
+% plot(1:valTIMESTEP, eltime)
+% xlabel('Timestep','FontSize',15)
+% ylabel('Time per timestep (s)', 'FontSize',15)
+% box on
+% grid on
+% axis tight
+
+
 
 % whos
