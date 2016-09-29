@@ -2,7 +2,7 @@ function [ vecDVEHVSPN, vecDVEHVCRD, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE, valNELE ] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 )
+    matVLST, matDVE, valNELE, idxVLST] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 )
 %FCNDVEPOINT2PARAM takes the corner and center points of each DVEs,computes the parameters and compiles the matVLST and matDVE
 %   Detailed explanation goes here
 
@@ -101,7 +101,7 @@ vecDVEAREA = vecDVEHVCRD.*vecDVEHVSPN.*4;
 % vertices location in matVLST
 % (old method) verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
 verticeList = [P1;P2;teRightProj;teLeftProj];
-[matVLST,~,matDVE] = unique(verticeList,'rows');
+[matVLST,idxVLST,matDVE] = unique(verticeList,'rows');
 matDVE = reshape(matDVE,valNELE,4);
 
 end
