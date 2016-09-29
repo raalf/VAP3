@@ -1,4 +1,4 @@
-function [a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM)
+function [a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM)
 % This function gives the influence of a DVE, accounting for symmetry.
 
 % DVE_type = 0 DVE has vortex filaments at leading and
@@ -28,14 +28,13 @@ function [a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, matC
 
 % T.D.K 2016-09-28 ROTHWELL STREET, AURORA, ONTARIO, CANADA L4G-0V8
 
-[a, b, c] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP);
+[a, b, c] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP);
 
 if any(vecSYM) == 1
     
     matVLSTs = [matVLST(:,1) -matVLST(:,2) matVLST(:,3)];
-    matCENTERs = [matCENTER(:,1) -matCENTER(:,2) matCENTER(:,3)];
     
-    [as, bs, cs] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matVLSTs, matCENTERs, -vecDVEROLL, vecDVEPITCH, -vecDVEYAW, -vecDVELESWP, -vecDVETESWP);
+    [as, bs, cs] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matVLSTs, vecDVEHVSPN, -vecDVEROLL, vecDVEPITCH, -vecDVEYAW, -vecDVELESWP, -vecDVETESWP);
     
     a = a + as;
     b = b - bs;

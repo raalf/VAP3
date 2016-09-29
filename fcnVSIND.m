@@ -1,12 +1,19 @@
-function [aloc, bloc, cloc] = fcnVSIND(endpoints, phi, fpl, k)
+function [aloc, bloc, cloc] = fcnVSIND(hspan, phi, fp_0, k)
+% This function finds the influence of a semi-infinite vortex sheet on a
+% point
+
+% INPUT:
+%   hspan - half-span of the DVE
+%   phi - sweep of the vortex sheet leading edge
+%   fp_0 - vector to the field point from the mid-point of the leading edge
+%           of the vortex sheet (origin), rotated into the reference frame of the DVE. 
+
+% OUTPUT:
+%   aloc, bloc, cloc - influence coefficients of the vortex sheet on the point
+
+% T.D.K 2016-09-28 ROTHWELL STREET, AURORA, ONTARIO, CANADA, L4G-0V8
 
 dbl_eps = 1e-14;
-
-eta_translation = mean(endpoints,3);
-
-hspan = abs(endpoints(:,2,2) - endpoints(:,2,1))./2;
-
-fp_0 = fpl - eta_translation;
 
 eta_0 = fp_0(:,2);
 xsi_0 = fp_0(:,1);

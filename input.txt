@@ -27,7 +27,7 @@ CG location (x y z):		cg =	0.3656400000 0.000000000 0.000000000
 CMo of wing:			CMo =	-0.100000000
 
 No. of wings (max. 5):		wings =		1
-No. of panels:			panels =	1
+No. of panels:			panels =	3
 No. of chordwise lifting lines: m =		1
 No. of airfoils (max. 15):	airfoils =	9
 
@@ -43,7 +43,21 @@ Neighbouring panels (0 for none) left: 0 right: 0
 xleft	yleft	zleft	chord	epsilon	Bound.Cond.
 0.000000	0.000000	0.000000	1.000000	0.000000	10
 xright	yright	zright	chord	epsilon	Bound.Cond.
-0.000000	1.000000	0.000000	1.000000	0.000000	220
+0.500000	2.000000	0.000000	0.200000	0.000000	220
+
+Panel #:1. Number of spanwise elements (n) = 3. Airfoil number = 6
+Neighbouring panels (0 for none) left: 0 right: 0
+xleft	yleft	zleft	chord	epsilon	Bound.Cond.
+0.500000	2.000000	0.000000	0.200000	0.000000	220
+xright	yright	zright	chord	epsilon	Bound.Cond.
+0.000000	3.000000	0.000000	0.100000	0.000000	220
+
+Panel #:1. Number of spanwise elements (n) = 3. Airfoil number = 6
+Neighbouring panels (0 for none) left: 0 right: 0
+xleft	yleft	zleft	chord	epsilon	Bound.Cond.
+0.500000	2.000000	0.000000	0.200000	0.000000	220
+xright	yright	zright	chord	epsilon	Bound.Cond.
+0.500000	3.000000	1.000000	0.100000	0.000000	220
 
 %<- special identifier
 Vertical tail information:

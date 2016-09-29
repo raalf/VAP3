@@ -1,15 +1,22 @@
-function [aloc, bloc, cloc] = fcnBOUNDIND(endpoints, phi, fpl)
+function [aloc, bloc, cloc] = fcnBOUNDIND(hspan, phi, fp_0)
+% This function finds the influence of a vortex filament on a
+% point
+
+% INPUT:
+%   hspan - half-span of the DVE
+%   phi - sweep of the vortex filament
+%   fp_0 - vector to the field point from the mid-point of the filament (origin)
+%           rotated into the reference frame of the DVE. 
+
+% OUTPUT:
+%   aloc, bloc, cloc - influence coefficients of the vortex filament on the point
+
+% T.D.K 2016-09-28 ROTHWELL STREET, AURORA, ONTARIO, CANADA, L4G-0V8
 
 dbl_eps = 1e-14;
 
 %% Transformation to bound vortex midpoint reference frame
 % and other preliminary stuff
-
-eta_translation = mean(endpoints,3);
-
-hspan = abs(endpoints(:,2,2) - endpoints(:,2,1))./2;
-
-fp_0 = fpl - eta_translation;
 
 eta_0 = fp_0(:,2);
 xsi_0 = fp_0(:,1);
@@ -26,15 +33,15 @@ re_2 = sqrt((hspan.^2).*a1 + (2.*hspan.*b1) + c1);
 
 G11 = ((a1.*hspan + b1)./((a1.*c1 - b1.^2).*re_2)) - ((a1.*-hspan + b1)./((a1.*c1 - b1.^2).*re_1));
 G12 = ((-b1.*hspan - c1)./((a1.*c1 - b1.^2).*re_2)) - ((-b1.*-hspan - c1)./((a1.*c1 - b1.^2).*re_1));
-G13 = (((2.*(b1.^2) - a1.*c1)./((a1.*c1 - b1.^2).*a1.*re_2)) + (1./sqrt(a1.^3)).*log(sqrt(a1).*re_2 + a1.*hspan + b1)) - ...
-        (((2.*(b1.^2) - a1.*c1)./((a1.*c1 - b1.^2).*a1.*re_1)) + (1./sqrt(a1.^3)).*log(sqrt(a1).*re_1 + a1.*-hspan + b1));
+% G13 = (((2.*(b1.^2) - a1.*c1)./((a1.*c1 - b1.^2).*a1.*re_2)) + (1./sqrt(a1.^3)).*log(sqrt(a1).*re_2 + a1.*hspan + b1)) - ...
+%         (((2.*(b1.^2) - a1.*c1)./((a1.*c1 - b1.^2).*a1.*re_1)) + (1./sqrt(a1.^3)).*log(sqrt(a1).*re_1 + a1.*-hspan + b1));
     
-% % FreeWake method:
-% tempS = ((a1.*c1 - b1.^2).*re_1.*re_2);
+% % FreeWake method (G13 ends up being different!):
+tempS = ((a1.*c1 - b1.^2).*re_1.*re_2);
 % G11	 = 	(a1.*hspan.*(re_1 + re_2) + b1.*(re_1 - re_2))./tempS;
 % G12	 = 	(-b1.*hspan.*(re_1 + re_2) - c1.*(re_1 - re_2))./tempS;
-% G13	 = 	((2.*b1.*b1 - a1.*c1).*hspan.*(re_1 + re_2) + b1.*c1.*(re_1 - re_2))./(a1.*tempS);
-% G13 = 	G13 + log((sqrt(a1).*re_2 + a1.*hspan + b1)./(sqrt(a1).*re_1 - a1.*hspan + b1))./sqrt(a1.*a1.*a1);
+G13	 = 	((2.*b1.*b1 - a1.*c1).*hspan.*(re_1 + re_2) + b1.*c1.*(re_1 - re_2))./(a1.*tempS);
+G13 = 	G13 + log((sqrt(a1).*re_2 + a1.*hspan + b1)./(sqrt(a1).*re_1 - a1.*hspan + b1))./sqrt(a1.*a1.*a1);
 
 a1_xsi = -G11.*zeta_0;
 a1_eta = G11.*zeta_0.*tan(phi);
