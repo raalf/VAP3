@@ -32,7 +32,7 @@ strFILE = 'VAP input.txt';
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnVAPREAD(strFILE);
-valMAXTIME = 1000;
+valMAXTIME = 3;
 % strFILE = 'input.txt';
 %
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
@@ -41,7 +41,7 @@ valMAXTIME = 1000;
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
 %     valINTERF] = fcnFWREAD(strFILE);
 
-flagPLOT = 0;
+flagPLOT = 1;
 
 %% Discretize geometry into DVEs
 
