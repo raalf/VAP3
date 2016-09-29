@@ -32,9 +32,9 @@ strFILE = 'VAP input.txt';
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnVAPREAD(strFILE);
-valMAXTIME = 1;
+valMAXTIME = 1000;
 % strFILE = 'input.txt';
-% 
+%
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
@@ -75,6 +75,22 @@ for ai = 1:length(seqALPHA)
         [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
         
         matWAKEGEOM = [];
+        vecWDVEHVSPN = [];
+        vecWDVEHVCRD = [];
+        vecWDVEROLL = [];
+        vecWDVEPITCH = [];
+        vecWDVEYAW = [];
+        vecWDVELESWP = [];
+        vecWDVEMCSWP = [];
+        vecWDVETESWP = [];
+        vecWDVEAREA = [];
+        matWDVENORM = [];
+        matWVLST = [];
+        matWDVE = [];
+        valWNELE = 0;
+        matWCENTER = [];
+        
+        
         for valTIMESTEP = 1:valMAXTIME
             %% Timestep to solution
             %   Move wing
@@ -91,17 +107,15 @@ for ai = 1:length(seqALPHA)
             % Moving the wing
             [matVLST, matCENTER, matNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE);
             
-tic;
-
-            % Generating the wake
+            tic;
+               
             [matWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                 vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER] ...
-                = fcnCREATEWAKE(matNEWWAKE, matWAKEGEOM);
+                = fcnCREATEWAKEROW(matNEWWAKE, matWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
+                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER);
             
-            
-            
-eltime(valTIMESTEP) = toc;
-elemets(valTIMESTEP) = valWNELE;
+            eltime(valTIMESTEP) = toc;
+            elemets(valTIMESTEP) = valWNELE;
             
         end
     end
@@ -119,13 +133,13 @@ end
 
 toc
 
-% figure(1);
-% plot(1:valTIMESTEP, eltime)
-% xlabel('Timestep','FontSize',15)
-% ylabel('Time per timestep (s)', 'FontSize',15)
-% box on
-% grid on
-% axis tight
+figure(1);
+plot(1:valTIMESTEP, eltime)
+xlabel('Timestep','FontSize',15)
+ylabel('Time per timestep (s)', 'FontSize',15)
+box on
+grid on
+axis tight
 
 
 
