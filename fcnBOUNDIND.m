@@ -14,6 +14,7 @@ function [aloc, bloc, cloc] = fcnBOUNDIND(hspan, phi, fp_0)
 % T.D.K 2016-09-28 ROTHWELL STREET, AURORA, ONTARIO, CANADA, L4G-0V8
 
 dbl_eps = 1e-14;
+dbl_zero = 1e-5; % Cutoff distance
 
 %% Transformation to bound vortex midpoint reference frame
 % and other preliminary stuff
@@ -57,7 +58,7 @@ c1_zeta = G13.*(xsi_0 - eta_0.*tan(phi));
 
 %% Special cases
 % If the point lies on the bound vortex
-idx1 = (abs(xsi_0 - eta_0.*tan(phi)) <= dbl_eps & abs(zeta_0) <= dbl_eps);
+idx1 = (abs(xsi_0 - eta_0.*tan(phi)) <= dbl_zero & abs(zeta_0) <= dbl_zero);
 
 a1_xsi(idx1) = zeros(length(a1_xsi(idx1)),1);
 a1_eta(idx1) = zeros(length(a1_eta(idx1)),1);
@@ -72,7 +73,7 @@ c1_eta(idx1) = zeros(length(c1_eta(idx1)),1);
 c1_zeta(idx1) = zeros(length(c1_zeta(idx1)),1);
 
 % If the point lies on the xsi-eta-zeta plane
-idx2 = abs(zeta_0) < dbl_eps;
+idx2 = abs(zeta_0) < dbl_zero;
 
 a1_xsi(idx2) = zeros(length(a1_xsi(idx2)),1);
 a1_eta(idx2) = zeros(length(a1_eta(idx2)),1);
@@ -84,7 +85,7 @@ c1_xsi(idx2) = zeros(length(c1_xsi(idx2)),1);
 c1_eta(idx2) = zeros(length(c1_eta(idx2)),1);
 
 % If the point lies in the plane defined by zeta-axis and bound vortex
-idx3 = abs(xsi_0 - eta_0.*tan(phi)) <= dbl_eps;
+idx3 = abs(xsi_0 - eta_0.*tan(phi)) <= dbl_zero;
 
 a1_zeta(idx3) = zeros(length(a1_zeta(idx3)),1);
 
