@@ -1,6 +1,6 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE, valNELE, matADJE, ...
+    matVLST, matNPVLST, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVEWING, vecDVETE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
@@ -47,21 +47,20 @@ function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVET
 %   fcnPANEL2DVE
 %   fcnGLOBSTAR
 
-
+%% Preallocation
 valNELE = sum(vecM.*vecN);
 
 
-dve2panel   = nan(valNELE,1);
+vecDVEPANEL   = nan(valNELE,1);
 
 P1          = nan(valNELE,3);
-P12         = nan(valNELE,3);
+% P12         = nan(valNELE,3);
 P2          = nan(valNELE,3);
 P3          = nan(valNELE,3);
 P4          = nan(valNELE,3);
-vecDVESYM   = zeros(valNELE,1);
-vecDVETIP   = zeros(valNELE,1);
+
 vecDVEWING  = nan(valNELE,1);
-vecDVETE    = zeros(valNELE,1);
+
 
 
 
@@ -70,11 +69,11 @@ vecEnd      = cumsum(vecN.*vecM);
 
 
 
-% Assign Wing to Panel
+%% Assign Wing to Panel
 panelEdges = reshape(permute(matGEOM,[1 3 2]),[],5);
 [~,tempB,tempC] = unique(panelEdges,'rows');
 panelEdgesIdx = reshape(tempC,2,[])';
-edge2wing = [[1:length(tempB)]',nan(length(tempB),1)];
+edge2wing = [(1:length(tempB))',nan(length(tempB),1)];
 % Assign first edge to wing 1
 edge2wing(1,2) = 1;
 
@@ -91,7 +90,7 @@ temp1 = reshape(edge2wing(tempC,2),2,[]);
 panel2wing = temp1(1,:)';
 clear tempB tempC temp1
 
-
+%% Convert Panels to Corner Points to DVEs
 
 for i = 1:valPANELS;
     
@@ -120,7 +119,7 @@ for i = 1:valPANELS;
     
     
 
-    dve2panel(idxStart:idxEnd,:) = repmat(i,count,1);
+    vecDVEPANEL(idxStart:idxEnd,:) = repmat(i,count,1);
     
     % Write DVE WING Index
     vecDVEWING(idxStart:idxEnd,:) = repmat(panel2wing(i),count,1);
@@ -148,87 +147,24 @@ end
 
 
 
-% fcnDVECORNER2PARAM takes the corner and center points of each DVEs,
+%% fcnDVECORNER2PARAM takes the corner and center points of each DVEs,
 % computes the parameters and compiles the matVLST and matDVE
+
 [ vecDVEHVSPN, vecDVEHVCRD, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE, ~ ] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 );
+    matVLST, matDVE, ~, idxVLST] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 );
 
 
 
-
-
-
-% Solve ADJT DVE
-% Grab the non-planer vertex list to avoid the gaps between DVEs
+%% Solve ADJT DVE
+% Grab the imaginary (no-twist) non-planer vertex list to avoid the gaps between DVEs
 nonplanerVLST = [imP1;imP2;imP3;imP4];
-[~,~,matNPVIDX] = unique(nonplanerVLST,'rows');
-matNPVIDX = reshape(matNPVIDX,valNELE,4);
-temp = sort([matNPVIDX(:,[1,2]);matNPVIDX(:,[2,3]);matNPVIDX(:,[3,4]);matNPVIDX(:,[4,1])],2); %sort to ensure the edge is align to same direction
-[~,~,j] = unique(temp,'rows','stable');
-EIDX = reshape(j,valNELE,4);
-clear temp ans j
-%row: DVE# | Local Edge # | Glob. edge#
-j = [repmat([1:valNELE]',4,1),reshape(repmat(1:4,valNELE,1),valNELE*4,1),reshape(EIDX,valNELE*4,1)];
-[j1,~] = histc(j(:,3),unique(j(:,3)));
-j = [j,j1(j(:,3))-1];
-%Currently the procedure was done in two for loops. May be modified in
-%later days if performance improvement is required.
-matADJE = nan(sum(j(:,4)),3);
-k = j(j(:,4)~=0,:);
-c = 0;
-
-idx1 = (j(:,4)==0&(j(:,2)==2|j(:,2)==4));
-dveedge2panel = repmat(dve2panel,4,1);
+matNPVLST = nonplanerVLST(idxVLST,:);
 
 
-findTIPSYM = [j(idx1,:),dveedge2panel(idx1,:)];
-tempTIP = nan(length(findTIPSYM(:,1)),1);
-% If the panel has vecSYM = 1, those panels' local edge 4 has symmetry
-panelidx = find(vecSYM==1);
-symidx = (findTIPSYM(:,2)==4 & ismember(findTIPSYM(:,5),panelidx));
-tempTIP(symidx) = 1;
-dveidx = findTIPSYM(symidx,1);
-vecDVESYM(dveidx) = 4;
-
-% If the panel has vecSYM = 2, those panels' local edge 2 has symmetry
-panelidx = find(vecSYM==2);
-symidx = (findTIPSYM(:,2)==2 & ismember(findTIPSYM(:,5),panelidx));
-tempTIP(symidx) = 1;
-dveidx = findTIPSYM(symidx,1);
-vecDVESYM(dveidx) = 2;
-
-% If the edge is not touching another dve nor symmetry edge, 
-% Define it as wing tip
-tipidx = isnan(tempTIP);
-dveidx=  findTIPSYM(tipidx,1);
-vecDVETIP(dveidx) = findTIPSYM(tipidx,2);
-
-
-% Get DVE index where TE appears if col2=3 & col4=0;
-% use matrix j, col1:dve, col2:Local.edge, col3:Glob.edge, col4:
-teIdx = j(j(:,2)==3&j(:,4)==0,1);
-vecDVETE(teIdx) = 3;
-
-for i = 1:length(k(:,1))
-    for i2 = 1:k(i,4)
-        c = c+1;
-        currentdve = k(i,1);
-        currentlocaledge = k(i,2);
-        currentedge = k(i,3);
-        
-        dvefulllist = j(j(:,3)==currentedge,1);
-        dvefilterlist = dvefulllist(dvefulllist~=currentdve);
-        matADJE(c,:) = [currentdve currentlocaledge dvefilterlist(i2)];
-    end  
-end
-
-
-%sort matADJE by dve#
-[~,tempB] = sort(matADJE(:,1));
-matADJE = matADJE(tempB,:);
+[ matADJE, vecDVESYM, vecDVETIP, vecDVETE ] = fcnDVEADJT( imP1, imP2, imP3, imP4, valNELE, vecDVEPANEL, vecSYM );
 
 
 
