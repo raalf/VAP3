@@ -1,10 +1,11 @@
-function [ matADJE, vecDVESYM, vecDVETIP, vecDVETE ] = fcnDVEADJT( imP1, imP2, imP3, imP4, valNELE, vecDVEPANEL, vecSYM )
+function [ matADJE, vecDVESYM, vecDVETIP, vecDVELE, vecDVETE ] = fcnDVEADJT( imP1, imP2, imP3, imP4, valNELE, vecDVEPANEL, vecSYM )
 %FCNDVEADJT Summary of this function goes here
 %   Detailed explanation goes here
 
 %Pre-allocation
 vecDVESYM   = zeros(valNELE,1);
 vecDVETIP   = zeros(valNELE,1);
+vecDVELE    = zeros(valNELE,1);
 vecDVETE    = zeros(valNELE,1);
 
 [~,~,idxNPV] = unique([imP1;imP2;imP3;imP4],'rows');
@@ -66,6 +67,11 @@ vecDVESYM(dveidx) = 2;
 tipidx = isnan(tempTIP);
 dveidx=  findTIPSYM(tipidx,1);
 vecDVETIP(dveidx) = findTIPSYM(tipidx,2);
+
+% Get DVE index where TE appears if col2=1 & col4=0;
+% use matrix j, col1:dve, col2:Local.edge, col3:Glob.edge, col4:
+leIdx = j(j(:,2)==1&j(:,4)==0,1);
+vecDVELE(leIdx) = 1;
 
 % Get DVE index where TE appears if col2=3 & col4=0;
 % use matrix j, col1:dve, col2:Local.edge, col3:Glob.edge, col4:
