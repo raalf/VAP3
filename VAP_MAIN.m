@@ -26,22 +26,22 @@ disp(' ');
 %% Reading in geometry
 
 % strFILE = 'VAP christmas.txt';
-strFILE = 'VAP input.txt';
-[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnVAPREAD(strFILE);
-valMAXTIME = 4;
-
-% strFILE = 'input.txt';
-%
+% strFILE = 'VAP input.txt';
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnFWREAD(strFILE);
-% valMAXTIME = 100;
+%     valINTERF] = fcnVAPREAD(strFILE);
+% valMAXTIME = 4;
+
+strFILE = 'input.txt';
+
+[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+    valINTERF] = fcnFWREAD(strFILE);
+valMAXTIME = 4;
 
 flagPLOT = 0;
 
@@ -156,6 +156,10 @@ for ai = 1:length(seqALPHA)
             eltime(valTIMESTEP) = toc;
             ttime(valTIMESTEP) = sum(eltime);
             
+            %% Forces
+%            fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
+%     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM,vecDVETESWP)
+
         end
     end
 end

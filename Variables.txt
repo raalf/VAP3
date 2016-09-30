@@ -45,13 +45,12 @@ vecDVEYAW - valNELE x 1 vector of DVE yaw angles (about z-axis) (radians)
 vecDVEAREA - valNELE x 1 vector of DVE area
 vecDVENORM -  valNELE x 3 matrix of DVE normal vectors
 matVLST - ? x 3 list of unique vertices, columns are (x,y,z) values
-matDVE - matrix of which DVE uses which vertices from the above list
+matDVE - matrix of which DVE uses which vertices from the above list (Clockwise starting from LE left)
 matADJE - matADJE - ? x 3 adjacency matrix, where columns are: DVE | local edge | adjacent DVE
 vecDVESYM - valNELE x 1 vector of which DVEs have symmetry on which edge (0 for no symmetry, 2 for local edge 2, 4 for local edge 4)
 vecDVETIP - valNELE x 1 vector of which DVEs are at the wingtip. Similar format to vecDVESYM above
 
 From remainder of program:
 matD - valNELE*3 x valNELE*3 matrix of boundary conditions for the wing, where the upper 2/3rds are from the geometry, and the lower 1/3 is from flow tangency
-
 
 
