@@ -1,20 +1,18 @@
-function [matWD, matWR] = fcnWDWAKE(valWNELE, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM)
+function [matWD, matWR] = fcnWDWAKE(all_DVEs, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM)
 % Creates the Wake D-matrix, for updating the vorticity coefficients 
 % for the wake to account for stretching.
 
 % INPUT:
-%   valWNELE - total number of wake DVEs
+%   dves - list of wake DVE numbers we are creating the matrix for 
 %   matWADJE - ? x 3 adjacency matrix, where columns are: Wake DVE | local edge | adjacent Wake DVE
-%   vecWDVEHVSPN - valWNELE x 1 vector of wake DVE half spans
-%   vecWDVESYM - valWNELE x 1 vector of which wake DVEs have symmetry on which edge (0 for no symmetry,
+%   vecWDVEHVSPN - nelements x 1 vector of wake DVE half spans
+%   vecWDVESYM - nelements x 1 vector of which wake DVEs have symmetry on which edge (0 for no symmetry,
 %                   2 for local edge 2, 4 for local edge 4)
-%   vecWDVETIP - valWNELE x 1 vector of which wake DVEs are at the wingtip. Similar format to vecWDVESYM above
+%   vecWDVETIP - nelements x 1 vector of which wake DVEs are at the wingtip. Similar format to vecWDVESYM above
 % OUTPUT:
 %   matWD - wake D-matrix
 
-% matWADJE = sortrows(matWADJE,[1 2 3]);
-
-all_DVEs = [1:valWNELE]';
+nelements = length(all_DVEs);
 
 % Vorticity and circulation equations between DVEs ----------------------------------------------------------------------
 
@@ -52,8 +50,8 @@ col1 = reshape([repmat((idx3.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
 col2 = reshape([repmat((idx5.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
 rows = reshape(repmat([1:len]',1,2)',[],1);
 
-% vort = zeros(len,valWNELE*2);
-vort = sparse(len, valWNELE*2);
+% vort = zeros(len,nelements*2);
+vort = sparse(len, nelements*2);
 
 vort(sub2ind(size(vort),rows,col1)) = reshape(dgamma1',[],1);
 vort(sub2ind(size(vort),rows,col2)) = reshape(dgamma2',[],1);
@@ -81,8 +79,8 @@ dsplit2 = matWADJE(idx2,3);
 dsplit2 = dsplit2(idx26);
 dsplit4 = idx4(idx26);
 
-% circ = zeros(len,valWNELE*2);
-circ = sparse(len, valWNELE*2);
+% circ = zeros(len,nelements*2);
+circ = sparse(len, nelements*2);
 count = 1;
 
 udsplit2 = unique(dsplit2);
@@ -160,8 +158,8 @@ if ~isempty(vecWDVESYM) == 1
     col3 = reshape([repmat((idx10.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
     rows = reshape(repmat([1:len]',1,2)',[],1);
     
-%     vort_sym = zeros(len,valWNELE*2);
-    vort_sym = sparse(len, valWNELE*2);
+%     vort_sym = zeros(len,nelements*2);
+    vort_sym = sparse(len, nelements*2);
     
     vort_sym(sub2ind(size(vort_sym),rows,col3)) = reshape(dgamma_sym',[],1);
     
@@ -184,8 +182,8 @@ col2 = reshape([repmat((tip4.*2)-1,1,2) + repmat([0:1], length(tip4),1)]',[],1);
 col = [col1; col2];
 rows = reshape(repmat([1:(length(tip2) + length(tip4))]',1,2)',[],1);
 
-% circ_tip = zeros(length(tip2) + length(tip4), valWNELE*2);
-circ_tip = sparse(length(tip2) + length(tip4), valWNELE*2);
+% circ_tip = zeros(length(tip2) + length(tip4), nelements*2);
+circ_tip = sparse(length(tip2) + length(tip4), nelements*2);
 
 circ_tip(sub2ind(size(circ_tip),rows,col)) = reshape(gammat',[],1);
 

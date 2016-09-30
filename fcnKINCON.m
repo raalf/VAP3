@@ -8,7 +8,7 @@ function [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENOR
 % Points we are influencing:
 fpg = matCENTER;
 
-% List of DVEs we are influencing from (one for each of the above fieldpoints)
+% List of DVEs we are influencing from (each one for each of the above fieldpoints)
 len = length(fpg(:,1));
 dvenum = reshape(repmat(1:valNELE,len,1),[],1);
 

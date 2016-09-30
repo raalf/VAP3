@@ -50,7 +50,8 @@ col1 = reshape([repmat((idx3.*3)-2,1,3) + repmat([0:2], len,1)]',[],1);
 col2 = reshape([repmat((idx5.*3)-2,1,3) + repmat([0:2], len,1)]',[],1);
 rows = reshape(repmat([1:len]',1,3)',[],1);
 
-vort = zeros(len,valNELE*3);
+% vort = zeros(len,valNELE*3);
+vort = sparse(len,valNELE*3);
 
 vort(sub2ind(size(vort),rows,col1)) = reshape(dgamma1',[],1);
 vort(sub2ind(size(vort),rows,col2)) = reshape(dgamma2',[],1);
@@ -76,7 +77,9 @@ dsplit2 = matADJE(idx2,3);
 dsplit2 = dsplit2(idx26);
 dsplit4 = idx4(idx26);
 
-circ = zeros(len,valNELE*3);
+% circ = zeros(len,valNELE*3);
+circ = sparse(len,valNELE*3);
+
 count = 1;
 
 udsplit2 = unique(dsplit2);
@@ -150,7 +153,8 @@ if ~isempty(vecDVESYM) == 1
     col3 = reshape([repmat((idx10.*3)-2,1,3) + repmat([0:2], len,1)]',[],1);
     rows = reshape(repmat([1:len]',1,3)',[],1);
     
-    vort_sym = zeros(len,valNELE*3);
+%     vort_sym = zeros(len,valNELE*3);
+    vort_sym = sparse(len,valNELE*3);
     
     vort_sym(sub2ind(size(vort_sym),rows,col3)) = reshape(dgamma_sym',[],1);
     
@@ -171,7 +175,9 @@ col2 = reshape([repmat((tip4.*3)-2,1,3) + repmat([0:2], length(tip4),1)]',[],1);
 col = [col1; col2];
 rows = reshape(repmat([1:(length(tip2) + length(tip4))]',1,3)',[],1);
 
-circ_tip = zeros(length(tip2) + length(tip4), valNELE*3);
+% circ_tip = zeros(length(tip2) + length(tip4), valNELE*3);
+circ_tip = sparse(length(tip2) + length(tip4), valNELE*3);
+
 circ_tip(sub2ind(size(circ_tip),rows,col)) = reshape(gammat',[],1);
 
 % END Circulation equations at wingtip ----------------------------------------------------------------------------------
