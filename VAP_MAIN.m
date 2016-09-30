@@ -26,23 +26,23 @@ disp(' ');
 %% Reading in geometry
 
 % strFILE = 'VAP christmas.txt';
-% strFILE = 'VAP input.txt';
-% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnVAPREAD(strFILE);
-% valMAXTIME = 1;
-
-strFILE = 'input.txt';
-
+strFILE = 'VAP input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnFWREAD(strFILE);
+    valINTERF] = fcnVAPREAD(strFILE);
+valMAXTIME = 10000;
 
-flagPLOT = 1;
+% strFILE = 'input.txt';
+% 
+% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+%     valINTERF] = fcnFWREAD(strFILE);
+% valMAXTIME = 100;
+flagPLOT = 0;
 
 %% Discretize geometry into DVEs
 
@@ -102,7 +102,7 @@ for ai = 1:length(seqALPHA)
         vecWDVESYM = [];
         vecWDVETIP = [];
         
-        for valTIMESTEP = 1:valMAXTIME+1
+        for valTIMESTEP = 1:valMAXTIME
             %% Timestep to solution
             %   Move wing
             %   Generate new wake elements
@@ -130,6 +130,10 @@ for ai = 1:length(seqALPHA)
             % Creating and solving WD-Matrix
             [matWD, vecWR] = fcnWDWAKE(valWNELE, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
             [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
+            
+            % Rebuilding and solving wing resultant
+%             [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, vecUINF);
+%             [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
             
             % eltime(valTIMESTEP) = toc;
             
