@@ -14,4 +14,4 @@ function [valCL] = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecU
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP);
 
 %% Sum up element forces to generate CL and CY
-[valCL, valCLF, valCLI, valCY, valCYF, valCYI]= fcnWINGNFORCE(nfree,nind,liftfree,liftind,sidefree,sideind,vecUINF,valAREA,vecSYM,valBETA);
+[valCL, valCLF, valCLI, valCY, valCYF, valCYI]= fcnWINGNFORCE(liftfree,liftind,sidefree,sideind,vecUINF,valAREA,vecSYM,valBETA);
