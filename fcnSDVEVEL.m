@@ -5,7 +5,7 @@ function [w_surf] = fcnSDVEVEL(fpg, valNELE, matDVE, matVLST, matCOEFF, vecK, ve
 % INPUT:
 %  
 % OUTPUT:
-%   w_wsurf - length(fpg) x 3  induced velocities
+%   w_surf - [number points x 3] surface induced velocities
 
 % List of sDVEs we are influencing from (each one for each of the fieldpoints)
 len = length(fpg(:,1));
