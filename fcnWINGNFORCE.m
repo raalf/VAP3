@@ -1,4 +1,4 @@
-function [valCL, valCLF, valCLI, valCY, valCYF, valCYI]= fcnWINGNFORCE(nfree,nind,liftfree,liftind,sidefree,sideind,vecUINF,valAREA,vecSYM,valBETA)
+function [valCL, valCLF, valCLI, valCY, valCYF, valCYI]= fcnWINGNFORCE(liftfree,liftind,sidefree,sideind,vecUINF,valAREA,vecSYM,valBETA)
 %% Wing Normal Force
 % this routine adds up the DVE's normal forces in order to compute the
 % total wing normal forces/density and coefficients based on free stream
