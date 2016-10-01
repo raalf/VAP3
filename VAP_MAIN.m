@@ -25,26 +25,25 @@ disp(' ');
 
 %% Reading in geometry
 
-% strFILE = 'VAP christmas.txt';
+strFILE = 'VAP christmas.txt';
 % strFILE = 'VAP input.txt';
-% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnVAPREAD(strFILE);
-% valMAXTIME = 4;
-
-strFILE = 'input.txt';
-
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnFWREAD(strFILE);
+    valINTERF] = fcnVAPREAD(strFILE);
+valMAXTIME = 3;
+
+% strFILE = 'input.txt';
+% 
+% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+%     valINTERF] = fcnFWREAD(strFILE);
 % valMAXTIME = 4;
 
 flagPLOT = 0;
-
 %% Discretize geometry into DVEs
 
 [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
@@ -152,13 +151,54 @@ for ai = 1:length(seqALPHA)
             %% Creating and solving WD-Matrix
             [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
             [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
-                        
-            %% Forces Package
-%             [valCL ]= fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
-%                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM,vecDVETESWP,valAREA,valBETA);
-          
+            
+            %% Relaxing wake
+            if valTIMESTEP > 2
+            up_right_w = [];
+            down_right_w = [];
+            
+            % The left ponts of all wake DVEs, and the right points of the wingtip DVEs (row number corresponds to wake DVE num)
+            left_midpt = reshape(mean(reshape(matWVLST(matWDVE(:,1:3:4)',:)',3,2,[]),2),3,[],1)';
+            right_midpt(vecWDVETIP==2,:) = reshape(mean(reshape(matWVLST(matWDVE(vecWDVETIP==2,2:3)',:)',3,2,[]),2),3,[],1)';
+            
+            len_r = length(right_midpt(vecWDVETIP==2,:));
+            
+            % Combining the above points into a list to get the induced velocities
+            fpg = [left_midpt; right_midpt(~all(right_midpt==0,2),:)];
+            
+            [w_total] = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
+                            valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
+            
+            % Induced velocities for the above points, reshaped so that the depth corresponds to the timestep number
+            left_w = permute(reshape(w_total(1:end-len_r,:)',3,[],valTIMESTEP),[2 1 3]);
+            right_w(vecWDVETIP(1:valWSIZE)==2,1:3,1:valTIMESTEP) = permute(reshape(w_total(end-len_r+1:end,:)',3,[],valTIMESTEP),[2 1 3]);
+            
+            timestep = reshape(repmat(1:valTIMESTEP,valWSIZE,1),[],1);
+            
+            % I shift the depth of the above matrices to try to get the induced velocities up and downstream for a specific timestep
+            % So the depth of this and the above will correspond 
+            up_right_w = right_w(:,:,2:valTIMESTEP);
+            down_right_w(:,:,2:valTIMESTEP) = right_w(:,:,1:valTIMESTEP-1);
+            down_right_w(:,:,1) = right_2(:,:,1);
+           
+            end
+            % Finding right edges at joints between panels (getting rid of SYM), then finding corresponding left edge
+%             idx = matWADJE(matWADJE(:,2) == 2,3);          
+%             idx(ismember(idx,find(vecWDVETIP == 4))) = [];
+%             idx3 = matWADJE(matWADJE(:,2) == 2,1);
+%             
+%             right_midpt(idx3,:) = left_midpt(idx,:);
+            
+            
+            
+            %% Timing
             eltime(valTIMESTEP) = toc;
             ttime(valTIMESTEP) = sum(eltime);
+            
+            %% Forces
+%            fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
+%     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM,vecDVETESWP)
+
         end
     end
 end
