@@ -43,7 +43,7 @@ Neighbouring panels (0 for none) left: 0 right: 0
 xleft	yleft	zleft	chord	epsilon	Bound.Cond.
 0.000000	0.000000	0.000000	1.000000	0.000000	10
 xright	yright	zright	chord	epsilon	Bound.Cond.
-0.000000	2.000000	0.000000	1.000000	0.000000	100
+1.000000	2.000000	0.000000	1.000000	0.000000	100
 
 %<- special identifier
 Vertical tail information:

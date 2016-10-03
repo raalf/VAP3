@@ -164,10 +164,10 @@ c26 = -2.*(zeta_0.^2);
 c27 = repmat(2,len,1);
 
 % Point is in plane of vortex sheet, but not on bound vortex
-idx30 = abs(zeta_0) <= dbl_eps;
+idx30 = abs(zeta_0) <= dbl_eps & abs(xsi_0 - eta_0.*tan(phi)) > dbl_eps;
 G21(idx30) = 0;
 G21b(idx30) = b21(idx30).*beta1(idx30).*(0.5.*log(mu1_2(idx30)./mu1_1(idx30)) + G25b(idx30))./rho(idx30);
-G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log(mu1_2(idx30)./mu1_1(idx30)) + G25c(idx30))./rho(idx30);
+G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log((mu1_2(idx30)+k(idx30))./(mu1_1(idx30)+k(idx30))) + G25c(idx30))./rho(idx30);
 G22(idx30) = 0;
 G26(idx30) = 0;
 
@@ -210,7 +210,7 @@ c2_zeta(idx40) = G21c(idx40) + G23(idx40).*c23(idx40) + G24(idx40).*c24(idx40) +
 % If he point falls on a swept leading edge inside the bounds of a sheet
 idx60 = abs(zeta_0) <= dbl_eps & abs(xsi_0 - eta_0.*tan(phi)) <= dbl_eps & abs(tan(phi)) > dbl_eps & abs(hspan) - abs(eta_0) >= -dbl_eps;
 b2_zeta(idx60) = 0;
-c2_zeta(idx60) = 0;
+% c2_zeta(idx60) = 0;
 
 % a, b, c in local ref frame
 bloc = [b2_xsi b2_eta b2_zeta];

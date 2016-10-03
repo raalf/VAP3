@@ -1,6 +1,6 @@
 function [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP)
 % Currently creates the upper 2/3rds of the D-matrix, which are the boundary conditions based
-% on adjacent DVEs, etc. 
+% on adjacent DVEs, etc.
 
 % INPUT:
 %   valNELE - total number of DVEs
@@ -70,8 +70,11 @@ vort(sub2ind(size(vort),rows,col2)) = reshape(dgamma2',[],1);
 dsplit2 = idx14(idx13 > 1);
 
 % Finding the corresponding DVEs with local edge 4 at the split
-[idx26,~] = find(repmat(matADJE(idx2,3),1,length(dsplit2)) == repmat(dsplit2',length(matADJE(idx2,3)),1));
-
+if ~isempty(dsplit2)
+    [idx26,~] = find(repmat(matADJE(idx2,3),1,length(dsplit2)) == repmat(dsplit2',length(matADJE(idx2,3)),1));
+else
+    idx26 = [];
+end
 % Reassigning dsplit2 so it lines up with dsplit4
 dsplit2 = matADJE(idx2,3);
 dsplit2 = dsplit2(idx26);
@@ -153,7 +156,7 @@ if ~isempty(vecDVESYM) == 1
     col3 = reshape([repmat((idx10.*3)-2,1,3) + repmat([0:2], len,1)]',[],1);
     rows = reshape(repmat([1:len]',1,3)',[],1);
     
-%     vort_sym = zeros(len,valNELE*3);
+    %     vort_sym = zeros(len,valNELE*3);
     vort_sym = sparse(len,valNELE*3);
     
     vort_sym(sub2ind(size(vort_sym),rows,col3)) = reshape(dgamma_sym',[],1);
