@@ -25,8 +25,8 @@ disp(' ');
 
 %% Reading in geometry
 
-% strFILE = 'VAP christmas.txt';
-% % strFILE = 'VAP input.txt';
+% strFILE = 'inputs/VAP christmas.txt';
+% % strFILE = 'inputs/VAP input.txt';
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
@@ -35,7 +35,10 @@ disp(' ');
 %
 % valMAXTIME = 1;
 
-strFILE = 'input (1).txt';
+
+% strFILE = 'inputs/input.txt';
+% strFILE = 'inputs/Config 1.txt';
+strFILE = 'inputs/Config 2.txt';
 
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
@@ -43,7 +46,7 @@ strFILE = 'input (1).txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
 
-valMAXTIME = 2;
+valMAXTIME = 30;
 
 flagPLOT = 1;
 flagVERBOSE = 0;

@@ -27,6 +27,7 @@ hold off
 box on
 grid on
 axis equal
+axis tight
 
 xlabel('X-Dir','FontSize',15);
 ylabel('Y-Dir','FontSize',15);
