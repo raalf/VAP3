@@ -111,7 +111,7 @@ while(ch~='=');
     ch = fscanf(fp,'%c',1);
 end
 seqALPHA = fscanf(fp,'%lf');
-
+seqALPHA = [seqALPHA(1):seqALPHA(3):seqALPHA(2)]
 % Reading sideslip angle
 ch = fscanf(fp,'%c',1);
 while(ch~='=');
