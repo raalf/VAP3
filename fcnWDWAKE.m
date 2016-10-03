@@ -1,9 +1,9 @@
 function [matWD, matWR] = fcnWDWAKE(all_DVEs, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM)
-% Creates the Wake D-matrix, for updating the vorticity coefficients 
+% Creates the Wake D-matrix, for updating the vorticity coefficients
 % for the wake to account for stretching.
 
 % INPUT:
-%   dves - list of wake DVE numbers we are creating the matrix for 
+%   dves - list of wake DVE numbers we are creating the matrix for
 %   matWADJE - ? x 3 adjacency matrix, where columns are: Wake DVE | local edge | adjacent Wake DVE
 %   vecWDVEHVSPN - nelements x 1 vector of wake DVE half spans
 %   vecWDVESYM - nelements x 1 vector of which wake DVEs have symmetry on which edge (0 for no symmetry,
@@ -72,7 +72,11 @@ r_vort = zeros(len,1);
 dsplit2 = idx14(idx13 > 1);
 
 % Finding the corresponding DVEs with local edge 4 at the split
-[idx26,~] = find(repmat(matWADJE(idx2,3),1,length(dsplit2)) == repmat(dsplit2',length(matWADJE(idx2,3)),1));
+if ~isempty(dsplit2)
+    [idx26,~] = find(repmat(matWADJE(idx2,3),1,length(dsplit2)) == repmat(dsplit2',length(matWADJE(idx2,3)),1));
+else
+    idx26 = [];
+end
 
 % Reassigning dsplit2 so it lines up with dsplit4
 dsplit2 = matWADJE(idx2,3);
@@ -158,7 +162,7 @@ if ~isempty(vecWDVESYM) == 1
     col3 = reshape([repmat((idx10.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
     rows = reshape(repmat([1:len]',1,2)',[],1);
     
-%     vort_sym = zeros(len,nelements*2);
+    %     vort_sym = zeros(len,nelements*2);
     vort_sym = sparse(len, nelements*2);
     
     vort_sym(sub2ind(size(vort_sym),rows,col3)) = reshape(dgamma_sym',[],1);

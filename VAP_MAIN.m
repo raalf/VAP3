@@ -41,9 +41,9 @@ strFILE = 'input.txt';
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
-valMAXTIME = 50;
 
 flagPLOT = 1;
+verbose = 0;
 %% Discretize geometry into DVEs
 
 [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
@@ -207,8 +207,8 @@ end
 %% Plotting
 
 if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER);
-    [hFig2] = fcnPLOTWAKE(1, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
+    [hFig2] = fcnPLOTBODY(verbose, valNELE, matDVE, matVLST, matCENTER);
+    [hFig2] = fcnPLOTWAKE(verbose, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
     
 %     figure(1);
