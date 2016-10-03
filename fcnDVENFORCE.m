@@ -30,7 +30,7 @@ idx1 = vecDVELE == 1; %index of LE vectors (will be the same)
 % vector of bound vortex along leading edge for LE row
 % tempa(idx1,1) = tan(vecDVELESWP(idx1));
 s = zeros(valNELE,3);
-s(idx1,:) =( matVLST(matDVE(idx1,2),:) -matVLST(matDVE(idx1,1),:) )  ./ (vecDVEHVSPN(idx1).*2); %?? why is the S vector non-dim. to the span?
+s(idx1,:) =( matVLST(matDVE(idx1,2),:) -matVLST(matDVE(idx1,1),:) )  ./ repmat((vecDVEHVSPN(idx1).*2),1,3); %?? why is the S vector non-dim. to the span?
 
 % vector along midchord for remaining elements
 if any(idx1 == 0)
@@ -57,7 +57,7 @@ tempb = cross(repmat(vecUINF,[valNELE,1]),s);
 uxs = sqrt(sum(abs(tempb).^2,2));
 
 % eN = tempa.*(1/UxS);
-en = tempb.*(1./uxs);
+en = tempb.*repmat((1./uxs),1,3);
 
 % the lift direction  eL=Ux[0,1,0]/|Ux[0,1,0]|
 el = repmat([-vecUINF(3)/norm(vecUINF) 0 vecUINF(1)/norm(vecUINF)],[valNELE,1]); %does this work with beta?
@@ -65,7 +65,7 @@ el = repmat([-vecUINF(3)/norm(vecUINF) 0 vecUINF(1)/norm(vecUINF)],[valNELE,1]);
 % the side force direction eS=UxeL/|UxeL|
 clear tempa tempb
 tempa = cross(el,repmat(vecUINF,[valNELE,1]),2);
-es = tempa.*1./ (sqrt(sum(abs(tempa).^2,2)) );
+es = tempa.*1./ repmat((sqrt(sum(abs(tempa).^2,2)) ),1,3);
 
 clear tempa
 %% normal force due to freestream
@@ -101,23 +101,23 @@ xle = (matVLST(matDVE(idx1,1),:) + matVLST(matDVE(idx1,2),:))/2;
 fpg = zeros(valNELE,3,3);
 
 % leading edge row:
-fpg(idx1,:,1) = (xle + s(idx1==1,:).*-eta8(idx1==1)); %left side
+fpg(idx1,:,1) = (xle + s(idx1==1,:).*repmat(-eta8(idx1==1),1,3)); %left side
 fpg(idx1,:,2) = xle ; %middle
-fpg(idx1,:,3) = (xle + s(idx1==1,:).*-eta8(idx1==1)); %right ride
+fpg(idx1,:,3) = (xle + s(idx1==1,:).*repmat(-eta8(idx1==1),1,3)); %right ride
 
 % Remaining rows:
-fpg(idx1==0,:,1) = (matCENTER(idx1==0,:) + s(idx1==0,:).*-eta8(idx1==0)); %left side
+fpg(idx1==0,:,1) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(-eta8(idx1==0),1,3)); %left side
 fpg(idx1==0,:,2) = matCENTER(idx1==0,:) ; %middle
-fpg(idx1==0,:,3) = (matCENTER(idx1==0,:) + s(idx1==0,:).*-eta8(idx1==0)); %right ride
+fpg(idx1==0,:,3) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(-eta8(idx1==0),1,3)); %right ride
 
 
 % if there are any elements in not the first row, we will append all the LE center
 % points to the bottom, necessary for averaging. the if statement will be ignored if all m=1.
 % need to remove tan, we should already have the vector
 if any(idx1 == 0)
-    fpg(1:(valNELE+sum(idx1)),:,1) = [fpg(1:valNELE,:,1) ; (matCENTER(idx1==1,:) + tan(vecDVEMCSWP(idx1==1)).*-eta8(idx1==1))]; %left side
+    fpg(1:(valNELE+sum(idx1)),:,1) = [fpg(1:valNELE,:,1) ; (matCENTER(idx1==1,:) + repmat(tan(vecDVEMCSWP(idx1==1)).*-eta8(idx1==1),1,3))]; %left side
     fpg(1:(valNELE+sum(idx1)),:,2) = [fpg(1:valNELE,:,2) ; matCENTER(idx1==1,:)] ; %middle
-    fpg(1:(valNELE+sum(idx1)),:,3) = [fpg(1:valNELE,:,3) ; (matCENTER(idx1==1,:) + tan(vecDVEMCSWP(idx1==1)).*-eta8(idx1==1))]; %right ride
+    fpg(1:(valNELE+sum(idx1)),:,3) = [fpg(1:valNELE,:,3) ; (matCENTER(idx1==1,:) + repmat(tan(vecDVEMCSWP(idx1==1)).*-eta8(idx1==1),1,3))]; %right ride
 end
 len = size(fpg,1);
 
@@ -158,15 +158,15 @@ tempA = cross(w,repmat(s,[1,1,3]),2);
 gamma(:,1) = A - B.*eta8' + C.*eta8'.*eta8';
 gamma(:,2) = A;
 gamma(:,3) = A + B.*eta8' + C.*eta8'.*eta8';
-tempr = tempA .* permute(gamma,[1 3 2]);
+tempr = tempA .* repmat(permute(gamma,[1 3 2]),1,3,1);
 
 %//The resulting induced force is
 %//determined by numerically integrating forces acros element
 %//using Simpson's Rule with overhaning parts\
 %  R = (R1 + 4*Ro+R2).*eta8/3;
-r = (tempr(:,:,1) + 4.*tempr(:,:,2) + tempr(:,:,3)) .* eta8 ./3;
+r = (tempr(:,:,1) + 4.*tempr(:,:,2) + tempr(:,:,3)) .* repmat(eta8,1,3) ./3;
 %  R = R + ((7.*R1 - 8.*Ro + 7.*R2).*(eta-eta8)./3);
-r = r + ((7.*tempr(:,:,1) - 8.*tempr(:,:,2) + 7.*tempr(:,:,3)).*(vecDVEHVSPN-eta8)./3);
+r = r + ((7.*tempr(:,:,1) - 8.*tempr(:,:,2) + 7.*tempr(:,:,3)).*repmat((vecDVEHVSPN-eta8),1,3)./3);
 
 % induced normal force
 nind = dot(r,en,2);  %induced normal force
