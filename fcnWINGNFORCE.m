@@ -32,7 +32,7 @@ ntind(2) = sum(sideind);
 %double the force if we are using symmetry. This only works with sym for
 %the whole system
 if any(vecSYM) == 1 && valBETA ==0 %not sure why beta has to be zero 
-    ntfree(1) = ntfree(1)*2; %why dont we double the ind lift?
+    ntfree(1) = ntfree(1)*2; %why dont we double the side force?
     ntind(1) = ntind(1)*2;
     ntind(2) = ntind(2)*2;
 end
