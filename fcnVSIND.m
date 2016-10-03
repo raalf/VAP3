@@ -131,8 +131,8 @@ G23 = ((1./a2).*rt_2 - (b2./sqrt(a2.^3)).*log(mu3_2)) - ((1./a2).*rt_1 - (b2./sq
 G24 = ((1./sqrt(a2)).*log(mu3_2)) - ((1./sqrt(a2)).*log(mu3_1));
 
 % Eqn A2-10
-% G26 = ((1./zeta_0).*atan(t2./zeta_0)) - (1./zeta_0).*atan(t1./zeta_0);
-G26 = atan((t1.*t2 - t1.*zeta_0)./(zeta_0.^2 + t1.*t2)); % Divide by zeta????????????????????????????????????
+G26 = ((1./zeta_0).*atan(t2./zeta_0)) - (1./zeta_0).*atan(t1./zeta_0);
+% G26 = atan((t1.*t2 - t1.*zeta_0)./(zeta_0.^2 + t1.*t2)); % Divide by zeta????????????????????????????????????
 
 X2Y2 = (t1.*t2)./(zeta_0.^2);
 X2 = t2./zeta_0;
@@ -235,7 +235,7 @@ cloc(idx_LE,1:2) = zeros(size(cloc(idx_LE,1:2)));
 % Bramesfelds:
 bloc(idx_LE,3) = 0.5.*log((t1(idx_LE).^2 + k(idx_LE))./(t2(idx_LE).^2 + k(idx_LE)));
 % cl(idx_LE,3) = -4.*hspan(idx_LE) + eta_0(idx_LE).*2.*bl(idx_LE,3);
-cloc(idx_LE,3) = -(2.*eta_0(idx_LE).*bloc(idx_LE,3) - 2.*(t2(idx_LE) - t1(idx_LE)));
+cloc(idx_LE,3) = -(2.*eta_0(idx_LE,1).*bloc(idx_LE,3) - 2.*(t2(idx_LE,1) - t1(idx_LE,1)));
 
 end
 
