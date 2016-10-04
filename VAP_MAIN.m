@@ -25,28 +25,28 @@ disp(' ');
 
 %% Reading in geometry
 
-% strFILE = 'inputs/VAP christmas.txt';
-% % strFILE = 'inputs/VAP input.txt';
-% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnVAPREAD(strFILE);
-%
-% valMAXTIME = 1;
-
-
-% strFILE = 'inputs/input.txt';
-% strFILE = 'inputs/Config 1.txt';
-strFILE = 'inputs/Config 2.txt';
-
+strFILE = 'inputs/VAP christmas.txt';
+% strFILE = 'inputs/VAP input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnFWREAD(strFILE);
+    valINTERF] = fcnVAPREAD(strFILE);
 
-valMAXTIME = 30;
+valMAXTIME = 3;
+
+
+% strFILE = 'inputs/input.txt';
+% strFILE = 'inputs/Config 1.txt';
+% strFILE = 'inputs/Config 2.txt';
+
+% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+%     valINTERF] = fcnFWREAD(strFILE);
+% 
+% valMAXTIME = 30;
 
 flagPLOT = 1;
 flagVERBOSE = 0;
@@ -161,6 +161,7 @@ for ai = 1:length(seqALPHA)
             
             %% Relaxing wake
 %             if valTIMESTEP > 2
+%             [] = fcnRLXWAKE()
 %             up_right_w = [];
 %             down_right_w = [];
 %             

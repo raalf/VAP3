@@ -32,13 +32,12 @@ if valWNELE - len == 0
     valLENWADJE = length(matWADJE(:,1));
 else
     
-    new_adje_spanwise = [matWADJE(1:valLENWADJE,1) + valWNELE - len matWADJE(1:valLENWADJE,2) matWADJE(1:valLENWADJE,3) + valWNELE - len];
+    new_adje_spanwise = [matWADJE(1:valLENWADJE,1) + valWNELE - len matWADJE(1:valLENWADJE,2) matWADJE(1:valLENWADJE,3)+valWNELE-len matWADJE(1:valLENWADJE,4)];
+    new_adje_te = [[(valWNELE - len + 1):valWNELE]' repmat(3,len,1) [(valWNELE - 2*len + 1):(valWNELE - len)]' ones(len,1)];
+    old_adje_le = [new_adje_te(:,3) ones(len,1) new_adje_te(:,1) ones(len,1)];
     
-    new_adje_te = [[(valWNELE - len + 1):valWNELE]' repmat(3,len,1) [(valWNELE - 2*len + 1):(valWNELE - len)]'];
-    
-    old_adje_le = [new_adje_te(:,3) repmat(1,len,1) new_adje_te(:,1)];
-    
-    matWADJE = [matWADJE; old_adje_le; new_adje_spanwise; new_adje_te];
+    % [matWADJE]  DVE# | Local Edge | DVE# | # of Panels This DVE is Touching
+    matWADJE = [matWADJE(:,1:4); old_adje_le; new_adje_spanwise; new_adje_te];
     vecWDVESYM = [vecWDVESYM; vecWDVESYM(1:len)];
     vecWDVETIP = [vecWDVETIP; vecWDVETIP(1:len)];
 end
