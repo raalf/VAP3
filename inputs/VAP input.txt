@@ -33,7 +33,7 @@ Airfoil number: 				vecAIRFOIL 	= 6
 Symmetry edge (0, 1 or 2): 		vecSYM 		= 1;
 xleft		yleft		zleft		chord		epsilon
 0.000000	0.000000	0.000000	1.000000	0.000000
-0.000000	6.000000	0.000000	1.000000	0.000000
+-0.5000000	6.000000	0.000000	1.000000	0.000000
 
 %<- special identifier
 Vertical tail information:

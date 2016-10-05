@@ -71,7 +71,7 @@ vecEnd      = cumsum(vecN.*vecM);
 
 %% Assign Wing to Panel
 panelEdges = reshape(permute(matGEOM,[1 3 2]),[],5);
-[~,tempB,tempC] = unique(panelEdges,'rows');
+[~,tempB,tempC] = unique(panelEdges,'rows','stable');
 panelEdgesIdx = reshape(tempC,2,[])';
 edge2wing = [(1:length(tempB))',nan(length(tempB),1)];
 % Assign first edge to wing 1

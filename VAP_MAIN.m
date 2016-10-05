@@ -47,10 +47,12 @@ strFILE = 'inputs/Config 2.txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
 
+matGEOM(2,1,2) = -.5;
+
 valMAXTIME = 5;
 
 flagPLOT = 1;
-flagVERBOSE = 0;
+flagVERBOSE = 1;
 
 %% Discretize geometry into DVEs
 
