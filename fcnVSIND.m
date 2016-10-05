@@ -232,10 +232,11 @@ cloc(idx_LE,1:2) = zeros(size(cloc(idx_LE,1:2)));
 % Horstmanns:
 % bl(idx_LE,3) = -log((t2(idx_LE) + k(idx_LE))./(t1(idx_LE) + k(idx_LE)));
 % cl(idx_LE,3) = -(2.*eta_0(idx_LE).*bl(idx_LE,3) - 2.*(t2(idx_LE) - t1(idx_LE)));
+
+% Reverted to GB's method, seems to work better (less singularities) T.D.K 2016-10-05
 % Bramesfelds:
 bloc(idx_LE,3) = 0.5.*log((t1(idx_LE).^2 + k(idx_LE))./(t2(idx_LE).^2 + k(idx_LE)));
-% cl(idx_LE,3) = -4.*hspan(idx_LE) + eta_0(idx_LE).*2.*bl(idx_LE,3);
-cloc(idx_LE,3) = -(2.*eta_0(idx_LE,1).*bloc(idx_LE,3) - 2.*(t2(idx_LE,1) - t1(idx_LE,1)));
+cloc(idx_LE,3) = -4.*hspan(idx_LE) + eta_0(idx_LE).*2.*bloc(idx_LE,3);
 
 end
 

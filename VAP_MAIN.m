@@ -38,8 +38,8 @@ disp(' ');
 % flagRELAX = 0;
 
 % strFILE = 'inputs/input.txt';
-% strFILE = 'inputs/Config 1.txt';
-strFILE = 'inputs/Config 2.txt';
+strFILE = 'inputs/Config 1.txt';
+% strFILE = 'inputs/Config 2.txt';
 
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
@@ -47,7 +47,7 @@ strFILE = 'inputs/Config 2.txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
 
-matGEOM(2,1,2) = -.5;
+% matGEOM(2,1,2) = 0.9;
 
 valMAXTIME = 5;
 
