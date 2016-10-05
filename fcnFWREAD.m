@@ -267,7 +267,7 @@ end
 vecBC = reshape(matGEOM(:,end,:),[],1);
 
 % Getting the location of edges with symmetry conditions:
-idx1 = (matGEOM(:,6,:) == 10);
+idx1 = (matGEOM(:,6,:) == 10 | matGEOM(:,6,:) == 010);
 % Assigning the appropriate 0, 1 or 2 in the vecSYM matrix
 vecSYM(idx1(1,:,:) == 1,1) = 1;
 vecSYM(idx1(2,:,:) == 1,1) = 2;

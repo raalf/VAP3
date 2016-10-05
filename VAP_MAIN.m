@@ -38,9 +38,10 @@ disp(' ');
 % flagRELAX = 0;
 
 % strFILE = 'inputs/input.txt';
-strFILE = 'inputs/Config 1.txt';
+% strFILE = 'inputs/Config 1.txt';
 % strFILE = 'inputs/Config 2.txt';
 
+strFILE = 'input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
@@ -49,7 +50,7 @@ strFILE = 'inputs/Config 1.txt';
 
 % matGEOM(2,1,2) = 0.9;
 
-valMAXTIME = 5;
+valMAXTIME = 30;
 
 flagPLOT = 1;
 flagVERBOSE = 1;
@@ -72,7 +73,6 @@ valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
 
 [vecK] = fcnSINGFCT(valNELE, vecDVEWING, vecDVETIP, vecDVEHVSPN);
 [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecSYM);
-
 
 %% Alpha Loop
 for ai = 1:length(seqALPHA)
@@ -135,8 +135,6 @@ for ai = 1:length(seqALPHA)
             %% Moving the wing
             [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNPVLST);
             
-            
-            
             %% Generating new wake elements
             [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                 vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM] ...
@@ -177,16 +175,14 @@ for ai = 1:length(seqALPHA)
                 % Calculate mid-point displacement
                 [matWDVEMPRLX] = fcnDISPLACE(matVUP, matVNOW, matVDOWN, matWDVEMP, valDELTIME);
                 
-            end
-            
+            end  
 
             %% Timing
             eltime(valTIMESTEP) = toc;
             ttime(valTIMESTEP) = sum(eltime);
             
             %% Forces
-            
-            cl = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
+            vecCL = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
                 valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA)
             
