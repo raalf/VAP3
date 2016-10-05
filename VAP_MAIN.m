@@ -39,9 +39,9 @@ disp(' ');
 
 % strFILE = 'inputs/input.txt';
 % strFILE = 'inputs/Config 1.txt';
-% strFILE = 'inputs/Config 2.txt';
+strFILE = 'inputs/Config 2.txt';
 
-strFILE = 'input.txt';
+% strFILE = 'input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
@@ -51,7 +51,7 @@ strFILE = 'input.txt';
 % matGEOM(2,1,2) = 0.9;
 
 valMAXTIME = 30;
-
+flagRELAX = 1;
 flagPLOT = 1;
 flagVERBOSE = 1;
 
@@ -162,21 +162,16 @@ for ai = 1:length(seqALPHA);
             [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
             
             %% Relaxing wake
-            if valTIMESTEP > 2 && flagRELAX == 1;
+            if valTIMESTEP > 2 && flagRELAX == 1
                 
-                [ matWDVEMP, matWDVEMPIDX, vecWMPUP, vecWMPDN ] = fcnWDVEMP(matWDVE, matWVLST, matWADJE, valWNELE, vecWDVESYM, vecWDVETIP);
+                [ vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
+                    vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWDVENORM, ...
+                    matWVLST, matWDVE, idxWVLST ] = fcnRELAXWAKE( matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+                    matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVEHVSPN, vecDVELESWP, ...
+                    vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVELESWP, vecWDVEPITCH, ...
+                    vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK );
                 
-                % Get mid-points induced velocity
-                [ matWDVEMPIND ] = fcnINDVEL(matWDVEMP,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
-                    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
-                
-                % Assemble matrices for fcnDISPLACE (vup, vnow, vdown)
-                [ matVUP, matVNOW, matVDOWN ] = fcnDISPMAT(matWDVEMPIND, vecWMPUP, vecWMPDN );
-                
-                % Calculate mid-point displacement
-                [matWDVEMPRLX] = fcnDISPLACE(matVUP, matVNOW, matVDOWN, matWDVEMP, valDELTIME);
-                
-            end  
+            end  % end if valTIMESTEP > 2 && flagRELAX == 1
 
             %% Timing
 %             eltime(valTIMESTEP) = toc;
