@@ -1,6 +1,12 @@
-function [ matWDVEMP, matWDVEMPIDX ] = fcnWDVEMP (matWDVE, matWVLST, matWADJE, valWNELE, vecWDVESYM, vecWDVETIP)
+function [ matWDVEMP, matWDVEMPIDX, vecWMPUP, vecWMPDN ] = fcnWDVEMP (matWDVE, matWVLST, matWADJE, valWNELE, vecWDVESYM, vecWDVETIP)
 % fcnWPDVEMP takes the wake geometry and works out the shared mid-points
 % for relax-wake calculation
+
+% outputs:
+% matWDVEMP - ? x 3 list of unique mid-points of wake DVE left/right edge
+% matWDVEMPIDX - valWNELE x 2 indeces of mid-points of wake DVE
+% vecWMPUP - valWMPNELE x 1 mid-point indeces of upstream mid-point
+% vecWMPDN - valWMPNELE x 1 mid-point indeces of downstream mid-point
 
 % Pre-allocation
 matWDVEEGL = zeros(valWNELE,1);
@@ -15,7 +21,7 @@ matWDVEEGR(vecWDVETIP==2,1:2) = [find(vecWDVETIP==2),2.*ones(sum(vecWDVETIP==2),
 matWDVEEGL(vecWDVESYM==4,1:2) = [find(vecWDVESYM==4),ones(sum(vecWDVESYM==4),1)];
 
 % Find edge with more than 2 panels/
-jointADJT = matWADJE(matWADJE(:,4)>1&matWADJE(:,2)==2,:);
+jointADJT = matWADJE(matWADJE(:,4)>0&matWADJE(:,2)==2,:);
 matWDVEEGL(jointADJT(:,3),1:2) = [jointADJT(:,1),2.*ones(length(jointADJT(:,1)),1)];
 
 % Rest of the DVEs equals to their own left and right edges
@@ -34,5 +40,28 @@ matWDVEMP(matWDVEEG(:,2)==2,1:3) = reshape(mean(reshape(matWVLST(matWDVE(matWDVE
 % Filter and index duplicate points to speed up fcnINDVEL
 [matWDVEMP,~,C] = unique(matWDVEMP,'rows');
 matWDVEMPIDX = reshape(C,valWNELE,2);
+
+valWMPNELE = length(matWDVEMP(:,1));
+vecWMPUP = nan(valWMPNELE,1);
+vecWMPDN = nan(valWMPNELE,1);
+
+
+%% Grab upstream Mid-Point Index
+% Find upstream DVE element index
+dveidxup1 = matWADJE(matWADJE(:,2)==1,1);
+dveidxup2 = matWADJE(matWADJE(:,2)==1,3);
+mpidxup1 = matWDVEMPIDX(dveidxup1,:);
+mpidxup2 = matWDVEMPIDX(dveidxup2,:);
+vecWMPUP(mpidxup1(:),1) = mpidxup2(:);
+% Find downstream DVE element index
+dveidxdn1 = matWADJE(matWADJE(:,2)==3,1);
+dveidxdn2 = matWADJE(matWADJE(:,2)==3,3);
+mpidxdn1 = matWDVEMPIDX(dveidxdn1,:);
+mpidxdn2 = matWDVEMPIDX(dveidxdn2,:);
+vecWMPDN(mpidxdn1(:),1) = mpidxdn2(:);
+
+
+
+
 
 end

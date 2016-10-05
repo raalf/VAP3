@@ -1,4 +1,4 @@
-function [x] = fcnDISPLACE(vup, vnow, vdown, x)
+function [x] = fcnDISPLACE(vup, vnow, vdown, x, valDELTIME)
 
 % This function takes a point and moves it based on
 % the velocity at the locations around it

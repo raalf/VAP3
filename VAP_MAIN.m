@@ -33,7 +33,7 @@ strFILE = 'inputs/VAP christmas.txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnVAPREAD(strFILE);
 
-valMAXTIME = 3;
+valMAXTIME = 5;
 
 
 % strFILE = 'inputs/input.txt';
@@ -161,9 +161,21 @@ for ai = 1:length(seqALPHA)
             
             %% Relaxing wake
             if valTIMESTEP > 2
-                [ matWDVEMP, matWDVEMPIDX ] = fcnWDVEMP (matWDVE, matWVLST, matWADJE, valWNELE, vecWDVESYM, vecWDVETIP);
-            end
 
+                [ matWDVEMP, matWDVEMPIDX, vecWMPUP, vecWMPDN ] = fcnWDVEMP(matWDVE, matWVLST, matWADJE, valWNELE, vecWDVESYM, vecWDVETIP);
+                
+                % Get mid-points induced velocity
+                [ matWDVEMPIND ] = fcnINDVEL(matWDVEMP,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
+                    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
+                
+                % Assemble matrices for fcnDISPLACE (vup, vnow, vdown)
+                [ matVUP, matVNOW, matVDOWN ] = fcnDISPMAT(matWDVEMPIND, vecWMPUP, vecWMPDN );
+                
+                % Calculate mid-point displacement
+                [matWDVEMPRLX] = fcnDISPLACE(matVUP, matVNOW, matVDOWN, matWDVEMP, valDELTIME);
+                
+            end
+            
             
             
             
