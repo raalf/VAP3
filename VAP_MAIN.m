@@ -75,7 +75,8 @@ valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
 [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecSYM);
 
 %% Alpha Loop
-for ai = 1:length(seqALPHA)
+for ai = 1:length(seqALPHA);
+    fprintf('\nAlpha = %0.3f', seqALPHA(ai));
     valALPHA = deg2rad(seqALPHA(ai));
     for bi = 1:length(seqBETA)
         valBETA = deg2rad(seqBETA(bi));
@@ -178,13 +179,14 @@ for ai = 1:length(seqALPHA)
             end  
 
             %% Timing
-            eltime(valTIMESTEP) = toc;
-            ttime(valTIMESTEP) = sum(eltime);
+%             eltime(valTIMESTEP) = toc;
+%             ttime(valTIMESTEP) = sum(eltime);
             
             %% Forces
-            vecCL = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
+            vecCL(valTIMESTEP) = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA)
+                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA);
+            fprintf('\n\tCL = %0.5f',vecCL(valTIMESTEP));
             
         end
     end
