@@ -226,7 +226,7 @@ aloc = zeros(size(bloc));
 
 % If the point lies on an unswept leading edge
 % a23ind.f - Line 604
-idx_LE = abs(zeta_0) <= dbl_eps & abs(xsi_0) <= dbl_eps & abs(phi) <= dbl_eps;
+idx_LE = abs(zeta_0) <= dbl_eps & abs(xsi_0.^2) <= dbl_eps & abs(phi) <= dbl_eps;
 bloc(idx_LE,1:2) = zeros(size(bloc(idx_LE,1:2)));
 cloc(idx_LE,1:2) = zeros(size(cloc(idx_LE,1:2)));
 % Horstmanns:

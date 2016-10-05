@@ -25,30 +25,31 @@ disp(' ');
 
 %% Reading in geometry
 
-strFILE = 'inputs/VAP christmas.txt';
+% strFILE = 'inputs/VAP christmas.txt';
 % strFILE = 'inputs/VAP input.txt';
-[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnVAPREAD(strFILE);
-
-valMAXTIME = 5;
-
-
-% strFILE = 'inputs/input.txt';
-% strFILE = 'inputs/Config 1.txt';
-% strFILE = 'inputs/Config 2.txt';
-
+% 
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnFWREAD(strFILE);
+%     valINTERF] = fcnVAPREAD(strFILE);
 % 
-% valMAXTIME = 30;
+% valMAXTIME = 5;
+% flagRELAX = 0;
 
-flagPLOT = 0;
+% strFILE = 'inputs/input.txt';
+% strFILE = 'inputs/Config 1.txt';
+strFILE = 'inputs/Config 2.txt';
+
+[flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+    seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+    vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+    valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+    valINTERF] = fcnFWREAD(strFILE);
+
+valMAXTIME = 5;
+
+flagPLOT = 1;
 flagVERBOSE = 0;
 
 %% Discretize geometry into DVEs
@@ -160,8 +161,8 @@ for ai = 1:length(seqALPHA)
             [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
             
             %% Relaxing wake
-            if valTIMESTEP > 2
-
+            if valTIMESTEP > 2 && flagRELAX == 1;
+                
                 [ matWDVEMP, matWDVEMPIDX, vecWMPUP, vecWMPDN ] = fcnWDVEMP(matWDVE, matWVLST, matWADJE, valWNELE, vecWDVESYM, vecWDVETIP);
                 
                 % Get mid-points induced velocity
@@ -176,18 +177,17 @@ for ai = 1:length(seqALPHA)
                 
             end
             
-            
-            
-            
+
             %% Timing
             eltime(valTIMESTEP) = toc;
             ttime(valTIMESTEP) = sum(eltime);
             
             %% Forces
-           cl = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
-                    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-                    valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA)
-
+            
+            cl = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
+                valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
+                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA)
+            
         end
     end
 end
@@ -199,21 +199,21 @@ if flagPLOT == 1
     [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
     
-%     figure(1);
-%     plot(1:valTIMESTEP, eltime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Time per timestep (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
-%     
-%     figure(3);
-%     plot(1:valTIMESTEP, ttime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Total time (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
+    %     figure(1);
+    %     plot(1:valTIMESTEP, eltime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Time per timestep (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
+    %
+    %     figure(3);
+    %     plot(1:valTIMESTEP, ttime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Total time (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
     
 end
 
