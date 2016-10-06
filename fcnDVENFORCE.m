@@ -3,7 +3,20 @@ function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF.
     vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,...
     vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP)
 %DVE element normal forces
-% computes lift and side force/density acting on surface DVE's
+
+% //computes lift and side force/density acting on surface DVE's. The local
+% //lift force is comuted by applying Kutta-Joukowski's theorem to both edges
+% //and to the center of DVE's bound vortices. These values are integrated,
+% //using Simpson's rule (with overhang), in order to get the lift force/density
+% //for the complete surface DVE.  
+% //Furthermore, as of now, any lift force due to the DVE's vortex sheet is
+% //neglected, since the resulting induced side velocities should be small
+% //
+% //
+% //Note: the velocities are not computed directly at the vortex edges, but
+% //at 80% of the of the DVE halfspan.
+% //Otherwise, the computed induced velocity would become singular at that
+% //point due to the next neighboring elementary wing influence.
 
 % INPUTS:
 
@@ -14,9 +27,6 @@ function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF.
 % liftind - induced lift for each DVE
 % sidefree - freestream side force for each DVE
 % sideind - induced side force for each DVE
-
-
-
 
 
 %% preliminary stuff
