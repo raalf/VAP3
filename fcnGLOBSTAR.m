@@ -10,7 +10,10 @@ function [xsi] = fcnGLOBSTAR(points, roll, pitch, yaw)
 % OUTPUT:
 %   xsi - n x 3 matrix of "points" in local reference frame
 
-rot = zeros(3,3,length(points(:,1)));
+len = length(points(:,1));
+
+rot = zeros(3,3,len);
+xsi = zeros(len,1,3);
 
 x = permute(points,[1 3 2]);
 
