@@ -50,9 +50,9 @@ strFILE = 'inputs/Config 2.txt';
 
 % matGEOM(2,1,2) = 0.9;
 
-valMAXTIME = 30;
-flagRELAX = 1;
-flagPLOT = 1;
+valMAXTIME = 500;
+flagRELAX = 0;
+flagPLOT = 0;
 flagVERBOSE = 1;
 
 %% Discretize geometry into DVEs

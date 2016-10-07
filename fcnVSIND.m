@@ -105,15 +105,18 @@ G21c = zeros(len,1);
 G25b = -0.5.*log((k + zeta_0.^2 + t2.^2)./(k + zeta_0.^2 + t1.^2));
 G25c = -hspan.*log((k + zeta_0.^2 + t1.^2).*(k + zeta_0.^2 + t2.^2));
 
+t1s = t1.*t1;
+t2s = t2.*t2;
+
 idx70 = abs(t1) > dbl_eps;
-G25c(idx70) = G25c(idx70) + t1(idx70).*log(zeta_0(idx70) + t1(idx70).^2);
+G25c(idx70) = G25c(idx70) + t1(idx70).*log(zeta_0(idx70) + t1s(idx70));
 
 idx71 = abs(t2) > dbl_eps;
-G25c(idx71) = G25c(idx71) - t2(idx71).*log(zeta_0(idx71) + t2(idx71).^2);
+G25c(idx71) = G25c(idx71) - t2(idx71).*log(zeta_0(idx71) + t2s(idx71));
 
 % Eqn A2-9
 % G25 = (0.5.*log(k + t2.^2 + zeta_0.^2)) - (0.5.*log(k + t1.^2 + zeta_0.^2));
-G25 = (0.5.*log(t2.^2 + zeta_0.^2)) - (0.5.*log(t1.^2 + zeta_0.^2));
+G25 = (0.5.*log(t2s + zeta_0.^2)) - (0.5.*log(t1s + zeta_0.^2));
 
 % Eqn A2-3
 % G21 = ((beta1./(2.*rho)).*log(mu1_2) + (beta2./rho).*mu2_2) - ((beta1./(2.*rho)).*log(mu1_1) + (beta2./rho).*mu2_1);
@@ -125,10 +128,14 @@ G21 = (beta1.*(0.5.*log(mu1_2./mu1_1) - G25) + beta2.*(mu2_2 - mu2_1))./rho;
 G22 = (-beta2.*(0.5.*log(mu1_2./mu1_1) - G25) + beta1.*(mu2_2 - mu2_1))./(rho.*zeta_0);
 
 % Eqn A2-6
-G23 = ((1./a2).*rt_2 - (b2./sqrt(a2.^3)).*log(mu3_2)) - ((1./a2).*rt_1 - (b2./sqrt(a2.^3)).*log(mu3_1));
+lmu3_2 = log(mu3_2);
+lmu3_1 = log(mu3_1);
+a2cus = sqrt(a2.*a2.*a2);
+
+G23 = ((1./a2).*rt_2 - (b2./a2cus).*lmu3_2) - ((1./a2).*rt_1 - (b2./a2cus).*lmu3_1);
 
 % Eqn A2-7
-G24 = ((1./sqrt(a2)).*log(mu3_2)) - ((1./sqrt(a2)).*log(mu3_1));
+G24 = ((1./sqrt(a2)).*lmu3_2) - ((1./sqrt(a2)).*lmu3_1);
 
 % Eqn A2-10
 G26 = ((1./zeta_0).*atan(t2./zeta_0)) - (1./zeta_0).*atan(t1./zeta_0);

@@ -40,6 +40,8 @@ a1te = zeros(len,3);
 b1te = zeros(len,3);
 c1te = zeros(len,3);
 
+endpoints = zeros(len,3,2);
+
 %% Leading Edge
 
 % Leading edge coordinates, used to find the midpoint of the leading edge
