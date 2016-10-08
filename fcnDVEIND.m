@@ -88,22 +88,3 @@ b = fcnSTARGLOB(b3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum)
 c = fcnSTARGLOB(c3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
 
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

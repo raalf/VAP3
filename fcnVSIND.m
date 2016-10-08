@@ -19,20 +19,24 @@ eta_0 = fp_0(:,2);
 xsi_0 = fp_0(:,1);
 zeta_0 = fp_0(:,3);
 
+zeta_0sq = zeta_0.*zeta_0;
+
 len = length(eta_0(:,1));
+
+le_vect = xsi_0 - eta_0.*tan(phi);
 
 % Eqn A2-12
 a2 = 1 + (tan(phi).^2);
-b2 = (xsi_0 - eta_0.*tan(phi)).*tan(phi);
-c2 = (xsi_0 - eta_0.*tan(phi)).^2 + zeta_0.^2;
+b2 = le_vect.*tan(phi);
+c2 = le_vect.^2 + zeta_0sq;
 t1 = eta_0 + hspan;
 t2 = eta_0 - hspan;
 rt_1 = sqrt((t1.^2).*a2 + 2.*t1.*b2 + c2);
 rt_2 = sqrt((t2.^2).*a2 + 2.*t2.*b2 + c2);
 
 % Eqn A2-5
-eps = ((xsi_0 - eta_0.*tan(phi)).^2) - (zeta_0.^2).*(tan(phi)).^2;
-rho = sqrt(eps.^2 + 4.*(zeta_0.^2).*(b2.^2));
+eps = (le_vect.^2) - (zeta_0sq).*(tan(phi)).^2;
+rho = sqrt(eps.^2 + 4.*(zeta_0sq).*(b2.^2));
 beta1 = -sqrt((rho + eps)./2);
 beta2 = -sqrt((rho - eps)./2);
 
@@ -40,8 +44,9 @@ beta2 = -sqrt((rho - eps)./2);
 beta1(0.5.*(rho + eps) <= dbl_eps) = 0;
 beta2(0.5.*(rho - eps) <= dbl_eps) = 0;
 
-idx_B2 = (abs(zeta_0.*b2) > dbl_eps);
-beta2(idx_B2) = beta2(idx_B2).*(zeta_0(idx_B2).*b2(idx_B2))./abs(zeta_0(idx_B2).*b2(idx_B2));
+zetab2 = zeta_0.*b2;
+idx_B2 = (abs(zetab2) > dbl_eps);
+beta2(idx_B2) = beta2(idx_B2).*(zetab2(idx_B2))./abs(zetab2(idx_B2));
 
 % Eqn A2-8
 mu3_1 = a2.*t1 + b2 + sqrt(a2).*rt_1;
@@ -102,8 +107,8 @@ G26a = zeros(len,1);
 G21b = zeros(len,1);
 G21c = zeros(len,1);
 
-G25b = -0.5.*log((k + zeta_0.^2 + t2.^2)./(k + zeta_0.^2 + t1.^2));
-G25c = -hspan.*log((k + zeta_0.^2 + t1.^2).*(k + zeta_0.^2 + t2.^2));
+G25b = -0.5.*log((k + zeta_0sq + t2.^2)./(k + zeta_0sq + t1.^2));
+G25c = -hspan.*log((k + zeta_0sq + t1.^2).*(k + zeta_0sq + t2.^2));
 
 t1s = t1.*t1;
 t2s = t2.*t2;
@@ -115,8 +120,8 @@ idx71 = abs(t2) > dbl_eps;
 G25c(idx71) = G25c(idx71) - t2(idx71).*log(zeta_0(idx71) + t2s(idx71));
 
 % Eqn A2-9
-% G25 = (0.5.*log(k + t2.^2 + zeta_0.^2)) - (0.5.*log(k + t1.^2 + zeta_0.^2));
-G25 = (0.5.*log(t2s + zeta_0.^2)) - (0.5.*log(t1s + zeta_0.^2));
+% G25 = (0.5.*log(k + t2.^2 + zeta_0sq)) - (0.5.*log(k + t1.^2 + zeta_0sq));
+G25 = (0.5.*log(t2s + zeta_0sq)) - (0.5.*log(t1s + zeta_0sq));
 
 % Eqn A2-3
 % G21 = ((beta1./(2.*rho)).*log(mu1_2) + (beta2./rho).*mu2_2) - ((beta1./(2.*rho)).*log(mu1_1) + (beta2./rho).*mu2_1);
@@ -141,7 +146,7 @@ G24 = ((1./sqrt(a2)).*lmu3_2) - ((1./sqrt(a2)).*lmu3_1);
 G26 = ((1./zeta_0).*atan(t2./zeta_0)) - (1./zeta_0).*atan(t1./zeta_0);
 % G26 = atan((t1.*t2 - t1.*zeta_0)./(zeta_0.^2 + t1.*t2)); % Divide by zeta????????????????????????????????????
 
-X2Y2 = (t1.*t2)./(zeta_0.^2);
+X2Y2 = (t1.*t2)./(zeta_0sq);
 X2 = t2./zeta_0;
 
 idx50 = X2Y2 < -1 & X2 > 0;
@@ -154,24 +159,24 @@ G26(idx51) = G26(idx51) - pi;
 G27 = t2 - t1;
 
 % Eqn A2-13
-b21 = -(xsi_0 - (eta_0.*tan(phi)));
-b22 = (zeta_0.^2).*tan(phi);
+b21 = -le_vect;
+b22 = (zeta_0sq).*tan(phi);
 b23 = zeros(len,1);
 b24 = -tan(phi);
 b25 = -ones(len,1);
 b26 = zeros(len,1);
 b27 = zeros(len,1);
 
-c21 = -2.*((zeta_0.^2).*tan(phi) + eta_0.*(xsi_0 - eta_0.*tan(phi)));
-c22 = -2.*(zeta_0.^2).*(xsi_0 - 2.*eta_0.*tan(phi));
+c21 = -2.*((zeta_0sq).*tan(phi) + eta_0.*le_vect);
+c22 = -2.*(zeta_0sq).*(xsi_0 - 2.*eta_0.*tan(phi));
 c23 = 2.*tan(phi);
 c24 = 2.*(xsi_0 - 2.*eta_0.*tan(phi));
 c25 = -2.*eta_0;
-c26 = -2.*(zeta_0.^2);
+c26 = -2.*(zeta_0sq);
 c27 = repmat(2,len,1);
 
 % Point is in plane of vortex sheet, but not on bound vortex
-idx30 = abs(zeta_0) <= dbl_eps & abs(xsi_0 - eta_0.*tan(phi)) > dbl_eps;
+idx30 = abs(zeta_0) <= dbl_eps & abs(le_vect) > dbl_eps;
 G21(idx30) = 0;
 G21b(idx30) = b21(idx30).*beta1(idx30).*(0.5.*log(mu1_2(idx30)./mu1_1(idx30)) + G25b(idx30))./rho(idx30);
 G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log((mu1_2(idx30)+k(idx30))./(mu1_1(idx30)+k(idx30))) + G25c(idx30))./rho(idx30);
@@ -194,7 +199,7 @@ G22(idx20) = 0;
 % 
 % G26(idx20) = G26a(idx20)./zeta_0(idx20);
 
-idx23 = (abs(xsi_0 - eta_0.*tan(phi)) <= dbl_eps & abs(zeta_0) <= dbl_eps);
+idx23 = (abs(le_vect) <= dbl_eps & abs(zeta_0) <= dbl_eps);
 G26(idx23) = 0;
 
 % Eqn A2-2
@@ -215,7 +220,7 @@ b2_zeta(idx40) = G21b(idx40) + G24(idx40).*b24(idx40) + G25b(idx40);
 c2_zeta(idx40) = G21c(idx40) + G23(idx40).*c23(idx40) + G24(idx40).*c24(idx40) + G25c(idx40) + G27(idx40).*c27(idx40);
 
 % If he point falls on a swept leading edge inside the bounds of a sheet
-idx60 = abs(zeta_0) <= dbl_eps & abs(xsi_0 - eta_0.*tan(phi)) <= dbl_eps & abs(tan(phi)) > dbl_eps & abs(hspan) - abs(eta_0) >= -dbl_eps;
+idx60 = abs(zeta_0) <= dbl_eps & abs(le_vect) <= dbl_eps & abs(tan(phi)) > dbl_eps & abs(hspan) - abs(eta_0) >= -dbl_eps;
 b2_zeta(idx60) = 0;
 % c2_zeta(idx60) = 0;
 
