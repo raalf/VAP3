@@ -50,8 +50,8 @@ strFILE = 'inputs/Config 2.txt';
 
 % matGEOM(2,1,2) = 0.9;
 
-valMAXTIME = 500;
-flagRELAX = 0;
+valMAXTIME = 100;
+flagRELAX = 1;
 flagPLOT = 0;
 flagVERBOSE = 1;
 
