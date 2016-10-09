@@ -37,9 +37,9 @@ disp(' ');
 % valMAXTIME = 5;
 % flagRELAX = 0;
 
-% strFILE = 'inputs/input.txt';
+strFILE = 'inputs/input.txt';
 % strFILE = 'inputs/Config 1.txt';
-strFILE = 'inputs/Config 2.txt';
+% strFILE = 'inputs/Config 2.txt';
 
 % strFILE = 'input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
@@ -50,10 +50,10 @@ strFILE = 'inputs/Config 2.txt';
 
 % matGEOM(2,1,2) = 0.9;
 
-valMAXTIME = 100;
-flagRELAX = 1;
-flagPLOT = 0;
-flagVERBOSE = 1;
+valMAXTIME = 20;
+flagRELAX = 0;
+flagPLOT = 1;
+flagVERBOSE = 0;
 
 %% Discretize geometry into DVEs
 
@@ -178,11 +178,12 @@ for ai = 1:length(seqALPHA);
 %             ttime(valTIMESTEP) = sum(eltime);
             
             %% Forces
-            [vecCL(valTIMESTEP) vecCDI(valTIMESTEP)] = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,vecDVETE,matADJE,...
+            [vecCL(valTIMESTEP) vecCDI(valTIMESTEP) vecE(valTIMESTEP)] = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,vecDVETE,matADJE,...
                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA,vecDVEWING);
+                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valSPAN,valBETA,vecDVEWING);
             fprintf('\n\tCL = %0.5f',vecCL(valTIMESTEP));
             fprintf('\tCDi = %0.5f',vecCDI(valTIMESTEP));
+            fprintf('\te = %0.5f',vecE(valTIMESTEP));
         end
     end
 end
