@@ -178,11 +178,11 @@ for ai = 1:length(seqALPHA);
 %             ttime(valTIMESTEP) = sum(eltime);
             
             %% Forces
-            vecCL(valTIMESTEP) = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
+            [vecCL(valTIMESTEP) vecCDI(valTIMESTEP)] = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,vecDVETE,matADJE,...
                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA);
+                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA,vecDVEWING);
             fprintf('\n\tCL = %0.5f',vecCL(valTIMESTEP));
-            
+            fprintf('\tCDi = %0.5f',vecCDI(valTIMESTEP));
         end
     end
 end
