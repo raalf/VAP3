@@ -134,7 +134,7 @@ for ai = 1:length(seqALPHA);
             %   Calculate induced drag
             %   Calculate cn, cl, cy, cdi
             %   Calculate viscous effects
-
+            
             %% Moving the wing
             [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNPVLST);
             
@@ -174,7 +174,10 @@ for ai = 1:length(seqALPHA);
                     vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVELESWP, vecWDVEPITCH, ...
                     vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK);
                 
-            end  % end if valTIMESTEP > 2 && flagRELAX == 1
+                % Creating and solving WD-Matrix
+                [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
+                [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
+            end
             
             %% Timing
             %             eltime(valTIMESTEP) = toc;
@@ -201,23 +204,23 @@ if flagPLOT == 1
     [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
     [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
-
-%     figure(1);
-%     plot(1:valTIMESTEP, eltime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Time per timestep (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
-%
-%     figure(3);
-%     plot(1:valTIMESTEP, ttime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Total time (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
-
+    
+    %     figure(1);
+    %     plot(1:valTIMESTEP, eltime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Time per timestep (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
+    %
+    %     figure(3);
+    %     plot(1:valTIMESTEP, ttime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Total time (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
+    
 end
 
 %% Viscous wrapper
