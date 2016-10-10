@@ -31,7 +31,9 @@ for i = 1:Aircraft.General.Panels
             if Temp.isverbose == 1
                 disp('Re higher than airfoil Re data')
             end
-            cl_max = Temp.Airfoil(end,4);
+            Re1 = airfoil(end,4);
+            temp_var = airfoil(airfoil(:,4)==Re2,2);
+            cl_max = temp_var(end);
         elseif Re < LoRe
             if Temp.isverbose == 1
                 disp('Re lower than airfoil Re data');
