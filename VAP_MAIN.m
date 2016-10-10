@@ -50,7 +50,7 @@ strFILE = 'inputs/input.txt';
 
 % matGEOM(2,1,2) = 0.9;
 
-valMAXTIME = 70;
+valMAXTIME = 10;
 flagRELAX = 1;
 flagPLOT = 0;
 flagVERBOSE = 1;
@@ -184,10 +184,13 @@ for ai = 1:length(seqALPHA);
             %             ttime(valTIMESTEP) = sum(eltime);
             
             %% Forces
-            vecCL(ai,valTIMESTEP) = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
-                valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-                valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA);
-            %             fprintf('\n\tCL = %0.5f',vecCL(ai,valTIMESTEP));
+            
+            [vecCL(valTIMESTEP,ai),vecCDI(valTIMESTEP,ai),vecE(valTIMESTEP,ai)] = ...
+                                    fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, vecUINF, vecDVELESWP,...
+                                    vecDVEMCSWP, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE,...
+                                    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, ...
+                                    vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, vecDVEWING);
+            
             
         end
     end
