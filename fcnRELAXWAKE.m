@@ -25,7 +25,7 @@ matWCENTER = matWDVEMPRLX(matWDVEMPIDX(:,1),:)+(0.5*(matWDVEMPRLX(matWDVEMPIDX(:
 matWDVELEMPIDX = flipud(reshape(1:valWNELE,valWSIZE,[])');
 matWDVELEMP = nan(valWNELE,3);
 for wakerow = 1:valTIMESTEP
-    if wakerow == 1 % freshest row of wake, closest to wing TE
+    if wakerow == 1 || wakerow == valTIMESTEP % freshest row of wake, closest to wing TE
         matWDVELEMP(matWDVELEMPIDX(wakerow,:),(1:3)) = permute(mean(reshape(matWVLST(matWDVE(matWDVELEMPIDX(wakerow,:),[1,2]),:)',3,[],2),3),[3 2 1]);
     else % rest of the wake dves
         prevLE = matWDVELEMP(matWDVELEMPIDX(wakerow-1,:),(1:3));

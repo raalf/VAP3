@@ -27,13 +27,13 @@ disp(' ');
 
 % strFILE = 'inputs/VAP christmas.txt';
 % strFILE = 'inputs/VAP input.txt';
-% 
+%
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
 %     valINTERF] = fcnVAPREAD(strFILE);
-% 
+%
 % valMAXTIME = 5;
 % flagRELAX = 0;
 
@@ -50,16 +50,16 @@ strFILE = 'inputs/Config 2.txt';
 
 % matGEOM(2,1,2) = 0.9;
 
-valMAXTIME = 30;
+valMAXTIME = 70;
 flagRELAX = 1;
-flagPLOT = 1;
+flagPLOT = 0;
 flagVERBOSE = 1;
 
 %% Discretize geometry into DVEs
 
-[matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+[matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST, matNPVLST, matDVE, valNELE, matADJE, ...
+    matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, ...
     vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
@@ -72,12 +72,18 @@ valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
 %% Add kinematic conditions to D-Matrix
 
 [vecK] = fcnSINGFCT(valNELE, vecDVEWING, vecDVETIP, vecDVEHVSPN);
-[matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecSYM);
+[matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER0, matVLST0, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecSYM);
 
 %% Alpha Loop
 for ai = 1:length(seqALPHA);
     fprintf('\nAlpha = %0.3f', seqALPHA(ai));
     valALPHA = deg2rad(seqALPHA(ai));
+    
+    % This is done for when we are using a parfor loop
+    matCENTER = matCENTER0;
+    matVLST = matVLST0;
+    matNPVLST = matNPVLST0;
+    
     for bi = 1:length(seqBETA)
         valBETA = deg2rad(seqBETA(bi));
         
@@ -172,45 +178,47 @@ for ai = 1:length(seqALPHA);
                     vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK );
                 
             end  % end if valTIMESTEP > 2 && flagRELAX == 1
-
+            
             %% Timing
-%             eltime(valTIMESTEP) = toc;
-%             ttime(valTIMESTEP) = sum(eltime);
+            %             eltime(valTIMESTEP) = toc;
+            %             ttime(valTIMESTEP) = sum(eltime);
             
             %% Forces
-            vecCL(valTIMESTEP) = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
+            vecCL(ai,valTIMESTEP) = fcnFORCES(matCOEFF,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEROLL,vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,...
                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
                 valWSIZE, valTIMESTEP,vecSYM,vecDVETESWP,valAREA,valBETA);
-            fprintf('\n\tCL = %0.5f',vecCL(valTIMESTEP));
+            %             fprintf('\n\tCL = %0.5f',vecCL(ai,valTIMESTEP));
             
         end
     end
+    
 end
-
+fprintf('\n');
+toc
 %% Plotting
 
-if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
-    [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
-    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
-    
-    %     figure(1);
-    %     plot(1:valTIMESTEP, eltime)
-    %     xlabel('Timestep','FontSize',15)
-    %     ylabel('Time per timestep (s)', 'FontSize',15)
-    %     box on
-    %     grid on
-    %     axis tight
-    %
-    %     figure(3);
-    %     plot(1:valTIMESTEP, ttime)
-    %     xlabel('Timestep','FontSize',15)
-    %     ylabel('Total time (s)', 'FontSize',15)
-    %     box on
-    %     grid on
-    %     axis tight
-    
-end
+% if flagPLOT == 1
+%     [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
+%     [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
+%     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
+
+%     figure(1);
+%     plot(1:valTIMESTEP, eltime)
+%     xlabel('Timestep','FontSize',15)
+%     ylabel('Time per timestep (s)', 'FontSize',15)
+%     box on
+%     grid on
+%     axis tight
+%
+%     figure(3);
+%     plot(1:valTIMESTEP, ttime)
+%     xlabel('Timestep','FontSize',15)
+%     ylabel('Total time (s)', 'FontSize',15)
+%     box on
+%     grid on
+%     axis tight
+
+% end
 
 %% Viscous wrapper
 
