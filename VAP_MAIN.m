@@ -201,6 +201,9 @@ for ai = 1:length(seqALPHA);
                 vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, ...
                 vecDVEWING, vecN, vecM, vecDVEPANEL);
             
+%             fprintf('\n\tTimestep = %0.0f', valTIMESTEP);
+%             fprintf('\tCL = %0.5f',vecCL(valTIMESTEP,ai));
+%             fprintf('\tCDi = %0.5f',vecCDI(valTIMESTEP,ai));
         end
         
         %% Viscous wrapper
