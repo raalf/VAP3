@@ -33,26 +33,22 @@ disp(' ');
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
 %     valINTERF] = fcnVAPREAD(strFILE);
-%
-% valMAXTIME = 5;
-% flagRELAX = 0;
 
 strFILE = 'inputs/input.txt';
 % strFILE = 'inputs/Config 1.txt';
 % strFILE = 'inputs/Config 2.txt';
 
-% strFILE = 'input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
 
-% matGEOM(2,1,2) = 0.9;
 
-valMAXTIME = 10;
+valMAXTIME = 50;
 flagRELAX = 1;
-flagPLOT = 0;
+
+flagPLOT = 1;
 flagVERBOSE = 1;
 
 %% Discretize geometry into DVEs
@@ -138,7 +134,7 @@ for ai = 1:length(seqALPHA);
             %   Calculate induced drag
             %   Calculate cn, cl, cy, cdi
             %   Calculate viscous effects
-            tic
+
             %% Moving the wing
             [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNPVLST);
             
@@ -161,6 +157,7 @@ for ai = 1:length(seqALPHA);
             [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, vecUINF, valWNELE, matWDVE, ...
                 matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                 vecWDVETESWP, vecSYM, valWSIZE);
+            
             [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
             
             %% Creating and solving WD-Matrix
@@ -170,12 +167,12 @@ for ai = 1:length(seqALPHA);
             %% Relaxing wake
             if valTIMESTEP > 2 && flagRELAX == 1
                 
-                [ vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
+                [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
                     vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWDVENORM, ...
-                    matWVLST, matWDVE, idxWVLST ] = fcnRELAXWAKE( matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+                    matWVLST, matWDVE, idxWVLST] = fcnRELAXWAKE(matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
                     matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVEHVSPN, vecDVELESWP, ...
                     vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVELESWP, vecWDVEPITCH, ...
-                    vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK );
+                    vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK);
                 
             end  % end if valTIMESTEP > 2 && flagRELAX == 1
             
@@ -185,11 +182,11 @@ for ai = 1:length(seqALPHA);
             
             %% Forces
             
-            [vecCL(valTIMESTEP,ai),vecCDI(valTIMESTEP,ai),vecE(valTIMESTEP,ai)] = ...
-                                    fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, vecUINF, vecDVELESWP,...
-                                    vecDVEMCSWP, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE,...
-                                    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, ...
-                                    vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, vecDVEWING);
+            [vecCL(valTIMESTEP,ai), vecCDI(valTIMESTEP,ai), vecE(valTIMESTEP,ai)] = ...
+                fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, vecUINF, vecDVELESWP,...
+                vecDVEMCSWP, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE,...
+                valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, ...
+                vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, vecDVEWING);
             
             
         end
@@ -200,10 +197,10 @@ fprintf('\n');
 toc
 %% Plotting
 
-% if flagPLOT == 1
-%     [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
-%     [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
-%     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
+if flagPLOT == 1
+    [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
+    [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
+    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 
 %     figure(1);
 %     plot(1:valTIMESTEP, eltime)
@@ -221,7 +218,7 @@ toc
 %     grid on
 %     axis tight
 
-% end
+end
 
 %% Viscous wrapper
 
