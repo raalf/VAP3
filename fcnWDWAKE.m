@@ -1,4 +1,4 @@
-function [matWD, matWR] = fcnWDWAKE(all_DVEs, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM)
+function [matWD, vecWR] = fcnWDWAKE(all_DVEs, matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM)
 % Creates the Wake D-matrix, for updating the vorticity coefficients
 % for the wake to account for stretching.
 
@@ -198,7 +198,7 @@ r_circ_tip = [-vecWKGAM(tip2); vecWKGAM(tip4)];
 % END Circulation equations at wingtip ----------------------------------------------------------------------------------
 
 matWD = [vort; circ; vort_sym; circ_tip];
-matWR = [r_vort; r_circ; r_vort_sym; r_circ_tip];
+vecWR = [r_vort; r_circ; r_vort_sym; r_circ_tip];
 
 end
 

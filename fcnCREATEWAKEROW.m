@@ -25,7 +25,7 @@ matWVLST = cat(1, matWVLST, newvertices);
 matWCOEFF = cat(1, matWCOEFF, matCOEFF(vecDVETE>0,:));
 vecWDVEHVCRD(end+1:end+len,1) = wdve_eta;
 vecWDVEPANEL = cat(1, vecWDVEPANEL, vecDVEPANEL(vecDVETE>0));
-vecWK = cat(1, vecWK, vecK);
+vecWK = cat(1, vecWK, vecK(vecDVETE>0));
 
 if valWNELE - len == 0
     [ matWADJE, vecWDVESYM, vecWDVETIP, ~, ~ ] = fcnDVEADJT(matNPNEWWAKE(:,:,1), matNPNEWWAKE(:,:,2), matNPNEWWAKE(:,:,3), matNPNEWWAKE(:,:,4), valWNELE, vecWDVEPANEL, vecSYM );
