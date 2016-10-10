@@ -1,8 +1,6 @@
 clc
 clear
 
-tic
-
 disp('===========================================================================');
 disp('VAP (Based on FreeWake 2015)');
 disp('Running Version 2016.09  .                             .');
@@ -34,6 +32,8 @@ strFILE = 'inputs/VAP christmas.txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnVAPREAD(strFILE);
 
+vecM = [3 3 3 3 3 3 2]';
+seqALPHA = [5 7];
 % strFILE = 'inputs/input.txt';
 % strFILE = 'inputs/Config 1.txt';
 % strFILE = 'inputs/Config 2.txt';
@@ -46,7 +46,7 @@ strFILE = 'inputs/VAP christmas.txt';
 
 
 valMAXTIME = 10;
-flagRELAX = 1;
+flagRELAX = 0;
 
 flagPLOT = 1;
 flagVERBOSE = 1;
@@ -71,6 +71,12 @@ valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
 [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER0, matVLST0, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecSYM);
 
 %% Alpha Loop
+
+% Preallocating for a turbo-boost in performance
+vecCL = zeros(valMAXTIME, length(seqALPHA));
+vecCDI = zeros(valMAXTIME, length(seqALPHA));
+vecE = zeros(valMAXTIME, length(seqALPHA));
+
 for ai = 1:length(seqALPHA);
     fprintf('\nAlpha = %0.3f', seqALPHA(ai));
     valALPHA = deg2rad(seqALPHA(ai));
@@ -185,43 +191,116 @@ for ai = 1:length(seqALPHA);
             
             %% Forces
             
-            [vecCL(valTIMESTEP,ai), vecCDI(valTIMESTEP,ai), vecE(valTIMESTEP,ai)] = ...
+            [vecCL(valTIMESTEP,ai), vecCDI(valTIMESTEP,ai), vecE(valTIMESTEP,ai), vecDVENFREE, vecDVENIND, ...
+                vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = ...
                 fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, vecUINF, vecDVELESWP,...
                 vecDVEMCSWP, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE,...
                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, ...
-                vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, vecDVEWING);
+                vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, ...
+                vecDVEWING, vecN, vecM, vecDVEPANEL);
             
         end
+        tic
+        %% Viscous wrapper
+        valCL = vecCL(end,ai);
+        
+        q_inf = valWEIGHT/(valCL*valAREA);
+        valVINF = sqrt(2*q_inf/valDENSITY);
+                
+        % Summing freestream and induced forces of each DVE
+        % This will NOT work with rotors, it does not take into
+        % account freestream! UINF^2*AREA should be the denominator
+        vecDVECN = ((vecDVENFREE + vecDVENIND).*2)./(vecDVEAREA);
+        vecDVECL = ((vecDVELFREE + vecDVELIND).*2)./(vecDVEAREA);
+        vecDVECY = ((vecDVESFREE + vecDVESIND).*2)./(vecDVEAREA);
+        
+        [ledves, ~, ~] = find(vecDVELE > 0);
+        lepanels = vecDVEPANEL(ledves);
+        
+        vecCNDIST = [];
+        vecCLDIST = [];
+        vecCYDIST = [];
+        matXYZDIST = [];
+        matLEDVEDIST = [];
+        
+        for i = 1:max(vecDVEWING)
+            
+            %% Getting the CL, CY, CN distribution
+            idxdve = ledves(vecDVEWING(ledves) == i);
+            idxpanel = lepanels(vecDVEWING(ledves) == i);
+            
+            m = vecM(idxpanel);
+            if any(m - m(1))
+                disp('Problem with wing chordwise elements.');
+                break
+            end
+            
+            m = m(1);
+            
+            % Matrix of how much we need to add to an index to get the next chordwise element
+            % It is done this way because n can be different for each panel. Unlike in the wake,
+            % we can't just add a constant value to get to the same spanwise location in the next
+            % row of elements
+            tempm = repmat(vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel),1);
+            
+            rows = repmat(idxdve,1,m) + tempm;
+            
+            vecCNDIST = [vecCNDIST; sum(vecDVECN(rows),2)];
+            vecCLDIST = [vecCLDIST; sum(vecDVECL(rows),2)];
+            vecCYDIST = [vecCYDIST; sum(vecDVECY(rows),2)];
+            
+            % The average coordinates for this row of elements
+            matXYZDIST = [matXYZDIST; mean(permute(reshape(matCENTER(rows,:)',3,[],m),[2 1 3]),3)];
+            
+            % The leading edge DVE for the distribution
+            matLEDVEDIST = [matLEDVEDIST; idxdve];
+        
+            %% Viscous effects
+            
+            re = valVINF.*2.*mean(vecDVEHVCRD(rows),2)./valKINV;
+            
+            for j = 1:length(idxpanel)
+                pan = idxpanel(j);
+                airfoil = dlmread(strcat('airfoils/airfoil',num2str(vecAIRFOIL(pan)),'.dat'),'\t', 1, 0);
+                
+                HiRe = airfoil(end,4);
+                LoRe = airfoil(1,4);
+                
+%                 cl = vecDVECN
+                
+            end
+            
+        end 
+        toc
     end
 end
 
 fprintf('\n');
-toc
 
 %% Plotting
 
-if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
-    [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
-    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
-    
-    %     figure(1);
-    %     plot(1:valTIMESTEP, eltime)
-    %     xlabel('Timestep','FontSize',15)
-    %     ylabel('Time per timestep (s)', 'FontSize',15)
-    %     box on
-    %     grid on
-    %     axis tight
-    %
-    %     figure(3);
-    %     plot(1:valTIMESTEP, ttime)
-    %     xlabel('Timestep','FontSize',15)
-    %     ylabel('Total time (s)', 'FontSize',15)
-    %     box on
-    %     grid on
-    %     axis tight
-    
-end
+% if flagPLOT == 1
+%     [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
+%     [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
+%     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
+
+%     figure(1);
+%     plot(1:valTIMESTEP, eltime)
+%     xlabel('Timestep','FontSize',15)
+%     ylabel('Time per timestep (s)', 'FontSize',15)
+%     box on
+%     grid on
+%     axis tight
+%
+%     figure(3);
+%     plot(1:valTIMESTEP, ttime)
+%     xlabel('Timestep','FontSize',15)
+%     ylabel('Total time (s)', 'FontSize',15)
+%     box on
+%     grid on
+%     axis tight
+
+% end
 
 %% Viscous wrapper
 
