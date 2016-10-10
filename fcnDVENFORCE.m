@@ -73,15 +73,19 @@ en = tempb.*repmat((1./uxs),1,3);
 el = repmat([-vecUINF(3)/norm(vecUINF) 0 vecUINF(1)/norm(vecUINF)],[valNELE,1]); %does this work with beta?
 
 % the side force direction eS=UxeL/|UxeL|
-clear tempa tempb
-tempa = cross(el,repmat(vecUINF,[valNELE,1]),2);
-es = tempa.*1./ repmat((sqrt(sum(abs(tempa).^2,2)) ),1,3);
+% clear tempa tempb
 
-clear tempa
+tempc = cross(el,repmat(vecUINF,[valNELE,1]),2);
+es = tempc.*1./ repmat((sqrt(sum(abs(tempc).^2,2)) ),1,3);
+
+% clear tempa
 %% normal force due to freestream
 
 % N_free = (A*2*eta + C/3*2*eta*eta*eta)*UxS;
 % if first row, A=A, B=B, C=C
+A = zeros(1,valNELE);
+B = zeros(1,valNELE);
+C = zeros(1,valNELE);
 
 A(idx1) = matCOEFF(idx1,1);
 B(idx1) = matCOEFF(idx1,2);
@@ -92,6 +96,7 @@ idxf = matADJE((ismember(matADJE(:,1), dvenum) & matADJE(:,2) == 1),3); %upstrea
 A(idx1 ==0) = (matCOEFF(idx1==0,1)-matCOEFF(idxf,1));
 B(idx1 ==0) = (matCOEFF(idx1==0,2)-matCOEFF(idxf,2));
 C(idx1 ==0) = (matCOEFF(idx1==0,3)-matCOEFF(idxf,3));
+
 
 nfree = ((A .*2 .* vecDVEHVSPN'+  C./3.*2.*vecDVEHVSPN'.*vecDVEHVSPN'.*vecDVEHVSPN') .*uxs')';
 
@@ -164,11 +169,11 @@ if any(idx1 ==0)
 end
 
 % perform integration
-tempA = cross(w,repmat(s,[1,1,3]),2);
+tempd = cross(w,repmat(s,[1,1,3]),2);
 gamma(:,1) = A - B.*eta8' + C.*eta8'.*eta8';
 gamma(:,2) = A;
 gamma(:,3) = A + B.*eta8' + C.*eta8'.*eta8';
-tempr = tempA .* repmat(permute(gamma,[1 3 2]),1,3,1);
+tempr = tempd .* repmat(permute(gamma,[1 3 2]),1,3,1);
 
 %//The resulting induced force is
 %//determined by numerically integrating forces acros element

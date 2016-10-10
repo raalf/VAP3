@@ -46,9 +46,9 @@ dgamma2 = [ones(len,1) -2.*vecWDVEHVSPN(idx5)].*-1;
 
 % Getting appropriate row and column numbers to assign the above
 % dgamma1 and dgamma2 into the D-matrix
-col1 = reshape([repmat((idx3.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
-col2 = reshape([repmat((idx5.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
-rows = reshape(repmat([1:len]',1,2)',[],1);
+col1 = reshape((repmat((idx3.*2)-1,1,2) + repmat((0:1), len,1))',[],1);
+col2 = reshape((repmat((idx5.*2)-1,1,2) + repmat((0:1), len,1))',[],1);
+rows = reshape(repmat((1:len)',1,2)',[],1);
 
 % vort = zeros(len,nelements*2);
 vort = sparse(len, nelements*2);
@@ -97,8 +97,8 @@ for i = 1:length(udsplit2)
     % DVEs on right of split
     gamma2s = [-vecWDVEHVSPN(dsplit4(idx)) (2/3).*vecWDVEHVSPN(dsplit4(idx)).^2].*-1;
     
-    col1 = reshape([repmat((udsplit2(i).*2)-1,1,2) + repmat([0:1], 1, 1)]',[],1);
-    col2 = reshape([repmat((dsplit4(idx).*2)-1,1,2) + repmat([0:1], len2, 1)]',[],1);
+    col1 = reshape((repmat((udsplit2(i).*2)-1,1,2) + repmat((0:1), 1, 1))',[],1);
+    col2 = reshape((repmat((dsplit4(idx).*2)-1,1,2) + repmat((0:1), len2, 1))',[],1);
     
     circ(sub2ind(size(circ),repmat(count,length(col1),1),col1)) = reshape(gamma1s',[],1);
     circ(sub2ind(size(circ),repmat(count,length(col2),1),col2)) = reshape(gamma2s',[],1);
@@ -116,9 +116,11 @@ end
 d2202 = idx14(idx13 == 1);
 
 % Finding the DVE numbers with local edge 4 neighbouring the above corresponding DVEs
-[idx27,~] = find(repmat(matWADJE(idx1,1),1,length(d2202)) == repmat(d2202',length(matWADJE(idx1,1)),1));
-d2204 = matWADJE(matWADJE(:,2) == 2,3);
-d2204 = d2204(idx27);
+% % [idx27,~] = find(repmat(matWADJE(idx1,1),1,length(d2202)) == repmat(d2202',length(matWADJE(idx1,1)),1));
+% % d2204 = matWADJE(matWADJE(:,2) == 2,3);
+% % d2204 = d2204(idx27);
+d2204 = matWADJE(matWADJE(:,2)==2&ismember(matWADJE(:,1),d2202),3);
+
 
 len3 = length(d2204);
 
@@ -127,9 +129,9 @@ gamma2 = [-vecWDVEHVSPN(d2204) (2/3).*vecWDVEHVSPN(d2204).^2].*-1;
 
 % Getting appropriate row and column numbers to assign the above
 % gamma1 and gamma2 into the D-matrix
-col1 = reshape([repmat((d2202.*2)-1,1,2) + repmat([0:1], len3,1)]',[],1);
-col2 = reshape([repmat((d2204.*2)-1,1,2) + repmat([0:1], len3,1)]',[],1);
-rows = reshape(repmat([1:len3]',1,2)',[],1) + count-1;
+col1 = reshape((repmat((d2202.*2)-1,1,2) + repmat((0:1), len3,1))',[],1);
+col2 = reshape((repmat((d2204.*2)-1,1,2) + repmat((0:1), len3,1))',[],1);
+rows = reshape(repmat((1:len3)',1,2)',[],1) + count-1;
 
 circ(sub2ind(size(circ),rows,col1)) = reshape(gamma1',[],1);
 circ(sub2ind(size(circ),rows,col2)) = reshape(gamma2',[],1);
@@ -159,8 +161,8 @@ if ~isempty(vecWDVESYM) == 1
     
     % Getting appropriate row and column numbers to assign the above
     % dgamma1 and dgamma2 into the D-matrix
-    col3 = reshape([repmat((idx10.*2)-1,1,2) + repmat([0:1], len,1)]',[],1);
-    rows = reshape(repmat([1:len]',1,2)',[],1);
+    col3 = reshape((repmat((idx10.*2)-1,1,2) + repmat((0:1), len,1))',[],1);
+    rows = reshape(repmat((1:len)',1,2)',[],1);
     
     %     vort_sym = zeros(len,nelements*2);
     vort_sym = sparse(len, nelements*2);
@@ -181,10 +183,10 @@ gamma1t = [vecWDVEHVSPN(tip2) (2/3).*vecWDVEHVSPN(tip2).^2];
 gamma2t = [-vecWDVEHVSPN(tip4) (2/3).*vecWDVEHVSPN(tip4).^2];
 gammat = [gamma1t; gamma2t];
 
-col1 = reshape([repmat((tip2.*2)-1,1,2) + repmat([0:1], length(tip2),1)]',[],1);
-col2 = reshape([repmat((tip4.*2)-1,1,2) + repmat([0:1], length(tip4),1)]',[],1);
+col1 = reshape((repmat((tip2.*2)-1,1,2) + repmat((0:1), length(tip2),1))',[],1);
+col2 = reshape((repmat((tip4.*2)-1,1,2) + repmat((0:1), length(tip4),1))',[],1);
 col = [col1; col2];
-rows = reshape(repmat([1:(length(tip2) + length(tip4))]',1,2)',[],1);
+rows = reshape(repmat((1:(length(tip2) + length(tip4)))',1,2)',[],1);
 
 % circ_tip = zeros(length(tip2) + length(tip4), nelements*2);
 circ_tip = sparse(length(tip2) + length(tip4), nelements*2);

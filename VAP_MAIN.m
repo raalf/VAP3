@@ -37,9 +37,9 @@ disp(' ');
 % valMAXTIME = 5;
 % flagRELAX = 0;
 
-% strFILE = 'inputs/input.txt';
+strFILE = 'inputs/input.txt';
 % strFILE = 'inputs/Config 1.txt';
-strFILE = 'inputs/Config 2.txt';
+% strFILE = 'inputs/Config 2.txt';
 
 % strFILE = 'input.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...

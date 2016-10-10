@@ -1,4 +1,4 @@
-function [valCL, valCLF, valCLI, valCY, valCYF, valCYI]= fcnWINGNFORCE(liftfree,liftind,sidefree,sideind,vecUINF,valAREA,vecSYM,valBETA)
+function [valCL, valCLF, valCLI, valCY, valCYF, valCYI,valCDI,valE]= fcnWINGNFORCE(liftfree,liftind,sidefree,sideind,inddrag,vecUINF,valAREA,valSPAN,vecSYM,valBETA)
 %% Wing Normal Force
 % this routine adds up the DVE's normal forces in order to compute the
 % total wing normal forces/density and coefficients based on free stream
@@ -29,12 +29,14 @@ ntfree(2) = sum(sidefree);
 ntind(1) = sum(liftind);
 ntind(2) = sum(sideind);
 
+inddrag = sum(inddrag);
 %double the force if we are using symmetry. This only works with sym for
 %the whole system
 if any(vecSYM) == 1 && valBETA ==0 %not sure why beta has to be zero 
     ntfree(1) = ntfree(1)*2; %why dont we double the side force?
     ntind(1) = ntind(1)*2;
     ntind(2) = ntind(2)*2;
+    inddrag = inddrag*2;
 end
 
 %non-dimensionalize
@@ -46,3 +48,8 @@ valCYF = ntfree(2)/q;
 
 valCLI = ntind(1)/q;
 valCYI = ntind(2)/q;
+
+valCDI = inddrag/q;
+
+AR = (valSPAN*valSPAN)/valAREA;
+valE = (valCL*valCL)/ (pi*AR*valCDI);
