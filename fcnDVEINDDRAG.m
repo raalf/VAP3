@@ -2,8 +2,8 @@
 function [inddrag]=fcnDVEINDDRAG(matCOEFF,matDVE,matVLST,vecUINF,vecDVEHVSPN,vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
     valWSIZE, valTIMESTEP,vecSYM,vecDVEWING )
-% Induced dve drag. Function finds induced drag values on each te element. Values are not
-% non-dimensionalized to q yet.
+% Induced dve drag. Function finds induced drag values on each te element. Outputs are not
+% non-dimensionalized to q.
 
 
 
