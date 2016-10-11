@@ -40,6 +40,14 @@ a1te = zeros(len,3);
 b1te = zeros(len,3);
 c1te = zeros(len,3);
 
+a2le = zeros(len,3);
+b2le = zeros(len,3);
+c2le = zeros(len,3);
+
+a2te = zeros(len,3);
+b2te = zeros(len,3);
+c2te = zeros(len,3);
+
 endpoints = zeros(len,3,2);
 
 %% Leading Edge
@@ -74,10 +82,11 @@ idx2 = dvetype == 0 | dvetype == -2;
 [a1te(idx2,:), b1te(idx2,:), c1te(idx2,:)] = fcnBOUNDIND(vecDVEHVSPN(dvenum(idx2)), vecDVETESWP(dvenum(idx2)), xsiA(idx2,:));
 
 % Vortex sheet at the trailing edge
-idx3 = dvetype ~= 3 | dvetype ~= -3;
-[a2te, b2te, c2te] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
+idx3 = dvetype ~= 3 & dvetype ~= -3;
+[a2te(idx3,:), b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
 
 %% Summing together the influences from the sheets and filaments
+
 
 a3xi = a1le + a2le - a1te - a2te;
 b3xi = b1le + b2le - b1te - b2te;
