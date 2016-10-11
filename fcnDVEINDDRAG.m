@@ -30,8 +30,7 @@ C = matCOEFF(idte,3);
 % 80% of halfspan of TE elements only
 eta8 = vecDVEHVSPN(idte).*0.8;
 
-%TE vectors of TE elements only %points could be slightly wrong (or maybe geom
-%is different)
+%TE vectors of TE elements only
 s =( matVLST(matDVE(idte,3),:) -matVLST(matDVE(idte,4),:) )  ./ repmat((vecDVEHVSPN(idte).*2),1,3); %?? why is the S vector non-dim. to the span?
 
 % element TE edge midpoint of TE elements only
