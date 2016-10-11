@@ -20,9 +20,9 @@ matVDOWN(idx2,1:3) = zeros(sum(idx2),3);
 
 % case 3 - 2nd Oldest Wake Elements
 % idx3, find downstream MP which is on the idx2 list
-% (Upstream, Current, Current)
+% (Current, Current, Current)
 idx3 = ismember(vecWMPDN,find(idx2));
-matVUP(idx3,1:3) = matWDVEMPIND(vecWMPUP(idx3),1:3);
+matVUP(idx3,1:3) = matWDVEMPIND(idx3,1:3);
 matVNOW(idx3,1:3) = matWDVEMPIND(idx3,1:3);
 matVDOWN(idx3,1:3) = matWDVEMPIND(idx3,1:3);
 

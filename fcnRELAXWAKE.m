@@ -1,5 +1,5 @@
 function [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
-    vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWDVENORM, ...
+    vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
     matWVLST, matWDVE, idxWVLST, vecWK] = fcnRELAXWAKE(matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
     matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVEHVSPN, vecDVELESWP, ...
     vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVELESWP, vecWDVEPITCH, ...
@@ -25,7 +25,7 @@ matWCENTER = matWDVEMPRLX(matWDVEMPIDX(:,1),:)+(0.5*(matWDVEMPRLX(matWDVEMPIDX(:
 matWDVELEMPIDX = flipud(reshape(1:valWNELE,valWSIZE,[])');
 matWDVELEMP = nan(valWNELE,3);
 for wakerow = 1:valTIMESTEP
-    if wakerow == 1 || wakerow == valTIMESTEP % freshest row of wake, closest to wing TE
+    if wakerow == 1% || wakerow == valTIMESTEP % freshest row of wake, closest to wing TE
         matWDVELEMP(matWDVELEMPIDX(wakerow,:),(1:3)) = permute(mean(reshape(matWVLST(matWDVE(matWDVELEMPIDX(wakerow,:),[1,2]),:)',3,[],2),3),[3 2 1]);
     else % rest of the wake dves
         prevLE = matWDVELEMP(matWDVELEMPIDX(wakerow-1,:),(1:3));
@@ -38,12 +38,21 @@ end
 crdvec = matWCENTER - matWDVELEMP;
 % half span vector, control point -> right edge midpoint
 spnvec = matWDVEMPRLX(matWDVEMPIDX(:,2),:) - matWCENTER;
+
+% fix oldest wake
+semiinfvec = matWCENTER(matWDVELEMPIDX(end-1,:),:)-matWDVELEMP(matWDVELEMPIDX(end-1,:),:);
+matWCENTER(matWDVELEMPIDX(end,:),:) = matWDVELEMP(matWDVELEMPIDX(end,:),:)+semiinfvec;
+crdvec(matWDVELEMPIDX(end,:),:) = crdvec(matWDVELEMPIDX(end-1,:),:);
+spnvec(matWDVELEMPIDX(end,:),:) = spnvec(matWDVELEMPIDX(end-1,:),:);
+
 % Calculate four corner point by adding vectors to control point coordinates
 WP1 = matWCENTER - crdvec - spnvec;
 WP2 = matWCENTER - crdvec + spnvec;
 WP3 = matWCENTER + crdvec + spnvec;
 WP4 = matWCENTER + crdvec - spnvec;
+%%
 
+%%
 % update relax wake dves
 [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
     vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWDVENORM, ...
