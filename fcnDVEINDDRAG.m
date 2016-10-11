@@ -1,5 +1,5 @@
 
-function [inddrag]=fcnDVEINDDRAG(matCOEFF,matDVE,matVLST,vecUINF,vecDVEHVSPN,vecDVETE,...
+function [inddrag]=fcnDVEINDDRAG2(matCOEFF,matDVE,matVLST,vecUINF,vecDVEHVSPN,vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
     valWSIZE, valTIMESTEP,vecSYM,vecDVEWING )
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
@@ -136,32 +136,39 @@ w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', valWSIZE*3, [])',1),3,[])';
 %w_wake is [num tedves x 3 x k]
 
 %% INTEGRATION
-% 		//Kutta-Joukowski at left edge
-tempA = cross(w_wake(:,:,1),s,2);			%// w1xS
-gamma1  = A - B.*eta8 + C.*eta8.*eta8;		%//gamma1
-R1 = tempA.*repmat(gamma1,1,3);
+% //Kutta-Joukowski at 3 edges (left, center, right)
+tempa = cross(w_wake,repmat(s,[1 1 3]),2);
 
-% 		//Kutta-Joukowski at center
-tempA = cross(w_wake(:,:,2),s,2);				%// woxS
-gammao  = A;
-Ro = tempA.*repmat(gammao,1,3);
+gamma(:,1) = A - B.*eta8 + C.*eta8.*eta8;
+gamma(:,2) = A;
+gamma(:,3) =  A + B.*eta8 + C.*eta8.*eta8;
 
-%  		//Kutta-Joukowski at right edge
-tempA = cross(w_wake(:,:,3),s,2);				%// w2xS
-gamma2  = A + B.*eta8 + C.*eta8.*eta8;
-R2 = tempA.*repmat(gamma2,1,3);
+tempr = tempa.*repmat(permute(gamma,[1 3 2]),[1,3,1]);
+% gamma1  = A - B.*eta8 + C.*eta8.*eta8;
+% R1 = tempa(:,:,1).*repmat(gamma(:,1),1,3);
+
+% gammao  = A;
+% Ro = tempa(:,:,2).*repmat(gamma(:,2),1,3);
+
+% gamma2  = A + B.*eta8 + C.*eta8.*eta8;
+% R2 = tempa(:,:,3).*repmat(gamma(:,3),1,3);
+
+% simpsons rule:
+R(:,:)  = (tempr(:,:,1)+4.*tempr(:,:,2)+tempr(:,:,3)).*repmat(eta8,[1 3])./3;	
+% R(:,:)  = (R1(:,:)+4*Ro(:,:)+R2(:,:)).*repmat(eta8,1,3)./3;	
+
+% plus overhanging parts:
+R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDVEHVSPN(idte)-eta8,[1 3])./3);
+% R(:,:) = R(:,:)+((7.*R1(:,:)-8.*Ro(:,:)+7.*R2(:,:)).*repmat((vecDVEHVSPN(idte)-eta8),1,3)./3);
 
 % R(:,1)  = (R1(:,1)+4*Ro(:,1)+R2(:,1)).*eta8./3;			%//Rx
 % R(:,2)  = (R1(:,2)+4*Ro(:,2)+R2(:,2)).*eta8./3;			%//Ry
 % R(:,3)  = (R1(:,3)+4*Ro(:,3)+R2(:,3)).*eta8./3;			%//Rz
 
-R(:,:)  = (R1(:,:)+4*Ro(:,:)+R2(:,:)).*repmat(eta8,1,3)./3;	
 % 		//plus overhanging parts
 % R(:,1) = R(:,1)+((7.*R1(:,1)-8.*Ro(:,1)+7.*R2(:,1)).*(vecDVEHVSPN(idte)-eta8)./3); %//Rx
 % R(:,2) = R(:,2)+((7.*R1(:,2)-8.*Ro(:,2)+7.*R2(:,2)).*(vecDVEHVSPN(idte)-eta8)./3); %//Ry
 % R(:,3) = R(:,3)+((7.*R1(:,3)-8.*Ro(:,3)+7.*R2(:,3)).*(vecDVEHVSPN(idte)-eta8)./3); %//Rz
-
-R(:,:) = R(:,:)+((7.*R1(:,:)-8.*Ro(:,:)+7.*R2(:,:)).*repmat((vecDVEHVSPN(idte)-eta8),1,3)./3);
 %% FORCES
 inddrag(:,1) = dot(R,repmat(ed,size(R,1),1),2);
 
