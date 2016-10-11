@@ -108,12 +108,9 @@ dvetype = ones(length(dvenum),1);
 
 dvetype(ismember(dvenum, newest_row)) = 1;%FW has this as type 1, but should be 2?
 
-%setting singfct for current timestep = 0
-vecWK1 = vecWK(1);
-clear vecWK
-vecWK = zeros(size(dvenum,1),1);
-vecWK(ismember(dvenum, newest_row) == 0) = vecWK1;
-vecWK(ismember(dvenum, newest_row)) = 0;
+%setting singfct for post-trailing edge row to 0
+tempwk = vecWK(dvenum);
+tempwk(ismember(dvenum, newest_row)) = 0;
 
 % Oldest row of wake DVEs are semi-infinite
 oldest_row = [1:valWSIZE]';
@@ -125,7 +122,7 @@ else
 end
 
 %get all velocities %need to set singfct = 0 for le row of elements!!!
-[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, zeros(size(vecWDVELESWP)), zeros(size(vecWDVETESWP)), vecSYM);
+[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, tempwk, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, zeros(size(vecWDVELESWP)), zeros(size(vecWDVETESWP)), vecSYM);
 
 % undo reshape and permute
 w_total = permute(reshape(w_ind,[],3,3),[1 3 2]);
