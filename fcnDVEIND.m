@@ -40,9 +40,9 @@ a1te = zeros(len,3);
 b1te = zeros(len,3);
 c1te = zeros(len,3);
 
-a2le = zeros(len,3);
-b2le = zeros(len,3);
-c2le = zeros(len,3);
+% a2le = zeros(len,3);
+% b2le = zeros(len,3);
+% c2le = zeros(len,3);
 
 a2te = zeros(len,3);
 b2te = zeros(len,3);
@@ -55,9 +55,12 @@ endpoints = zeros(len,3,2);
 % Leading edge coordinates, used to find the midpoint of the leading edge
 % A vector is then made between this midpoint and the field point, which is
 % then rotated into the DVE reference frame.
-endpoints(:,:,1) = matVLST(matDVE(dvenum,1),:); % Left leading edge point
-endpoints(:,:,2) = matVLST(matDVE(dvenum,2),:); % Right leading edge point
-xsiA = fcnGLOBSTAR(fpg - mean(endpoints,3), vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+
+% These line are commented out for speed boost
+% endpoints(:,:,1) = matVLST(matDVE(dvenum,1),:); % Left leading edge point
+% endpoints(:,:,2) = matVLST(matDVE(dvenum,2),:); % Right leading edge point
+% xsiA = fcnGLOBSTAR(fpg - mean(endpoints,3), vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:)+matVLST(matDVE(dvenum,2),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
 
 % Bound vortex on the leading edge
 idx1 = dvetype == 0 | dvetype == 2 | dvetype == -3 | dvetype == -4;
@@ -66,16 +69,19 @@ idx1 = dvetype == 0 | dvetype == 2 | dvetype == -3 | dvetype == -4;
 % Vortex sheet at leading edge
 [a2le, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum));
 
-clear endpoints
+% clear endpoints
 
 %% Trailing Edge
 
 % Trailing edge coordinates, used to find the midpoint of the trailing edge
 % A vector is then made between this midpoint and the field point, which is
 % then rotated into the DVE reference frame.
-endpoints(:,:,1) = matVLST(matDVE(dvenum,4),:); % Left leading edge point
-endpoints(:,:,2) = matVLST(matDVE(dvenum,3),:); % Right leading edge point
-xsiA = fcnGLOBSTAR(fpg - mean(endpoints,3), vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+
+% These line are commented out for speed boost
+% endpoints(:,:,1) = matVLST(matDVE(dvenum,4),:); % Left leading edge point
+% endpoints(:,:,2) = matVLST(matDVE(dvenum,3),:); % Right leading edge point
+% xsiA = fcnGLOBSTAR(fpg - mean(endpoints,3), vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,3),:)+matVLST(matDVE(dvenum,4),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
 
 % Bound vortex at the trailing edge
 idx2 = dvetype == 0 | dvetype == -2;
