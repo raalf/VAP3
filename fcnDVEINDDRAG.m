@@ -14,13 +14,7 @@ idte = (vecDVETE == 3);
 %number of te elements
 numte = sum(idte);
 
-%drag force direction
-ed = vecUINF;
-
 %ABC for TE elements only
-A = zeros(1,numte);
-B = zeros(1,numte);
-C = zeros(1,numte);
 
 A = matCOEFF(idte,1);
 B = matCOEFF(idte,2);
@@ -169,6 +163,6 @@ R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDV
 % R(:,2) = R(:,2)+((7.*R1(:,2)-8.*Ro(:,2)+7.*R2(:,2)).*(vecDVEHVSPN(idte)-eta8)./3); %//Ry
 % R(:,3) = R(:,3)+((7.*R1(:,3)-8.*Ro(:,3)+7.*R2(:,3)).*(vecDVEHVSPN(idte)-eta8)./3); %//Rz
 %% FORCES
-inddrag(:,1) = dot(R,repmat(ed,size(R,1),1),2);
+inddrag(:,1) = dot(R,repmat(vecUINF,size(R,1),1),2);
 
 end %end function
