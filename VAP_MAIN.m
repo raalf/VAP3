@@ -4,10 +4,14 @@ clear
 warning off
 
 disp('===========================================================================');
-disp('VAP (Based on FreeWake 2015)');
-disp('Running Version 2016.09  .                             .');
-disp('Includes stall model    //                             \\');
-disp('No trim solution       //                               \\');
+disp('+---------------+');
+disp('| RYERSON       |       VAP (Based on FreeWake 2015)');
+disp('| APPLIED       |       Running Version 2016.09');
+disp('| AERODYNAMICS  |       Includes stall model');
+disp('| LABORATORY OF |       No trim solution');
+disp('| FLIGHT        |        .                             .');
+disp('+---------------+       //                             \\');
+disp('                       //                               \\');
 disp('                      //                                 \\');
 disp('                     //                _._                \\');
 disp('                  .---.              .//|\\.              .---.');
@@ -47,10 +51,10 @@ strFILE = 'inputs/Config 2.txt';
     valINTERF] = fcnFWREAD(strFILE);
 
 
-valMAXTIME = 50;   
-flagRELAX = 1;
-
-flagPLOT = 1;
+valMAXTIME  = 500;   
+flagRELAX   = 0;
+flagPRINT   = 1;
+flagPLOT    = 0;
 flagVERBOSE = 1;
 
 %% Discretize geometry into DVEs
@@ -79,8 +83,8 @@ vecCL = zeros(valMAXTIME, length(seqALPHA));
 vecCDI = zeros(valMAXTIME, length(seqALPHA));
 vecE = zeros(valMAXTIME, length(seqALPHA));
 
-for ai = 1:length(seqALPHA);
-    fprintf('\nAlpha = %0.3f', seqALPHA(ai));
+for ai = 1:length(seqALPHA)
+    
     valALPHA = deg2rad(seqALPHA(ai));
     
     % This is done for when we are using a parfor loop
@@ -89,6 +93,11 @@ for ai = 1:length(seqALPHA);
     matNPVLST = matNPVLST0;
     
     for bi = 1:length(seqBETA)
+        
+        fprintf('      ANGLE OF ATTACK = %0.3f DEG\n',seqALPHA(ai));
+        fprintf('    ANGLE OF SIDESLIP = %0.3f DEG\n',seqBETA(bi));
+        fprintf('\n');
+        
         valBETA = deg2rad(seqBETA(bi));
         
         % Determining freestream vector
@@ -200,6 +209,14 @@ for ai = 1:length(seqALPHA);
                 valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, ...
                 vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, ...
                 vecDVEWING, vecN, vecM, vecDVEPANEL);
+            
+            if flagPRINT == 1 && valTIMESTEP == 1
+                fprintf(' TIMESTEP    CL          CDI\n'); %header
+                fprintf('----------------------------------------------\n'); 
+            end
+            if flagPRINT == 1
+                fprintf('  %4d     %0.5f     %0.5f\n',valTIMESTEP,vecCL(valTIMESTEP,ai),vecCDI(valTIMESTEP,ai)); %valTIMESTEP
+            end
             
 %             fprintf('\n\tTimestep = %0.0f', valTIMESTEP);
 %             fprintf('\tCL = %0.5f',vecCL(valTIMESTEP,ai));
