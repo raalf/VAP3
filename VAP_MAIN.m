@@ -51,11 +51,12 @@ strFILE = 'inputs/Config 2.txt';
     valINTERF] = fcnFWREAD(strFILE);
 
 
-valMAXTIME  = 500;   
-flagRELAX   = 0;
+valMAXTIME  = 10;   
+flagRELAX   = 1;
 flagPRINT   = 1;
-flagPLOT    = 0;
-flagVERBOSE = 1;
+flagPLOT    = 1;
+flagPLOTWAKEVEL = 1;
+flagVERBOSE = 0;
 
 %% Discretize geometry into DVEs
 
@@ -186,7 +187,7 @@ for ai = 1:length(seqALPHA)
                 
                 [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
                     vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
-                    matWVLST, matWDVE, idxWVLST, vecWK] = fcnRELAXWAKE(matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+                    matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
                     matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVEHVSPN, vecDVELESWP, ...
                     vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVELESWP, vecWDVEPITCH, ...
                     vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVEWING);
@@ -241,7 +242,10 @@ if flagPLOT == 1
     [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
     [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
-
+    
+    if flagPLOTWAKEVEL == 1
+        quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
+    end
 %     figure(1);
 %     plot(1:valTIMESTEP, eltime)
 %     xlabel('Timestep','FontSize',15)
