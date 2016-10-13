@@ -194,7 +194,8 @@ c27 = repmat(2,len,1);
 idx30 = abs(zeta_0) <= dbl_eps & abs(le_vect) > dbl_eps;
 G21(idx30) = 0;
 G21b(idx30) = b21(idx30).*beta1(idx30).*(0.5.*log(mu1_2(idx30)./mu1_1(idx30)) + G25b(idx30))./rho(idx30);
-G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log((mu1_2(idx30)+k(idx30))./(mu1_1(idx30)+k(idx30))) + G25c(idx30))./rho(idx30);
+% G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log((mu1_2(idx30)+k(idx30))./(mu1_1(idx30)+k(idx30))) + G25c(idx30))./rho(idx30);
+G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log((mu1_2(idx30))./(mu1_1(idx30))) + G25c(idx30))./rho(idx30);
 G22(idx30) = 0;
 G26(idx30) = 0;
 

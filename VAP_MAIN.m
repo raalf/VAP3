@@ -52,7 +52,7 @@ strFILE = 'inputs/Config 2.txt';
 
 matGEOM(2,5,2) = 0;
 
-valMAXTIME  = 75;   
+valMAXTIME  = 150;   
 flagRELAX   = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
