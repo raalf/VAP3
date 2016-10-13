@@ -50,8 +50,9 @@ strFILE = 'inputs/Config 2.txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
 
+matGEOM(2,5,2) = 0;
 
-valMAXTIME  = 10;   
+valMAXTIME  = 75;   
 flagRELAX   = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -183,6 +184,9 @@ for ai = 1:length(seqALPHA)
             [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
             
             %% Relaxing wake
+                [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER);
+    [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
+    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
             if valTIMESTEP > 2 && flagRELAX == 1
                 
                 [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
@@ -244,7 +248,9 @@ if flagPLOT == 1
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
     
     if flagPLOTWAKEVEL == 1
+        try
         quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
+        end
     end
 %     figure(1);
 %     plot(1:valTIMESTEP, eltime)

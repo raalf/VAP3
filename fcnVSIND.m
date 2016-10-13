@@ -110,24 +110,33 @@ mu3_2(idx31) = 0.0001.*hspan(idx31) + mu3_2(idx31);
 % 
 % G25b = zeros(len,1);
 % G25c = zeros(len,1);
-G26a = zeros(len,1);
+% G26a = zeros(len,1);
 G21b = zeros(len,1);
 G21c = zeros(len,1);
-
-
 
 G25b = -0.5.*log((k + zeta_0sq + t2s)./(k + zeta_0sq + t1s));
 G25c = -hspan.*log((k + zeta_0sq + t1s).*(k + zeta_0sq + t2s));
 
+
 idx70 = abs(t1) > dbl_eps;
-G25c(idx70) = G25c(idx70) + t1(idx70).*log(zeta_0(idx70) + t1s(idx70));
+% G25c(idx70) = G25c(idx70) + t1(idx70).*log(zeta_0(idx70) + t1s(idx70)); before speed boost
+G25c70 = G25c + t1.*log(zeta_0 + t1s); %speed boost without index
+G25c(idx70) = G25c70(idx70); %speed boost index
 
 idx71 = abs(t2) > dbl_eps;
-G25c(idx71) = G25c(idx71) - t2(idx71).*log(zeta_0(idx71) + t2s(idx71));
+% G25c(idx71) = G25c(idx71) - t2(idx71).*log(zeta_0(idx71) + t2s(idx71)); before speed boost
+G25c71 = G25c - t2.*log(zeta_0 + t2s); %speed boost without index
+G25c(idx71) = G25c71(idx71); %speed boost index
+
+
+
 
 % Eqn A2-9
 % G25 = (0.5.*log(k + t2.^2 + zeta_0sq)) - (0.5.*log(k + t1.^2 + zeta_0sq));
-G25 = (0.5.*log(t2s + zeta_0sq)) - (0.5.*log(t1s + zeta_0sq));
+% G25 = (0.5.*log(t2s + zeta_0sq)) - (0.5.*log(t1s + zeta_0sq)); before speed boost
+G25 = (log(t2s + zeta_0sq) - log(t1s + zeta_0sq))./2;
+
+
 
 % Eqn A2-3
 % G21 = ((beta1./(2.*rho)).*log(mu1_2) + (beta2./rho).*mu2_2) - ((beta1./(2.*rho)).*log(mu1_1) + (beta2./rho).*mu2_1);

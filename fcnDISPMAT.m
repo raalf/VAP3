@@ -14,9 +14,12 @@ matVDOWN(idx1,1:3) = matWDVEMPIND(vecWMPDN(idx1),1:3);
 % case 2 - Oldest Wake Elements, DO NOT RELAX
 % ([0,0,0],[0,0,0],[0,0,0])
 idx2 = isnan(vecWMPDN);
-matVUP(idx2,1:3) = zeros(sum(idx2),3);
-matVNOW(idx2,1:3) = zeros(sum(idx2),3);
-matVDOWN(idx2,1:3) = zeros(sum(idx2),3);
+% matVUP(idx2,1:3) = zeros(sum(idx2),3);
+% matVNOW(idx2,1:3) = zeros(sum(idx2),3);
+% matVDOWN(idx2,1:3) = zeros(sum(idx2),3);
+matVUP(idx2,1:3) = matWDVEMPIND(vecWMPUP(idx2),1:3);
+matVNOW(idx2,1:3) = matWDVEMPIND(vecWMPUP(idx2),1:3);
+matVDOWN(idx2,1:3) = matWDVEMPIND(vecWMPUP(idx2),1:3);
 
 % case 3 - 2nd Oldest Wake Elements
 % idx3, find downstream MP which is on the idx2 list
