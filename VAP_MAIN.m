@@ -51,6 +51,7 @@ strFILE = 'inputs/Config 2.txt';
     valINTERF] = fcnFWREAD(strFILE);
 
 matGEOM(2,5,2) = 0;
+vecN = [4 8]';
 
 valMAXTIME  = 150;   
 flagRELAX   = 1;

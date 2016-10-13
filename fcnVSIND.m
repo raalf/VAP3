@@ -79,10 +79,9 @@ mu2_2 = atan(zeta_0./t2) + atan((gamma2.*t2 + delta2)./(gamma1.*t2 + delta1 - rt
 
 %% Implementing special conditions
 
-idx_m21 = (t1s < dbl_eps);
-mu2_1(idx_m21) = (pi/2).*abs(zeta_0(idx_m21))./zeta_0(idx_m21) + ...
-    atan((gamma2(idx_m21).*t1(idx_m21) + delta2(idx_m21))./ ...
-    (gamma1(idx_m21).*t1(idx_m21) + delta1(idx_m21) - rt_1(idx_m21).*rho(idx_m21)));
+idx_m21 = (t1s <= dbl_eps);
+mu2_1(idx_m21) = (pi/2).*abs(zeta_0(idx_m21))./zeta_0(idx_m21) + atan((gamma2(idx_m21).*t1(idx_m21) + delta2(idx_m21))./ ...
+                    (gamma1(idx_m21).*t1(idx_m21) + delta1(idx_m21) - rt_1(idx_m21).*rho(idx_m21)));
 
 mu2_1(zeta_0 > 0 & t1 < 0 & t1s > dbl_eps) = mu2_1(zeta_0 > 0 & t1 < 0 & t1s > dbl_eps) + pi;
 mu2_1(zeta_0 < 0 & t1 < 0 & t1s > dbl_eps) = mu2_1(zeta_0 < 0 & t1 < 0 & t1s > dbl_eps) - pi;
@@ -90,13 +89,12 @@ mu2_1(gamma1.*t1 + delta1 - rt_1.*rho < 0) = mu2_1(gamma1.*t1 + delta1 - rt_1.*r
 mu2_1(gamma2.*t1 + delta2 < 0 & gamma1.*t1 + delta1 - rt_1.*rho > 0) = ...
     mu2_1(gamma2.*t1 + delta2 < 0 & gamma1.*t1 + delta1 - rt_1.*rho > 0) + 2*pi;
 
-idx_m22 = (t2s < dbl_eps);
-mu2_2(idx_m22) = (pi/2).*abs(zeta_0(idx_m22))./zeta_0(idx_m22) + ...
-    atan((gamma2(idx_m22).*t2(idx_m22) + delta2(idx_m22))./ ...
-    (gamma1(idx_m22).*t2(idx_m22) + delta1(idx_m22) - rt_2(idx_m22).*rho(idx_m22)));
+idx_m22 = (t2s <= dbl_eps);
+mu2_2(idx_m22) = (pi/2).*abs(zeta_0(idx_m22))./zeta_0(idx_m22) + atan((gamma2(idx_m22).*t2(idx_m22) + delta2(idx_m22))./ ...
+                    (gamma1(idx_m22).*t2(idx_m22) + delta1(idx_m22) - rt_2(idx_m22).*rho(idx_m22)));
 
-mu2_2(zeta_0 > 0 & t2 < 0 & ~idx_m22) = mu2_2(zeta_0 > 0 & t2 < 0 & ~idx_m22) + pi;
-mu2_2(zeta_0 < 0 & t2 < 0 & ~idx_m22) = mu2_2(zeta_0 < 0 & t2 < 0 & ~idx_m22) - pi;
+mu2_2(zeta_0 > 0 & t2 < 0 & t2s > dbl_eps) = mu2_2(zeta_0 > 0 & t2 < 0 & t2s > dbl_eps) + pi;
+mu2_2(zeta_0 < 0 & t2 < 0 & t2s > dbl_eps) = mu2_2(zeta_0 < 0 & t2 < 0 & t2s > dbl_eps) - pi;
 mu2_2(gamma1.*t2 + delta1 - rt_2.*rho < 0) = mu2_2(gamma1.*t2 + delta1 - rt_2.*rho < 0) + pi;
 mu2_2(gamma2.*t2 + delta2 < 0 & gamma1.*t2 + delta1 - rt_2.*rho > 0) = ...
     mu2_2(gamma2.*t2 + delta2 < 0 & gamma1.*t2 + delta1 - rt_2.*rho > 0) + 2*pi;
@@ -194,7 +192,6 @@ c27 = repmat(2,len,1);
 idx30 = abs(zeta_0) <= dbl_eps & abs(le_vect) > dbl_eps;
 G21(idx30) = 0;
 G21b(idx30) = b21(idx30).*beta1(idx30).*(0.5.*log(mu1_2(idx30)./mu1_1(idx30)) + G25b(idx30))./rho(idx30);
-% G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log((mu1_2(idx30)+k(idx30))./(mu1_1(idx30)+k(idx30))) + G25c(idx30))./rho(idx30);
 G21c(idx30) = b21(idx30).*beta1(idx30).*(eta_0(idx30).*log((mu1_2(idx30))./(mu1_1(idx30))) + G25c(idx30))./rho(idx30);
 G22(idx30) = 0;
 G26(idx30) = 0;
