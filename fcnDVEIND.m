@@ -1,4 +1,4 @@
-function [a, b, c] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP)
+function [a, b, c] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP)
 
 % This function gives the influence of a DVE.
 
@@ -67,7 +67,8 @@ idx1 = dvetype == 0 | dvetype == 2 | dvetype == -3 | dvetype == -4;
 [a1le(idx1,:), b1le(idx1,:), c1le(idx1,:)] = fcnBOUNDIND(vecDVEHVSPN(dvenum(idx1)), vecDVELESWP(dvenum(idx1)), xsiA(idx1,:));
 
 % Vortex sheet at leading edge
-[a2le, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum));
+[a2le, b2le, c2le] = fcnVSIND(vecDVEHVCRD(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum)); 
+% [a2le, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum));
 
 % clear endpoints
 
@@ -89,8 +90,8 @@ idx2 = dvetype == 0 | dvetype == -2;
 
 % Vortex sheet at the trailing edge
 idx3 = dvetype ~= 3 & dvetype ~= -3;
-[a2te(idx3,:), b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
-
+[a2te(idx3,:), b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVCRD(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
+% [a2te(idx3,:), b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
 %% Summing together the influences from the sheets and filaments
 
 

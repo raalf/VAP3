@@ -67,8 +67,8 @@ idx12 = [idx1; idx2];
 idx3 = true(len,1);
 idx4 = dvetype ~= 3 | dvetype ~= -3;
 idx34 = [idx3; idx4];
-[a2(idx34,:), b2(idx34,:), c2(idx34,:)] = fcnVSIND([vecDVEHVSPN(dvenum(idx3)); vecDVEHVSPN(dvenum(idx4))], [vecDVELESWP(dvenum(idx3)); vecDVETESWP(dvenum(idx4))], xsiA(idx34,:), [vecK(dvenum(idx3)); vecK(dvenum(idx4))]);
-
+[a2(idx34,:), b2(idx34,:), c2(idx34,:)] = fcnVSIND([vecDVEHVCRD(dvenum(idx3)); vecDVEHVSPN(dvenum(idx4))], [vecDVELESWP(dvenum(idx3)); vecDVETESWP(dvenum(idx4))], xsiA(idx34,:), [vecK(dvenum(idx3)); vecK(dvenum(idx4))]);
+% [a2(idx34,:), b2(idx34,:), c2(idx34,:)] = fcnVSIND([vecDVEHVSPN(dvenum(idx3)); vecDVEHVSPN(dvenum(idx4))], [vecDVELESWP(dvenum(idx3)); vecDVETESWP(dvenum(idx4))], xsiA(idx34,:), [vecK(dvenum(idx3)); vecK(dvenum(idx4))]);
 %% Summing together the influences from the sheets and filaments
 
 % a3xi = a1(1:len,:) + a2(1:len,:) - a1(len+1:end,:) - a2(len+1:end,:);
