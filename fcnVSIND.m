@@ -1,4 +1,4 @@
-function [aloc, bloc, cloc] = fcnVSIND(hspan, phi, fp_0, k)
+function [aloc, bloc, cloc] = fcnVSIND(hspan, hchord, phi, fp_0, k)
 % This function finds the influence of a semi-infinite vortex sheet on a
 % point
 
