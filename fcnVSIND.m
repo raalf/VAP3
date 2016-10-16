@@ -101,10 +101,10 @@ mu2_2(gamma1.*t2 + delta1 - rt_2.*rho < 0) = mu2_2(gamma1.*t2 + delta1 - rt_2.*r
 mu2_2(gamma2.*t2 + delta2 < 0 & gamma1.*t2 + delta1 - rt_2.*rho > 0) = ...
     mu2_2(gamma2.*t2 + delta2 < 0 & gamma1.*t2 + delta1 - rt_2.*rho > 0) + 2*pi;
 
-% Using half span instead of half chord - unconfirmed if this is OK
+% now uses hchord
 idx31 = abs(phi) > dbl_eps;
-mu3_1(idx31) = 0.0001.*hspan(idx31) + mu3_1(idx31);
-mu3_2(idx31) = 0.0001.*hspan(idx31) + mu3_2(idx31);
+mu3_1(idx31) = 0.0001.*hchord(idx31) + mu3_1(idx31);
+mu3_2(idx31) = 0.0001.*hchord(idx31) + mu3_2(idx31);
 
 %%
 % 
