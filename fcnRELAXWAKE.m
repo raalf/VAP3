@@ -1,6 +1,6 @@
 function [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
     vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
-    matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+    matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(vecUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
     matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
     vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVELESWP, vecWDVEPITCH, ...
     vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVEWING)
@@ -41,9 +41,15 @@ spnvec = matWDVEMPRLX(matWDVEMPIDX(:,2),:) - matWCENTER;
 
 % fix oldest wake
 semiinfvec = matWCENTER(matWDVELEMPIDX(end-1,:),:)-matWDVELEMP(matWDVELEMPIDX(end-1,:),:);
-matWCENTER(matWDVELEMPIDX(end,:),:) = matWDVELEMP(matWDVELEMPIDX(end,:),:)+semiinfvec;
-crdvec(matWDVELEMPIDX(end,:),:) = crdvec(matWDVELEMPIDX(end-1,:),:);
-spnvec(matWDVELEMPIDX(end,:),:) = spnvec(matWDVELEMPIDX(end-1,:),:);
+% matWCENTER(matWDVELEMPIDX(end,:),:) = matWDVELEMP(matWDVELEMPIDX(end,:),:)+semiinfvec;
+
+xsi0 = repmat(sqrt(semiinfvec(:,1).^2+semiinfvec(:,2).^2+semiinfvec(:,3).^2),1,3);
+fs = repmat(vecUINF,length(xsi0),1);
+matWCENTER(matWDVELEMPIDX(end,:),:) = matWCENTER(matWDVELEMPIDX(end-1,:),:)+semiinfvec+fs.*xsi0;
+
+% crdvec(matWDVELEMPIDX(end,:),:) = crdvec(matWDVELEMPIDX(end-1,:),:);
+% spnvec(matWDVELEMPIDX(end,:),:) = spnvec(matWDVELEMPIDX(end-1,:),:);
+
 
 % Calculate four corner point by adding vectors to control point coordinates
 WP1 = matWCENTER - crdvec - spnvec;
