@@ -1,4 +1,4 @@
-function [w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM)
+function [w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM)
 % This function takes in DVE number and a corresponding global field point and returns an induced velocity
 % in the global reference frame. 
 
@@ -6,7 +6,7 @@ function [w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matDVE, matVLST, matCOEFF, ve
 
 len = length(dvenum);
 
-[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
+[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
 
 D = [a b c];
 D = reshape(reshape(D', 1, 9, []), 3, 3, len);
