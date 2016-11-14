@@ -1,7 +1,7 @@
 
 function [inddrag]=fcnDVEINDDRAG(matCOEFF,matDVE,matVLST,vecUINF,vecDVEHVSPN,vecDVEHVCRD, vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-    valWSIZE, valTIMESTEP,vecSYM,vecDVEWING )
+    valWSIZE, valTIMESTEP,vecSYM,vecDVEWING,vecWDVEWING )
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
 % non-dimensionalized to q.
 
@@ -45,7 +45,7 @@ tepoints(:,:,1) = (xte + s.*repmat(-eta8,1,3)); %left side
 tepoints(:,:,2) = xte ; %middle
 tepoints(:,:,3) = (xte + s.*repmat(eta8,1,3)); %right ride
 
-%% WORKING ON INDUCERS
+%% WORKING ON INDUCERS /INDUCED POINTS
 % newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
 % if on same wing!
 % we won't use fcnWDVEVEL because we have to change the induced point for each
@@ -57,17 +57,25 @@ tepoints(:,:,3) = (xte + s.*repmat(eta8,1,3)); %right ride
 %current timestep, on all the te points.
 tepoints = repmat(tepoints,[numte,1,1]);
 
+%need to repmat the wing index of te elements (induced)
+tewings = repmat(vecDVEWING(idte),[numte,1,1]);
+
 %dvenum is inducer
 %need to keep the inducers index the same as the induced points
 newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
 dvenum = newest_row(repmat(1:valWSIZE,valWSIZE,1),:);
+
+%inducers wing number repmat
+wwings = vecWDVEWING(newest_row);
+wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
 
 % now actually moving the point:
 % vector from TE of each TE element to each point in tepoints
 % order is as follows:
 % influence of first dve on (1:numte), then influence of second dve
 % on (1:numte), etc. 
-
+% to keep this cleaner I move all points, then overwrite the cases when
+% the inducers wing is different than the induced points.
 delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
 
 %project into freestream direction
@@ -77,7 +85,9 @@ tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this b
 % original te point - tempb should be new te point
 newtepoint = tepoints - tempb;
 
-%end if on same wing, else newtepoint = oldtepoint
+%if inducers wing is different than induced wing, newtepoint = oldtepoint
+diffw = (tewings~= wwings);
+newtepoint(diffw) = tepoints(diffw);
 
 %we have now accounted for all the current timestep of wake elements, now repmat to
 %account for remaining wake rows
