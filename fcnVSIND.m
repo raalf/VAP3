@@ -118,12 +118,12 @@ G25c = -hspan.*log((k + zeta_0sq + t1s).*(k + zeta_0sq + t2s));
 
 idx70 = abs(t1) > dbl_eps;
 % G25c(idx70) = G25c(idx70) + t1(idx70).*log(zeta_0(idx70) + t1s(idx70)); before speed boost
-G25c70 = G25c + t1.*log(zeta_0 + t1s); %speed boost without index
+G25c70 = G25c + t1.*log(zeta_0sq + t1s); %speed boost without index
 G25c(idx70) = G25c70(idx70); %speed boost index
 
 idx71 = abs(t2) > dbl_eps;
 % G25c(idx71) = G25c(idx71) - t2(idx71).*log(zeta_0(idx71) + t2s(idx71)); before speed boost
-G25c71 = G25c - t2.*log(zeta_0 + t2s); %speed boost without index
+G25c71 = G25c - t2.*log(zeta_0sq + t2s); %speed boost without index
 G25c(idx71) = G25c71(idx71); %speed boost index
 
 
@@ -156,18 +156,25 @@ G23 = ((1./a2).*rt_2 - (b2./a2cus).*lmu3_2) - ((1./a2).*rt_1 - (b2./a2cus).*lmu3
 G24 = ((1./sqrt(a2)).*lmu3_2) - ((1./sqrt(a2)).*lmu3_1);
 
 % Eqn A2-10
-G26 = ((1./zeta_0).*atan(t2./zeta_0)) - (1./zeta_0).*atan(t1./zeta_0);
-% G26 = atan((t1.*t2 - t1.*zeta_0)./(zeta_0.^2 + t1.*t2)); % Divide by zeta????????????????????????????????????
+% G26 = ((1./zeta_0).*atan(t2./zeta_0)) - (1./zeta_0).*atan(t1./zeta_0);
+% % G26 = atan((t1.*t2 - t1.*zeta_0)./(zeta_0.^2 + t1.*t2)); % Divide by zeta????????????????????????????????????
+% 
+%             
+% X2Y2 = (t1.*t2)./(zeta_0sq);
+% X2 = t2./zeta_0;
+% 
+% idx50 = X2Y2 < -1 & X2 > 0;
+% G26(idx50) = G26(idx50) + pi;
+% 
+% idx51 = X2Y2 < -1 & X2 < 0;
+% G26(idx51) = G26(idx51) - pi;
 
-X2Y2 = (t1.*t2)./(zeta_0sq);
-X2 = t2./zeta_0;
-
-idx50 = X2Y2 < -1 & X2 > 0;
-G26(idx50) = G26(idx50) + pi;
-
-idx51 = X2Y2 < -1 & X2 < 0;
-G26(idx51) = G26(idx51) - pi;
-
+tempS=(zeta_0.*zeta_0+t1.*t2);
+G26	= atan((t2-t1).*zeta_0./tempS);
+				G26(tempS<0 & (t2./zeta_0)>0)= G26(tempS<0 & (t2./zeta_0)>0) + pi;
+				G26(tempS<0 & (t2./zeta_0)<0)	=	G26(tempS<0 & (t2./zeta_0)<0) - pi;
+			G26 = G26./zeta_0;
+            
 % Eqn A2-11
 G27 = t2 - t1;
 
@@ -251,7 +258,8 @@ aloc = zeros(size(bloc));
 
 % If the point lies on an unswept leading edge
 % a23ind.f - Line 604
-idx_LE = abs(zeta_0) <= dbl_eps & abs(xsi_0.^2) <= dbl_eps & abs(phi) <= dbl_eps;
+% idx_LE = abs(zeta_0) <= dbl_eps & abs(xsi_0.^2) <= dbl_eps & abs(phi) <= dbl_eps;
+idx_LE = abs(zeta_0) <= dbl_eps & abs(le_vect) <= dbl_eps & abs(phi) <= dbl_eps;
 bloc(idx_LE,1:2) = zeros(size(bloc(idx_LE,1:2)));
 cloc(idx_LE,1:2) = zeros(size(cloc(idx_LE,1:2)));
 % Horstmanns:
