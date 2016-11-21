@@ -40,20 +40,15 @@ disp(' ');
 % 
 % seqALPHA = [10];
 
-% strFILE = 'inputs/input.txt';
+strFILE = 'inputs/input.txt';
 % strFILE = 'inputs/Config 1.txt';
-strFILE = 'inputs/Config 2.txt';
-
+% strFILE = 'inputs/Config 2.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
 
-% matGEOM(2,5,2) = 0;
-
-% valMAXTIME  = 40;   
-% flagRELAX   = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
