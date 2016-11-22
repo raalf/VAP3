@@ -50,7 +50,7 @@ strFILE = 'inputs/input.txt';
     valINTERF] = fcnFWREAD(strFILE);
 
 % flagRELAX = 0;
-valMAXTIME = 120;
+valMAXTIME = 68;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
