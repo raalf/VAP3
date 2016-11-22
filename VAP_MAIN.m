@@ -49,10 +49,14 @@ strFILE = 'inputs/input.txt';
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnFWREAD(strFILE);
 
+% flagRELAX = 0;
+valMAXTIME = 120;
+
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 0;
+
 
 %% Discretize geometry into DVEs
 
