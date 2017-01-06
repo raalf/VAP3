@@ -1,6 +1,6 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
+    matVLST, matNPVLST, matNTVLST, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
@@ -133,7 +133,6 @@ for i = 1:valPANELS
 
     % Write non-planer DVE coordinates
     P1(idxStart:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count,3);
-%     P12(idxStart:idxEnd,:) = reshape(permute(LE_Mid, [2 1 3]),count,3);
     P2(idxStart:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count,3);
     P3(idxStart:idxEnd,:) = reshape(permute(TE_Right, [2 1 3]),count,3);
     P4(idxStart:idxEnd,:) = reshape(permute(TE_Left, [2 1 3]),count,3);
@@ -150,7 +149,6 @@ for i = 1:valPANELS
 end
 
 
-
 %% fcnDVECORNER2PARAM takes the corner and center points of each DVEs,
 % computes the parameters and compiles the matVLST and matDVE
 
@@ -161,11 +159,16 @@ end
     matVLST, matDVE, ~, idxVLST] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 );
 
 
+%% Create nonplaner VLST
+nonplanerVLST = [P1;P2;P3;P4];
+matNPVLST = nonplanerVLST(idxVLST,:);
+
+
 
 %% Solve ADJT DVE
 % Grab the imaginary (no-twist) non-planer vertex list to avoid the gaps between DVEs
-nonplanerVLST = [imP1;imP2;imP3;imP4];
-matNTVLST = nonplanerVLST(idxVLST,:);
+notwistnonplanerVLST = [imP1;imP2;imP3;imP4];
+matNTVLST = notwistnonplanerVLST(idxVLST,:);
 
 
 [ matADJE, vecDVESYM, vecDVETIP, vecDVELE, vecDVETE ] = fcnDVEADJT( imP1, imP2, imP3, imP4, valNELE, vecDVEPANEL, vecSYM );
