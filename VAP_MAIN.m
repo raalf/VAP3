@@ -31,6 +31,7 @@ disp(' ');
 
 % strFILE = 'inputs/VAP christmas.txt';
 % strFILE = 'inputs/VAP input.txt';
+% strFILE = 'inputs/VAP_SB14_Modified (1).txt';
 % 
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
@@ -41,6 +42,7 @@ disp(' ');
 % seqALPHA = [10];
 
 strFILE = 'inputs/input.txt';
+
 % strFILE = 'inputs/Config 1.txt';
 % strFILE = 'inputs/Config 2.txt';
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
@@ -50,7 +52,7 @@ strFILE = 'inputs/input.txt';
     valINTERF] = fcnFWREAD(strFILE);
 
 % flagRELAX = 0;
-valMAXTIME = 68;
+valMAXTIME = 1;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -62,7 +64,7 @@ flagVERBOSE = 0;
 
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
+    matVLST0, matNTVLST0, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, ...
     vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
@@ -91,7 +93,7 @@ for ai = 1:length(seqALPHA)
     % This is done for when we are using a parfor loop
     matCENTER = matCENTER0;
     matVLST = matVLST0;
-    matNPVLST = matNPVLST0;
+    matNTVLST = matNTVLST0;
     
     for bi = 1:length(seqBETA)
         
@@ -154,13 +156,13 @@ for ai = 1:length(seqALPHA)
             %   Calculate viscous effects
             
             %% Moving the wing
-            [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNPVLST);
+            [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNTVLST);
             
             %% Generating new wake elements
             [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] ...
+                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNTVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] ...
                 = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNPVLST, vecDVEPANEL, ...
+                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
                 vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE);
             
             %% Creating and solving WD-Matrix for latest row of wake elements

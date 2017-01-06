@@ -1,6 +1,6 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST, matNPVLST, matDVE, valNELE, matADJE, ...
+    matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
@@ -13,6 +13,11 @@ function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVET
 %      - Comptue LE Sweep
 %      - Project TE to DVE, Rotate adn Comptue TE Sweep
 %   V3 - Function overhaul for VAP2.0
+%  3.5 - Modify non-planer VLST (Jan 6, 2017)
+%        old matNPVLST will be not called matNTVLST to specify it holds dve
+%        infomation of non-twisted wing
+%      - new matNPVLST will now hold non-planer dve coordinates of
+%        non-modified wing geometry specified in input file
 %
 % Fixed how DVEs matrix is converted from 2D grid to 1D array. 16/01/2016 (Alton)
 
@@ -54,7 +59,6 @@ valNELE = sum(vecM.*vecN);
 vecDVEPANEL   = nan(valNELE,1);
 
 P1          = nan(valNELE,3);
-% P12         = nan(valNELE,3);
 P2          = nan(valNELE,3);
 P3          = nan(valNELE,3);
 P4          = nan(valNELE,3);
@@ -92,7 +96,7 @@ clear tempB tempC temp1
 
 %% Convert Panels to Corner Points to DVEs
 
-for i = 1:valPANELS;
+for i = 1:valPANELS
     
     rchord = matGEOM(1,4,i); repsilon = deg2rad(matGEOM(1,5,i));
     tchord = matGEOM(2,4,i); tepsilon = deg2rad(matGEOM(2,5,i));
@@ -161,7 +165,7 @@ end
 %% Solve ADJT DVE
 % Grab the imaginary (no-twist) non-planer vertex list to avoid the gaps between DVEs
 nonplanerVLST = [imP1;imP2;imP3;imP4];
-matNPVLST = nonplanerVLST(idxVLST,:);
+matNTVLST = nonplanerVLST(idxVLST,:);
 
 
 [ matADJE, vecDVESYM, vecDVETIP, vecDVELE, vecDVETE ] = fcnDVEADJT( imP1, imP2, imP3, imP4, valNELE, vecDVEPANEL, vecSYM );
