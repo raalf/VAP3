@@ -51,7 +51,7 @@ xsiLocal = fcnGLOBSTAR(xsiVec,vecDVEROLL,vecDVEPITCH,zeros(valNELE,1));
 % (old method) xsi = (xsi_local(:,:,1).^2+xsi_local(:,:,2).^2+xsi_local(:,:,3).^2).^0.5;
 vecDVEHVCRD = (xsiLocal(:,1).^2+xsiLocal(:,2).^2+xsiLocal(:,3).^2).^0.5;
 % (old method) psi = atan(xsi_local(:,:,2)./xsi_local(:,:,1));
-vecDVEYAW = atan(xsiLocal(:,2)./xsiLocal(:,1));
+vecDVEYAW = atan2(-xsiLocal(:,2), -xsiLocal(:,1));
 % 
 % % Find eta. bring non-normalized LE_vec to local and half the Y component
 % (old method) LE_vec_local = fcnGLOBSTAR3D( LE_vec,nu,epsilon,psi);
