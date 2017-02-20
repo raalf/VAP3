@@ -56,7 +56,19 @@ WP1 = matWCENTER - crdvec - spnvec;
 WP2 = matWCENTER - crdvec + spnvec;
 WP3 = matWCENTER + crdvec + spnvec;
 WP4 = matWCENTER + crdvec - spnvec;
-%%
+
+%% Recalculating oldest row 4 corner points
+% This overwrites the WP1-WP4 points of oldest wake elements
+oldestwake = reshape(matWDVELEMPIDX(end,:),[],1);
+secondoldestwake = reshape(matWDVELEMPIDX(end-1,:),[],1);
+WP1(oldestwake,:) = WP4(secondoldestwake,:);
+WP2(oldestwake,:) = WP3(secondoldestwake,:);
+timesteptranslate = repmat(vecUINF,length(oldestwake),1).*valDELTIME;
+WP4(oldestwake,:) = WP1(oldestwake,:)+timesteptranslate;
+WP3(oldestwake,:) = WP2(oldestwake,:)+timesteptranslate;
+matWCENTER(oldestwake,:) = (WP1(oldestwake,:)+WP2(oldestwake,:)+WP3(oldestwake,:)+WP4(oldestwake,:))./4;
+
+
 
 %%
 % update relax wake dves
