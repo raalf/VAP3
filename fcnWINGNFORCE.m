@@ -15,7 +15,7 @@ function [valCL, valCLF, valCLI, valCY, valCYF, valCYI,valCDI,valE]= fcnWINGNFOR
 
 
 %  q=0.5*info.Uinf*info.Uinf*info.S
-q = 0.5* sqrt(sum(abs(vecUINF).^2,2)) * valAREA;
+q = 0.5.*sum(abs(vecUINF).^2,2).*valAREA;
 
 ntfree(1) = 0;
 ntfree(2) = 0;
