@@ -1,4 +1,4 @@
-function [valCL, valCD] = fcnVISCOUS(valCL, valCDI, valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+function [valCL, valCD, valPREQ, valVINF, valLD] = fcnVISCOUS(valCL, valCDI, valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL)
@@ -181,6 +181,12 @@ valCD = dtot/(q_inf*valAREA);
 %% Adjusting CL for stall
 
 valCL = sum(vecCNDIST.*vecAREADIST.*cos(vecDVEROLL(vecLEDVEDIST)))/valAREA*2;
+
+%% Final calculations
+
+valVINF = sqrt((2.*valWEIGHT)./(valDENSITY.*valAREA.*valCL));
+valLD = valCL./valCD;
+valPREQ = dtot.*valVINF;
 
 
 end
