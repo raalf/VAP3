@@ -53,6 +53,8 @@ flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 0;
 
+
+valMAXTIME = 20
 %% Discretize geometry into DVEs
 
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...

@@ -24,12 +24,6 @@ function [a, b, c] = fcnDVEIND(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecD
 % OUTPUT:
 %   a,b,c - influence coefficients (each are (x,y,z))
 
-% Vector to field point from DVE control point
-% rA = fpg - matCENTER(dvenum,:);
-
-% Rotate the above vector into local reference frame
-% xsiA = fcnGLOBSTAR(rA, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-
 len = length(dvenum);
 
 a1le = zeros(len,3);
@@ -40,15 +34,8 @@ a1te = zeros(len,3);
 b1te = zeros(len,3);
 c1te = zeros(len,3);
 
-% a2le = zeros(len,3);
-% b2le = zeros(len,3);
-% c2le = zeros(len,3);
-
-a2te = zeros(len,3);
 b2te = zeros(len,3);
 c2te = zeros(len,3);
-
-endpoints = zeros(len,3,2);
 
 %% Leading Edge
 
@@ -56,11 +43,10 @@ endpoints = zeros(len,3,2);
 % A vector is then made between this midpoint and the field point, which is
 % then rotated into the DVE reference frame.
 
-% These line are commented out for speed boost
-% endpoints(:,:,1) = matVLST(matDVE(dvenum,1),:); % Left leading edge point
-% endpoints(:,:,2) = matVLST(matDVE(dvenum,2),:); % Right leading edge point
-% xsiA = fcnGLOBSTAR(fpg - mean(endpoints,3), vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
 xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:)+matVLST(matDVE(dvenum,2),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+
+% xsiA = fcnGLOBSTARGPU(gpuArray(fpg - (matVLST(matDVE(dvenum,1),:)+matVLST(matDVE(dvenum,2),:))./2), gpuArray(vecDVEROLL(dvenum)), gpuArray(vecDVEPITCH(dvenum)), gpuArray(vecDVEYAW(dvenum)));
+% xsiA = gather(xsiA);
 
 % Bound vortex on the leading edge
 idx1 = dvetype == 0 | dvetype == 2 | dvetype == -3 | dvetype == -4;
@@ -68,9 +54,6 @@ idx1 = dvetype == 0 | dvetype == 2 | dvetype == -3 | dvetype == -4;
 
 % Vortex sheet at leading edge
 [~, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVEHVCRD(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum)); 
-% [a2le, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum));
-
-% clear endpoints
 
 %% Trailing Edge
 
@@ -78,11 +61,10 @@ idx1 = dvetype == 0 | dvetype == 2 | dvetype == -3 | dvetype == -4;
 % A vector is then made between this midpoint and the field point, which is
 % then rotated into the DVE reference frame.
 
-% These line are commented out for speed boost
-% endpoints(:,:,1) = matVLST(matDVE(dvenum,4),:); % Left leading edge point
-% endpoints(:,:,2) = matVLST(matDVE(dvenum,3),:); % Right leading edge point
-% xsiA = fcnGLOBSTAR(fpg - mean(endpoints,3), vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
 xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,3),:)+matVLST(matDVE(dvenum,4),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+
+% xsiA = fcnGLOBSTARGPU(gpuArray(fpg - (matVLST(matDVE(dvenum,3),:)+matVLST(matDVE(dvenum,4),:))./2), gpuArray(vecDVEROLL(dvenum)), gpuArray(vecDVEPITCH(dvenum)), gpuArray(vecDVEYAW(dvenum)));
+% xsiA = gather(xsiA);
 
 % Bound vortex at the trailing edge
 idx2 = dvetype == 0 | dvetype == -2;
@@ -91,7 +73,7 @@ idx2 = dvetype == 0 | dvetype == -2;
 % Vortex sheet at the trailing edge
 idx3 = dvetype ~= 3 & dvetype ~= -3;
 [~, b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVEHVCRD(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
-% [a2te(idx3,:), b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
+
 %% Summing together the influences from the sheets and filaments
 
 
@@ -102,5 +84,12 @@ c3xi = c1le + c2le - c1te - c2te;
 a = fcnSTARGLOB(a3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
 b = fcnSTARGLOB(b3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
 c = fcnSTARGLOB(c3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+
+% a = fcnSTARGLOBGPU(gpuArray(a3xi), gpuArray(vecDVEROLL(dvenum)), gpuArray(vecDVEPITCH(dvenum)), gpuArray(vecDVEYAW(dvenum)));
+% b = fcnSTARGLOBGPU(gpuArray(b3xi), gpuArray(vecDVEROLL(dvenum)), gpuArray(vecDVEPITCH(dvenum)), gpuArray(vecDVEYAW(dvenum)));
+% c = fcnSTARGLOBGPU(gpuArray(c3xi), gpuArray(vecDVEROLL(dvenum)), gpuArray(vecDVEPITCH(dvenum)), gpuArray(vecDVEYAW(dvenum)));
+% a = gather(a);
+% b = gather(b);
+% c = gather(c);
 
 end
