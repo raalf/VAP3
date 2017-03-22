@@ -55,6 +55,7 @@ flagVERBOSE = 0;
 
 
 valMAXTIME = 20
+vecN = 1;
 %% Discretize geometry into DVEs
 
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
