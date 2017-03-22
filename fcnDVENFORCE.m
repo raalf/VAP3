@@ -61,7 +61,7 @@ end
 eta8 = vecDVEHVSPN*0.8;
 
 % UxS
-tempb = cross(repmat(vecUINF,[valNELE,1]),s);
+tempb = cross(repmat(vecUINF,[valNELE,1]),s,2);
 
 % norm(UxS)
 uxs = sqrt(sum(abs(tempb).^2,2));
