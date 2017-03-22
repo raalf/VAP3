@@ -3,6 +3,8 @@ clear
 
 warning off
 
+% profile -memory on
+
 disp('===========================================================================');
 disp('+---------------+');
 disp('| RYERSON       |       VAP (Based on FreeWake 2015)');
@@ -30,27 +32,30 @@ disp(' ');
 %% Reading in geometry
 
 % strFILE = 'inputs/VAP christmas.txt';
-% strFILE = 'inputs/VAP input.txt';
-% 
-% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnVAPREAD(strFILE);
-
-strFILE = 'inputs/input.txt';
+strFILE = 'inputs/VAP input.txt';
 
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-    valINTERF] = fcnFWREAD(strFILE);
+    valINTERF] = fcnVAPREAD(strFILE);
+
+% strFILE = 'inputs/input.txt';
+% 
+% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
+%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
+%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
+%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
+%     valINTERF] = fcnFWREAD(strFILE);
 
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 0;
 
+
+valMAXTIME = 20
+vecN = 1;
 %% Discretize geometry into DVEs
 
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
@@ -256,6 +261,8 @@ if flagPLOT == 1
 %     axis tight
 
 end
+
+% profreport
 
 %% Viscous wrapper
 

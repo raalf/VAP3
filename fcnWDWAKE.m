@@ -31,7 +31,12 @@ eqn_num = cell2mat(LB);
 
 idx3 = matWADJE(idx1,1);
 idx4 = matWADJE(idx2,1);
-idx5 = idx4(eqn_num); % Corresponding edge 4 DVE for every edge 2 DVE
+
+if isempty(idx3)
+    idx5 = idx3; % Ensuring the empty is the correct size if this is empty
+else
+    idx5 = idx4(eqn_num); % Corresponding edge 4 DVE for every edge 2 DVE
+end
 
 % dgamma1 = dgamma2
 % B + 2*C*eta = B - 2*C*eta
@@ -112,15 +117,16 @@ end
 % gamma1 = gamma2
 % A + B*eta + C*eta^2 = A - B*eta + C*eta^2
 
-% DVE numbers with local edge 2 neighbouring another DVE
-d2202 = idx14(idx13 == 1);
-
-% Finding the DVE numbers with local edge 4 neighbouring the above corresponding DVEs
-% % [idx27,~] = find(repmat(matWADJE(idx1,1),1,length(d2202)) == repmat(d2202',length(matWADJE(idx1,1)),1));
-% % d2204 = matWADJE(matWADJE(:,2) == 2,3);
-% % d2204 = d2204(idx27);
-d2204 = matWADJE(matWADJE(:,2)==2&ismember(matWADJE(:,1),d2202),3);
-
+if isempty(idx14(idx13 == 1))
+    d2202 = double.empty(0,1);
+    d2204 = double.empty(0,1);
+else
+    % DVE numbers with local edge 2 neighbouring another DVE
+    d2202 = idx14(idx13 == 1);
+    
+    % Finding the DVE numbers with local edge 4 neighbouring the above corresponding DVEs
+    d2204 = matWADJE(matWADJE(:,2)==2&ismember(matWADJE(:,1),d2202),3);
+end
 
 len3 = length(d2204);
 
@@ -178,6 +184,12 @@ end
 
 [tip2,~] = find(vecWDVETIP == 2);
 [tip4,~] = find(vecWDVETIP == 4);
+
+if isempty(tip2)
+    tip2 = double.empty(0,1); % Ensuring the empty is the correct size if this is empty
+elseif isempty(tip4)
+    tip4 = double.empty(0,1);
+end
 
 gamma1t = [vecWDVEHVSPN(tip2) (2/3).*vecWDVEHVSPN(tip2).^2];
 gamma2t = [-vecWDVEHVSPN(tip4) (2/3).*vecWDVEHVSPN(tip4).^2];

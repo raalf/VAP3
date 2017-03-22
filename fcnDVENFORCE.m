@@ -8,7 +8,7 @@ function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF.
 % //lift force is comuted by applying Kutta-Joukowski's theorem to both edges
 % //and to the center of DVE's bound vortices. These values are integrated,
 % //using Simpson's rule (with overhang), in order to get the lift force/density
-% //for the complete surface DVE.  
+% //for the complete surface DVE.
 % //Furthermore, as of now, any lift force due to the DVE's vortex sheet is
 % //neglected, since the resulting induced side velocities should be small
 % //
@@ -54,7 +54,7 @@ if any(idx1 == 0)
     %using the verticies to do this doesn't match the results from above for idx1 ==0
     % s(idx1==0,:) =(( (matVLST(matDVE(idx1,2),:) + matVLST(matDVE(idx1,3),:))./2 ) -...
     %     ( (matVLST(matDVE(idx1,1),:) + matVLST(matDVE(idx1,4),:))./2 ) )./ (vecDVEHVSPN.*2);
-
+    
 end
 
 % 80% of halfspan
@@ -121,10 +121,11 @@ fpg(idx1,:,2) = xle ; %middle
 fpg(idx1,:,3) = (xle + s(idx1==1,:).*repmat(eta8(idx1==1),1,3)); %right ride
 
 % Remaining rows:
-fpg(idx1==0,:,1) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(-eta8(idx1==0),1,3)); %left side
-fpg(idx1==0,:,2) = matCENTER(idx1==0,:) ; %middle
-fpg(idx1==0,:,3) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(eta8(idx1==0),1,3)); %right ride
-
+if any(idx1 == 0)
+    fpg(idx1==0,:,1) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(-eta8(idx1==0),1,3)); %left side
+    fpg(idx1==0,:,2) = matCENTER(idx1==0,:) ; %middle
+    fpg(idx1==0,:,3) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(eta8(idx1==0),1,3)); %right ride
+end
 
 % if there are any elements in not the first row, we will append all the LE center
 % points to the bottom, necessary for averaging. the if statement will be ignored if all m=1.
@@ -134,6 +135,7 @@ if any(idx1 == 0)
     fpg(1:(valNELE+sum(idx1)),:,2) = [fpg(1:valNELE,:,2) ; matCENTER(idx1==1,:)] ; %middle
     fpg(1:(valNELE+sum(idx1)),:,3) = [fpg(1:valNELE,:,3) ; (matCENTER(idx1==1,:) + repmat(tan(vecDVEMCSWP(idx1==1)).*eta8(idx1==1),1,3))]; %right ride
 end
+
 len = size(fpg,1);
 
 % take second dimension, move to bottom. then take third dimension and move

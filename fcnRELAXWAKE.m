@@ -44,7 +44,7 @@ semiinfvec = matWCENTER(matWDVELEMPIDX(end-1,:),:)-matWDVELEMP(matWDVELEMPIDX(en
 % matWCENTER(matWDVELEMPIDX(end,:),:) = matWDVELEMP(matWDVELEMPIDX(end,:),:)+semiinfvec;
 
 xsi0 = repmat(sqrt(semiinfvec(:,1).^2+semiinfvec(:,2).^2+semiinfvec(:,3).^2),1,3);
-fs = repmat(vecUINF,length(xsi0),1);
+fs = repmat(vecUINF,length(xsi0(:,1)),1);
 matWCENTER(matWDVELEMPIDX(end,:),:) = matWCENTER(matWDVELEMPIDX(end-1,:),:)+semiinfvec+fs.*xsi0;
 
 % crdvec(matWDVELEMPIDX(end,:),:) = crdvec(matWDVELEMPIDX(end-1,:),:);
