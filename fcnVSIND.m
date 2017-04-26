@@ -153,6 +153,7 @@ lmu3_1 = log(mu3_1);
 a2cus = sqrt(a2.*a2.*a2);
 
 G23 = ((1./a2).*rt_2 - (b2./a2cus).*lmu3_2) - ((1./a2).*rt_1 - (b2./a2cus).*lmu3_1);
+G23(isnan(G23)) = 0; % Correcting issue when mu3_2 and mu3_1 are 0, carries through to c2_zeta calculation resulting in NaN
 
 % Eqn A2-7
 G24 = ((1./sqrt(a2)).*lmu3_2) - ((1./sqrt(a2)).*lmu3_1);

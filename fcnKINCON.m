@@ -17,8 +17,9 @@ fpg = repmat(fpg,valNELE,1);
 % DVE type 0 is a surface element
 dvetype = zeros(length(dvenum),1);
 
-%set singfct to zero temporarily
-[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, zeros(size(vecK,1),1), matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
+%set singfct to zero temporarily. Why? Not gonna do this, we have NaN CL because of this. T.D.K 2017-04-26
+% [a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, zeros(size(vecK,1),1), matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
+[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
 
 % List of normals we are to dot the above with
 normals = repmat(matDVENORM,valNELE,1); % Repeated so we can dot all at once

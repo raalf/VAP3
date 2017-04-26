@@ -31,7 +31,6 @@ disp(' ');
 
 %% Reading in geometry
 
-% strFILE = 'inputs/VAP christmas.txt';
 strFILE = 'inputs/VAP input.txt';
 
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...

@@ -126,6 +126,9 @@ end
 %get all velocities %need to set singfct = 0 for le row of elements!!!
 [w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, tempwk, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, zeros(size(vecWDVELESWP)), zeros(size(vecWDVETESWP)), vecSYM);
 
+% idxnans = sum(isnan(w_ind),2);
+% idxnans = idxnans > 0;
+
 % undo reshape and permute
 w_total = permute(reshape(w_ind,[],3,3),[1 3 2]);
 
