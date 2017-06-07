@@ -5,24 +5,16 @@ warning off
 
 % profile -memory on
 
-disp('===========================================================================');
-disp('+---------------+');
-disp('| RYERSON       |       VAP (Based on FreeWake 2015)');
-disp('| APPLIED       |       Running Version 2016.09');
-disp('| AERODYNAMICS  |       Includes stall model');
-disp('| LABORATORY OF |       No trim solution');
-disp('| FLIGHT        |        .                             .');
-disp('+---------------+       //                             \\');
-disp('                       //                               \\');
-disp('                      //                                 \\');
-disp('                     //                _._                \\');
-disp('                  .---.              .//|\\.              .---.');
-disp('         ________/ .-. \_________..-~ _.-._ ~-..________ / .-. \_________');
-disp('                 \ ~-~ /   /H-     `-=.___.=-''     -H\   \ ~-~ /');
-disp('                   ~~~    / H          [H]          H \    ~~~');
-disp('                         / _H_         _H_         _H_ \');
-disp('                           UUU         UUU         UUU');
-disp('===========================================================================');
+disp('=============================================================================');
+disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$$$$$ ');
+disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$_  $$');
+disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$$$\ $$');
+disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$ $$ $$');
+disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   | $$\ $$$$');
+disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$   | $$ \ $$$');
+disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
+disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/');
+disp('=============================================================================');
 disp(' ');
 
 %% Best Practices
@@ -40,7 +32,7 @@ strFILE = 'inputs/VAP input.txt';
     valINTERF] = fcnVAPREAD(strFILE);
 
 % strFILE = 'inputs/input.txt';
-% 
+%
 % [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
 %     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
@@ -51,13 +43,19 @@ flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 0;
+valMAXTIME = 20;
 
 %% Discretize geometry into DVEs
 
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, vecM] = fcnGENERATEDVESTRI(valPANELS, matGEOM, vecSYM, vecN, vecM);
+
+% [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
+%     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
+%     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
+%     vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
 valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
 
@@ -204,25 +202,25 @@ for ai = 1:length(seqALPHA)
             
             if flagPRINT == 1 && valTIMESTEP == 1
                 fprintf(' TIMESTEP    CL          CDI\n'); %header
-                fprintf('----------------------------------------------\n'); 
+                fprintf('----------------------------------------------\n');
             end
             if flagPRINT == 1
                 fprintf('  %4d     %0.5f     %0.5f\n',valTIMESTEP,vecCL(valTIMESTEP,ai),vecCDI(valTIMESTEP,ai)); %valTIMESTEP
             end
             
-%             fprintf('\n\tTimestep = %0.0f', valTIMESTEP);
-%             fprintf('\tCL = %0.5f',vecCL(valTIMESTEP,ai));
-%             fprintf('\tCDi = %0.5f',vecCDI(valTIMESTEP,ai));
+            %             fprintf('\n\tTimestep = %0.0f', valTIMESTEP);
+            %             fprintf('\tCL = %0.5f',vecCL(valTIMESTEP,ai));
+            %             fprintf('\tCDi = %0.5f',vecCDI(valTIMESTEP,ai));
         end
         
         %% Viscous wrapper
-        
-        [vecCLv(1,ai), vecCD(1,ai), vecPREQ(1,ai), valVINF(1,ai), valLD(1,ai)] = fcnVISCOUS(vecCL(end,ai), vecCDI(end,ai), ...
-            valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
-            vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-            matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-            valFPWIDTH, valINTERF, vecDVEROLL);
-                
+        if valTIMESTEP > 0
+%             [vecCLv(1,ai), vecCD(1,ai), vecPREQ(1,ai), valVINF(1,ai), valLD(1,ai)] = fcnVISCOUS(vecCL(end,ai), vecCDI(end,ai), ...
+%                 valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+%                 vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
+%                 matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
+%                 valFPWIDTH, valINTERF, vecDVEROLL);
+        end
     end
 end
 
@@ -237,25 +235,25 @@ if flagPLOT == 1
     
     if flagPLOTWAKEVEL == 1
         try
-        quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
+            quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
         end
     end
-%     figure(1);
-%     plot(1:valTIMESTEP, eltime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Time per timestep (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
-%
-%     figure(3);
-%     plot(1:valTIMESTEP, ttime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Total time (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
-
+    %     figure(1);
+    %     plot(1:valTIMESTEP, eltime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Time per timestep (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
+    %
+    %     figure(3);
+    %     plot(1:valTIMESTEP, ttime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Total time (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
+    
 end
 
 % profreport
