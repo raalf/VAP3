@@ -139,8 +139,6 @@ for i = 1:valPANELS
     TE_Mid = (TE_Right + TE_Left)./2;
     LE_Mid = (LE_Right + LE_Left)./2;
     
-    stop1 = vecN(i)*vecM(i)
-
     P1(idxStart:4:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count/4,3);
     P2(idxStart:4:idxEnd,:) = reshape(permute(LE_Mid, [2 1 3]),count/4,3);
     P3(idxStart:4:idxEnd,:) = reshape(permute(TE_Mid, [2 1 3]),count/4,3);
