@@ -102,13 +102,14 @@ A(idx1) = matCOEFF(idx1,1);
 B(idx1) = matCOEFF(idx1,2);
 C(idx1) = matCOEFF(idx1,3);
 % if any other row, A= A-Aupstream, B= B-Bupstream, C= C-Cupstream
-if any(idx1 == 0)
-    dvenum = find(idx1==0); %dvenum in question
-    idxf = matADJE((ismember(matADJE(:,1), dvenum) & matADJE(:,2) == 1),3); %upstream dve num
-    A(idx1 ==0) = (matCOEFF(idx1==0,1)-matCOEFF(idxf,1));
-    B(idx1 ==0) = (matCOEFF(idx1==0,2)-matCOEFF(idxf,2));
-    C(idx1 ==0) = (matCOEFF(idx1==0,3)-matCOEFF(idxf,3));
-end
+
+idx2 = vecDVELE == 1; %idx2 since we need to do this even for triangles
+dvenum = find(idx2==0); %dvenum in question
+idxf = matADJE((ismember(matADJE(:,1), dvenum) & matADJE(:,2) == 1),3); %upstream dve num
+A(idx2 ==0) = (matCOEFF(idx2==0,1)-matCOEFF(idxf,1));
+B(idx2 ==0) = (matCOEFF(idx2==0,2)-matCOEFF(idxf,2));
+C(idx2 ==0) = (matCOEFF(idx2==0,3)-matCOEFF(idxf,3));
+
 
 nfree = ((A .*2 .* vecDVEHVSPN'+  C./3.*2.*vecDVEHVSPN'.*vecDVEHVSPN'.*vecDVEHVSPN') .*uxs')';
 
