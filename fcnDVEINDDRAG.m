@@ -1,6 +1,6 @@
 function [inddrag]=fcnDVEINDDRAG(matCOEFF,matDVE,matVLST,vecUINF,vecDVEHVSPN,vecDVEHVCRD, vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-    valWSIZE, valTIMESTEP,vecSYM,vecDVEWING,vecWDVEWING )
+    valWSIZE, valTIMESTEP,vecSYM,vecDVEWING,vecWDVEWING, flagTRI)
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
 % non-dimensionalized to q.
 
@@ -48,7 +48,7 @@ tepoints(:,:,3) = (xte + s.*repmat(eta8,1,3)); %right ride
 % newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
 % if on same wing!
 % we won't use fcnWDVEVEL because we have to change the induced point for each
-% column of wake elements, and change dve type for current timestep to 1. 
+% column of wake elements, and change dve type for current timestep to 1.
 % So we will call fcnDVEVEL directly. So we have to set up all points/inducers
 
 %need to repmat te points to get each tepoint numte times (induced)
@@ -61,18 +61,28 @@ tewings = repmat(vecDVEWING(idte),[numte,1,1]);
 
 %dvenum is inducer
 %need to keep the inducers index the same as the induced points
-newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
-dvenum = newest_row(repmat(1:valWSIZE,valWSIZE,1),:);
+if flagTRI == 1
+    newest_row = [((valWNELE-valWSIZE)+1):2:valWNELE]';
+    dvenum = newest_row(repmat(1:valWSIZE/2,valWSIZE/2,1),:);
+else
+    newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
+    dvenum = newest_row(repmat(1:valWSIZE,valWSIZE,1),:);
+end
 
 %inducers wing number repmat
 wwings = vecWDVEWING(newest_row);
-wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
+
+if flagTRI == 1
+    wwings = wwings(repmat(1:valWSIZE/2,valWSIZE/2,1),:);
+else
+    wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
+end
 
 % now actually moving the point:
 % vector from TE of each TE element to each point in tepoints
 % order is as follows:
 % influence of first dve on (1:numte), then influence of second dve
-% on (1:numte), etc. 
+% on (1:numte), etc.
 % to keep this cleaner I move all points, then overwrite the cases when
 % the inducers wing is different than the induced points.
 delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
@@ -95,9 +105,17 @@ fpg = repmat(newtepoint,[valTIMESTEP,1,1]);
 dvenum = repmat(dvenum,[valTIMESTEP,1,1]); %incorrect inducers index
 
 mult = [1:valTIMESTEP]'; %need to renumber old timestep rows
-multnew = repmat(mult,[valWSIZE*valWSIZE,1,1]);
-multnew = sort(multnew);
-dvenum = dvenum - repmat(valWSIZE,size(dvenum,1),1).*(multnew-1);
+
+if flagTRI == 1
+    multnew = repmat(mult,[valWSIZE/2*valWSIZE/2,1,1]);
+    multnew = sort(multnew);
+    dvenum = dvenum - repmat(valWSIZE,size(dvenum,1),1).*(multnew-1);
+else
+    multnew = repmat(mult,[valWSIZE*valWSIZE,1,1]);
+    multnew = sort(multnew);
+    dvenum = dvenum - repmat(valWSIZE,size(dvenum,1),1).*(multnew-1);
+end
+
 dvenum = repmat(dvenum,[1 1 3]);%correct inducers index
 
 % take second dimension, move to bottom. then take third dimension and move
@@ -134,9 +152,16 @@ w_total = permute(reshape(w_ind,[],3,3),[1 3 2]);
 
 %add up influence of every dve on each point (every WSIZE value corresponds
 %to the ind. vel on one point
-w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', valWSIZE*3, [])',1),3,[])';
-w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', valWSIZE*3, [])',1),3,[])';
-w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', valWSIZE*3, [])',1),3,[])';
+
+if flagTRI == 1
+    w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', (valWSIZE/2)*3, [])',1),3,[])';
+    w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', (valWSIZE/2)*3, [])',1),3,[])';
+    w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', (valWSIZE/2)*3, [])',1),3,[])';
+else
+    w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', valWSIZE*3, [])',1),3,[])';
+    w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', valWSIZE*3, [])',1),3,[])';
+    w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', valWSIZE*3, [])',1),3,[])';
+end
 
 %w_wake is [num tedves x 3 x k]
 
@@ -159,8 +184,8 @@ tempr = tempa.*repmat(permute(gamma,[1 3 2]),[1,3,1]);
 % R2 = tempa(:,:,3).*repmat(gamma(:,3),1,3);
 
 % simpsons rule:
-R(:,:)  = (tempr(:,:,1)+4.*tempr(:,:,2)+tempr(:,:,3)).*repmat(eta8,[1 3])./3;	
-% R(:,:)  = (R1(:,:)+4*Ro(:,:)+R2(:,:)).*repmat(eta8,1,3)./3;	
+R(:,:)  = (tempr(:,:,1)+4.*tempr(:,:,2)+tempr(:,:,3)).*repmat(eta8,[1 3])./3;
+% R(:,:)  = (R1(:,:)+4*Ro(:,:)+R2(:,:)).*repmat(eta8,1,3)./3;
 
 % plus overhanging parts:
 R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDVEHVSPN(idte)-eta8,[1 3])./3);

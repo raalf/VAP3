@@ -1,4 +1,4 @@
-function [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNTVLST)
+function [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, matNEWWAKEPANEL, matPANELTE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNTVLST, matPANELTE)
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
@@ -43,3 +43,12 @@ matNEWWAKE(:,:,2) = matVLST(matDVE(vecDVETE>0,3),:);
 % New non-planar trailing edge vertices (used to calculate matWADJE)
 matNPNEWWAKE(:,:,1) = matNTVLST(matDVE(vecDVETE>0,4),:);
 matNPNEWWAKE(:,:,2) = matNTVLST(matDVE(vecDVETE>0,3),:);
+
+matNEWWAKEPANEL(:,:,1) = matPANELTE(:,:,1) - translation;
+matNEWWAKEPANEL(:,:,2) = matPANELTE(:,:,2) - translation;
+matNEWWAKEPANEL(:,:,3) = matPANELTE(:,:,2);
+matNEWWAKEPANEL(:,:,4) = matPANELTE(:,:,1);
+
+matPANELTE = matPANELTE - translation;
+
+end

@@ -1,7 +1,7 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, vecM] = fcnGENERATEDVESTRI(valPANELS, matGEOM, vecSYM, vecN, vecM)
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, vecM, vecN, matPANELTE] = fcnGENERATEDVESTRI(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -166,7 +166,10 @@ for i = 1:valPANELS
     
    % Write DVE CENTER POINT Coordinates
    xsi_vec = (P4(idxStart:idxEnd,:) - P1(idxStart:idxEnd,:) + P3(idxStart:idxEnd,:) - P2(idxStart:idxEnd,:))./2;
-   matCENTER(idxStart:idxEnd,:) = ((P1(idxStart:idxEnd,:) + P2(idxStart:idxEnd,:))./2) + xsi_vec;
+   matCENTER(idxStart:idxEnd,:) = ((P1(idxStart:idxEnd,:) + P2(idxStart:idxEnd,:))./2) + xsi_vec./2;
+   
+   matPANELTE(i,:,1) = panel4corners(4,:); % Rear Left
+   matPANELTE(i,:,2) = panel4corners(3,:); % Rear Right
 
     clear LE_Left LE_Mid LE_Right TE_Right TE_Left ...
         imLEL imLER imTER imTEL ...

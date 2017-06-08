@@ -3,7 +3,7 @@ function [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, v
     valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] = fcnCREATEWAKEROWTRI(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, ...
     vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, ...
     matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
-    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE)
+    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE, matNEWWAKEPANEL, vecN)
 
 matWAKEGEOM = cat(1, matWAKEGEOM, matNEWWAKE);
 matNPWAKEGEOM = cat(1, matNPWAKEGEOM, matNPNEWWAKE);
@@ -11,50 +11,51 @@ len = length(matNEWWAKE(:,1))*4;
 
 %% Putting matNEWWAKE into P1/P2/P3/P4 format
 % Similar to GenerateDVESTRI
-panels = size(matNEWWAKE,3);
+panels = max(vecDVEPANEL);
+len = sum(vecN).*2;
 
-P1          = nan(panels*4,3);
-P2          = nan(panels*4,3);
-P3          = nan(panels*4,3);
-P4          = nan(panels*4,3);
+P1          = nan(panels*2,3);
+P2          = nan(panels*2,3);
+P3          = nan(panels*2,3);
+P4          = nan(panels*2,3);
 
-LE_Left = matNEWWAKE(:,:,1);
-LE_Right = matNEWWAKE(:,:,2);
-TE_Right = matNEWWAKE(:,:,3);
-TE_Left = matNEWWAKE(:,:,4);
-
-vecEnd = cumsum(repmat(2,4,1).*(repmat(2,4,1)));
+vecEnd      = cumsum(vecN.*repmat(2,length(vecN),1));
 
 for i = 1:panels
-    count = 4;
+    count = 4.*(vecN(i)./2);
     idxStart = vecEnd(i)-count+1;
     idxEnd = vecEnd(i);
     
+    panel4corners = reshape(permute(matNEWWAKEPANEL(i,:,:), [2 1 3]), size(matNEWWAKEPANEL(i,:,:), 2), [])';
+    [ ~, LE_Left, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE(panel4corners, i, vecN./2, ones(size(vecN)));
+
     TE_Mid = (TE_Right + TE_Left)./2;
     LE_Mid = (LE_Right + LE_Left)./2;
     
-    P1(idxStart:4:idxEnd,:) = reshape(permute(LE_Left(i,:), [2 1 3]),count/4,3);
-    P2(idxStart:4:idxEnd,:) = reshape(permute(LE_Mid(i,:), [2 1 3]),count/4,3);
-    P3(idxStart:4:idxEnd,:) = reshape(permute(TE_Mid(i,:), [2 1 3]),count/4,3);
-    P4(idxStart:4:idxEnd,:) = reshape(permute(LE_Left(i,:), [2 1 3]),count/4,3);
+    P1(idxStart:4:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count/4,3);
+    P2(idxStart:4:idxEnd,:) = reshape(permute(LE_Mid, [2 1 3]),count/4,3);
+    P3(idxStart:4:idxEnd,:) = reshape(permute(TE_Mid, [2 1 3]),count/4,3);
+    P4(idxStart:4:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count/4,3);
     
-    P1(idxStart+1:4:idxEnd,:) = reshape(permute(LE_Left(i,:), [2 1 3]),count/4,3);
-    P2(idxStart+1:4:idxEnd,:) = reshape(permute(TE_Mid(i,:), [2 1 3]),count/4,3);
-    P3(idxStart+1:4:idxEnd,:) = reshape(permute(TE_Mid(i,:), [2 1 3]),count/4,3);
-    P4(idxStart+1:4:idxEnd,:) = reshape(permute(TE_Left(i,:), [2 1 3]),count/4,3);
+    P1(idxStart+1:4:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count/4,3);
+    P2(idxStart+1:4:idxEnd,:) = reshape(permute(TE_Mid, [2 1 3]),count/4,3);
+    P3(idxStart+1:4:idxEnd,:) = reshape(permute(TE_Mid, [2 1 3]),count/4,3);
+    P4(idxStart+1:4:idxEnd,:) = reshape(permute(TE_Left, [2 1 3]),count/4,3);
     
-    P1(idxStart+2:4:idxEnd,:) = reshape(permute(LE_Mid(i,:), [2 1 3]),count/4,3);
-    P2(idxStart+2:4:idxEnd,:) = reshape(permute(LE_Right(i,:), [2 1 3]),count/4,3);
-    P3(idxStart+2:4:idxEnd,:) = reshape(permute(LE_Right(i,:), [2 1 3]),count/4,3);
-    P4(idxStart+2:4:idxEnd,:) = reshape(permute(TE_Mid(i,:), [2 1 3]),count/4,3);
+    P1(idxStart+2:4:idxEnd,:) = reshape(permute(LE_Mid, [2 1 3]),count/4,3);
+    P2(idxStart+2:4:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count/4,3);
+    P3(idxStart+2:4:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count/4,3);
+    P4(idxStart+2:4:idxEnd,:) = reshape(permute(TE_Mid, [2 1 3]),count/4,3);
+
+    P1(idxStart+3:4:idxEnd,:) = reshape(permute(TE_Mid, [2 1 3]),count/4,3);
+    P2(idxStart+3:4:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count/4,3);
+    P3(idxStart+3:4:idxEnd,:) = reshape(permute(TE_Right, [2 1 3]),count/4,3);
+    P4(idxStart+3:4:idxEnd,:) = reshape(permute(TE_Mid, [2 1 3]),count/4,3);
     
-    P1(idxStart+3:4:idxEnd,:) = reshape(permute(TE_Mid(i,:), [2 1 3]),count/4,3);
-    P2(idxStart+3:4:idxEnd,:) = reshape(permute(LE_Right(i,:), [2 1 3]),count/4,3);
-    P3(idxStart+3:4:idxEnd,:) = reshape(permute(TE_Right(i,:), [2 1 3]),count/4,3);
-    P4(idxStart+3:4:idxEnd,:) = reshape(permute(TE_Mid(i,:), [2 1 3]),count/4,3);
     
-    xsi_vec = (P4(idxStart:idxEnd,:) - P1(idxStart:idxEnd,:) + P3(idxStart:idxEnd,:) - P2(idxStart:idxEnd,:))./2;
-    temp_wcenter(idxStart:idxEnd,:) = ((P1(idxStart:idxEnd,:) + P2(idxStart:idxEnd,:))./2) + xsi_vec;
+   % Write DVE CENTER POINT Coordinates
+   xsi_vec = (P4(idxStart:idxEnd,:) - P1(idxStart:idxEnd,:) + P3(idxStart:idxEnd,:) - P2(idxStart:idxEnd,:))./2;
+   temp_wcenter(idxStart:idxEnd,:) = ((P1(idxStart:idxEnd,:) + P2(idxStart:idxEnd,:))./2) + xsi_vec./2;
     
 end
 
@@ -75,7 +76,7 @@ valWNELE = valWNELE + len;
 %% Assigning circulation values to wake DVEs
 % K_g = A + ((eta.^2)/3) * C
 if flagSTEADY == 1
-    vecWKGAM = repmat([repmat(matCOEFF(vecDVETE>0,1),4,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),4,1)], valWNELE/valWSIZE, 1);
+    vecWKGAM = repmat([repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)], valWNELE/valWSIZE, 1);
 else
     vecWKGAM(end+1:end+len,1) = [matCOEFF(vecDVETE>0,1) + ((wdve_eta.^2)./3).*matCOEFF(vecDVETE>0,3)];
 end
@@ -83,7 +84,7 @@ end
 %% Assinging remaining values to wake parameters
 matWDVE(end+1:end+len,1:4) = newdves + length(matWVLST);
 matWVLST = cat(1, matWVLST, newvertices);
-matWCOEFF = cat(1, matWCOEFF, repmat(matCOEFF(vecDVETE>0,:),4,1));
+matWCOEFF = cat(1, matWCOEFF, reshape(repmat(matCOEFF(vecDVETE>0,:),1,2)',3,[],1)');
 
 vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
 vecWDVEPANEL = cat(1, vecWDVEPANEL, reshape(repmat(vecDVEPANEL(vecDVETE>0),1,4)',1,[])');

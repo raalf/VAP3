@@ -1,7 +1,7 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -142,6 +142,9 @@ for i = 1:valPANELS
     imP2(idxStart:idxEnd,:) = reshape(permute(imLER, [2 1 3]),count,3);
     imP3(idxStart:idxEnd,:) = reshape(permute(imTER, [2 1 3]),count,3);
     imP4(idxStart:idxEnd,:) = reshape(permute(imTEL, [2 1 3]),count,3);
+    
+    matPANELTE(i,:,1) = panel4corners(4,:); % Rear Left
+    matPANELTE(i,:,2) = panel4corners(3,:); % Rear Right
     
     clear LE_Left LE_Mid LE_Right TE_Right TE_Left ...
         imLEL imLER imTER imTEL ...
