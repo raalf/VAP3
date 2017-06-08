@@ -15,7 +15,7 @@ dvetype = ones(length(dvenum),1);
 
 % Newest row of wake DVEs have a filament at the leading edge
 if flagTRI == 1
-    newest_row = sort([valWNELE:-valWSIZE:valWNELE-valWSIZE]-1)';
+    newest_row = sort([valWNELE:-2:valWNELE-valWSIZE*2+1]-1)';
     
 else
 newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';

@@ -8,7 +8,7 @@ Steady (1) or unsteady (2):		flagSTEADY =	1
 
 Max. number of time steps:		valMAXTIME 	=	0
 Min. number of time steps: 		valMINTIME 	= 	0
-Width of each time step (sec):	valDELTIME 	=	1.0000
+Width of each time step (sec):	valDELTIME 	=	0.25000
 Convergence delta-span effic.:	valDELTAE 	=	0.000000	(0 if only timestepping)
 
 AOA sequence: 			seqALPHA 	= 	5
@@ -27,7 +27,7 @@ Defines leading edge of wing, all measured in metres:
 Keep vecM the same for all panels on a wing!
 
 Panel #:1. 
-Number of spanwise elements:	vecN 		= 1. 
+Number of spanwise elements:	vecN 		= 2. 
 Number of chordwise elements: 	vecM 		= 2.
 Airfoil number: 				vecAIRFOIL 	= 6
 Symmetry edge (0, 1 or 2): 		vecSYM 		= 1;
