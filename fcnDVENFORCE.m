@@ -1,7 +1,7 @@
 function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF...
     ,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEHVCRD,vecDVEROLL,...
     vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,...
-    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP)
+    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP,flagTRI)
 %DVE element normal forces
 
 % //computes lift and side force/density acting on surface DVE's. The local
@@ -31,8 +31,19 @@ function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF.
 
 %% preliminary stuff
 
-idx1 = vecDVELE == 1; %index of LE vectors (will be the same)
+%for quad elements:
+%we need to average mid chord velocities of each
+%chordwise row to estimate LE vels, since there may be a gap at the LE
 
+%for triangle elements:
+%we find all velocities directly at the LE
+
+if flagTRI ==1  %tri elements
+    idx1 = ones(valNELE,1) == 1 ;
+    
+else %quad elements,
+    idx1 = vecDVELE == 1; %index of LE vectors (will be the same)
+end
 % find vector across element (should already have this somewhere...)
 % for first spanwise row, vector is LE vect, for all other spanwise rows,
 % vector is halfchord vect.
@@ -91,16 +102,19 @@ A(idx1) = matCOEFF(idx1,1);
 B(idx1) = matCOEFF(idx1,2);
 C(idx1) = matCOEFF(idx1,3);
 % if any other row, A= A-Aupstream, B= B-Bupstream, C= C-Cupstream
-dvenum = find(idx1==0); %dvenum in question
-idxf = matADJE((ismember(matADJE(:,1), dvenum) & matADJE(:,2) == 1),3); %upstream dve num
-A(idx1 ==0) = (matCOEFF(idx1==0,1)-matCOEFF(idxf,1));
-B(idx1 ==0) = (matCOEFF(idx1==0,2)-matCOEFF(idxf,2));
-C(idx1 ==0) = (matCOEFF(idx1==0,3)-matCOEFF(idxf,3));
-
+if any(idx1 == 0)
+    dvenum = find(idx1==0); %dvenum in question
+    idxf = matADJE((ismember(matADJE(:,1), dvenum) & matADJE(:,2) == 1),3); %upstream dve num
+    A(idx1 ==0) = (matCOEFF(idx1==0,1)-matCOEFF(idxf,1));
+    B(idx1 ==0) = (matCOEFF(idx1==0,2)-matCOEFF(idxf,2));
+    C(idx1 ==0) = (matCOEFF(idx1==0,3)-matCOEFF(idxf,3));
+end
 
 nfree = ((A .*2 .* vecDVEHVSPN'+  C./3.*2.*vecDVEHVSPN'.*vecDVEHVSPN'.*vecDVEHVSPN') .*uxs')';
 
 %% induced force
+% for triangluar elements we compute velocities directly at LE. idx1 = 1
+% for all elements. 
 
 % for first row (m=1):
 %	compute 3 velocities along LE of DVE
