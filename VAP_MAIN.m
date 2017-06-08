@@ -45,9 +45,9 @@ flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 1;
-valMAXTIME = 20;
+valMAXTIME = 2;
 
-flagRELAX = 1
+flagRELAX = 0
 
 %% Discretize geometry into DVEs
 
@@ -65,11 +65,11 @@ end
 
 %             flagTRI = 0
 
-if flagTRI == 1
-    valWSIZE = length(nonzeros(vecDVETE))*2; % Amount of wake DVEs shed each timestep
-else
+% if flagTRI == 1
+%     valWSIZE = length(nonzeros(vecDVETE))*2; % Amount of wake DVEs shed each timestep
+% else
     valWSIZE = length(nonzeros(vecDVETE));
-end
+% end
 %% Add boundary conditions to D-Matrix
 
 [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
@@ -85,7 +85,7 @@ end
 vecCL = zeros(valMAXTIME, length(seqALPHA));
 vecCDI = zeros(valMAXTIME, length(seqALPHA));
 vecE = zeros(valMAXTIME, length(seqALPHA));
-
+ 
 for ai = 1:length(seqALPHA)
     
     valALPHA = deg2rad(seqALPHA(ai));
@@ -140,7 +140,7 @@ for ai = 1:length(seqALPHA)
         
         % Solving for wing coefficients
         [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
-        
+       
         for valTIMESTEP = 1:valMAXTIME
             %% Timestep to solution
             %   Move wing

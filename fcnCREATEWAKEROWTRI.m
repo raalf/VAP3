@@ -76,9 +76,9 @@ valWNELE = valWNELE + len;
 %% Assigning circulation values to wake DVEs
 % K_g = A + ((eta.^2)/3) * C
 if flagSTEADY == 1
-    vecWKGAM = repmat([repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)], valWNELE/valWSIZE, 1);
+    vecWKGAM = repmat([repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)], valWNELE/(2*valWSIZE), 1);
 else
-    vecWKGAM(end+1:end+len,1) = [matCOEFF(vecDVETE>0,1) + ((wdve_eta.^2)./3).*matCOEFF(vecDVETE>0,3)];
+    vecWKGAM(end+1:end+len,1) = [repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)];
 end
 
 %% Assinging remaining values to wake parameters
@@ -87,10 +87,10 @@ matWVLST = cat(1, matWVLST, newvertices);
 matWCOEFF = cat(1, matWCOEFF, reshape(repmat(matCOEFF(vecDVETE>0,:),1,2)',3,[],1)');
 
 vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
-vecWDVEPANEL = cat(1, vecWDVEPANEL, reshape(repmat(vecDVEPANEL(vecDVETE>0),1,4)',1,[])');
-vecWK = cat(1, vecWK, reshape(repmat(vecK(vecDVETE>0),1,4)',1,[])');
+vecWDVEPANEL = cat(1, vecWDVEPANEL, reshape(repmat(vecDVEPANEL(vecDVETE>0),1,2)',1,[])');
+vecWK = cat(1, vecWK, reshape(repmat(vecK(vecDVETE>0),1,2)',1,[])');
 
-vecWDVEWING = cat(1, vecWDVEWING, reshape(repmat(vecDVEWING(vecDVETE > 0),1,4)',1,[])');
+vecWDVEWING = cat(1, vecWDVEWING, reshape(repmat(vecDVEWING(vecDVETE > 0),1,2)',1,[])');
 
 if valWNELE - len == 0
     [ matWADJE, vecWDVESYM, vecWDVETIP, ~, ~ ] = fcnDVEADJT(P1, P2, P3, P4, valWNELE, vecWDVEPANEL, vecSYM );

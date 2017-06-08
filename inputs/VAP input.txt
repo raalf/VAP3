@@ -8,7 +8,7 @@ Steady (1) or unsteady (2):		flagSTEADY =	1
 
 Max. number of time steps:		valMAXTIME 	=	0
 Min. number of time steps: 		valMINTIME 	= 	0
-Width of each time step (sec):	valDELTIME 	=	0.250000
+Width of each time step (sec):	valDELTIME 	=	1.0000
 Convergence delta-span effic.:	valDELTAE 	=	0.000000	(0 if only timestepping)
 
 AOA sequence: 			seqALPHA 	= 	5
@@ -21,13 +21,13 @@ Reference span:				valSPAN 	=	10
 Mean aerodynamic chord: 	valCMAC 	=	1
 Aircraft weight (N):		valWEIGHT 	=	2950
 
-No. of panels:	valPANELS =	2
+No. of panels:	valPANELS =	1
 
 Defines leading edge of wing, all measured in metres:
 Keep vecM the same for all panels on a wing!
 
 Panel #:1. 
-Number of spanwise elements:	vecN 		= 2. 
+Number of spanwise elements:	vecN 		= 1. 
 Number of chordwise elements: 	vecM 		= 2.
 Airfoil number: 				vecAIRFOIL 	= 6
 Symmetry edge (0, 1 or 2): 		vecSYM 		= 1;
@@ -35,14 +35,6 @@ xleft		yleft		zleft		chord		epsilon
 0.000000	0.000000	0.000000	1.000000	0.000000
 1.000000	5.000000	0.000000	0.500000	25.000000
 
-Panel #:2. 
-Number of spanwise elements:	vecN 		= 2. 
-Number of chordwise elements: 	vecM 		= 2.
-Airfoil number: 				vecAIRFOIL 	= 6
-Symmetry edge (0, 1 or 2): 		vecSYM 		= 1;
-xleft		yleft		zleft		chord		epsilon
-1.000000	5.000000	0.000000	0.500000	25.000000
-1.000000	7.000000	0.000000	0.250000	25.000000
 
 
 %<- special identifier
