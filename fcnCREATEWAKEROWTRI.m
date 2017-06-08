@@ -98,8 +98,8 @@ if valWNELE - len == 0
 else
     
     new_adje_spanwise = [matWADJE(1:valLENWADJE,1) + valWNELE - len matWADJE(1:valLENWADJE,2) matWADJE(1:valLENWADJE,3)+valWNELE-len matWADJE(1:valLENWADJE,4)];
-    new_adje_te = [[(valWNELE - len + 1):valWNELE]' repmat(3,len,1) [(valWNELE - 2*len + 1):(valWNELE - len)]' ones(len,1)];
-    old_adje_le = [new_adje_te(:,3) ones(len,1) new_adje_te(:,1) ones(len,1)];
+    new_adje_te = [[(valWNELE - len + 2):2:valWNELE]' repmat(3,len/2,1) [(valWNELE - 2*len + 1):2:(valWNELE - len)]' ones(len/2,1)];
+    old_adje_le = [new_adje_te(:,3) ones(len/2,1) new_adje_te(:,1) ones(len/2,1)];
     
     % [matWADJE]  DVE# | Local Edge | DVE# | # of Panels This DVE is Touching
     matWADJE = [matWADJE(:,1:4); old_adje_le; new_adje_spanwise; new_adje_te];

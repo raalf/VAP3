@@ -54,29 +54,32 @@ tepoints(:,:,3) = (xte + s.*repmat(eta8,1,3)); %right ride
 %need to repmat te points to get each tepoint numte times (induced)
 %this will account for the induction of all the wake elements in the
 %current timestep, on all the te points.
+if flagTRI == 1
+    numte = numte*2;
+end
+
 tepoints = repmat(tepoints,[numte,1,1]);
 
 %need to repmat the wing index of te elements (induced)
-tewings = repmat(vecDVEWING(idte),[numte,1,1]);
+if flagTRI == 1
+    tewings = repmat(repmat(vecDVEWING(idte),[numte,1,1]),2,1,1);
+    
+else
+    tewings = repmat(vecDVEWING(idte),[numte,1,1]);
+end
 
 %dvenum is inducer
 %need to keep the inducers index the same as the induced points
-if flagTRI == 1
-    newest_row = [((valWNELE-valWSIZE)+1):2:valWNELE]';
-    dvenum = newest_row(repmat(1:valWSIZE/2,valWSIZE/2,1),:);
-else
-    newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
-    dvenum = newest_row(repmat(1:valWSIZE,valWSIZE,1),:);
-end
+
+newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
+dvenum = newest_row(repmat(1:valWSIZE,valWSIZE,1),:);
+
 
 %inducers wing number repmat
 wwings = vecWDVEWING(newest_row);
 
-if flagTRI == 1
-    wwings = wwings(repmat(1:valWSIZE/2,valWSIZE/2,1),:);
-else
-    wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
-end
+wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
+
 
 % now actually moving the point:
 % vector from TE of each TE element to each point in tepoints
@@ -85,8 +88,11 @@ end
 % on (1:numte), etc.
 % to keep this cleaner I move all points, then overwrite the cases when
 % the inducers wing is different than the induced points.
-delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
-
+if flagTRI == 1
+    delx  = tepoints-repmat(xte(repmat(1:numte/2,numte/2,1),:),2,1,3);
+else
+    delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
+end
 %project into freestream direction
 temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
 tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
@@ -101,21 +107,23 @@ newtepoint(diffw) = tepoints(diffw);
 %we have now accounted for all the current timestep of wake elements, now repmat to
 %account for remaining wake rows
 %fpg is all points to go into DVEVEL
-fpg = repmat(newtepoint,[valTIMESTEP,1,1]);
-dvenum = repmat(dvenum,[valTIMESTEP,1,1]); %incorrect inducers index
+
+if flagTRI == 1
+    fpg = repmat(newtepoint,[valTIMESTEP*2,1,1]);
+    dvenum = repmat(dvenum,[valTIMESTEP,1,1]);
+else
+    fpg = repmat(newtepoint,[valTIMESTEP,1,1]);
+    dvenum = repmat(dvenum,[valTIMESTEP,1,1]);
+end
 
 mult = [1:valTIMESTEP]'; %need to renumber old timestep rows
 
-if flagTRI == 1
-    multnew = repmat(mult,[valWSIZE/2*valWSIZE/2,1,1]);
-    multnew = sort(multnew);
-    dvenum = dvenum - repmat(valWSIZE,size(dvenum,1),1).*(multnew-1);
-else
-    multnew = repmat(mult,[valWSIZE*valWSIZE,1,1]);
-    multnew = sort(multnew);
-    dvenum = dvenum - repmat(valWSIZE,size(dvenum,1),1).*(multnew-1);
-end
 
+multnew = repmat(mult,[valWSIZE*valWSIZE,1,1]);
+
+
+multnew = sort(multnew);
+dvenum = dvenum - repmat(valWSIZE,size(dvenum,1),1).*(multnew-1);
 dvenum = repmat(dvenum,[1 1 3]);%correct inducers index
 
 % take second dimension, move to bottom. then take third dimension and move
@@ -153,14 +161,13 @@ w_total = permute(reshape(w_ind,[],3,3),[1 3 2]);
 %add up influence of every dve on each point (every WSIZE value corresponds
 %to the ind. vel on one point
 
+
+w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', (valWSIZE)*3, [])',1),3,[])';
+w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', (valWSIZE)*3, [])',1),3,[])';
+w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', (valWSIZE)*3, [])',1),3,[])';
+
 if flagTRI == 1
-    w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', (valWSIZE/2)*3, [])',1),3,[])';
-    w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', (valWSIZE/2)*3, [])',1),3,[])';
-    w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', (valWSIZE/2)*3, [])',1),3,[])';
-else
-    w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', valWSIZE*3, [])',1),3,[])';
-    w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', valWSIZE*3, [])',1),3,[])';
-    w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', valWSIZE*3, [])',1),3,[])';
+   w_wake = w_wake(1:end/2,:,:) + w_wake((end/2)+1:end,:,:);
 end
 
 %w_wake is [num tedves x 3 x k]

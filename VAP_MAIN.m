@@ -45,9 +45,9 @@ flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 1;
-valMAXTIME = 2;
+valMAXTIME = 20;
 
-flagRELAX = 0
+flagRELAX = 1
 
 %% Discretize geometry into DVEs
 
@@ -62,6 +62,8 @@ else
         matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
         vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 end
+
+%             flagTRI = 0
 
 if flagTRI == 1
     valWSIZE = length(nonzeros(vecDVETE))*2; % Amount of wake DVEs shed each timestep
@@ -157,6 +159,7 @@ for ai = 1:length(seqALPHA)
             [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, matNEWWAKEPANEL, matPANELTE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNPVLST, matPANELTE);
             
             %% Generating new wake elements
+            
             if flagTRI == 1
                 [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                     vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] ...
