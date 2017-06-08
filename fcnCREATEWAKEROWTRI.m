@@ -76,8 +76,8 @@ valWNELE = valWNELE + len;
 %% Assigning circulation values to wake DVEs
 % K_g = A + ((eta.^2)/3) * C
 if flagSTEADY == 1
-    vecWKGAM = repmat([repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)], valWNELE/(2*valWSIZE), 1);
-else
+    vecWKGAM = repmat([reshape(repmat(matCOEFF(vecDVETE>0,1),1,2)',[],1) + ((wdve_eta.^2)./3).*reshape(repmat(matCOEFF(vecDVETE>0,3),1,2)',[],1)], valWNELE/(2*valWSIZE), 1);
+else %unsteady is incorrect
     vecWKGAM(end+1:end+len,1) = [repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)];
 end
 
