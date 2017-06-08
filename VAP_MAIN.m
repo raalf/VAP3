@@ -45,7 +45,7 @@ flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 1;
-valMAXTIME = 2;
+valMAXTIME = 30;
 
 flagRELAX = 0
 
@@ -176,15 +176,21 @@ for ai = 1:length(seqALPHA)
             %% Creating and solving WD-Matrix for latest row of wake elements
             % We need to grab from matWADJE only the values we need for this latest row of wake DVEs
             idx = sparse(sum(ismember(matWADJE,[((valWNELE - valWSIZE) + 1):valWNELE]'),2)>0 & (matWADJE(:,2) == 4 | matWADJE(:,2) == 2));
-            temp_WADJE = [matWADJE(idx,1) - (valTIMESTEP-1)*valWSIZE matWADJE(idx,2) matWADJE(idx,3) - (valTIMESTEP-1)*valWSIZE];
             
-            [matWD, vecWR] = fcnWDWAKE([1:valWSIZE]', temp_WADJE, vecWDVEHVSPN(end-valWSIZE+1:end), vecWDVESYM(end-valWSIZE+1:end), vecWDVETIP(end-valWSIZE+1:end), vecWKGAM(end-valWSIZE+1:end));
-            [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
-            
+            if flagTRI == 1
+                temp_WADJE = [matWADJE(idx,1) - (valTIMESTEP-1)*valWSIZE*2 matWADJE(idx,2) matWADJE(idx,3) - (valTIMESTEP-1)*valWSIZE*2];
+                
+                [matWD, vecWR] = fcnWDWAKE([1:valWSIZE*2]', temp_WADJE, vecWDVEHVSPN(end-valWSIZE*2+1:end), vecWDVESYM(end-valWSIZE*2+1:end), vecWDVETIP(end-valWSIZE*2+1:end), vecWKGAM(end-valWSIZE*2+1:end));
+                [matWCOEFF(end-valWSIZE*2+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE*2, vecWKGAM(end-valWSIZE*2+1:end), vecWDVEHVSPN(end-valWSIZE*2+1:end));
+            else
+                temp_WADJE = [matWADJE(idx,1) - (valTIMESTEP-1)*valWSIZE matWADJE(idx,2) matWADJE(idx,3) - (valTIMESTEP-1)*valWSIZE];
+                [matWD, vecWR] = fcnWDWAKE([1:valWSIZE]', temp_WADJE, vecWDVEHVSPN(end-valWSIZE+1:end), vecWDVESYM(end-valWSIZE+1:end), vecWDVETIP(end-valWSIZE+1:end), vecWKGAM(end-valWSIZE+1:end));
+                [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
+            end
             %% Rebuilding and solving wing resultant
             [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, vecUINF, valWNELE, matWDVE, ...
                 matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                vecWDVETESWP, vecSYM, valWSIZE);
+                vecWDVETESWP, vecSYM, valWSIZE, flagTRI);
             
             [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
             
