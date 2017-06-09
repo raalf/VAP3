@@ -8,7 +8,7 @@ Steady (1) or unsteady (2):		flagSTEADY =	1
 
 Max. number of time steps:		valMAXTIME 	=	0
 Min. number of time steps: 		valMINTIME 	= 	0
-Width of each time step (sec):	valDELTIME 	=	0.1150
+Width of each time step (sec):	valDELTIME 	=	0.250
 Convergence delta-span effic.:	valDELTAE 	=	0.000000	(0 if only timestepping)
 
 AOA sequence: 			seqALPHA 	= 	5
