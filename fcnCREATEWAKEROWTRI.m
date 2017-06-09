@@ -7,7 +7,7 @@ function [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, v
 
 matWAKEGEOM = cat(1, matWAKEGEOM, matNEWWAKE);
 matNPWAKEGEOM = cat(1, matNPWAKEGEOM, matNPNEWWAKE);
-len = length(matNEWWAKE(:,1))*4;
+len = length(matNEWWAKE(:,1))*4; 
 
 %% Putting matNEWWAKE into P1/P2/P3/P4 format
 % Similar to GenerateDVESTRI
@@ -68,8 +68,30 @@ matWCENTER = [matWCENTER; temp_wcenter];
     newvertices, newdves, ~] = fcnDVECORNER2PARAM(temp_wcenter, P1, P2, P3, P4);
 
 verticeList = [P1;P2;P3;P4];
-[newvertices,~,newdves] = unique(verticeList,'rows');
-newdves = reshape(newdves,len,4);
+
+if isempty(matWVLST) == 1 % if matWVLST is empty. create the first wake row
+    [newvertices,~,newdves] = unique(verticeList,'rows');
+    newdves = reshape(newdves,len,4);
+    matWDVE(end+1:end+len,1:4) = newdves + length(matWVLST);
+    
+else % deal with duplicate wake vertices
+%     verticeList
+    [idx,newdves]=ismember(verticeList,matWVLST,'rows');
+%     [idx, newdves] = ismembertol(verticeList, matWVLST, 'ByRows',true);
+    [newvertices,~,newrowdves]=unique(verticeList(~idx,:),'rows');
+%     [newvertices,~,newrowdves] = uniquetol(verticeList(~idx,:),'ByRows',true);
+    
+    newdves(~idx) = newrowdves + length(matWVLST(:,1));
+    
+    
+    newdves = reshape(newdves,len,4);
+    matWDVE(end+1:end+len,1:4) = newdves;
+end
+
+%% Assinging remaining values to wake parameters
+
+
+matWVLST = cat(1, matWVLST, newvertices);
 
 valWNELE = valWNELE + len;
 
@@ -81,9 +103,9 @@ else %unsteady is incorrect
     vecWKGAM(end+1:end+len,1) = [repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)];
 end
 
-%% Assinging remaining values to wake parameters
-matWDVE(end+1:end+len,1:4) = newdves + length(matWVLST);
-matWVLST = cat(1, matWVLST, newvertices);
+
+% matWVLST = cat(1, matWVLST, unique([P1; P2],'rows'));
+
 matWCOEFF = cat(1, matWCOEFF, reshape(repmat(matCOEFF(vecDVETE>0,:),1,2)',3,[],1)');
 
 vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;

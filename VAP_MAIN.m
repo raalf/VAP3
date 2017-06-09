@@ -23,7 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-strFILE = 'inputs/VAP input.txt';
+% strFILE = 'inputs/VAP input.txt';
+strFILE = 'inputs/VAP3_2tri.txt';
 
 flagTRI = 1;
 
@@ -44,8 +45,8 @@ flagTRI = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
-flagVERBOSE = 0;
-valMAXTIME =20;
+flagVERBOSE = 1;
+valMAXTIME = 10;
 
 flagRELAX = 1
 
