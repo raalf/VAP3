@@ -33,7 +33,10 @@ WP1 = matWVLST(matWDVE(:,1),:);
 WP2 = matWVLST(matWDVE(:,2),:);
 WP3 = matWVLST(matWDVE(:,3),:);
 WP4 = matWVLST(matWDVE(:,4),:);
-matWCENTER = (WP1(:,:)+WP2(:,:)+WP3(:,:)+WP4(:,:))./4;
+% matWCENTER = (WP1(:,:)+WP2(:,:)+WP3(:,:)+WP4(:,:))./4;
+
+xsi_vec = ((WP4 - WP1) + (WP3 - WP2))./2;
+matWCENTER = ((WP1 + WP2)./2) + xsi_vec./2;
 
 % update relax wake dves
 [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...

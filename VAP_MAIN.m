@@ -44,8 +44,8 @@ flagTRI = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
-flagVERBOSE = 1;
-valMAXTIME =5;
+flagVERBOSE = 0;
+valMAXTIME =20;
 
 flagRELAX = 1
 
