@@ -46,7 +46,7 @@ matWCENTER = ((WP1 + WP2)./2) + xsi_vec./2;
 % For singularity factor updating, each row of wake elements needs to be seen as its own "wing"
 % so we are adding on to the vecWDVEWING by timestep number to create the right form to pass into
 % the surface singularity factor function
-tswing = vecWDVEWING + reshape(repmat([0:max(vecWDVEWING):((valWNELE/(valWSIZE*2))-1)*max(vecWDVEWING)], valWSIZE*2,1),[],1);
+tswing = vecWDVEWING + reshape(repmat([0:max(vecWDVEWING):((valWNELE/(valWSIZE*1))-1)*max(vecWDVEWING)], valWSIZE*1,1),[],1);
 
 % Updating wake singularity factor
 [vecWK] = fcnSINGFCT(valWNELE, tswing, vecWDVETIP, vecWDVEHVSPN);

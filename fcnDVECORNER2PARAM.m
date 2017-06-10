@@ -101,6 +101,7 @@ vecDVEAREA = vecDVEHVCRD.*vecDVEHVSPN.*4;
 % vertices location in matVLST
 % (old method) verticeList = [LECoordL;LECoordR;TECoordR;TECoordL];
 verticeList = [P1;P2;teRightProj;teLeftProj];
+% verticeList = [P1;P2;P3;P4];
 [matVLST,idxVLST,matDVE] = unique(verticeList,'rows');
 matDVE = reshape(matDVE,valNELE,4);
 

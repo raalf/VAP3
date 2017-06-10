@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-% strFILE = 'inputs/VAP input.txt';
-strFILE = 'inputs/VAP3_2tri.txt';
+strFILE = 'inputs/VAP input.txt';
+% strFILE = 'inputs/VAP3_2tri.txt';
 
 flagTRI = 1;
 
@@ -44,11 +44,11 @@ flagTRI = 1;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagPLOTWAKEVEL = 0;
-flagVERBOSE = 1;
-valMAXTIME = 10;
+flagPLOTWAKEVEL = 1;
+flagVERBOSE = 0;
+valMAXTIME = 3;
 
-flagRELAX = 1
+flagRELAX =1
 
 %% Discretize geometry into DVEs
 
@@ -64,7 +64,7 @@ else
         vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 end
 
-%             flagTRI = 0
+            flagTRI = 0
 
 % if flagTRI == 1
 %     valWSIZE = length(nonzeros(vecDVETE))*2; % Amount of wake DVEs shed each timestep
@@ -219,7 +219,7 @@ for ai = 1:length(seqALPHA)
                     matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(vecUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
                     matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
                     vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVELESWP, vecWDVEPITCH, ...
-                    vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVEWING);                    
+                    vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVEWING, flagTRI);                    
                 end
                 
                 % Creating and solving WD-Matrix
