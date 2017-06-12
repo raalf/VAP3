@@ -20,18 +20,36 @@ would yield the same result as
 `<span>1.524</span>`
 
 
+## VAP Settings
+- `VAP`
+	- `flagRELAX` (True | False)
+	- `flagSTEADY` (True | False)
+	- `flagTRI` (True | False)
+	- `valMAXTIME` Maximum number of time steps
+<!--	- `valMINTIME` Minimum number of time steps-->
+	- `valDELTIME` Inteval of each time step (second)
+<!--	- `valDELTAE` Convergence delta-span effic.-->
+
 
 
 ## Condition
 - `condition`
+	- `valDENSITY` Fluid density (kg/m^3)
+	- `valKINV` Kinematic viscosity (m^2/s)
 
 
 ## Vehicle
 - `vehicle*`
-	- `metrics`
-		- `area` Reference area of the vehicle (m^2)
-		- `span` Reference span of the vehicle (m)
-		- `cmac` Mean aerodynamic chord of the vehicle (m)
+	- `alpha` Overall angle of attack of the entire vehicle (deg)
+	- `beta` Overall angle of sideslip of the entire vehicle (deg)
+	- `vinf` Freestream velocity of the vehicle (m/s)
+	- `x` X position of the entire vehicle (Position of vehicle's origin in global reference frame)
+	- `y` Y position of the entire vehicle 
+	- `z` Z position of the entire vehicle 
+	- `area` Reference area of the vehicle (m^2)
+	- `span` Reference span of the vehicle (m)
+	- `cmac` Mean aerodynamic chord of the vehicle (m)
+	
 	- `wing*`
 		- `panel*`
 			- `symmetry` Symmetry edge (0, 1 or 2)
@@ -44,6 +62,10 @@ would yield the same result as
 				- `chord` Chord length of section (m)
 				- `epsilon` Twist angle of section (deg)
 				- `airfoil`
+
+	- `rotor*`
+	- `fuselage*`
+	- `viscous`
 
 				
 ---
