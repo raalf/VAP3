@@ -26,7 +26,7 @@ disp(' ');
 strFILE = 'inputs/VAP input.txt';
 % strFILE = 'inputs/VAP3_2tri.txt';
 
-flagTRI = 1;
+
 
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
@@ -41,15 +41,15 @@ flagTRI = 1;
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
 %     valINTERF] = fcnFWREAD(strFILE);
-
+flagTRI = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 1;
 flagVERBOSE = 0;
-valMAXTIME = 3;
+valMAXTIME = 10;
 
-flagRELAX =1
-
+flagRELAX = 1;
+% seqALPHA = 20;
 %% Discretize geometry into DVEs
 
 if flagTRI == 1
@@ -64,7 +64,7 @@ else
         vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 end
 
-            flagTRI = 0
+%             flagTRI = 0
 
 % if flagTRI == 1
 %     valWSIZE = length(nonzeros(vecDVETE))*2; % Amount of wake DVEs shed each timestep
