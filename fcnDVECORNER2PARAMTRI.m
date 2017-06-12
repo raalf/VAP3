@@ -2,7 +2,7 @@ function [ vecDVEHVSPN, vecDVEHVCRD, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE, valNELE, idxVLST] = fcnDVECORNER2PARAMTRI( matDVE, matCENTER, P1, P2, P3, P4 )
+    matVLST, matDVE, valNELE, idxVLST] = fcnDVECORNER2PARAMTRI( matCENTER, P1, P2, P3, P4 )
 %FCNDVEPOINT2PARAM takes the corner and center points of each DVEs,computes the parameters and compiles the matVLST and matDVE
 %   Detailed explanation goes here
 
@@ -12,7 +12,7 @@ valNELE = length(matCENTER(:,1));
 
 
 % type 1 tri dves with points 2 and 3 welded
-idxT1 = (matDVE(:,2) == matDVE(:,3));
+% idxT1 = (matDVE(:,2) == matDVE(:,3));
 % type 2 tri dves with points 1 and 4 welded
 
 
@@ -25,8 +25,11 @@ leVec = P2-P1;
 % (old method) xsi_vec = LE_Mid - CP;
 % (quad method)P12 = (P1+P2)./2;
 % (quad method)xsiVec = P12-matCENTER;
-xsiVec(idxT1,:) = P1(idxT1,:)-P4(idxT1,:);
-xsiVec(~idxT1,:) = P2(~idxT1,:)-P3(~idxT1,:);
+% xsiVec(idxT1,:) = P1(idxT1,:)-P4(idxT1,:);
+% xsiVec(~idxT1,:) = P2(~idxT1,:)-P3(~idxT1,:);
+
+P12 = (P1+P2)./2;
+xsiVec = P12 - matCENTER;
 
 
 tempM = cross(leVec, xsiVec, 2);
@@ -73,11 +76,12 @@ vecDVELESWP = atan(leVecLocal(:,1)./leVecLocal(:,2));
 % q(x,y,z) TE point | p(a,b,c) Control Point | n(d,e,f) DVE normal
 % q_proj = q - dot(q-p,n)*n
 % (old method) TE_Left_proj = TE_Left-repmat(dot(TE_Left-CP,DVE_norm,3),1,1,3).*DVE_norm;
-teLeftProj = P4 - repmat(dot(P4-matCENTER,matDVENORM,2),1,3).*matDVENORM;
+% teLeftProj = P4 - repmat(dot(P4-matCENTER,matDVENORM,2),1,3).*matDVENORM;
 % (old method) TE_Right_proj = TE_Right-repmat(dot(TE_Right-CP,DVE_norm,3),1,1,3).*DVE_norm;
-teRightProj = P3 - repmat(dot(P3-matCENTER,matDVENORM,2),1,3).*matDVENORM;
+% teRightProj = P3 - repmat(dot(P3-matCENTER,matDVENORM,2),1,3).*matDVENORM;
 % (old method) TE_vec_proj = TE_Right_proj - TE_Left_proj;
-teVecProj = teRightProj-teLeftProj;
+% teVecProj = teRightProj-teLeftProj;
+teVecProj = P4 - P3;
 
 % Rotate the Projected TE on DVE to local reference frame
 % arctan(Projected TE local X component/Projected TE local Y component)

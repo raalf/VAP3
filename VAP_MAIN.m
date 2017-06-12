@@ -46,10 +46,10 @@ flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 1;
 flagVERBOSE = 0;
-valMAXTIME = 10;
+valMAXTIME = 15;
 
 flagRELAX = 1;
-% seqALPHA = 20;
+% seqALPHA = 10;
 %% Discretize geometry into DVEs
 
 if flagTRI == 1

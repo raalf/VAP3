@@ -42,7 +42,7 @@ matWCENTER = ((WP1 + WP2)./2) + xsi_vec./2;
 % update relax wake dves
 [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, ...
     vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWDVENORM, ...
-    ~, ~, ~, idxWVLST] = fcnDVECORNER2PARAMTRI( matWDVE, matWCENTER, WP1, WP2, WP3, WP4 );
+    ~, ~, ~, idxWVLST] = fcnDVECORNER2PARAMTRI( matWCENTER, WP1, WP2, WP3, WP4 );
 
 
 % For singularity factor updating, each row of wake elements needs to be seen as its own "wing"
