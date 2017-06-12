@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VAP>
+	<relaxwake></relaxwake>
+	<steady></steady>
+
+</VAP>
+
+
+
+<vehicle>
+	<metrics>
+		<refarea></refarea>
+		<refspan></refspan>
+		<mac></mac>
+	</metrics>
+	<mass>
+	</mass>
+
+
+
+    <wing>
+    	<geometry>
+	        <panel>
+	        	<symmetry></symmetry>
+	        	<section>
+		            <airfoil></airfoil>
+		            <chord></chord>
+		            <epsilon></epsilon>
+	        	</section>
+	        </panel>
+    	</geometry>
+    </wing>
+
+
+
+    <rotor>
+    	<geometry>
+	        <panel>
+	        	<symmetry></symmetry>
+	        	<section>
+		            <airfoil></airfoil>
+		            <chord></chord>
+		            <epsilon></epsilon>
+	        	</section>
+	        </panel>
+    	</geometry>
+    </rotor>
+</vehicle>
