@@ -9,6 +9,18 @@ This markdown file holds infomation and records of VAPXML, development of a new 
 - [VAP2] Parameter introduced to VAP2
 - [VAP3] Parameter introduced to VAP3
 
+## Notes
+### Default Unit
+All numerical input would have a default unit assigned. (e.g. meters for the reference span). This can be setup with a `unit` tag under the numerical parameter such that specific units can be converted to the default unit in *future* VAP releases.
+
+For example:
+`<span unit='feet'>5</span>` 
+
+would yield the same result as
+`<span>1.524</span>`
+
+
+
 
 ## Condition
 - `condition`
@@ -17,7 +29,7 @@ This markdown file holds infomation and records of VAPXML, development of a new 
 ## Vehicle
 - `vehicle*`
 	- `metrics`
-		- `area` Reference area of the vehicle (m)
+		- `area` Reference area of the vehicle (m^2)
 		- `span` Reference span of the vehicle (m)
 		- `cmac` Mean aerodynamic chord of the vehicle (m)
 	- `wing*`
