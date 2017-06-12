@@ -1,3 +1,30 @@
+# VAPXML
+This markdown file holds infomation and records of VAPXML, development of a new input format for future versions of VAP. Similar to previous input files, parameters of the flight vehicle geometry are stored in ASCII text file but in XML 1.0 language. This will provide freedom for future versions of VAP and enable analysis of complex vechicle geometry and configuration. 
+
+
+# VAPXML File Format Specifications 
+## Vehicle
+- \<vehicle*\>
+	- \<metrics\>
+		- \<area\> Reference area of the vehicle (m)
+		- \<span\> Reference span of the vehicle (m)
+		- \<cmac\> Mean aerodynamic chord of the vehicle (m)
+	- \<wing*\>
+		- \<panel*\>
+			- \<symmetry\> Symmetry edge (0, 1 or 2)
+			- \<N\> Number of spanwise elements
+			- \<M\> Number of chordwise elements
+			- \<section*\>
+				- \<X\> X position of section leading edge (m)
+				- \<Y\> Y position of section leading edge (m)
+				- \<Z\> Z position of section leading edge (m)
+				- \<chord\> Chord length of section (m)
+				- \<epsilon\> Twist angle of section (deg)
+				- \<airfoil\>
+
+				
+--
+
 # VAP
 The MATLAB version of the higher-order potential flow code FreeWake.
 
