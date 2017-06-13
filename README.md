@@ -47,13 +47,14 @@ would yield the same result as
 	- `x` X position of the entire vehicle (Position of vehicle's origin in global reference frame)
 	- `y` Y position of the entire vehicle 
 	- `z` Z position of the entire vehicle 
-	- `area` Reference area of the vehicle (m^2)
-	- `span` Reference span of the vehicle (m)
-	- `cmac` Mean aerodynamic chord of the vehicle (m)
+
 	
 	- `wing*`
 		- `incidence` Angle of incidence of the root (deg)
 		- `trimable` Defines a surface that can be trimmed (True | False)
+		- `area` Reference area of the wing (m^2)
+		- `span` Reference span of the wing (m)
+		- `cmac` Mean aerodynamic chord of the wing (m)
 		- `panel*`
 			- `symmetry` Symmetry edge (0, 1 or 2)
 			- `N` Number of spanwise elements
@@ -68,6 +69,7 @@ would yield the same result as
 
 	- `rotor*`
 		- `RPM` Rotational speed of rotor (RPM) 
+		- `dia` Rotor diameter (m) 
 		- `xhub` X location of center of rotor with respect to vehicle origin (m)
 		- `yhub` Y location of center of rotor with respect to vehicle origin (m)
 		- `zhub` Z location of center of rotor with respect to vehicle origin (m)
