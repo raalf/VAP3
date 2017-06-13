@@ -28,7 +28,7 @@ would yield the same result as
 	- `valMAXTIME` Maximum number of time steps
 <!--	- `valMINTIME` Minimum number of time steps-->
 	- `valDELTIME` Inteval of each time step (second)
-<!--	- `valDELTAE` Convergence delta-span effic.-->
+<!--	- `valDELTAE` Convergence delta-span effic. (0 if only timestepping)-->
 
 
 
@@ -42,6 +42,7 @@ would yield the same result as
 - `vehicle*`
 	- `alpha` Overall angle of attack of the entire vehicle (deg)
 	- `beta` Overall angle of sideslip of the entire vehicle (deg)
+	- `phi` Overall angle of roll of the entire vehicle (deg)
 	- `vinf` Freestream velocity of the vehicle (m/s)
 	- `x` X position of the entire vehicle (Position of vehicle's origin in global reference frame)
 	- `y` Y position of the entire vehicle 
@@ -51,6 +52,7 @@ would yield the same result as
 	- `cmac` Mean aerodynamic chord of the vehicle (m)
 	
 	- `wing*`
+		- `incidence` Angle of incidence of the root (deg)
 		- `panel*`
 			- `symmetry` Symmetry edge (0, 1 or 2)
 			- `N` Number of spanwise elements
@@ -64,6 +66,19 @@ would yield the same result as
 				- `airfoil`
 
 	- `rotor*`
+		- `hub` Location of center of rotor (m)
+		- `axis` Axis of rotation vector
+		- `blades` Number of blades
+		- `panel*`
+			- `N` Number of spanwise elements
+			- `M` Number of chordwise elements
+			- `section*`
+				- `X` X position of section leading edge with respect to `hub` and XY plane (m)
+				- `Y` Y position of section leading edge with respect to `hub` and XY plane (m)
+				- `Z` Z position of section leading edge with respect to `hub` and XY plane (m)
+				- `chord` Chord length of section (m)
+				- `epsilon` Twist angle of section (deg)
+				- `airfoil`
 	- `fuselage*`
 	- `viscous`
 
