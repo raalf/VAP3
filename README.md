@@ -26,9 +26,9 @@ would yield the same result as
 	- `flagSTEADY` (True | False)
 	- `flagTRI` (True | False)
 	- `valMAXTIME` Maximum number of time steps
-<!--	- `valMINTIME` Minimum number of time steps-->
+	- `valMINTIME` Minimum number of time steps
 	- `valDELTIME` Inteval of each time step (second)
-<!--	- `valDELTAE` Convergence delta-span effic. (0 if only timestepping)-->
+	- `valDELTAE` Convergence delta-span effic. (0 if only timestepping)
 
 
 
