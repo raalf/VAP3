@@ -53,6 +53,7 @@ would yield the same result as
 	
 	- `wing*`
 		- `incidence` Angle of incidence of the root (deg)
+		- `trimable` Defines a surface that can be trimmed (1 for yes, 0 for no)
 		- `panel*`
 			- `symmetry` Symmetry edge (0, 1 or 2)
 			- `N` Number of spanwise elements
