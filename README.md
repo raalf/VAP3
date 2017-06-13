@@ -66,8 +66,12 @@ would yield the same result as
 				- `airfoil`
 
 	- `rotor*`
-		- `hub` Location of center of rotor (m)
-		- `axis` Axis of rotation vector
+		- `xhub` X location of center of rotor with respect to vehicle origin (m)
+		- `yhub` Y location of center of rotor with respect to vehicle origin (m)
+		- `zhub` Z location of center of rotor with respect to vehicle origin (m)
+		- `axisx` Axis of rotation unit vector X-component with respect to vehicle origin (m)
+		- `axisy` Axis of rotation unit vector Y-component with respect to vehicle origin (m)
+		- `axisz` Axis of rotation unit vector Z-component with respect to vehicle origin (m)
 		- `blades` Number of blades
 		- `panel*`
 			- `N` Number of spanwise elements
