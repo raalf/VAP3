@@ -1,0 +1,16 @@
+<VAP>
+	<flagRELAX>TRUE</flagRELAX>
+	<flagSTEADY>TRUE</flagSTEADY>
+	<flagTRI>TRUE</flagTRI>
+	<valMAXTIME>10</valMAXTIME>
+	<valMINTIME>2</valMINTIME>
+	<valDELTIME>0.25</valDELTIME>
+	<valDELTAE>0</valDELTAE>
+</VAP>
+
+<vehicle>
+	<alpha>5</alpha>
+	<beta>0</beta>
+</vehicle>
+
+
