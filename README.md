@@ -20,8 +20,8 @@ would yield the same result as
 `<span>1.524</span>`
 
 
-## VAP Settings
-- `VAP`
+## Setting
+- `Setting`
 	- `flagRELAX` (True | False)
 	- `flagSTEADY` (True | False)
 	- `flagTRI` (True | False)
