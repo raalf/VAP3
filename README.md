@@ -21,7 +21,7 @@ would yield the same result as
 
 
 ## VAP Settings
-- `VAP`
+- `settings`
 	- `flagRELAX` (True | False)
 	- `flagSTEADY` (True | False)
 	- `flagTRI` (True | False)

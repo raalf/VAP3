@@ -1,16 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <VAP>
-	<flagRELAX>TRUE</flagRELAX>
-	<flagSTEADY>TRUE</flagSTEADY>
-	<flagTRI>TRUE</flagTRI>
-	<valMAXTIME>10</valMAXTIME>
-	<valMINTIME>2</valMINTIME>
-	<valDELTIME>0.25</valDELTIME>
-	<valDELTAE>0</valDELTAE>
+	<settings>
+		<flagRELAX>TRUE</flagRELAX>
+		<flagSTEADY>TRUE</flagSTEADY>
+		<flagTRI>TRUE</flagTRI>
+		<valMAXTIME>10</valMAXTIME>
+		<valMINTIME>2</valMINTIME>
+		<valDELTIME>0.25</valDELTIME>
+		<valDELTAE>0</valDELTAE>
+	</settings>
+
+	<conditions>
+		<valDENSITY>1.225</valDENSITY>
+		<valKINV>1.460000e-05</valKINV>
+	</conditions>
+
+	<vehicle>
+		<x>10</x>
+		<y>14</y>
+		<z>2</z>
+
+		<vinf>20</vinf>
+
+		<alpha>5</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<pitch>0</pitch>
+		<yaw>0</yaw>
+
+		<wing>
+			<incidence>2</incidence>
+			<trimable>FALSE</trimable>
+			<area>10</area>
+			<span>10</span>
+			<cmac>1</cmac>
+
+			<panel>
+				<symmetry>1</symmetry>
+				<N>10</N>
+				<M>2</M>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>1</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<x>0</x>
+					<y>5</y>
+					<z>0</z>
+					<chord>1</chord>
+					<twist>5</twist>
+				</section>	
+			</panel>
+		</wing>
+
+		<wing>
+			<incidence>1</incidence>
+			<trimable>FALSE</trimable>
+			<area>10</area>
+			<span>10</span>
+			<cmac>1</cmac>
+
+			<panel>
+				<symmetry>1</symmetry>
+				<N>5</N>
+				<M>2</M>
+				<section>
+					<x>2</x>
+					<y>2</y>
+					<z>2</z>
+					<chord>1</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<x>3</x>
+					<y>3</y>
+					<z>3</z>
+					<chord>1</chord>
+					<twist>5</twist>
+				</section>	
+			</panel>
+		</wing>
+
+	</vehicle>				
+
+	<vehicle>
+		<x>2</x>
+		<y>-40</y>
+		<z>-10</z>
+
+		<vinf>40</vinf>
+
+		<alpha>2</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<pitch>0</pitch>
+		<yaw>0</yaw>
+
+		<wing>
+			<incidence>1</incidence>
+			<trimable>FALSE</trimable>
+			<area>10</area>
+			<span>10</span>
+			<cmac>1</cmac>
+
+			<panel>
+				<symmetry>1</symmetry>
+				<N>10</N>
+				<M>2</M>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>1</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<x>0</x>
+					<y>5</y>
+					<z>0</z>
+					<chord>1</chord>
+					<twist>5</twist>
+				</section>	
+			</panel>
+		</wing>
+	</vehicle>
+
 </VAP>
 
-<vehicle>
-	<alpha>5</alpha>
-	<beta>0</beta>
-</vehicle>
+
 
 
