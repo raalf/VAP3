@@ -53,20 +53,21 @@ would yield the same result as
 	
 	- `wing*`
 		- `incidence` Angle of incidence of the root (deg)
-		- `trimable` Defines a surface that can be trimmed (1 for yes, 0 for no)
+		- `trimable` Defines a surface that can be trimmed (True | False)
 		- `panel*`
 			- `symmetry` Symmetry edge (0, 1 or 2)
 			- `N` Number of spanwise elements
 			- `M` Number of chordwise elements
 			- `section*`
-				- `X` X position of section leading edge (m)
-				- `Y` Y position of section leading edge (m)
-				- `Z` Z position of section leading edge (m)
+				- `X` X position of section leading edge with respect to vehicle origin(m)
+				- `Y` Y position of section leading edge with respect to vehicle origin(m)
+				- `Z` Z position of section leading edge with respect to vehicle origin(m)
 				- `chord` Chord length of section (m)
 				- `epsilon` Twist angle of section (deg)
 				- `airfoil`
 
 	- `rotor*`
+		- `RPM` Rotational speed of rotor (RPM) 
 		- `xhub` X location of center of rotor with respect to vehicle origin (m)
 		- `yhub` Y location of center of rotor with respect to vehicle origin (m)
 		- `zhub` Z location of center of rotor with respect to vehicle origin (m)
