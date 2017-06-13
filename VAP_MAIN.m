@@ -1,21 +1,21 @@
-clc
+% clc
 clear
 
 warning off
 
 % profile -memory on
 
-disp('=============================================================================');
-disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$$$$$ ');
-disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$_  $$');
-disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$$$\ $$');
-disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$ $$ $$');
-disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   | $$\ $$$$');
-disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$   | $$ \ $$$');
-disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
-disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/');
-disp('=============================================================================');
-disp(' ');
+% disp('=============================================================================');
+% disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$$$$$ ');
+% disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$_  $$');
+% disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$$$\ $$');
+% disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$ $$ $$');
+% disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   | $$\ $$$$');
+% disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$   | $$ \ $$$');
+% disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
+% disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/');
+% disp('=============================================================================');
+% disp(' ');
 
 %% Best Practices
 % 1. Define wing from one wingtip to another in one direction
@@ -25,14 +25,24 @@ disp(' ');
 
 strFILE = 'inputs/VAP input.txt';
 % strFILE = 'inputs/VAP3_2tri.txt';
-
-
-
 [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
     valINTERF] = fcnVAPREAD(strFILE);
+
+% Useful for debugging wake (comparison between quads/tris)
+vecN = 1;
+vecM = 1;
+flagTRI = 1;
+
+% vecN = 2;
+% vecM = 2;
+% flagTRI = 0;
+
+valMAXTIME = 10;
+flagPLOTWAKEVEL = 1;
+flagRELAX = 0;
 
 % strFILE = 'inputs/input.txt';
 %
@@ -41,15 +51,12 @@ strFILE = 'inputs/VAP input.txt';
 %     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
 %     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
 %     valINTERF] = fcnFWREAD(strFILE);
-flagTRI = 1;
+
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagPLOTWAKEVEL = 1;
 flagVERBOSE = 0;
-valMAXTIME = 15;
 
-flagRELAX = 1;
-% seqALPHA = 10;
+
 %% Discretize geometry into DVEs
 
 if flagTRI == 1
@@ -273,9 +280,24 @@ if flagPLOT == 1
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
     
     if flagPLOTWAKEVEL == 1
-        try
-            quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
-        end
+%         try
+%             quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
+
+            newest_row = sort([valWNELE:-2:valWNELE-valWSIZE*2+1]-1)';
+            idx1 = unique(reshape(matWDVE(newest_row,1:2),[],1),'rows'); 
+            idx3 = ones(size(matWVLST,1),1);
+            idx3(idx1)= 0;
+
+            w_surf = fcnSDVEVEL(matWVLST, valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM); 
+            w_wake = fcnWDVEVEL(matWVLST, valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, vecSYM, valWSIZE, valTIMESTEP, flagTRI); 
+            w_tot = w_surf + w_wake;
+            
+            hold on
+%             quiver3(matWVLST(idx3~=0,1), matWVLST(idx3~=0,2), matWVLST(idx3~=0,3), w_surf(idx3~=0,1), w_surf(idx3~=0,2), w_surf(idx3~=0,3),0,'r')
+%             quiver3(matWVLST(idx3~=0,1), matWVLST(idx3~=0,2), matWVLST(idx3~=0,3), w_wake(idx3~=0,1), w_wake(idx3~=0,2), w_wake(idx3~=0,3),0,'b')
+            quiver3(matWVLST(idx3~=0,1), matWVLST(idx3~=0,2), matWVLST(idx3~=0,3), w_tot(idx3~=0,1), w_tot(idx3~=0,2), w_tot(idx3~=0,3),0,'b')
+            hold off
+%         end
     end
     %     figure(1);
     %     plot(1:valTIMESTEP, eltime)

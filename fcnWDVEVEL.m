@@ -16,7 +16,6 @@ dvetype = ones(length(dvenum),1);
 % Newest row of wake DVEs have a filament at the leading edge
 if flagTRI == 1
     newest_row = sort([valWNELE:-2:valWNELE-valWSIZE*2+1]-1)';
-    
 else
 newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
 end
@@ -30,12 +29,13 @@ else
 oldest_row = [1:valWSIZE]';
 end
 
-if valTIMESTEP == 1
+if valTIMESTEP == 1 && flagTRI == 0
     dvetype(ismember(dvenum, oldest_row)) = -3;
-else
+elseif valTIMESTEP > 0 && flagTRI == 0
+    dvetype(ismember(dvenum, oldest_row)) = 3;
+elseif flagTRI == 1 % last row of wake elements in a tri-wake never has a bound vortex
     dvetype(ismember(dvenum, oldest_row)) = 3;
 end
-
 
 [w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, vecSYM);
 

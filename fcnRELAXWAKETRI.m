@@ -10,21 +10,22 @@ function [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
 
 matWDVEMP = matWVLST;
 
+% indicies to not move (attached to wing)
+newest_row = sort([valWNELE:-2:valWNELE-valWSIZE*2+1]-1)';
+idx1 = unique(reshape(matWDVE(newest_row,1:2),[],1),'rows');
+
+oldest_row = [2:2:valWSIZE*2];
+idx2 = unique(reshape(matWDVE(oldest_row,1:4),[],1),'rows');
+ 
+idx3 = ones(size(matWDVEMP,1),1);
+idx3(idx1)= 0;
+
+% idx3(idx2) = 0;
+
 % Get induced velocity at vertices
 [ matWDVEMPIND ] = fcnINDVEL(matWDVEMP,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI);
 
-
-% indicies to not move (attached to wing)
- newest_row = sort([valWNELE:-2:valWNELE-valWSIZE*2+1]-1)';
- idx1 = unique(reshape(matWDVE(newest_row,1:2),[],1),'rows');
- 
- oldest_row = [2:2:valWSIZE*2];
- idx2 = unique(reshape(matWDVE(oldest_row,1:4),[],1),'rows');
- 
- idx3 = ones(size(matWDVEMP,1),1);
-idx3(idx1)= 0;
-idx3(idx2) = 0;
 %Move verticies by indvel*time
 matWVLST(idx3~=0,:) = matWDVEMP(idx3~=0,:) + matWDVEMPIND(idx3~=0,:).*valDELTIME;
 
