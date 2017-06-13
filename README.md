@@ -91,6 +91,7 @@ would yield the same result as
 				- `epsilon` Twist angle of section (deg)
 				- `airfoil`
 	- `fuselage*`
+	- `mass`
 	- `viscous`
 
 				
