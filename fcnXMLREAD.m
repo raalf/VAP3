@@ -3,7 +3,8 @@ flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, val
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
 vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, ...
 vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
-vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, vecROTORM, vecROTOR...
+vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, ...
+vecROTORM, vecROTOR, matSURFACETYPE...
 ] = fcnXMLREAD(filename)
 
 % clc
@@ -20,6 +21,8 @@ vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecR
 % vecROTORAXIS - Rows are rotor number, column is xyz in vehicle local. Unit vector of rotor plane normal
 % vecROTORM - Rows are rotor number, tells how many chordwise elements on the rotor blade
 % vecROTOR - Rows are panel number, tells which rotor the panel belongs to
+
+% matSURFACETYPE - surface x 2 matrix defining which surface is a wing or rotor, where 1 in column 1 is wing, 1 in column 2 is rotor
 
 % vecWINGVEHICLE - Rows are wing number, tells which vehicle each wing belongs to
 % vecWING - Rows are panel number, tells which wing each panel belongs to
@@ -221,5 +224,13 @@ for i = 1:valPANELS
 end
 
 valPANELS = size(matGEOM,3);
+
+temp1 = zeros(size(vecWING))
+temp2 = zeros(size(vecWING));
+
+temp1(find(vecWING)) = find(vecWING);
+temp2(find(vecROTOR)) = find(vecROTOR);
+
+matSURFACETYPE = [temp1 temp2];
 
 

@@ -5,25 +5,25 @@ warning off
 
 % profile -memory on
 
-disp('===========================================================================');
-disp('+---------------+');
-disp('| RYERSON       |       VAP (Based on FreeWake 2015)');
-disp('| APPLIED       |       Running Version 2016.09');
-disp('| AERODYNAMICS  |       Includes stall model');
-disp('| LABORATORY OF |       No trim solution');
-disp('| FLIGHT        |        .                             .');
-disp('+---------------+       //                             \\');
-disp('                       //                               \\');
-disp('                      //                                 \\');
-disp('                     //                _._                \\');
-disp('                  .---.              .//|\\.              .---.');
-disp('         ________/ .-. \_________..-~ _.-._ ~-..________ / .-. \_________');
-disp('                 \ ~-~ /   /H-     `-=.___.=-''     -H\   \ ~-~ /');
-disp('                   ~~~    / H          [H]          H \    ~~~');
-disp('                         / _H_         _H_         _H_ \');
-disp('                           UUU         UUU         UUU');
-disp('===========================================================================');
-disp(' ');
+% disp('===========================================================================');
+% disp('+---------------+');
+% disp('| RYERSON       |       VAP (Based on FreeWake 2015)');
+% disp('| APPLIED       |       Running Version 2016.09');
+% disp('| AERODYNAMICS  |       Includes stall model');
+% disp('| LABORATORY OF |       No trim solution');
+% disp('| FLIGHT        |        .                             .');
+% disp('+---------------+       //                             \\');
+% disp('                       //                               \\');
+% disp('                      //                                 \\');
+% disp('                     //                _._                \\');
+% disp('                  .---.              .//|\\.              .---.');
+% disp('         ________/ .-. \_________..-~ _.-._ ~-..________ / .-. \_________');
+% disp('                 \ ~-~ /   /H-     `-=.___.=-''     -H\   \ ~-~ /');
+% disp('                   ~~~    / H          [H]          H \    ~~~');
+% disp('                         / _H_         _H_         _H_ \');
+% disp('                           UUU         UUU         UUU');
+% disp('===========================================================================');
+% disp(' ');
 
 %% Best Practices
 % 1. Define wing from one wingtip to another in one direction
@@ -36,14 +36,13 @@ filename = 'inputs/XMLtest.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
-vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, ...
-vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
-vecWINGVEHICLE, valPANELS...
+vecVEHFPA, vecVEHTRK, ~, ~, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, ~, ...
+~, vecSYM, vecN, vecM, ~, ~, ~, ~, ...
+vecWINGVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, ~, vecROTOR, matSURFACETYPE...
 ] = fcnXMLREAD(filename);
 
-flagSTEADY = 1
-seqALPHA = 0
-seqBETA = 0
+seqALPHA = 0;
+seqBETA = 0;
 
 % strFILE = 'inputs/VAP input.txt';
 % 
@@ -72,6 +71,14 @@ flagVERBOSE = 0;
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
+
+% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
+vecDVEROTOR = zeros(size(vecDVEWING));
+vecDVEVEHICLE = vecWINGVEHICLE(vecDVEWING); 
+
+idx_rotor = vecDVEWING == find(vecROTOR > 0);
+vecDVEROTOR(idx_rotor) = vecDVEWING(idx_rotor);
+vecDVEWING(idx_rotor) = 0;
 
 valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
 

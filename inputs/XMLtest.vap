@@ -38,25 +38,6 @@
 			<M>2</M>
 
 			<panel>
-				<symmetry>1</symmetry>
-				<N>10</N>
-				<section>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
-					<chord>1</chord>
-					<twist>0</twist>
-				</section>
-				<section>
-					<x>0</x>
-					<y>5</y>
-					<z>0</z>
-					<chord>1</chord>
-					<twist>5</twist>
-				</section>	
-			</panel>
-
-			<panel>
 				<symmetry>0</symmetry>
 				<N>5</N>
 				<section>
