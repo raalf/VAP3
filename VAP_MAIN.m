@@ -5,25 +5,17 @@ warning off
 
 % profile -memory on
 
-% disp('===========================================================================');
-% disp('+---------------+');
-% disp('| RYERSON       |       VAP (Based on FreeWake 2015)');
-% disp('| APPLIED       |       Running Version 2016.09');
-% disp('| AERODYNAMICS  |       Includes stall model');
-% disp('| LABORATORY OF |       No trim solution');
-% disp('| FLIGHT        |        .                             .');
-% disp('+---------------+       //                             \\');
-% disp('                       //                               \\');
-% disp('                      //                                 \\');
-% disp('                     //                _._                \\');
-% disp('                  .---.              .//|\\.              .---.');
-% disp('         ________/ .-. \_________..-~ _.-._ ~-..________ / .-. \_________');
-% disp('                 \ ~-~ /   /H-     `-=.___.=-''     -H\   \ ~-~ /');
-% disp('                   ~~~    / H          [H]          H \    ~~~');
-% disp('                         / _H_         _H_         _H_ \');
-% disp('                           UUU         UUU         UUU');
-% disp('===========================================================================');
-% disp(' ');
+disp('=============================================================================');
+disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$$$$$ ');
+disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$_  $$');
+disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$$$\ $$');
+disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$ $$ $$');
+disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   | $$\ $$$$');
+disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$   | $$ \ $$$');
+disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
+disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/');
+disp('=============================================================================');
+disp(' ');
 
 %% Best Practices
 % 1. Define wing from one wingtip to another in one direction
@@ -33,32 +25,15 @@ warning off
 
 filename = 'inputs/XMLtest.vap';
 
-
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
 vecVEHFPA, vecVEHTRK, ~, ~, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, ~, ...
 ~, vecSYM, vecN, vecM, ~, ~, ~, ~, ...
-vecWINGVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, ~, vecROTOR, matSURFACETYPE...
+vecWINGVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, ~, vecROTOR...
 ] = fcnXMLREAD(filename);
 
 seqALPHA = 0;
 seqBETA = 0;
-
-% strFILE = 'inputs/VAP input.txt';
-% 
-% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnVAPREAD(strFILE);
-
-% strFILE = 'inputs/input.txt';
-% 
-% [flagRELAX, flagSTEADY, valAREA, valSPAN, valCMAC, valWEIGHT, ...
-%     seqALPHA, seqBETA, valKINV, valDENSITY, valPANELS, matGEOM, vecSYM, ...
-%     vecAIRFOIL, vecN, vecM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, ...
-%     valFTURB, valFPWIDTH, valDELTAE, valDELTIME, valMAXTIME, valMINTIME, ...
-%     valINTERF] = fcnFWREAD(strFILE);
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -70,17 +45,23 @@ flagVERBOSE = 0;
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
+    vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
 % Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
-vecDVEROTOR = zeros(size(vecDVEWING));
-vecDVEVEHICLE = vecWINGVEHICLE(vecDVEWING); 
+vecDVEROTOR = zeros(size(vecDVESURFACE));
+vecDVEVEHICLE = vecWINGVEHICLE(vecDVESURFACE); 
+vecDVEWING = vecDVESURFACE;
 
-idx_rotor = vecDVEWING == find(vecROTOR > 0);
-vecDVEROTOR(idx_rotor) = vecDVEWING(idx_rotor);
+idx_rotor = vecDVEPANEL == find(vecROTOR > 0); % Which surfaces are rotors
+vecDVEROTOR(idx_rotor) = vecDVESURFACE(idx_rotor);
+
 vecDVEWING(idx_rotor) = 0;
 
-valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
+matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);
+matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
+matSURFACETYPE(nonzeros(unique(vecDVEROTOR)),2) = nonzeros(unique(vecDVEROTOR));
+
+valWSIZE = length(nonzeros(vecDVETE.*(vecDVEWING > 0))); % Amount of wake DVEs shed each timestep
 
 %% Add boundary conditions to D-Matrix
 
@@ -88,7 +69,7 @@ valWSIZE = length(nonzeros(vecDVETE)); % Amount of wake DVEs shed each timestep
 
 %% Add kinematic conditions to D-Matrix
 
-[vecK] = fcnSINGFCT(valNELE, vecDVEWING, vecDVETIP, vecDVEHVSPN);
+[vecK] = fcnSINGFCT(valNELE, vecDVESURFACE, vecDVETIP, vecDVEHVSPN);
 [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER0, matVLST0, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD,vecSYM);
 
 %% Alpha Loop
@@ -168,14 +149,14 @@ for ai = 1:length(seqALPHA)
             %   Calculate viscous effects
             
             %% Moving the wing
-            [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE, matNPVLST);
+            [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE.*(vecDVEWING > 0), matNPVLST);
             
             %% Generating new wake elements
             [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                 vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] ...
                 = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNPVLST, vecDVEPANEL, ...
-                vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE);
+                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE.*(vecDVEWING > 0), matWADJE, matNPVLST, vecDVEPANEL, ...
+                vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVEWING, flagSTEADY, valWSIZE);
             
             %% Creating and solving WD-Matrix for latest row of wake elements
             % We need to grab from matWADJE only the values we need for this latest row of wake DVEs

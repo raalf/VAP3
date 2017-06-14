@@ -4,7 +4,7 @@ valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBET
 vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, ...
 vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
 vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, ...
-vecROTORM, vecROTOR, matSURFACETYPE...
+vecROTORM, vecROTOR...
 ] = fcnXMLREAD(filename)
 
 % clc
@@ -225,12 +225,5 @@ end
 
 valPANELS = size(matGEOM,3);
 
-temp1 = zeros(size(vecWING))
-temp2 = zeros(size(vecWING));
-
-temp1(find(vecWING)) = find(vecWING);
-temp2(find(vecROTOR)) = find(vecROTOR);
-
-matSURFACETYPE = [temp1 temp2];
 
 
