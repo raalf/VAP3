@@ -20,8 +20,8 @@ would yield the same result as
 `<span>1.524</span>`
 
 
-## VAP Settings
-- `settings`
+## Setting
+- `Setting`
 	- `flagRELAX` (True | False)
 	- `flagSTEADY` (True | False)
 	- `flagTRI` (True | False)
@@ -42,7 +42,10 @@ would yield the same result as
 - `vehicle*`
 	- `alpha` Overall angle of attack of the entire vehicle (deg)
 	- `beta` Overall angle of sideslip of the entire vehicle (deg)
-	- `phi` Overall angle of roll of the entire vehicle (deg)
+	- `roll` Overall angle of roll of the entire vehicle (deg)
+	- `pitch` Overall angle of pitch of the entire vehicle (deg)
+	- `yaw` Overall angle of yaw (Heading) of the entire vehicle (deg)
+	- `radius` Turning radius of the vehicle (zero = straight) (m)
 	- `vinf` Freestream velocity of the vehicle (m/s)
 	- `x` X position of the entire vehicle (Position of vehicle's origin in global reference frame)
 	- `y` Y position of the entire vehicle 
@@ -88,6 +91,7 @@ would yield the same result as
 				- `epsilon` Twist angle of section (deg)
 				- `airfoil`
 	- `fuselage*`
+	- `mass`
 	- `viscous`
 
 				
