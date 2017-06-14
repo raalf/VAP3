@@ -26,8 +26,8 @@
 		<alpha>5</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<pitch>0</pitch>
-		<yaw>0</yaw>
+		<fpa>0</fpa>
+		<trk>0</trk>
 
 		<wing>
 			<incidence>30</incidence>
@@ -160,8 +160,8 @@
 		<alpha>2</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<pitch>0</pitch>
-		<yaw>0</yaw>
+		<fpa>0</fpa>
+		<trk>0</trk>
 
 		<wing>
 			<incidence>1</incidence>
