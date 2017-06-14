@@ -112,17 +112,17 @@
 				<N>10</N>
 
 				<section>
-					<x>-10</x>
-					<y>0</y>
+					<x>0</x>
+					<y>2</y>
 					<z>0</z>
 					<chord>0.5</chord>
 					<twist>2</twist>
 				</section>
 
 				<section>
-					<x>-10</x>
-					<y>5</y>
-					<z>0</z>
+					<x>0</x>
+					<y>6</y>
+					<z>.5</z>
 					<chord>0.3</chord>
 					<twist>25</twist>
 				</section>
@@ -171,6 +171,43 @@
 				</section>	
 			</panel>
 		</wing>
+
+		<rotor>
+			<rpm>140</rpm>
+			<dia>5</dia>
+
+			<xhub>1</xhub>
+			<yhub>1</yhub>
+			<zhub>0</zhub>
+
+			<axisx>0</axisx>
+			<axisy>1</axisy>
+			<axisz>0</axisz>
+
+			<blades>2</blades>
+
+			<M>4</M>
+
+			<panel>
+				<N>5</N>
+
+				<section>
+					<x>0</x>
+					<y>2</y>
+					<z>1</z>
+					<chord>0.5</chord>
+					<twist>2</twist>
+				</section>
+
+				<section>
+					<x>0</x>
+					<y>8</y>
+					<z>0</z>
+					<chord>0.3</chord>
+					<twist>25</twist>
+				</section>
+			</panel>
+		</rotor>
 
 		<wing>
 			<incidence>1</incidence>

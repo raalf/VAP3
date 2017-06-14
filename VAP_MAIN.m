@@ -29,7 +29,7 @@ filename = 'inputs/XMLtest.vap';
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
 vecVEHFPA, vecVEHTRK, ~, ~, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, ~, ...
 ~, vecSYM, vecN, vecM, ~, ~, ~, ~, ...
-vecWINGVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, ~, vecROTOR...
+vecWINGVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, vecROTORBLADES, ~, vecROTOR...
 ] = fcnXMLREAD(filename);
 
 seqALPHA = 0;
@@ -47,12 +47,15 @@ flagVERBOSE = 0;
     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
-% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
+[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
+
+%% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
 vecDVEROTOR = zeros(size(vecDVESURFACE));
 vecDVEVEHICLE = vecWINGVEHICLE(vecDVESURFACE); 
 vecDVEWING = vecDVESURFACE;
 
-idx_rotor = vecDVEPANEL == find(vecROTOR > 0); % Which surfaces are rotors
+idx_rotor = sort(vecDVEPANEL == repmat(find(vecROTOR > 0)',valNELE,1),2); % Which surfaces are rotors
+idx_rotor = idx_rotor(:,2);
 vecDVEROTOR(idx_rotor) = vecDVESURFACE(idx_rotor);
 
 vecDVEWING(idx_rotor) = 0;
@@ -61,6 +64,29 @@ matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);
 matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
 matSURFACETYPE(nonzeros(unique(vecDVEROTOR)),2) = nonzeros(unique(vecDVEROTOR));
 
+%% Creating extra rotor blades
+% THIS SHIT DON'T WORK AND IS HELLA CONFUSING
+
+% valROTORS = length(nonzeros(vecROTOR));
+% rotor_surfaces = nonzeros(matSURFACETYPE(:,2));
+% for i = 1:valROTORS
+%     surface_num = rotor_surfaces(i);
+%     idx_surf = vecDVEROTOR == surface_num;
+%     len = length(nonzeros(idx_surf));
+%     
+% [valNELE, matNEWNPVLST, vecAIRFOIL, vecDVELE, vecDVETE, ...
+%     vecDVEYAW, vecDVEPANEL, vecDVETIP, vecDVEWING, vecDVESYM, vecM, vecN, ...
+%     vecDVEROLL, vecDVEAREA, vecDVEPITCH, vecDVEMCSWP, vecDVETESWP, vecDVELESWP, ...
+%     vecDVEHVCRD, vecDVEHVSPN, vecSYM, vecQARM, matADJE, matNEWCENTER, matNEWVLST, matDVE, matNEWDVENORM, matVLST] = ...
+%     fcnDVEMULTIROTOR(...
+%     len, vecROTORBLADES(i), vecDVETIP(idx_surf), vecDVETESWP(idx_surf), vecDVEPITCH(idx_surf), vecDVESURFACE(idx_surf), ...
+%     vecDVEMCSWP(idx_surf), vecM(surface_num), vecN(surface_num), vecDVEPANEL(idx_surf), vecDVEROLL(idx_surf), vecDVELESWP(idx_surf), ...
+%     vecDVEYAW(idx_surf), vecDVEHVCRD(idx_surf), vecDVEHVSPN(idx_surf), vecDVEAREA(idx_surf), vecDVESYM(idx_surf), ...
+%     vecDVELE(idx_surf), vecDVETE(idx_surf), vecSYM(surface_num), [0 0 0], 0, matNPVLST0, matDVE(idx_surf), matADJE, matVLST0, matCENTER0(idx_surf), matDVENORM(idx_surf));
+% end
+
+
+%%
 valWSIZE = length(nonzeros(vecDVETE.*(vecDVEWING > 0))); % Amount of wake DVEs shed each timestep
 
 %% Add boundary conditions to D-Matrix

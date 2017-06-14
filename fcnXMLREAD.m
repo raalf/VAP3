@@ -3,7 +3,7 @@ flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, val
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
 vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, ...
 vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
-vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, ...
+vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, vecROTORBLADES,...
 vecROTORM, vecROTOR...
 ] = fcnXMLREAD(filename)
 
@@ -146,6 +146,8 @@ for i = 1:valVEHICLES
         vecROTORHUB(p,:) = [str2double(rot.xhub.Text) str2double(rot.yhub.Text) str2double(rot.zhub.Text)];
         vecROTORAXIS(p,:) = [str2double(rot.axisx.Text) str2double(rot.axisy.Text) str2double(rot.axisz.Text)];
         
+        vecROTORBLADES(p,:) = floor(str2double(rot.blades.Text));
+        
         vecROTORM(p,1) = floor(str2double(rot.M.Text));
         
         vecPANELS(k,1) = max(size(rot.panel));
@@ -183,6 +185,8 @@ for i = 1:valVEHICLES
 end
 valPANELS = sum(vecPANELS);
 
+
+%% Reorganizing data for output
 
 k = 1;
 
@@ -223,7 +227,28 @@ for i = 1:valPANELS
     end
 end
 
+
+
+%% Duplicating rotor blades
+% THIS SHIT DON'T WORK
+% [matNEWGEOM, ~, vecNnew, vecMnew, vecSYMnew] = fcnMULTIBLADE(sum(vecROTOR > 0), vecROTORBLADES, vecN(vecROTOR > 0), vecM(vecROTOR > 0), vecSYM(vecROTOR > 0), matGEOM(:,:,vecROTOR > 0));
+% 
+% matGEOM = cat(3, matGEOM, matNEWGEOM);
+% 
+% vecN = cat(1, vecN, vecNnew);
+% vecM = cat(1, vecM, vecMnew);
+% vecSYM = cat(1, vecSYM, vecSYMnew);
+
 valPANELS = size(matGEOM,3);
+
+
+
+end
+
+
+
+
+
 
 
 
