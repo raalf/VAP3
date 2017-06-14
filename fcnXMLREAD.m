@@ -95,7 +95,7 @@ for i = 1:valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                sec = pan.section{1,n};
                 
-               matSECTIONS(kkk,:) = [str2double(sec.x.Text) str2double(sec.y.Text) str2double(sec.z.Text) str2double(sec.chord.Text) str2double(sec.twist.Text)];
+               matSECTIONS(kkk,:) = [str2double(sec.x.Text) str2double(sec.y.Text) str2double(sec.z.Text) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text)];
                vecSECTIONPANEL(kkk,1) = kk;
                 
                kkk = kkk + 1;

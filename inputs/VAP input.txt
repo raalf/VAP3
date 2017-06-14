@@ -6,7 +6,7 @@ Please note that the program uses equal, number and : signs as special recognize
 Relaxed wake (yes 1, no 0):		flagRELAX =		1
 Steady (1) or unsteady (2):		flagSTEADY =	1
 
-Max. number of time steps:		valMAXTIME 	=	100
+Max. number of time steps:		valMAXTIME 	=	2
 Min. number of time steps: 		valMINTIME 	= 	0
 Width of each time step (sec):	valDELTIME 	=	0.250000
 Convergence delta-span effic.:	valDELTAE 	=	0.000000	(0 if only timestepping)
@@ -32,8 +32,8 @@ Number of chordwise elements: 	vecM 		= 1.
 Airfoil number: 				vecAIRFOIL 	= 6
 Symmetry edge (0, 1 or 2): 		vecSYM 		= 1;
 xleft		yleft		zleft		chord		epsilon
-0.000000	0.000000	0.000000	1.000000	0.000000
-0.000000	5.000000	0.000000	1.000000	0.000000
+0.000000	0.000000	0.000000	1.000000	20.000000
+0.000000	5.000000	0.000000	1.000000	20.000000
 
 %<- special identifier
 Vertical tail information:

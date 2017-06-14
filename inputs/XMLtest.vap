@@ -30,7 +30,7 @@
 		<yaw>0</yaw>
 
 		<wing>
-			<incidence>2</incidence>
+			<incidence>30</incidence>
 			<trimable>FALSE</trimable>
 			<area>10</area>
 			<span>10</span>
@@ -64,14 +64,14 @@
 					<y>2</y>
 					<z>2</z>
 					<chord>1</chord>
-					<twist>0</twist>
+					<twist>6</twist>
 				</section>
 				<section>
 					<x>3</x>
 					<y>3</y>
 					<z>3</z>
 					<chord>1</chord>
-					<twist>5</twist>
+					<twist>2</twist>
 				</section>	
 
 				<section>
@@ -79,7 +79,7 @@
 					<y>5</y>
 					<z>3</z>
 					<chord>1</chord>
-					<twist>5</twist>
+					<twist>25</twist>
 				</section>	
 			</panel>
 		</wing>
@@ -106,7 +106,7 @@
 					<y>6</y>
 					<z>3</z>
 					<chord>1</chord>
-					<twist>5</twist>
+					<twist>6</twist>
 				</section>	
 			</panel>
 		</wing>
@@ -142,14 +142,14 @@
 					<y>0</y>
 					<z>1</z>
 					<chord>1</chord>
-					<twist>0</twist>
+					<twist>7</twist>
 				</section>
 				<section>
 					<x>10</x>
 					<y>5</y>
 					<z>0</z>
 					<chord>1</chord>
-					<twist>5</twist>
+					<twist>8</twist>
 				</section>	
 			</panel>
 		</wing>
