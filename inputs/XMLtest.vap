@@ -111,6 +111,43 @@
 			</panel>
 		</wing>
 
+		<rotor>
+			<rpm>1200</rpm>
+			<dia>2</dia>
+
+			<xhub>2</xhub>
+			<yhub>2</yhub>
+			<zhub>5</zhub>
+
+			<axisx>1</axisx>
+			<axisy>0</axisy>
+			<axisz>0</axisz>
+
+			<blades>3</blades>
+
+			<M>2</M>
+
+			<panel>
+				<N>10</N>
+
+				<section>
+					<x>-10</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>0.5</chord>
+					<twist>2</twist>
+				</section>
+
+				<section>
+					<x>-10</x>
+					<y>5</y>
+					<z>0</z>
+					<chord>0.3</chord>
+					<twist>25</twist>
+				</section>
+			</panel>
+		</rotor>
+
 	</vehicle>				
 
 	<vehicle>

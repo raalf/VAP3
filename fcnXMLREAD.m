@@ -1,15 +1,28 @@
 function [...
-matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, valDENSITY, valKINV, valVEHICLES, ...
-matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, vecVEHPITCH, vecVEHYAW, ...
-vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, vecPANELS, ...
-vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, vecWINGVEHICLE, valPANELS...
+flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
+valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
+vecVEHPITCH, vecVEHYAW, vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, ...
+vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
+vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, vecROTORM, vecROTOR...
 ] = fcnXMLREAD(filename)
+
+% clc
+% clear
+% 
+% filename = 'inputs/XMLtest.vap';
 
 % OUTPUT
 
+% vecROTORS - Rows are wing number, tells which vehicle has how many rotors
+% vecROTORRPM - Rows are rotor number, tells the rotor RPM
+% vecROTDIAM - Rows are rotor number, tells the rotor diameter
+% vecROTORHUB - Rows are rotor number, column is xyz in vehicle local. Tells rotor hub location
+% vecROTORAXIS - Rows are rotor number, column is xyz in vehicle local. Unit vector of rotor plane normal
+% vecROTORM - Rows are rotor number, tells how many chordwise elements on the rotor blade
+% vecROTOR - Rows are panel number, tells which rotor the panel belongs to
+
 % vecWINGVEHICLE - Rows are wing number, tells which vehicle each wing belongs to
 % vecWING - Rows are panel number, tells which wing each panel belongs to
-% vecSECTIONPANEL - Rows are section number, tells which panel each section belongs to
 % valPANELS - Total number of panels
 % vecPANELS - Rows are wing number, tells how many panels are on each wing
 % vecWINGM - Rows are wing number, tells us the number of chordwise lifting lines on each wing
@@ -30,8 +43,8 @@ if strcmpi(VAP.settings.flagRELAX.Text, 'true') flagRELAX = 1; else flagRELAX = 
 if strcmpi(VAP.settings.flagSTEADY.Text, 'true') flagSTEADY = 1; else flagSTEADY = 0; end
 if strcmpi(VAP.settings.flagTRI.Text, 'true') flagTRI = 1; else flagTRI = 0; end
 
-valMAXTIME = int32(str2double(VAP.settings.valMAXTIME.Text));
-valMINTIME = int32(str2double(VAP.settings.valMINTIME.Text));
+valMAXTIME = floor(str2double(VAP.settings.valMAXTIME.Text));
+valMINTIME = floor(str2double(VAP.settings.valMINTIME.Text));
 valDELTIME = str2double(VAP.settings.valDELTIME.Text);
 valDELTAE = str2double(VAP.settings.valDELTAE.Text);
 
@@ -51,10 +64,16 @@ vecVEHPITCH = nan(valVEHICLES,1);
 vecVEHYAW = nan(valVEHICLES,1);
 
 vecWINGS = nan(valVEHICLES,1);
+vecROTORS = nan(valVEHICLES,1);
 
 k = 1;
 kk = 1;
 kkk = 1;
+
+p = 1;
+pp = 1;
+ppp = 1;
+
 for i = 1:valVEHICLES
     
     veh = VAP.vehicle{1,i};
@@ -66,8 +85,10 @@ for i = 1:valVEHICLES
     vecVEHPITCH(i,1) = str2double(veh.pitch.Text);
     vecVEHYAW(i,1) = str2double(veh.yaw.Text);
     
-    vecWINGS(i,1) = max(size(veh.wing));
+    try vecWINGS(i,1) = max(size(veh.wing)); catch; vecWINGS(i,1) = 0; end
+    try vecROTORS(i,1) = max(size(veh.rotor)); catch; vecROTORS(i,1) = 0; end
     
+    %% Loading Wings
     for j = 1:vecWINGS(i)
         
         try win = veh.wing{1,j}; catch; win = veh.wing; end
@@ -86,22 +107,23 @@ for i = 1:valVEHICLES
             
             try pan = win.panel{1,m}; catch; pan = win.panel; end
             
-            vecSYMtemp(kk,1) = int32(str2double(pan.symmetry.Text));
+            vecSYMtemp(kk,1) = floor(str2double(pan.symmetry.Text));
             vecNtemp(kk,1) = floor(str2double(pan.N.Text));
             vecMtemp(kk,1) = floor(vecWINGM(k,1)); % Same for entire wing
             
             vecSECTIONS(kk,1) = max(size(pan.section));
             
             for n = 1:vecSECTIONS(kk,1)
-               sec = pan.section{1,n};
+                sec = pan.section{1,n};
                 
-               matSECTIONS(kkk,:) = [str2double(sec.x.Text) str2double(sec.y.Text) str2double(sec.z.Text) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text)];
-               vecSECTIONPANEL(kkk,1) = kk;
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) str2double(sec.y.Text) str2double(sec.z.Text) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text)];
+                vecSECTIONPANEL(kkk,1) = kk;
                 
-               kkk = kkk + 1;
+                kkk = kkk + 1;
             end
-           
+            
             vecPANELWING(kk,1) = k;
+            vecPANELROTOR(kk,1) = 0;
             
             kk = kk + 1;
         end
@@ -110,9 +132,54 @@ for i = 1:valVEHICLES
         k = k + 1;
     end
     
-valPANELS = sum(vecPANELS);
-    
+    %% Loading Rotors
+    for j = 1:vecROTORS(i)
+        
+        try rot = veh.rotor{1,j}; catch; rot = veh.rotor; end
+        
+        vecROTORRPM(p,1) = str2double(rot.rpm.Text);
+        vecROTDIAM(p,1) = str2double(rot.dia.Text);
+        
+        vecROTORHUB(p,:) = [str2double(rot.xhub.Text) str2double(rot.yhub.Text) str2double(rot.zhub.Text)];
+        vecROTORAXIS(p,:) = [str2double(rot.axisx.Text) str2double(rot.axisy.Text) str2double(rot.axisz.Text)];
+        
+        vecROTORM(p,1) = floor(str2double(rot.M.Text));
+        
+        vecPANELS(k,1) = max(size(rot.panel));
+        
+        for m = 1:vecPANELS(k,1)
+            
+            try pan = rot.panel{1,m}; catch; pan = rot.panel; end
+            
+            vecSYMtemp(kk,1) = 0;
+            vecNtemp(kk,1) = floor(str2double(pan.N.Text));
+            vecMtemp(kk,1) = floor(vecROTORM(p,1)); % Same for entire wing
+            
+            vecSECTIONS(kk,1) = max(size(pan.section));
+            
+            for n = 1:vecSECTIONS(kk,1)
+                sec = pan.section{1,n};
+                
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) str2double(sec.y.Text) str2double(sec.z.Text) str2double(sec.chord.Text) str2double(sec.twist.Text)];
+                vecSECTIONPANEL(kkk,1) = kk;
+                
+                kkk = kkk + 1;
+            end
+            
+            vecPANELWING(kk,1) = 0;
+            vecPANELROTOR(kk,1) = p;
+            
+            kk = kk + 1;
+        end
+        
+        p = p + 1;
+        
+        vecWINGVEHICLE(k,1) = i;
+        k = k + 1;
+    end
 end
+valPANELS = sum(vecPANELS);
+
 
 k = 1;
 
@@ -125,6 +192,7 @@ for i = 1:valPANELS
         matGEOM(1,:,k) = sections(1,:);
         matGEOM(2,:,k) = sections(2,:);
         vecWING(k,1) = vecPANELWING(i);
+        vecROTOR(k,1) = vecPANELROTOR(i);
         vecSYM(k,1) = vecSYMtemp(i);
         vecN(k,1) = vecNtemp(i);
         vecM(k,1) = vecMtemp(i);
@@ -134,7 +202,8 @@ for i = 1:valPANELS
             matGEOM(1,:,k) = sections(j,:);
             matGEOM(2,:,k) = sections(j+1,:);
             vecWING(k,1) = vecPANELWING(i);
-           
+            vecROTOR(k,1) = vecPANELROTOR(i);
+            
             vecN(k,1) = vecNtemp(i);
             vecM(k,1) = vecMtemp(i);
             vecSYM(k,1) = 0;
