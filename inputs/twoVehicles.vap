@@ -39,7 +39,7 @@
 
 			<panel>
 				<symmetry>1</symmetry>
-				<N>1</N>
+				<N>5</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
@@ -66,7 +66,7 @@
 			<M>1</M>
 			<panel>
 				<symmetry>1</symmetry>
-				<N>1</N>
+				<N>5</N>
 				<section>
 					<x>3</x>
 					<y>0</y>
@@ -89,7 +89,7 @@
 	<vehicle>
 		<x>1</x>
 		<y>1</y>
-		<z>1</z>
+		<z>0</z>
 
 		<vinf>40</vinf>
 
@@ -109,18 +109,18 @@
 
 			<panel>
 				<symmetry>1</symmetry>
-				<N>1</N>
+				<N>5</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
-					<z>1</z>
+					<z>0</z>
 					<chord>1</chord>
 					<twist>0</twist>
 				</section>
 				<section>
 					<x>1</x>
 					<y>5</y>
-					<z>1</z>
+					<z>0</z>
 					<chord>.5</chord>
 					<twist>0</twist>
 				</section>		
@@ -136,18 +136,18 @@
 			<M>1</M>
 			<panel>
 				<symmetry>1</symmetry>
-				<N>1</N>
+				<N>5</N>
 				<section>
 					<x>3</x>
 					<y>0</y>
-					<z>1</z>
+					<z>0</z>
 					<chord>0.5</chord>
 					<twist>0</twist>
 				</section>
 				<section>
 					<x>3</x>
 					<y>2</y>
-					<z>1.25</z>
+					<z>0.25</z>
 					<chord>0.5</chord>
 					<twist>0</twist>
 				</section>	
@@ -171,12 +171,12 @@
 			<M>1</M>
 
 			<panel>
-				<N>1</N>
+				<N>5</N>
 
 				<section>
 					<x>-0.2</x>
 					<y>0</y>
-					<z>1</z>
+					<z>0</z>
 					<chord>0.2</chord>
 					<twist>2</twist>
 				</section>
@@ -184,7 +184,7 @@
 				<section>
 					<x>-0.2</x>
 					<y>0.5</y>
-					<z>1</z>
+					<z>0</z>
 					<chord>0.1</chord>
 					<twist>25</twist>
 				</section>
