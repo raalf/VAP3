@@ -51,7 +51,6 @@ flagVERBOSE = 0;
 [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
 
 %% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
-vecDVEROTOR = zeros(size(vecDVESURFACE));
 vecDVEVEHICLE = vecWINGVEHICLE(vecDVESURFACE); 
 vecDVEWING = vecDVESURFACE;
 
@@ -76,15 +75,25 @@ matSURFACETYPE(nonzeros(unique(vecDVEROTOR)),2) = nonzeros(unique(vecDVEROTOR));
 %     idx_surf = vecDVEROTOR == surface_num;
 %     len = length(nonzeros(idx_surf));
 %     
+%     P(:,:,1) = matVLST0(matDVE(idx_surf,1),:);
+%     P(:,:,2) = matVLST0(matDVE(idx_surf,2),:);
+%     P(:,:,3) = matVLST0(matDVE(idx_surf,3),:);
+%     P(:,:,4) = matVLST0(matDVE(idx_surf,4),:);
+%     
+%     NPP(:,:,1) = matNPVLST0(matDVE(idx_surf,1),:);
+%     NPP(:,:,2) = matNPVLST0(matDVE(idx_surf,2),:);
+%     NPP(:,:,3) = matNPVLST0(matDVE(idx_surf,3),:);
+%     NPP(:,:,4) = matNPVLST0(matDVE(idx_surf,4),:);
+%     
 % [valNELE, matNEWNPVLST, vecAIRFOIL, vecDVELE, vecDVETE, ...
 %     vecDVEYAW, vecDVEPANEL, vecDVETIP, vecDVEWING, vecDVESYM, vecM, vecN, ...
 %     vecDVEROLL, vecDVEAREA, vecDVEPITCH, vecDVEMCSWP, vecDVETESWP, vecDVELESWP, ...
 %     vecDVEHVCRD, vecDVEHVSPN, vecSYM, vecQARM, matADJE, matNEWCENTER, matNEWVLST, matDVE, matNEWDVENORM, matVLST] = ...
-%     fcnDVEMULTIROTOR(...
+%     fcnDVEMULTIROTOR3(...
 %     len, vecROTORBLADES(i), vecDVETIP(idx_surf), vecDVETESWP(idx_surf), vecDVEPITCH(idx_surf), vecDVESURFACE(idx_surf), ...
 %     vecDVEMCSWP(idx_surf), vecM(surface_num), vecN(surface_num), vecDVEPANEL(idx_surf), vecDVEROLL(idx_surf), vecDVELESWP(idx_surf), ...
 %     vecDVEYAW(idx_surf), vecDVEHVCRD(idx_surf), vecDVEHVSPN(idx_surf), vecDVEAREA(idx_surf), vecDVESYM(idx_surf), ...
-%     vecDVELE(idx_surf), vecDVETE(idx_surf), vecSYM(surface_num), [0 0 0], 0, matNPVLST0, matDVE(idx_surf), matADJE, matVLST0, matCENTER0(idx_surf), matDVENORM(idx_surf));
+%     vecDVELE(idx_surf), vecDVETE(idx_surf), vecSYM(surface_num), [0 0 0], 0, NPP, matDVE(idx_surf,:), matADJE, P, matCENTER0(idx_surf), matDVENORM(idx_surf));
 % end
 
 
