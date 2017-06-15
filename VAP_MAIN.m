@@ -23,7 +23,7 @@ disp(' ');
 
 %% Reading in geometry
 
-filename = 'inputs/XMLtest.vap';
+filename = 'inputs/twoVehicles.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -40,14 +40,14 @@ flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
 flagVERBOSE = 0;
 
-%% Discretize geometry into DVEs
+% Discretize geometry into DVEs
 
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
+    vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM, vecWINGVEHICLE);
 
-[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
+[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0);
 
 %% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
 vecDVEROTOR = zeros(size(vecDVESURFACE));

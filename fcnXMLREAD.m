@@ -69,6 +69,13 @@ vecVEHTRK = nan(valVEHICLES,1);
 vecWINGS = nan(valVEHICLES,1);
 vecROTORS = nan(valVEHICLES,1);
 
+vecROTORRPM = [];
+vecROTDIAM = [];
+vecROTORHUB = [];
+vecROTORAXIS = [];
+vecROTORBLADES = [];
+vecROTORM = [];
+
 k = 1;
 kk = 1;
 kkk = 1;
