@@ -105,7 +105,10 @@ verticeList = [P1;P2;teRightProj;teLeftProj];
 %(VAP3)  add vecDVEWING infomation to verticeList before running 'unique'
 % this ensures vertices from different vehicle/type(rotor vs wing) 
 % will not get WELDED
+try
 verticeList = [verticeList,reshape(repmat(vecDVEWING,1,4),[],1)];
+catch
+end
 
 [matVLST,idxVLST,matDVE] = unique(verticeList,'rows');
 

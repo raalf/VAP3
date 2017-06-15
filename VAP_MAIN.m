@@ -23,7 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-filename = 'inputs/twoVehicles.vap';
+filename = 'inputs/XMLtest.vap';
+% filename = 'inputs/twoVehicles.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -45,19 +46,20 @@ flagVERBOSE = 0;
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM, vecWINGVEHICLE);
+    vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
-[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0);
+[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
 
 %% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
 vecDVEROTOR = zeros(size(vecDVESURFACE));
 vecDVEVEHICLE = vecWINGVEHICLE(vecDVESURFACE); 
 vecDVEWING = vecDVESURFACE;
 
-idx_rotor = sort(vecDVEPANEL == repmat(find(vecROTOR > 0)',valNELE,1),2); % Which surfaces are rotors
-idx_rotor = idx_rotor(:,2);
-vecDVEROTOR(idx_rotor) = vecDVESURFACE(idx_rotor);
-
+% idx_rotor = sort(vecDVEPANEL == repmat(find(vecROTOR > 0)',valNELE,1),2); % Which surfaces are rotors
+% idx_rotor = idx_rotor(:,2);
+% vecDVEROTOR(idx_rotor) = vecDVESURFACE(idx_rotor);
+vecDVEROTOR = vecROTOR(vecDVEPANEL); % Alton-Y
+idx_rotor = vecDVEROTOR>0; % Alton-Y
 vecDVEWING(idx_rotor) = 0;
 
 matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);

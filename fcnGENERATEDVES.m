@@ -1,7 +1,7 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matNPVLST] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM, vecWINGVEHICLE)
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matNPVLST] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -82,7 +82,7 @@ vecEnd      = cumsum(vecN.*vecM);
 % VAP3 - make sure wings get different id if belong to different vehicles
 % any touching panels in same vehicel would still get deteced and merged into a same wing. 
 % *same wing id WOULD NEVER exist in different vehicle
-panelEdges = [reshape(permute(matGEOM,[1 3 2]),[],5),reshape(repmat(vecWINGVEHICLE,1,2)',[],1)];
+panelEdges = reshape(permute(matGEOM,[1 3 2]),[],6);
 
 [~,tempB,tempC] = unique(panelEdges,'rows','stable');
 panelEdgesIdx = reshape(tempC,2,[])';

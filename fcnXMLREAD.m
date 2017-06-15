@@ -200,6 +200,9 @@ k = 1;
 for i = 1:valPANELS
     
     sections = matSECTIONS(vecSECTIONPANEL == i,:);
+    
+    % (VAP3) add vehicle id to matGEOM
+    sections(:,6) = vecWINGVEHICLE(i);
     len = size(sections,1);
     
     if len == 2
@@ -232,6 +235,7 @@ for i = 1:valPANELS
         end
         
     end
+    
 end
 
 
