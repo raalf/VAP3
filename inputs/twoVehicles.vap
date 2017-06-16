@@ -93,9 +93,9 @@
 
 		<vinf>40</vinf>
 
-		<alpha>2</alpha>
+		<alpha>20</alpha>
 		<beta>0</beta>
-		<roll>0</roll>
+		<roll>40</roll>
 		<fpa>0</fpa>
 		<trk>0</trk>
 

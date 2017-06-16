@@ -35,7 +35,7 @@ vecWINGVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS
 
 seqALPHA = 0;
 seqBETA = 0;
-
+flagRELAX = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
@@ -68,6 +68,9 @@ matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);
 matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
 matSURFACETYPE(nonzeros(unique(vecDVEROTOR)),2) = nonzeros(unique(vecDVEROTOR));
 
+
+
+[ vecVEHUVW, vecVEHROT ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
 
 
 [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
