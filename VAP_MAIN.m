@@ -71,6 +71,12 @@ matSURFACETYPE(nonzeros(unique(vecDVEROTOR)),2) = nonzeros(unique(vecDVEROTOR));
 
 
 [ vecVEHUVW, vecVEHROT ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
+[ matVLST0, matCENTER0 ] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, vecVEHROT );
+% update DVE params after vehicle rotation
+[ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
+    vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
+    = fcnVLST2DVEPARAM(matDVE, matVLST0);
+
 
 
 [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
