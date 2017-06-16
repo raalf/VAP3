@@ -7,7 +7,7 @@ vecVEHPITCH = vecVEHFPA + vecVEHALPHA;
 
 matVEHROT = deg2rad([vecVEHROLL, vecVEHPITCH, vecVEHYAW]);
 
-[x,y,z] = sph2cart(deg2rad(vecVEHTRK),rad2deg(vecVEHFPA),vecVEHVINF);
+[x,y,z] = sph2cart(deg2rad(vecVEHTRK),deg2rad(vecVEHFPA),vecVEHVINF);
 
 matVEHUVW = [-x,y,z];
 
