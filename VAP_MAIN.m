@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-filename = 'inputs/XMLtest.vap';
-% filename = 'inputs/twoVehicles.vap';
+% filename = 'inputs/XMLtest.vap';
+filename = 'inputs/twoVehicles.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -43,14 +43,17 @@ flagVERBOSE = 0;
 
 % Discretize geometry into DVEs
 
+
+% tranlsate matGEOM to vehicle origin
+matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
+
 [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
     vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
-[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
 
-%% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
+% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
 vecDVEVEHICLE = vecWINGVEHICLE(vecDVESURFACE); 
 vecDVEWING = vecDVESURFACE;
 
@@ -64,6 +67,12 @@ vecDVEWING(idx_rotor) = 0;
 matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);
 matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
 matSURFACETYPE(nonzeros(unique(vecDVEROTOR)),2) = nonzeros(unique(vecDVEROTOR));
+
+
+
+[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0);
+
+%
 
 %% Creating extra rotor blades
 % THIS SHIT DON'T WORK AND IS HELLA CONFUSING
