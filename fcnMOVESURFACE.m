@@ -1,4 +1,4 @@
-function [matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNTVLST)
+function [matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE)
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
@@ -24,10 +24,12 @@ if length(vecVLSTVEH(:,1)) ~= length(matVLST(:,1))
     disp('vecVLSTVEH does not match vehicle ID');
 end
 
-
-
 matVLSTTRANS = valDELTIME.*matVEHUVW(vecVLSTVEH,:);
 matDVETRANS  = valDELTIME.*matVEHUVW(vecDVEVEHICLE,:);
+matFUSETRANS = valDELTIME.*matVEHUVW(vecFUSEVEHICLE,:);
+
+sz = size(matFUSEGEOM);
+matFUSETRANS = repmat(reshape(matFUSETRANS',1,1,3,length(vecFUSEVEHICLE)),sz(1),sz(2),1,1);
 
 % Old trailing edge vertices
 matNEWWAKE(:,:,4) = matVLST(matDVE(vecDVETE>0,4),:);
@@ -48,3 +50,5 @@ matNEWWAKE(:,:,2) = matVLST(matDVE(vecDVETE>0,3),:);
 % New non-planar trailing edge vertices (used to calculate matWADJE)
 matNPNEWWAKE(:,:,1) = matNTVLST(matDVE(vecDVETE>0,4),:);
 matNPNEWWAKE(:,:,2) = matNTVLST(matDVE(vecDVETE>0,3),:);
+
+matFUSEGEOM = matFUSEGEOM + matFUSETRANS;

@@ -1,15 +1,15 @@
 function [...
-flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
-valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
-vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, ...
-vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
-vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, matROTORHUB, vecROTORAXIS, vecROTORBLADES,...
-vecROTORM, vecROTOR...
-] = fcnXMLREAD(filename)
+    flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
+    valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
+    vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecAREA, vecSPAN, vecCMAC, vecWINGM, ...
+    vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
+    vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, matROTORHUB, vecROTORAXIS, vecROTORBLADES,...
+    vecROTORM, vecROTOR, vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
+    ] = fcnXMLREAD(filename)
 
 % clc
 % clear
-% 
+%
 % filename = 'inputs/XMLtest.vap';
 
 % OUTPUT
@@ -68,6 +68,7 @@ vecVEHTRK = nan(valVEHICLES,1);
 
 vecWINGS = nan(valVEHICLES,1);
 vecROTORS = nan(valVEHICLES,1);
+vecFUSELAGES = nan(valVEHICLES,1);
 
 vecROTORRPM = [];
 vecROTDIAM = [];
@@ -79,10 +80,11 @@ vecROTORM = [];
 k = 1;
 kk = 1;
 kkk = 1;
+kkkk = 1;
 
 p = 1;
-pp = 1;
-ppp = 1;
+
+q = 1;
 
 for i = 1:valVEHICLES
     
@@ -98,6 +100,11 @@ for i = 1:valVEHICLES
     
     try vecWINGS(i,1) = max(size(veh.wing)); catch; vecWINGS(i,1) = 0; end
     try vecROTORS(i,1) = max(size(veh.rotor)); catch; vecROTORS(i,1) = 0; end
+    try vecFUSELAGES(i,1) = max(size(veh.fuselage)); catch; vecFUSELAGES(i,1) = 0; end
+    
+    vecAREA(i) = str2double(veh.area.Text);
+    vecSPAN(i) = str2double(veh.span.Text);
+    vecCMAC(i) = str2double(veh.cmac.Text);
     
     %% Loading Wings
     for j = 1:vecWINGS(i)
@@ -106,9 +113,6 @@ for i = 1:valVEHICLES
         
         vecWINGINCID(k) = str2double(win.incidence.Text);
         if strcmpi(win.trimable.Text, 'true') vecTRIMABLE(j) = 1; else vecTRIMABLE(j) = 0; end
-        vecWINGAREA(k) = str2double(win.area.Text);
-        vecWINGSPAN(k) = str2double(win.span.Text);
-        vecWINGCMAC(k) = str2double(win.cmac.Text);
         
         vecWINGM(k,1) = str2double(win.M.Text);
         
@@ -116,7 +120,7 @@ for i = 1:valVEHICLES
         catch; matWINGORIG(k,:) = [0 0 0]; end
         
         vecPANELS(k,1) = max(size(win.panel));
-                
+        
         for m = 1:vecPANELS(k,1)
             
             try pan = win.panel{1,m}; catch; pan = win.panel; end
@@ -130,7 +134,7 @@ for i = 1:valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matWINGORIG(k,1) str2double(sec.y.Text) + matWINGORIG(k,2) str2double(sec.z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text)];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matWINGORIG(k,1) str2double(sec.y.Text) + matWINGORIG(k,2) str2double(sec.z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
@@ -174,9 +178,8 @@ for i = 1:valVEHICLES
             vecSECTIONS(kk,1) = max(size(pan.section));
             
             for n = 1:vecSECTIONS(kk,1)
-                sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text)];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
@@ -193,7 +196,33 @@ for i = 1:valVEHICLES
         vecWINGVEHICLE(k,1) = i;
         k = k + 1;
     end
+    
+    %% Fuselage
+    for j = 1:vecFUSELAGES(i)
+        try fuse = veh.fuselage{1,j}; catch; fuse = veh.fuselage; end
+        
+        vecFTURB(q,1) = str2double(fuse.transitionpanel.Text);
+        
+        vecFUSESECTIONS(q,1) = max(size(fuse.fsection));
+        
+        matFUSEAXIS(q,:) = [str2double(fuse.xaxis.Text) str2double(fuse.yaxis.Text) str2double(fuse.zaxis.Text)];
+        matFUSEORIG(q,:) = [str2double(fuse.xorig.Text) str2double(fuse.yorig.Text) str2double(fuse.zorig.Text)];
+        
+        for m = 1:vecFUSESECTIONS(q,1)
+            sec = fuse.fsection{1,m};
+            
+            matFGEOM(kkkk,:) = [str2double(sec.x.Text) str2double(sec.diameter.Text)];
+            matSECTIONFUSELAGE(kkkk,1) = q;
+            
+            kkkk = kkkk + 1; 
+        end
+
+        vecFUSEVEHICLE(q,1) = i;
+        q = q + 1;
+        
+    end
 end
+
 valPANELS = sum(vecPANELS);
 
 
@@ -206,7 +235,7 @@ for i = 1:valPANELS
     sections = matSECTIONS(vecSECTIONPANEL == i,:);
     
     % (VAP3) add vehicle id to matGEOM
-    sections(:,6) = vecWINGVEHICLE(i);
+%     sections(:,6) = vecWINGVEHICLE(i);
     len = size(sections,1);
     
     if len == 2
@@ -247,9 +276,9 @@ end
 %% Duplicating rotor blades
 % THIS SHIT DON'T WORK
 % [matNEWGEOM, ~, vecNnew, vecMnew, vecSYMnew] = fcnMULTIBLADE(sum(vecROTOR > 0), vecROTORBLADES, vecN(vecROTOR > 0), vecM(vecROTOR > 0), vecSYM(vecROTOR > 0), matGEOM(:,:,vecROTOR > 0));
-% 
+%
 % matGEOM = cat(3, matGEOM, matNEWGEOM);
-% 
+%
 % vecN = cat(1, vecN, vecNnew);
 % vecM = cat(1, vecM, vecMnew);
 % vecSYM = cat(1, vecSYM, vecSYMnew);

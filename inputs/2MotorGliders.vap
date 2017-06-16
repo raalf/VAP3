@@ -150,7 +150,176 @@
 					<twist>0</twist>
 				</section>
 			</panel>
+		</wing>
 
+		<fuselage>
+			<transitionpanel>2</transitionpanel>
+
+			<xaxis>1</xaxis>
+			<yaxis>0</yaxis>
+			<zaxis>0</zaxis>
+
+			<xorig>-1.5</xorig>
+			<yorig>0</yorig>
+			<zorig>0</zorig>
+
+			<fsection>
+				<diameter>0.01</diameter>
+				<x>0</x>
+			</fsection>
+			<fsection>
+				<diameter>0.5</diameter>
+				<x>0.4</x>
+			</fsection>
+			<fsection>
+				<diameter>0.5</diameter>
+				<x>1.05</x>
+			</fsection>
+			<fsection>
+				<diameter>0.4</diameter>
+				<x>4.5</x>
+			</fsection>
+			<fsection>
+				<diameter>0.2</diameter>
+				<x>5.9</x>
+			</fsection>
+		</fuselage>
+	</vehicle>				
+
+	<vehicle>
+		<x>10</x>
+		<y>15</y>
+		<z>1</z>
+
+		<vinf>1</vinf>
+
+		<alpha>5</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<trk>0</trk>
+
+		<area>12.6</area>
+		<span>15</span>
+		<cmac>0.707</cmac>
+
+		<wing>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+
+			<M>2</M>
+
+			<xwingorig>0</xwingorig>
+			<ywingorig>0</ywingorig>
+			<zwingorig>0</zwingorig>
+
+			<panel>
+				<symmetry>0</symmetry>
+				<N>8</N>
+				<section>
+					<x>0.3</x>
+					<y>-7.5</y>
+					<z>0.3875</z>
+					<chord>0.375</chord>
+					<twist>1.8</twist>
+				</section>
+				<section>
+					<x>0.179</x>
+					<y>-4.464</y>
+					<z>0.234</z>
+					<chord>0.675</chord>
+					<twist>0.3</twist>
+				</section>	
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>0.92</chord>
+					<twist>0</twist>
+				</section>					
+				<section>
+					<x>0.179</x>
+					<y>4.464</y>
+					<z>0.234</z>
+					<chord>0.675</chord>
+					<twist>0.3</twist>
+				</section>	
+				<section>
+					<x>0.3</x>
+					<y>7.5</y>
+					<z>0.3875</z>
+					<chord>0.375</chord>
+					<twist>1.8</twist>
+				</section>
+			</panel>
+		</wing>
+
+		<wing>
+			<incidence>0</incidence>
+			<trimable>TRUE</trimable>
+
+			<M>1</M>
+
+			<xwingorig>3.9</xwingorig>
+			<ywingorig>0</ywingorig>
+			<zwingorig>1.1</zwingorig>
+
+			<panel>
+				<symmetry>0</symmetry>
+				<N>4</N>
+				<section>
+					<x>-0.5</x>
+					<y>0</y>
+					<z>-1.1</z>
+					<chord>0.9</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>0.5375</chord>
+					<twist>0</twist>
+				</section>
+			</panel>
+
+			<panel>
+				<symmetry>0</symmetry>
+				<N>3</N>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>0.5375</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<x>0.2</x>
+					<y>1.2</y>
+					<z>0</z>
+					<chord>0.3225</chord>
+					<twist>0</twist>
+				</section>
+			</panel>
+
+			<panel>
+				<symmetry>0</symmetry>
+				<N>3</N>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>0.5375</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<x>0.2</x>
+					<y>-1.2</y>
+					<z>0</z>
+					<chord>0.3225</chord>
+					<twist>0</twist>
+				</section>
+			</panel>
 		</wing>
 
 		<fuselage>
@@ -186,7 +355,7 @@
 			</fsection>
 		</fuselage>
 
-	</vehicle>				
+	</vehicle>	
 
 </VAP>
 
