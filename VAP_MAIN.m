@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-% filename = 'inputs/XMLtest.vap';
-filename = 'inputs/twoVehicles.vap';
+filename = 'inputs/XMLtest.vap';
+% filename = 'inputs/twoVehicles.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...

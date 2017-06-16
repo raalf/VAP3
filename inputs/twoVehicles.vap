@@ -30,6 +30,10 @@
 		<trk>180</trk>
 
 		<wing>
+			<xwingorig>-2</xwingorig>
+			<ywingorig>0</ywingorig>
+			<zwingorig>0</zwingorig>
+
 			<incidence>5</incidence>
 			<trimable>FALSE</trimable>
 			<area>10</area>
@@ -58,6 +62,10 @@
 		</wing>
 
 		<wing>
+			<xwingorig>5</xwingorig>
+			<ywingorig>0</ywingorig>
+			<zwingorig>0</zwingorig>
+
 			<incidence>-5</incidence>
 			<trimable>FALSE</trimable>
 			<area>10</area>
@@ -107,6 +115,10 @@
 			<cmac>1</cmac>
 			<M>1</M>
 
+			<xwingorig>0</xwingorig>
+			<ywingorig>0</ywingorig>
+			<zwingorig>0</zwingorig>
+
 			<panel>
 				<symmetry>1</symmetry>
 				<N>5</N>
@@ -128,6 +140,10 @@
 		</wing>
 
 		<wing>
+			<xwingorig>3</xwingorig>
+			<ywingorig>0</ywingorig>
+			<zwingorig>0</zwingorig>
+
 			<incidence>-5</incidence>
 			<trimable>FALSE</trimable>
 			<area>10</area>

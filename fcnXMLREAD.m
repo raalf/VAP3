@@ -3,7 +3,7 @@ flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, val
 valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
 vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecWINGAREA, vecWINGSPAN, vecWINGCMAC, vecWINGM, ...
 vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
-vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, vecROTORBLADES,...
+vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, matROTORHUB, vecROTORAXIS, vecROTORBLADES,...
 vecROTORM, vecROTOR...
 ] = fcnXMLREAD(filename)
 
@@ -71,7 +71,7 @@ vecROTORS = nan(valVEHICLES,1);
 
 vecROTORRPM = [];
 vecROTDIAM = [];
-vecROTORHUB = [];
+matROTORHUB = [];
 vecROTORAXIS = [];
 vecROTORBLADES = [];
 vecROTORM = [];
@@ -86,7 +86,8 @@ ppp = 1;
 
 for i = 1:valVEHICLES
     
-    veh = VAP.vehicle{1,i};
+    try veh = VAP.vehicle{1,i}; catch; veh = VAP.vehicle; end
+    
     matVEHORIG(i,:) = [str2double(veh.x.Text) str2double(veh.y.Text) str2double(veh.z.Text)];
     vecVEHVINF(i,1) = str2double(veh.vinf.Text);
     vecVEHALPHA(i,1) = str2double(veh.alpha.Text);
@@ -111,8 +112,11 @@ for i = 1:valVEHICLES
         
         vecWINGM(k,1) = str2double(win.M.Text);
         
-        vecPANELS(k,1) = max(size(win.panel));
+        try matWINGORIG(k,:) = [str2double(win.xwingorig.Text) str2double(win.ywingorig.Text) str2double(win.zwingorig.Text)];
+        catch; matWINGORIG(k,:) = [0 0 0]; end
         
+        vecPANELS(k,1) = max(size(win.panel));
+                
         for m = 1:vecPANELS(k,1)
             
             try pan = win.panel{1,m}; catch; pan = win.panel; end
@@ -126,7 +130,7 @@ for i = 1:valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) str2double(sec.y.Text) str2double(sec.z.Text) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text)];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matWINGORIG(k,1) str2double(sec.y.Text) + matWINGORIG(k,2) str2double(sec.z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text)];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
@@ -150,7 +154,7 @@ for i = 1:valVEHICLES
         vecROTORRPM(p,1) = str2double(rot.rpm.Text);
         vecROTDIAM(p,1) = str2double(rot.dia.Text);
         
-        vecROTORHUB(p,:) = [str2double(rot.xhub.Text) str2double(rot.yhub.Text) str2double(rot.zhub.Text)];
+        matROTORHUB(p,:) = [str2double(rot.xhub.Text) str2double(rot.yhub.Text) str2double(rot.zhub.Text)];
         vecROTORAXIS(p,:) = [str2double(rot.axisx.Text) str2double(rot.axisy.Text) str2double(rot.axisz.Text)];
         
         vecROTORBLADES(p,:) = floor(str2double(rot.blades.Text));
@@ -172,7 +176,7 @@ for i = 1:valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) str2double(sec.y.Text) str2double(sec.z.Text) str2double(sec.chord.Text) str2double(sec.twist.Text)];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text)];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
