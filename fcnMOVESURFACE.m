@@ -1,4 +1,4 @@
-function [matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNTVLST)
+function [matUINF, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNTVLST)
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
@@ -11,23 +11,33 @@ function [matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVESUR
 %   matELST - List of edges from fcnTRIANG
 %   vecTE - List of trailing edge edges
 % OUTPUT:
+%   matUINF - Local 
 %   matVEHORIG - vehicle origin after timestep of each vehicle valVEHICLE x 3
 %   matVLST - New vertex list with moved points
 %   matCENTER - New in-center list with moved points
 %   matNEWWAKE - Outputs a 4 x 3 x n matrix of points for the wake DVE generation
 
-
+% update matVEHORIG positions
 matVEHORIG = matVEHORIG + matVEHUVW.*valDELTIME;
+
+% crate vecVLSTVEH which is a lookup vector for vertice to vehicle ID
 vecVLSTVEH = unique([reshape(matDVE,[],1), repmat(vecDVEVEHICLE,4,1)],'rows');
 vecVLSTVEH = vecVLSTVEH(:,2);
+% check error (should never fail if no vertices are shared between
+% differnet vehicles
 if length(vecVLSTVEH(:,1)) ~= length(matVLST(:,1))
     disp('vecVLSTVEH does not match vehicle ID');
 end
 
-
-
+% translation matrix for the vertice list
 matVLSTTRANS = valDELTIME.*matVEHUVW(vecVLSTVEH,:);
+% translation matrix for the dve list
 matDVETRANS  = valDELTIME.*matVEHUVW(vecDVEVEHICLE,:);
+
+% matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
+% hence excluding the effect of rotating rotors
+matUINF = matDVETRANS;
+
 
 % Old trailing edge vertices
 matNEWWAKE(:,:,4) = matVLST(matDVE(vecDVETE>0,4),:);

@@ -39,6 +39,7 @@ flagRELAX = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
+flagPLOTUINF = 1;
 flagVERBOSE = 0;
 valMAXTIME = 25;
 
@@ -206,7 +207,7 @@ for ai = 1:length(seqALPHA)
             
             %% Moving the wing
 %             [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE.*(vecDVEWING > 0), matNPVLST);
-            [matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE.*(vecDVEWING > 0), matNPVLST);
+            [matUINF, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE.*(vecDVEWING > 0), matNPVLST);
             %% Generating new wake elements
             [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                 vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] ...
@@ -296,6 +297,11 @@ if flagPLOT == 1
     if flagPLOTWAKEVEL == 1
         try
         quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
+        end
+    end
+    if flagPLOTUINF == 1
+        try
+        quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matUINF(:,1),matUINF(:,2),matUINF(:,3));
         end
     end
 %     figure(1);
