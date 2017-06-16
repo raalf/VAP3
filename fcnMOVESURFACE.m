@@ -34,6 +34,11 @@ matVLSTTRANS = valDELTIME.*matVEHUVW(vecVLSTVEH,:);
 % translation matrix for the dve list
 matDVETRANS  = valDELTIME.*matVEHUVW(vecDVEVEHICLE,:);
 
+matFUSETRANS = valDELTIME.*matVEHUVW(vecFUSEVEHICLE,:);
+sz = size(matFUSEGEOM);
+matFUSETRANS = repmat(reshape(matFUSETRANS',1,1,3,length(vecFUSEVEHICLE)),sz(1),sz(2),1,1);
+matFUSEGEOM = matFUSEGEOM + matFUSETRANS;
+
 % matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
 matUINF = matDVETRANS;
