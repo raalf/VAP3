@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-filename = 'inputs/2MotorGliders.vap';
-% filename = 'inputs/StandardCirrus.vap';
+% filename = 'inputs/2MotorGliders.vap';
+filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
@@ -45,7 +45,7 @@ seqBETA = 0;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagPLOTWAKEVEL = 0;
-flagPLOTUINF = 1;
+flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
 %% Creating fuselage

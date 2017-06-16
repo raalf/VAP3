@@ -28,9 +28,13 @@ for i = 1:length(vecFUSEVEHICLE)
     
     B = fcnSTARGLOB(matFUSEAXIS(i,:), matVEHROT(vecFUSEVEHICLE(i),1), matVEHROT(vecFUSEVEHICLE(i),2), matVEHROT(vecFUSEVEHICLE(i),3));
     
-    v = cross(A,B);
-    ssc = [0 -v(3) v(2); v(3) 0 -v(1); -v(2) v(1) 0];
-    R = eye(3) + ssc + ssc^2*(1-dot(A,B))/(norm(v))^2;
+    if ~isequal(A,B)
+        v = cross(A,B);
+        ssc = [0 -v(3) v(2); v(3) 0 -v(1); -v(2) v(1) 0];
+        R = eye(3) + ssc + ssc^2*(1-dot(A,B))/(norm(v))^2;
+    else
+        R = [1 0 0; 0 1 0; 0 0 1];
+    end
     
     X = matFUSEGEOM(:,:,1,i);
     Y = matFUSEGEOM(:,:,2,i);
