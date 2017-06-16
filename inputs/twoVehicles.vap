@@ -21,13 +21,13 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>20</vinf>
+		<vinf>1</vinf>
 
-		<alpha>5</alpha>
+		<alpha>15</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
-		<trk>0</trk>
+		<trk>180</trk>
 
 		<wing>
 			<incidence>5</incidence>
@@ -87,15 +87,15 @@
 	</vehicle>				
 
 	<vehicle>
-		<x>10</x>
+		<x>5</x>
 		<y>0</y>
-		<z>0</z>
+		<z>1</z>
 
-		<vinf>40</vinf>
+		<vinf>1</vinf>
 
 		<alpha>20</alpha>
 		<beta>0</beta>
-		<roll>40</roll>
+		<roll>15</roll>
 		<fpa>0</fpa>
 		<trk>0</trk>
 
