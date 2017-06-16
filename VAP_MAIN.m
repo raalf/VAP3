@@ -23,7 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-filename = 'inputs/2MotorGliders.vap';
+% filename = 'inputs/2MotorGliders.vap';
+filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
@@ -35,7 +36,7 @@ filename = 'inputs/2MotorGliders.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 40
+valMAXTIME = 3
 flagRELAX = 1
 
 seqALPHA = 0;
