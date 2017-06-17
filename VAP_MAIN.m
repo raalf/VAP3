@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-% filename = 'inputs/2MotorGliders.vap';
-filename = 'inputs/StandardCirrus.vap';
+filename = 'inputs/2MotorGliders.vap';
+% filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
@@ -36,7 +36,7 @@ filename = 'inputs/StandardCirrus.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 20
+valMAXTIME = 30
 flagRELAX = 1
 
 seqALPHA = 0;
@@ -44,6 +44,7 @@ seqBETA = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
+flagGIF = 1;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
@@ -257,6 +258,23 @@ for ai = 1:length(seqALPHA)
                 [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
             end
             
+            if flagGIF == 1
+                [hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
+                [hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER);
+                view([33 22])
+                
+                frame = getframe(hFig3);
+                im = frame2im(frame);
+                [imind,cm] = rgb2ind(im,256);
+                
+                % Write to the GIF File
+                
+                if valTIMESTEP == 1
+                    imwrite(imind,cm,'GIF/output.gif','gif', 'Loopcount',inf);
+                else
+                    imwrite(imind,cm,'GIF/output.gif','gif','WriteMode','append');
+                end
+            end
             %% Timing
             %             eltime(valTIMESTEP) = toc;
             %             ttime(valTIMESTEP) = sum(eltime);
@@ -309,25 +327,25 @@ if flagPLOT == 1
     end
     if flagPLOTUINF == 1
         try
-        quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matUINF(:,1),matUINF(:,2),matUINF(:,3));
+            quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matUINF(:,1),matUINF(:,2),matUINF(:,3));
         end
     end
-%     figure(1);
-%     plot(1:valTIMESTEP, eltime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Time per timestep (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
-%
-%     figure(3);
-%     plot(1:valTIMESTEP, ttime)
-%     xlabel('Timestep','FontSize',15)
-%     ylabel('Total time (s)', 'FontSize',15)
-%     box on
-%     grid on
-%     axis tight
-
+    %     figure(1);
+    %     plot(1:valTIMESTEP, eltime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Time per timestep (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
+    %
+    %     figure(3);
+    %     plot(1:valTIMESTEP, ttime)
+    %     xlabel('Timestep','FontSize',15)
+    %     ylabel('Total time (s)', 'FontSize',15)
+    %     box on
+    %     grid on
+    %     axis tight
+    
 end
 
 % profreport
