@@ -21,8 +21,9 @@ for n = 1:valVEHICLES
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) + repmat(matVEHORIG(n,:),valDVEVEH,1);
     
-    rotor_veh = nonzeros(matSURFACETYPE((vecSURFACEVEHICLE == n),2));
-    matROTORHUB(rotor_veh,:) = matROTORHUB(rotor_veh,:) + matVEHORIG(n,:);
+%     rotor_veh = nonzeros(matSURFACETYPE((vecSURFACEVEHICLE == n),2));
+%     matROTORHUB(rotor_veh,:) = matROTORHUB(rotor_veh,:) + matVEHORIG(n,:);
+    
 end
 
 for i = 1:length(vecFUSEVEHICLE)

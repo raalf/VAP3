@@ -18,7 +18,7 @@
 
 	<vehicle>
 		<x>0</x>
-		<y>0</y>
+		<y>-2</y>
 		<z>0</z>
 
 		<vinf>2</vinf>
@@ -191,7 +191,7 @@
 
 			<xhub>-1.6</xhub>
 			<yhub>0</yhub>
-			<zhub>0</zhub>
+			<zhub>-0.1</zhub>
 
 			<axisx>1</axisx>
 			<axisy>0</axisy>
@@ -374,7 +374,7 @@
 
 			<xhub>0</xhub>
 			<yhub>3</yhub>
-			<zhub>0</zhub>
+			<zhub>0.15</zhub>
 
 			<axisx>1</axisx>
 			<axisy>0</axisy>
@@ -405,7 +405,7 @@
 
 				<section>
 					<x>0</x>
-					<y>1</y>
+					<y>1.5</y>
 					<z>0</z>
 					<chord>0.15</chord>
 					<twist>5</twist>
@@ -419,7 +419,7 @@
 
 			<xhub>0</xhub>
 			<yhub>-3</yhub>
-			<zhub>0</zhub>
+			<zhub>0.15</zhub>
 
 			<axisx>1</axisx>
 			<axisy>0</axisy>
@@ -450,7 +450,7 @@
 
 				<section>
 					<x>0</x>
-					<y>1</y>
+					<y>1.5</y>
 					<z>0</z>
 					<chord>0.15</chord>
 					<twist>5</twist>

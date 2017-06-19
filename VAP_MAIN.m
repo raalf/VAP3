@@ -83,25 +83,24 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 
 
 [ matVEHUVW, matVEHROT ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
-[ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUB, matROTORAXIS] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, matSURFACETYPE, vecSURFACEVEHICLE);
+[ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, matSURFACETYPE, vecSURFACEVEHICLE);
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
+%[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 
-
-% [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
-
-%
 
 %% Creating extra rotor blades
-% THIS SHIT DON'T WORK AND IS HELLA CONFUSING
+% JESUS CHRIST ON A TRAMPOLINE
 
 valROTORS = length(vecROTORRPM);
 rotor_surfaces = nonzeros(matSURFACETYPE(:,2));
 for i = 1:valROTORS
 
+    rotor_veh = vecSURFACEVEHICLE(matSURFACETYPE(:,2) == i);
+    
     surface_num = rotor_surfaces(i);
     idx_surf = vecDVEROTOR == surface_num;
     len = length(nonzeros(idx_surf));
@@ -127,7 +126,7 @@ for i = 1:valROTORS
     
     [~, vecSYM(end+1:end+pn), vecN(end+1:end+pn), vecM(end+1:end+pn), vecDVEHVSPN(end+1:end+dven), vecDVEHVCRD(end+1:end+dven), vecDVEROLL(end+1:end+dven), vecDVEPITCH(end+1:end+dven), vecDVEYAW(end+1:end+dven), ...
         vecDVELESWP(end+1:end+dven), vecDVEMCSWP(end+1:end+dven), vecDVETESWP(end+1:end+dven), vecDVEAREA(end+1:end+dven), matDVENORM(end+1:end+dven,:), matCENTER0(end+1:end+dven,:), matNEWVLST, matNEWDVE, matNEWNPVLST] = ...
-        fcnDVEMULTIROTOR3(vecROTORBLADES(i), vecM(surface_num), vecN(surface_num), vecSYM(surface_num), matROTORHUB(i,:), 0, NPP, P, []);
+        fcnDVEMULTIROTOR3(vecROTORBLADES(i), vecM(surface_num), vecN(surface_num), vecSYM(surface_num), matROTORHUB(i,:) + matVEHORIG(rotor_veh,:), 0, NPP, P, []);
     
     % Splicing in new vertices, non planar vertices, and corresponding DVE corners
     old_vertices = size(matVLST0,1);
@@ -159,7 +158,41 @@ for i = 1:valROTORS
     
     valPANELS = max(vecDVEPANEL);
 
+    %% Rotate rotors in to position
+    
+    A = [0 0 1];
+    B = fcnSTARGLOB(matROTORAXIS(i,:), matVEHROT(rotor_veh,1), matVEHROT(rotor_veh,2), matVEHROT(rotor_veh,3));
+
+    if ~isequal(A,B)
+        v = cross(A,B);
+        ssc = [0 -v(3) v(2); v(3) 0 -v(1); -v(2) v(1) 0];
+        R = eye(3) + ssc + ssc^2*(1-dot(A,B))/(norm(v))^2;
+    else
+        R = [1 0 0; 0 1 0; 0 0 1];
+    end
+
+    rotor_vertices = reshape(unique(matDVE(vecDVEROTOR == i,:)),[],1);
+    rotor_dves = find(vecDVEROTOR);
+    
+    hub = fcnSTARGLOB(matROTORHUB(i,:), matVEHROT(rotor_veh,1), matVEHROT(rotor_veh,2), matVEHROT(rotor_veh,3)) + matVEHORIG(rotor_veh,:);
+    X = matVLST0(rotor_vertices,1) - hub(1);
+    Y = matVLST0(rotor_vertices,2) - hub(2);
+    Z = matVLST0(rotor_vertices,3) - hub(3);
+
+    temp=[X(:),Y(:),Z(:)]*R.';
+    sz=size(X);
+    Xrot=reshape(temp(:,1),sz);
+    Yrot=reshape(temp(:,2),sz);
+    Zrot=reshape(temp(:,3),sz);
+    
+    matVLST0(rotor_vertices,:) = [Xrot Yrot Zrot] + hub;
+    
+    [ ~, ~, vecDVEROLL(rotor_dves), vecDVEPITCH(rotor_dves), vecDVEYAW(rotor_dves),~, ~, ~, ~, matDVENORM(rotor_dves,:), ~, ~, matCENTER0(rotor_dves,:)] ...
+    = fcnVLST2DVEPARAM(matDVE(rotor_dves,:), matVLST0);
+    
+%     [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 end
+
 [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 
 %%
