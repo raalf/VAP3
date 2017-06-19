@@ -23,7 +23,7 @@
 
 		<vinf>2</vinf>
 
-		<alpha>20</alpha>
+		<alpha>6</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -233,16 +233,16 @@
 	</vehicle>				
 
 	<vehicle>
-		<x>-5</x>
-		<y>0</y>
-		<z>2</z>
+		<x>-3</x>
+		<y>10</y>
+		<z>0</z>
 
 		<vinf>4</vinf>
 
-		<alpha>30</alpha>
+		<alpha>3</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<fpa>-20</fpa>
+		<fpa>0</fpa>
 		<trk>0</trk>
 
 		<area>12.6</area>

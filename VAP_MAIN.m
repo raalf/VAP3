@@ -160,7 +160,7 @@ for i = 1:valROTORS
 
     %% Rotate rotors in to position
     
-    A = [0 0 1];
+    A = [0 0 -1];
     B = fcnSTARGLOB(matROTORAXIS(i,:), matVEHROT(rotor_veh,1), matVEHROT(rotor_veh,2), matVEHROT(rotor_veh,3));
 
     if ~isequal(A,B)
