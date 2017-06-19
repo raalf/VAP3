@@ -82,7 +82,7 @@ matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(v
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
 
-[ matVEHUVW, matVEHROT ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
+[ matVEHUVW, matVEHROT, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
 [ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, matSURFACETYPE, vecSURFACEVEHICLE);
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
@@ -100,6 +100,7 @@ rotor_surfaces = nonzeros(matSURFACETYPE(:,2));
 for i = 1:valROTORS
 
     rotor_veh = vecSURFACEVEHICLE(matSURFACETYPE(:,2) == i);
+    vecROTORVEH(i,:) = rotor_veh;
     
     surface_num = rotor_surfaces(i);
     idx_surf = vecDVEROTOR == surface_num;
@@ -292,7 +293,8 @@ for ai = 1:length(seqALPHA)
                 matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
                 valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
                 vecDVETE, matNPVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
-                matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM);
+                vecVEHROLL, vecVEHPITCH, vecVEHYAW, vecROTORVEH, ...
+                matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM );
             %% Generating new wake elements
 %             [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
 %                 vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] ...

@@ -1,4 +1,11 @@
-function [matUINF, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM)
+function [matUINF, matVEHORIG, ...
+    matVLST, matCENTER, ...
+    matNEWWAKE, matNPNEWWAKE, ...
+    matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
+    valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
+    vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
+    vecVEHROLL, vecVEHPITCH, vecVEHYAW, vecROTORVEH, ...
+    matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM)
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
@@ -17,6 +24,10 @@ function [matUINF, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, mat
 %   matCENTER - New in-center list with moved points
 %   matNEWWAKE - Outputs a 4 x 3 x n matrix of points for the wake DVE generation
 
+% pre-calculate rad per timestep of rotors
+vecROTORRAD = vecROTORRPM.*2.*pi./60.*valDELTIME;
+% TODO: insert warning if vecROTORRAD>2*pi
+
 % update matVEHORIG positions
 matVEHORIG = matVEHORIG + matVEHUVW.*valDELTIME;
 
@@ -34,10 +45,27 @@ matVLSTTRANS = valDELTIME.*matVEHUVW(vecVLSTVEH,:);
 % translation matrix for the dve list
 matDVETRANS  = valDELTIME.*matVEHUVW(vecDVEVEHICLE,:);
 
+
+
+% Fuselage
 matFUSETRANS = valDELTIME.*matVEHUVW(vecFUSEVEHICLE,:);
 sz = size(matFUSEGEOM);
 matFUSETRANS = repmat(reshape(matFUSETRANS',1,1,3,length(vecFUSEVEHICLE)),sz(1),sz(2),1,1);
 matFUSEGEOM = matFUSEGEOM + matFUSETRANS;
+
+
+
+% % Rotate Rotors
+% for i = 1:length(vecROTORVEH)
+%     idxVLSTROTOR = unique(matDVE(vecDVEROTOR==i,:));
+%     matVLST(idxVLSTROTOR,:)
+% end
+
+
+
+
+
+
 
 % matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
@@ -52,6 +80,7 @@ matNEWWAKE(:,:,3) = matVLST(matDVE(vecDVETE>0,3),:);
 matNPNEWWAKE(:,:,4) = matNTVLST(matDVE(vecDVETE>0,4),:);
 matNPNEWWAKE(:,:,3) = matNTVLST(matDVE(vecDVETE>0,3),:);
 
+% Translate Vehicles
 matVLST = matVLST + matVLSTTRANS;
 matCENTER = matCENTER + matDVETRANS;
 matNTVLST = matNTVLST + matVLSTTRANS;

@@ -1,4 +1,4 @@
-function [ matVEHUVW, matVEHROT ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK )
+function [ matVEHUVW, matVEHROT, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK )
 %FCNINITVEHICLE Summary of this function goes here
 %   Inititalize velocites and rotation angles of vehicle
 
