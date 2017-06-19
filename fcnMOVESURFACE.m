@@ -1,4 +1,4 @@
-function [matUINF, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE)
+function [matUINF, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM)
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
