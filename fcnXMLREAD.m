@@ -178,6 +178,7 @@ for i = 1:valVEHICLES
             vecSECTIONS(kk,1) = max(size(pan.section));
             
             for n = 1:vecSECTIONS(kk,1)
+                sec = pan.section{1,n};
                 
                 matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
                 vecSECTIONPANEL(kkk,1) = kk;

@@ -23,7 +23,7 @@
 
 		<vinf>2</vinf>
 
-		<alpha>5</alpha>
+		<alpha>20</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -184,6 +184,52 @@
 				<x>5.9</x>
 			</fsection>
 		</fuselage>
+
+		<rotor>
+			<rpm>1200</rpm>
+			<dia>2</dia>
+
+			<xhub>-1.5</xhub>
+			<yhub>0</yhub>
+			<zhub>0</zhub>
+
+			<axisx>1</axisx>
+			<axisy>0</axisy>
+			<axisz>0</axisz>
+
+			<blades>3</blades>
+
+			<M>2</M>
+
+			<panel>
+				<N>10</N>
+
+				<section>
+					<x>0</x>
+					<y>0.2</y>
+					<z>0</z>
+					<chord>0.1</chord>
+					<twist>2</twist>
+				</section>
+
+				<section>
+					<x>0</x>
+					<y>0.4</y>
+					<z>0</z>
+					<chord>0.5</chord>
+					<twist>5</twist>
+				</section>
+
+				<section>
+					<x>0</x>
+					<y>1</y>
+					<z>0</z>
+					<chord>0.4</chord>
+					<twist>10</twist>
+				</section>
+			</panel>
+		</rotor>
+
 	</vehicle>				
 
 	<vehicle>
@@ -193,7 +239,7 @@
 
 		<vinf>4</vinf>
 
-		<alpha>5</alpha>
+		<alpha>30</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>-20</fpa>
