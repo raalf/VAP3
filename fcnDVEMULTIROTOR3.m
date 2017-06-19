@@ -1,10 +1,6 @@
-function [valNELE, matNEWNPVLST, vecAIRFOIL, vecDVELE, vecDVETE, ...
-    vecDVEYAW, vecDVEPANEL, vecDVETIP, vecDVEWING, vecDVESYM, vecM, vecN, ...
-    vecDVEROLL, vecDVEAREA, vecDVEPITCH, vecDVEMCSWP, vecDVETESWP, vecDVELESWP, ...
-    vecDVEHVCRD, vecDVEHVSPN, vecSYM, vecQARM, matADJE, matNEWCENTER, matNEWVLST, matDVE, matNEWDVENORM, matVLST] = fcnDVEMULTIROTOR3(...
-    valNELE, valNUMB, vecDVETIP, vecDVETESWP, vecDVEPITCH, vecDVEWING, vecDVEMCSWP, vecM, vecN, vecDVEPANEL, vecDVEROLL, vecDVELESWP, ...
-    vecDVEYAW, vecDVEHVCRD, vecDVEHVSPN, vecDVEAREA, vecDVESYM, vecDVELE, vecDVETE, vecSYM, vecROTAX, vecAIRFOIL, NPP, matDVE, matADJE, ...
-    P, matCENTER, matDVENORM)
+function [vecNEWAIRFOIL, vecNEWSYM, vecNEWN, vecNEWM, vecNEWDVEHVSPN, vecNEWDVEHVCRD, vecNEWDVEROLL, vecNEWDVEPITCH, vecNEWDVEYAW, ...
+    vecNEWDVELESWP, vecNEWDVEMCSWP, vecNEWDVETESWP, vecNEWDVEAREA, matNEWDVENORM, matNEWCENTER, matNEWVLST, matNEWDVE, matNEWNPVLST] = ...
+    fcnDVEMULTIROTOR3(valNUMB, vecM, vecN, vecSYM, vecROTAX, vecAIRFOIL, NPP, P, matADJE)
 % This function modifies the created DVEs and all required input values
 %	for multiple rotor blades.
 %
@@ -64,29 +60,38 @@ tempROTATE2D = (reshape(permute(tempROTATE,[2,1,3]),[3 valNUMB*3]))';
 
 %% Parameters the must Rotate
 % Make Each point relative to rotation axis
-tempCENTER = matCENTER - vecROTAX;
 P = P - vecROTAX;
+NPP = NPP - vecROTAX;
 
 % Rotate values
-
 tempP1 = [];
 tempP2 = [];
 tempP3 = [];
 tempP4 = [];
+
+tempNPP1 = [];
+tempNPP2 = [];
+tempNPP3 = [];
+tempNPP4 = [];
 
 for i = 2:valNUMB
     tempP1 = cat(1,tempP1,(tempROTATE(:,:,i)*P(:,:,1)')');
     tempP2 = cat(1,tempP2,(tempROTATE(:,:,i)*P(:,:,2)')');
     tempP3 = cat(1,tempP3,(tempROTATE(:,:,i)*P(:,:,3)')');
     tempP4 = cat(1,tempP4,(tempROTATE(:,:,i)*P(:,:,4)')');
+    
+    tempNPP1 = cat(1,tempNPP1,(tempROTATE(:,:,i)*NPP(:,:,1)')');
+    tempNPP2 = cat(1,tempNPP2,(tempROTATE(:,:,i)*NPP(:,:,2)')');
+    tempNPP3 = cat(1,tempNPP3,(tempROTATE(:,:,i)*NPP(:,:,3)')');
+    tempNPP4 = cat(1,tempNPP4,(tempROTATE(:,:,i)*NPP(:,:,4)')');
 end
 
 matNEWCENTER = (tempP1 + tempP2 + tempP3 + tempP4)./4;
 
-tempNPVLST = matNPVLST - vecROTAX;
-tempNEWNPVLST = (tempROTATE2D*tempNPVLST')';
-temp = reshape(tempNEWNPVLST,[numel(tempNPVLST)/3,3,valNUMB]);
-matNEWNPVLST = reshape(permute(temp,[2,1,3]),[3,valNUMB*(numel(tempNPVLST)/3)])' + vecROTAX;
+% tempNPVLST = matNPVLST - vecROTAX;
+% tempNEWNPVLST = (tempROTATE2D*tempNPVLST')';
+% temp = reshape(tempNEWNPVLST,[numel(tempNPVLST)/3,3,valNUMB]);
+% matNEWNPVLST = reshape(permute(temp,[2,1,3]),[3,valNUMB*(numel(tempNPVLST)/3)])' + vecROTAX;
 
 %% Parameters to increase vector for number of blades
 vecNEWAIRFOIL = repmat(vecAIRFOIL,[valNUMB-1,1]);
@@ -100,9 +105,15 @@ vecNEWM = repmat(vecM,[valNUMB-1,1]);
     vecNEWDVEAREA, matNEWDVENORM, ...
     matNEWVLST, matNEWDVE, ~, idxVLST] = fcnDVECORNER2PARAM( matNEWCENTER, tempP1, tempP2, tempP3, tempP4);
 
+[~,~,~,~,~,~,~,~,~,~,matNEWNPVLST,~,~,~] = fcnDVECORNER2PARAM(matNEWCENTER, tempNPP1, tempNPP2, tempNPP3, tempNPP4);
+
+matNEWVLST = matNEWVLST + vecROTAX;
+matNEWNPVLST = matNEWNPVLST + vecROTAX;
+matNEWCENTER = matNEWCENTER + vecROTAX;
+
 % Chordwise radial distances
 vecQARM = abs(matNEWCENTER(:,2)-vecROTAX(2));
 
-fcnPLOTBODY(1, size(matNEWCENTER,1), matNEWDVE, matNEWVLST, matNEWCENTER)
+% fcnPLOTBODY(1, size(matNEWCENTER,1), matNEWDVE, matNEWVLST, matNEWCENTER,[])
 end
 

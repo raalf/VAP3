@@ -32,7 +32,7 @@ filename = 'inputs/2MotorGliders.vap';
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
     vecVEHFPA, vecVEHTRK, ~, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
     ~, vecSYM, vecN, vecM, ~, ~, ~, ~, ...
-    vecWINGVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, vecROTORHUB, vecROTORAXIS, vecROTORBLADES, ~, vecROTOR,...
+    vecSURFACEVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, matROTORHUB, matROTORAXIS, vecROTORBLADES, ~, vecROTOR,...
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
@@ -64,25 +64,26 @@ matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)
 
 
 % Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
-vecDVEVEHICLE = vecWINGVEHICLE(vecDVESURFACE);
+vecDVEVEHICLE = vecSURFACEVEHICLE(vecDVESURFACE);
 vecDVEWING = vecDVESURFACE;
 
 % idx_rotor = sort(vecDVEPANEL == repmat(find(vecROTOR > 0)',valNELE,1),2); % Which surfaces are rotors
 % idx_rotor = idx_rotor(:,2);
 % vecDVEROTOR(idx_rotor) = vecDVESURFACE(idx_rotor);
 vecDVEROTOR = vecROTOR(vecDVEPANEL); % Alton-Y
+vecDVEROTORBLADE = vecDVEROTOR; % Current rotor DVEs are for Blade 1 (they are duplicated to Blade 2, 3, etc etc below)
 idx_rotor = vecDVEROTOR>0; % Alton-Y
 vecDVEWING(idx_rotor) = 0;
 
 matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);
 matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
-matSURFACETYPE(nonzeros(unique(vecDVEROTOR)),2) = nonzeros(unique(vecDVEROTOR));
+matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(vecDVEROTOR));
 
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
 
 [ matVEHUVW, matVEHROT ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
-[ matVLST0, matCENTER0, matFUSEGEOM] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS);
+[ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUB, matROTORAXIS] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, matSURFACETYPE, vecSURFACEVEHICLE);
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
@@ -90,41 +91,76 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 
 
 
-[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
+% [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 
 %
 
 %% Creating extra rotor blades
 % THIS SHIT DON'T WORK AND IS HELLA CONFUSING
 
-% valROTORS = length(nonzeros(vecROTOR));
-% rotor_surfaces = nonzeros(matSURFACETYPE(:,2));
-% for i = 1:valROTORS
-%     surface_num = rotor_surfaces(i);
-%     idx_surf = vecDVEROTOR == surface_num;
-%     len = length(nonzeros(idx_surf));
-%
-%     P(:,:,1) = matVLST0(matDVE(idx_surf,1),:);
-%     P(:,:,2) = matVLST0(matDVE(idx_surf,2),:);
-%     P(:,:,3) = matVLST0(matDVE(idx_surf,3),:);
-%     P(:,:,4) = matVLST0(matDVE(idx_surf,4),:);
-%
-%     NPP(:,:,1) = matNPVLST0(matDVE(idx_surf,1),:);
-%     NPP(:,:,2) = matNPVLST0(matDVE(idx_surf,2),:);
-%     NPP(:,:,3) = matNPVLST0(matDVE(idx_surf,3),:);
-%     NPP(:,:,4) = matNPVLST0(matDVE(idx_surf,4),:);
-%
-% [valNELE, matNEWNPVLST, vecAIRFOIL, vecDVELE, vecDVETE, ...
-%     vecDVEYAW, vecDVEPANEL, vecDVETIP, vecDVEWING, vecDVESYM, vecM, vecN, ...
-%     vecDVEROLL, vecDVEAREA, vecDVEPITCH, vecDVEMCSWP, vecDVETESWP, vecDVELESWP, ...
-%     vecDVEHVCRD, vecDVEHVSPN, vecSYM, vecQARM, matADJE, matNEWCENTER, matNEWVLST, matDVE, matNEWDVENORM, matVLST] = ...
-%     fcnDVEMULTIROTOR3(...
-%     len, vecROTORBLADES(i), vecDVETIP(idx_surf), vecDVETESWP(idx_surf), vecDVEPITCH(idx_surf), vecDVESURFACE(idx_surf), ...
-%     vecDVEMCSWP(idx_surf), vecM(surface_num), vecN(surface_num), vecDVEPANEL(idx_surf), vecDVEROLL(idx_surf), vecDVELESWP(idx_surf), ...
-%     vecDVEYAW(idx_surf), vecDVEHVCRD(idx_surf), vecDVEHVSPN(idx_surf), vecDVEAREA(idx_surf), vecDVESYM(idx_surf), ...
-%     vecDVELE(idx_surf), vecDVETE(idx_surf), vecSYM(surface_num), [0 0 0], 0, NPP, matDVE(idx_surf,:), matADJE, P, matCENTER0(idx_surf), matDVENORM(idx_surf));
-% end
+valROTORS = length(vecROTORRPM);
+rotor_surfaces = nonzeros(matSURFACETYPE(:,2));
+for i = 1:valROTORS
 
+    surface_num = rotor_surfaces(i);
+    idx_surf = vecDVEROTOR == surface_num;
+    len = length(nonzeros(idx_surf));
+
+    P(:,:,1) = matVLST0(matDVE(idx_surf,1),:);
+    P(:,:,2) = matVLST0(matDVE(idx_surf,2),:);
+    P(:,:,3) = matVLST0(matDVE(idx_surf,3),:);
+    P(:,:,4) = matVLST0(matDVE(idx_surf,4),:);
+
+    NPP(:,:,1) = matNPVLST0(matDVE(idx_surf,1),:);
+    NPP(:,:,2) = matNPVLST0(matDVE(idx_surf,2),:);
+    NPP(:,:,3) = matNPVLST0(matDVE(idx_surf,3),:);
+    NPP(:,:,4) = matNPVLST0(matDVE(idx_surf,4),:);
+
+    pn = length(nonzeros(vecROTOR == i));
+    dven = size(P,1)*(vecROTORBLADES(i)-1);
+    
+    valNELE = valNELE + dven;
+    
+    dveadj = find(idx_surf);
+    idx1 = sort(ismember(matADJE(:,1:2:3),dveadj),2,'descend');
+    idx1 = idx1(:,1);
+    
+    [~, vecSYM(end+1:end+pn), vecN(end+1:end+pn), vecM(end+1:end+pn), vecDVEHVSPN(end+1:end+dven), vecDVEHVCRD(end+1:end+dven), vecDVEROLL(end+1:end+dven), vecDVEPITCH(end+1:end+dven), vecDVEYAW(end+1:end+dven), ...
+        vecDVELESWP(end+1:end+dven), vecDVEMCSWP(end+1:end+dven), vecDVETESWP(end+1:end+dven), vecDVEAREA(end+1:end+dven), matDVENORM(end+1:end+dven,:), matCENTER0(end+1:end+dven,:), matNEWVLST, matNEWDVE, matNEWNPVLST] = ...
+        fcnDVEMULTIROTOR3(vecROTORBLADES(i), vecM(surface_num), vecN(surface_num), vecSYM(surface_num), matROTORHUB(i,:), 0, NPP, P, []);
+    
+    % Splicing in new vertices, non planar vertices, and corresponding DVE corners
+    old_vertices = size(matVLST0,1);
+    matVLST0 = cat(1, matVLST0, matNEWVLST);
+    matNPVLST0 = cat(1, matNPVLST0, matNEWNPVLST);
+    last_dve_prev = size(matDVE,1);
+    matDVE = cat(1, matDVE, matNEWDVE + old_vertices);
+    
+    dve_per_blade = (dven)/(vecROTORBLADES(i)-1);
+    stripped_adje = [matADJE(idx1,1) - min(min(matADJE(idx1,1:2:3))) + 1 matADJE(idx1,2) matADJE(idx1,3) - min(min(matADJE(idx1,1:2:3))) + 1 ones(size(matADJE(idx1,2),1),1)] + [last_dve_prev 0 last_dve_prev 0];
+    for ii = 2:vecROTORBLADES(i)
+        matADJE = cat(1, matADJE, stripped_adje + [dve_per_blade*(ii-2) 0 dve_per_blade*(ii-2) 0]);
+    end
+    
+    matSURFACETYPE(end + 1,:) = [0 max(matSURFACETYPE(:,2)) + 1];
+    
+    vecDVEWING(end+1:end+dven) = 0;
+    vecDVEVEHICLE(end+1:end+dven) = repmat(vecDVEVEHICLE(idx_surf),vecROTORBLADES(i)-1,1);
+    vecDVEROTOR(end+1:end+dven) = i;
+    vecDVEROTORBLADE(end+1:end+dven) = reshape(repmat([2:vecROTORBLADES(i)],dve_per_blade,1),[],1);
+
+    vecDVETIP(end+1:end+dven) = repmat(vecDVETIP(idx_surf),vecROTORBLADES(i)-1,1);
+    vecDVELE(end+1:end+dven) = repmat(vecDVELE(idx_surf),vecROTORBLADES(i)-1,1);
+    vecDVETE(end+1:end+dven) = repmat(vecDVETE(idx_surf),vecROTORBLADES(i)-1,1);
+    
+    num_panels = length(unique(vecDVEPANEL(idx_surf)));
+    vecDVESURFACE(end+1:end+dven) = reshape(repmat([1:vecROTORBLADES(i)-1]+max(vecDVESURFACE),dve_per_blade,1),[],1);
+    vecDVEPANEL(end+1:end+dven) = repmat(vecDVEPANEL(idx_surf) - min(vecDVEPANEL(idx_surf)) + 1,vecROTORBLADES(i)-1,1) + reshape(repmat([0:1:(vecROTORBLADES(i)-2)]*num_panels,dve_per_blade,1),[],1) + max(vecDVEPANEL);
+    
+    valPANELS = max(vecDVEPANEL);
+
+end
+[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 
 %%
 valWSIZE = length(nonzeros(vecDVETE.*(vecDVEWING > 0))); % Amount of wake DVEs shed each timestep

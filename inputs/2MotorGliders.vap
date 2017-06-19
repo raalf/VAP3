@@ -189,7 +189,7 @@
 			<rpm>1200</rpm>
 			<dia>2</dia>
 
-			<xhub>-1.5</xhub>
+			<xhub>-1.6</xhub>
 			<yhub>0</yhub>
 			<zhub>0</zhub>
 
@@ -216,16 +216,16 @@
 					<x>0</x>
 					<y>0.4</y>
 					<z>0</z>
-					<chord>0.5</chord>
-					<twist>5</twist>
+					<chord>0.2</chord>
+					<twist>10</twist>
 				</section>
 
 				<section>
 					<x>0</x>
 					<y>1</y>
 					<z>0</z>
-					<chord>0.4</chord>
-					<twist>10</twist>
+					<chord>0.15</chord>
+					<twist>5</twist>
 				</section>
 			</panel>
 		</rotor>
@@ -367,6 +367,96 @@
 				</section>
 			</panel>
 		</wing>
+
+		<rotor>
+			<rpm>1200</rpm>
+			<dia>2</dia>
+
+			<xhub>0</xhub>
+			<yhub>3</yhub>
+			<zhub>0</zhub>
+
+			<axisx>1</axisx>
+			<axisy>0</axisy>
+			<axisz>0</axisz>
+
+			<blades>3</blades>
+
+			<M>2</M>
+
+			<panel>
+				<N>10</N>
+
+				<section>
+					<x>0</x>
+					<y>0.2</y>
+					<z>0</z>
+					<chord>0.1</chord>
+					<twist>2</twist>
+				</section>
+
+				<section>
+					<x>0</x>
+					<y>0.4</y>
+					<z>0</z>
+					<chord>0.2</chord>
+					<twist>10</twist>
+				</section>
+
+				<section>
+					<x>0</x>
+					<y>1</y>
+					<z>0</z>
+					<chord>0.15</chord>
+					<twist>5</twist>
+				</section>
+			</panel>
+		</rotor>
+
+		<rotor>
+			<rpm>1200</rpm>
+			<dia>2</dia>
+
+			<xhub>0</xhub>
+			<yhub>-3</yhub>
+			<zhub>0</zhub>
+
+			<axisx>1</axisx>
+			<axisy>0</axisy>
+			<axisz>0</axisz>
+
+			<blades>3</blades>
+
+			<M>2</M>
+
+			<panel>
+				<N>10</N>
+
+				<section>
+					<x>0</x>
+					<y>0.2</y>
+					<z>0</z>
+					<chord>0.1</chord>
+					<twist>2</twist>
+				</section>
+
+				<section>
+					<x>0</x>
+					<y>0.4</y>
+					<z>0</z>
+					<chord>0.2</chord>
+					<twist>10</twist>
+				</section>
+
+				<section>
+					<x>0</x>
+					<y>1</y>
+					<z>0</z>
+					<chord>0.15</chord>
+					<twist>5</twist>
+				</section>
+			</panel>
+		</rotor>
 
 		<fuselage>
 			<transitionpanel>2</transitionpanel>

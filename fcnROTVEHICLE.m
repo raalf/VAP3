@@ -1,4 +1,4 @@
-function [ matVLST, matCENTER, matFUSEGEOM] = fcnROTVEHICLE( matDVE, matVLST, matCENTER, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS)
+function [ matVLST, matCENTER, matFUSEGEOM, matROTORHUB, matROTORAXIS] = fcnROTVEHICLE( matDVE, matVLST, matCENTER, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, matSURFACETYPE, vecSURFACEVEHICLE)
 %FCNROTVEHICLE Summary of this function goes here
 %   using for loop to rotate each vehicle with respect with their origin
 %   position in global coordinates
@@ -20,6 +20,9 @@ for n = 1:valVEHICLES
     % local to global translation
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) + repmat(matVEHORIG(n,:),valDVEVEH,1);
+    
+    rotor_veh = nonzeros(matSURFACETYPE((vecSURFACEVEHICLE == n),2));
+    matROTORHUB(rotor_veh,:) = matROTORHUB(rotor_veh,:) + matVEHORIG(n,:);
 end
 
 for i = 1:length(vecFUSEVEHICLE)
