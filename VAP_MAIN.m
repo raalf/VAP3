@@ -36,7 +36,7 @@ filename = 'inputs/2MotorGliders.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 30
+valMAXTIME = 5
 flagRELAX = 0
 
 seqALPHA = 0;
@@ -84,6 +84,69 @@ matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(v
 vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
 
 
+% Add Duplicate Rotor Blades
+valROTORS = length(vecROTORVEH);
+for n = 1:valROTORS
+    idxDVEBLADE = find(vecDVEROTOR==n);
+    matDVEBLADE = matDVE(idxDVEBLADE,:);
+    [idxVLSTBLADE,b,c] = unique(matDVEBLADE);
+    offsetDVEBLADE = reshape(c,[],4);
+    
+    % matADJE
+    offsetADJE = matADJE(sum(ismember(matADJE,idxDVEBLADE),2)==2,:);
+      
+    for j = 1:vecROTORBLADES(n)-1
+
+        radBLADE = 2*pi/vecROTORBLADES(n)*j; % radian
+        dcmBLADE = angle2dcm(radBLADE,0,0, 'XYZ');        
+        
+        %matDVE
+        addDVEBLADE = offsetDVEBLADE + length(matVLST0(:,1));
+        matDVE = [matDVE;addDVEBLADE];
+        
+        %matADJE
+        offsetADJEBLADE = offsetADJE;
+        offsetADJEBLADE(:,[1,3]) = offsetADJE(:,[1,3]) - min(idxDVEBLADE) + 1 + valNELE;
+        matADJE = [matADJE;offsetADJEBLADE];
+        
+        %matVLST0
+        addVLST0BLADE = (matVLST0(idxVLSTBLADE,:) - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:)) ... 
+            * dcmBLADE + matROTORHUB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+        matVLST0 = [matVLST0;addVLST0BLADE];
+        
+        %matNPVLST0
+        addNPVLST0BLADE = (matNPVLST0(idxVLSTBLADE,:) - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:)) ... 
+            * dcmBLADE + matROTORHUB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+        matNPVLST0 = [matNPVLST0;addNPVLST0BLADE];
+        
+        %matCENTER0
+        addCENTER0BLADE = (matCENTER0(idxDVEBLADE,:) - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:)) ... 
+            * dcmBLADE + matROTORHUB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+        matCENTER0 = [matCENTER0;addCENTER0BLADE];
+        
+        %valNELE
+        valNELE = valNELE + length(idxDVEBLADE);
+        
+        vecDVEVEHICLE = [vecDVEVEHICLE; vecDVEVEHICLE(idxDVEBLADE)];
+        vecDVEWING = [vecDVEWING; vecDVEWING(idxDVEBLADE)];
+        vecDVEROTOR = [vecDVEROTOR; vecDVEROTOR(idxDVEBLADE)];
+        matSURFACETYPE = [matSURFACETYPE;0,max(matSURFACETYPE(:,2))+1];
+        vecDVESURFACE = [vecDVESURFACE;ones(length(idxDVEBLADE),1).*length(matSURFACETYPE(:,1))];
+        valPANELS = max(vecDVEPANEL) + 1;
+        vecDVEPANEL = [vecDVEPANEL;ones(length(idxDVEBLADE),1).*valPANELS];
+        vecDVETIP = [vecDVETIP; vecDVETIP(idxDVEBLADE)];
+        vecDVELE = [vecDVELE; vecDVELE(idxDVEBLADE)];
+        vecDVETE = [vecDVETE; vecDVETE(idxDVEBLADE)];
+        vecDVEROTORBLADE = [vecDVEROTORBLADE; vecDVEROTORBLADE(idxDVEBLADE)];
+        vecDVESYM = [vecDVESYM; vecDVESYM(idxDVEBLADE)];
+    end
+        
+    % rotate rotor to axis 
+end
+
+
+
+
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
 
@@ -94,109 +157,6 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
-%[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
-
-
-%% Creating extra rotor blades
-% JESUS CHRIST ON A TRAMPOLINE
-
-valROTORS = length(vecROTORRPM);
-rotor_surfaces = nonzeros(matSURFACETYPE(:,2));
-for i = 1:valROTORS
-
-    rotor_veh = vecSURFACEVEHICLE(matSURFACETYPE(:,2) == i);
-    
-    surface_num = rotor_surfaces(i);
-    idx_surf = vecDVEROTOR == surface_num;
-    len = length(nonzeros(idx_surf));
-
-    P(:,:,1) = matVLST0(matDVE(idx_surf,1),:);
-    P(:,:,2) = matVLST0(matDVE(idx_surf,2),:);
-    P(:,:,3) = matVLST0(matDVE(idx_surf,3),:);
-    P(:,:,4) = matVLST0(matDVE(idx_surf,4),:);
-
-    NPP(:,:,1) = matNPVLST0(matDVE(idx_surf,1),:);
-    NPP(:,:,2) = matNPVLST0(matDVE(idx_surf,2),:);
-    NPP(:,:,3) = matNPVLST0(matDVE(idx_surf,3),:);
-    NPP(:,:,4) = matNPVLST0(matDVE(idx_surf,4),:);
-
-    pn = length(nonzeros(vecROTOR == i));
-    dven = size(P,1)*(vecROTORBLADES(i)-1);
-    
-    valNELE = valNELE + dven;
-    
-    dveadj = find(idx_surf);
-    idx1 = sort(ismember(matADJE(:,1:2:3),dveadj),2,'descend');
-    idx1 = idx1(:,1);
-    
-    [~, vecSYM(end+1:end+pn), vecN(end+1:end+pn), vecM(end+1:end+pn), vecDVEHVSPN(end+1:end+dven), vecDVEHVCRD(end+1:end+dven), vecDVEROLL(end+1:end+dven), vecDVEPITCH(end+1:end+dven), vecDVEYAW(end+1:end+dven), ...
-        vecDVELESWP(end+1:end+dven), vecDVEMCSWP(end+1:end+dven), vecDVETESWP(end+1:end+dven), vecDVEAREA(end+1:end+dven), matDVENORM(end+1:end+dven,:), matCENTER0(end+1:end+dven,:), matNEWVLST, matNEWDVE, matNEWNPVLST] = ...
-        fcnDVEMULTIROTOR3(vecROTORBLADES(i), vecM(surface_num), vecN(surface_num), vecSYM(surface_num), matROTORHUB(i,:) + matVEHORIG(rotor_veh,:), 0, NPP, P, []);
-    
-    % Splicing in new vertices, non planar vertices, and corresponding DVE corners
-    old_vertices = size(matVLST0,1);
-    matVLST0 = cat(1, matVLST0, matNEWVLST);
-    matNPVLST0 = cat(1, matNPVLST0, matNEWNPVLST);
-    last_dve_prev = size(matDVE,1);
-    matDVE = cat(1, matDVE, matNEWDVE + old_vertices);
-    
-    dve_per_blade = (dven)/(vecROTORBLADES(i)-1);
-    stripped_adje = [matADJE(idx1,1) - min(min(matADJE(idx1,1:2:3))) + 1 matADJE(idx1,2) matADJE(idx1,3) - min(min(matADJE(idx1,1:2:3))) + 1 ones(size(matADJE(idx1,2),1),1)] + [last_dve_prev 0 last_dve_prev 0];
-    for ii = 2:vecROTORBLADES(i)
-        matADJE = cat(1, matADJE, stripped_adje + [dve_per_blade*(ii-2) 0 dve_per_blade*(ii-2) 0]);
-    end
-    
-    matSURFACETYPE(end + 1,:) = [0 max(matSURFACETYPE(:,2)) + 1];
-    
-    vecDVEWING(end+1:end+dven) = 0;
-    vecDVEVEHICLE(end+1:end+dven) = repmat(vecDVEVEHICLE(idx_surf),vecROTORBLADES(i)-1,1);
-    vecDVEROTOR(end+1:end+dven) = i;
-    vecDVEROTORBLADE(end+1:end+dven) = reshape(repmat([2:vecROTORBLADES(i)],dve_per_blade,1),[],1);
-
-    vecDVETIP(end+1:end+dven) = repmat(vecDVETIP(idx_surf),vecROTORBLADES(i)-1,1);
-    vecDVELE(end+1:end+dven) = repmat(vecDVELE(idx_surf),vecROTORBLADES(i)-1,1);
-    vecDVETE(end+1:end+dven) = repmat(vecDVETE(idx_surf),vecROTORBLADES(i)-1,1);
-    
-    num_panels = length(unique(vecDVEPANEL(idx_surf)));
-    vecDVESURFACE(end+1:end+dven) = reshape(repmat([1:vecROTORBLADES(i)-1]+max(vecDVESURFACE),dve_per_blade,1),[],1);
-    vecDVEPANEL(end+1:end+dven) = repmat(vecDVEPANEL(idx_surf) - min(vecDVEPANEL(idx_surf)) + 1,vecROTORBLADES(i)-1,1) + reshape(repmat([0:1:(vecROTORBLADES(i)-2)]*num_panels,dve_per_blade,1),[],1) + max(vecDVEPANEL);
-    
-    valPANELS = max(vecDVEPANEL);
-
-    %% Rotate rotors in to position
-    
-    A = [0 0 -1];
-    B = fcnSTARGLOB(matROTORAXIS(i,:), matVEHROT(rotor_veh,1), matVEHROT(rotor_veh,2), matVEHROT(rotor_veh,3));
-
-    if ~isequal(A,B)
-        v = cross(A,B);
-        ssc = [0 -v(3) v(2); v(3) 0 -v(1); -v(2) v(1) 0];
-        R = eye(3) + ssc + ssc^2*(1-dot(A,B))/(norm(v))^2;
-    else
-        R = [1 0 0; 0 1 0; 0 0 1];
-    end
-
-    rotor_vertices = reshape(unique(matDVE(vecDVEROTOR == i,:)),[],1);
-    rotor_dves = find(vecDVEROTOR);
-    
-    hub = fcnSTARGLOB(matROTORHUB(i,:), matVEHROT(rotor_veh,1), matVEHROT(rotor_veh,2), matVEHROT(rotor_veh,3)) + matVEHORIG(rotor_veh,:);
-    X = matVLST0(rotor_vertices,1) - hub(1);
-    Y = matVLST0(rotor_vertices,2) - hub(2);
-    Z = matVLST0(rotor_vertices,3) - hub(3);
-
-    temp=[X(:),Y(:),Z(:)]*R.';
-    sz=size(X);
-    Xrot=reshape(temp(:,1),sz);
-    Yrot=reshape(temp(:,2),sz);
-    Zrot=reshape(temp(:,3),sz);
-    
-    matVLST0(rotor_vertices,:) = [Xrot Yrot Zrot] + hub;
-    
-    [ ~, ~, vecDVEROLL(rotor_dves), vecDVEPITCH(rotor_dves), vecDVEYAW(rotor_dves),~, ~, ~, ~, matDVENORM(rotor_dves,:), ~, ~, matCENTER0(rotor_dves,:)] ...
-    = fcnVLST2DVEPARAM(matDVE(rotor_dves,:), matVLST0);
-    
-%     [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
-end
 
 [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 
