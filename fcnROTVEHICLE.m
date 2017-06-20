@@ -1,13 +1,21 @@
-function [ matVLST, matCENTER, matFUSEGEOM, matROTORHUB, matROTORAXIS] = fcnROTVEHICLE( matDVE, matVLST, matCENTER, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, matSURFACETYPE, vecSURFACEVEHICLE)
+function [ matVLST, matCENTER, matFUSEGEOM, ...
+    matROTORHUBGLOB, matROTORAXIS] = fcnROTVEHICLE( matDVE, matVLST, ...
+    matCENTER, valVEHICLES, vecDVEVEHICLE, matVEHORIG, ...
+    matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, ...
+    matROTORHUB, matROTORAXIS, vecROTORVEH)
 %FCNROTVEHICLE Summary of this function goes here
 %   using for loop to rotate each vehicle with respect with their origin
 %   position in global coordinates
+
+
+matROTORHUBGLOB = nan(length(matROTORHUB(:,1)),3);
 
 for n = 1:valVEHICLES
     idxVLSTVEH = unique(matDVE(vecDVEVEHICLE==n,:));
     idxDVEVEH = vecDVEVEHICLE==n;
     valVLSTVEH = length(idxVLSTVEH);
     valDVEVEH = sum(idxDVEVEH);
+    
     % glob to local translation
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) - repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) - repmat(matVEHORIG(n,:),valDVEVEH,1);
@@ -16,14 +24,12 @@ for n = 1:valVEHICLES
     dcm = angle2dcm(matVEHROT(n,1), matVEHROT(n,2), matVEHROT(n,3), 'XYZ');
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:)*dcm;
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:)*dcm;
+    % rotate vecROTORVEH for later reference
+    matROTORHUBGLOB(vecROTORVEH==n,:) = matROTORHUB(vecROTORVEH==n,:)*dcm;
     
     % local to global translation
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
-    matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) + repmat(matVEHORIG(n,:),valDVEVEH,1);
-    
-%     rotor_veh = nonzeros(matSURFACETYPE((vecSURFACEVEHICLE == n),2));
-%     matROTORHUB(rotor_veh,:) = matROTORHUB(rotor_veh,:) + matVEHORIG(n,:);
-    
+    matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) + repmat(matVEHORIG(n,:),valDVEVEH,1); 
 end
 
 for i = 1:length(vecFUSEVEHICLE)

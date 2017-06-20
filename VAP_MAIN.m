@@ -79,11 +79,16 @@ matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);
 matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
 matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(vecDVEROTOR));
 
+
+% Identifying which ROTOR belongs to which vehicle.
+vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
+
+
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
 
 [ matVEHUVW, matVEHROT, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
-[ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, matSURFACETYPE, vecSURFACEVEHICLE);
+[ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUBGLOB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, vecROTORVEH);
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
@@ -100,7 +105,6 @@ rotor_surfaces = nonzeros(matSURFACETYPE(:,2));
 for i = 1:valROTORS
 
     rotor_veh = vecSURFACEVEHICLE(matSURFACETYPE(:,2) == i);
-    vecROTORVEH(i,:) = rotor_veh;
     
     surface_num = rotor_surfaces(i);
     idx_surf = vecDVEROTOR == surface_num;
@@ -293,7 +297,7 @@ for ai = 1:length(seqALPHA)
                 matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
                 valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
                 vecDVETE, matNPVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
-                vecVEHROLL, vecVEHPITCH, vecVEHYAW, vecROTORVEH, ...
+                matVEHROT, vecROTORVEH, ...
                 matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM );
             %% Generating new wake elements
 %             [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
