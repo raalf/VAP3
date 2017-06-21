@@ -7,8 +7,11 @@ function [ matVLST, matCENTER, matFUSEGEOM, ...
 %   using for loop to rotate each vehicle with respect with their origin
 %   position in global coordinates
 
-
-matROTORHUBGLOB = nan(length(matROTORHUB(:,1)),3);
+if ~isempty(matROTORHUB)
+    matROTORHUBGLOB = nan(length(matROTORHUB(:,1)),3);
+else
+    matROTORHUBGLOB = [];
+end
 
 for n = 1:valVEHICLES
     idxVLSTVEH = unique(matDVE(vecDVEVEHICLE==n,:));
@@ -24,8 +27,11 @@ for n = 1:valVEHICLES
     dcm = angle2dcm(matVEHROT(n,1), matVEHROT(n,2), matVEHROT(n,3), 'XYZ');
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:)*dcm;
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:)*dcm;
-    % rotate vecROTORVEH for later reference
-    matROTORHUBGLOB(vecROTORVEH==n,:) = matROTORHUB(vecROTORVEH==n,:)*dcm;
+    
+    if ~isempty(matROTORHUB)
+        % rotate vecROTORVEH for later reference
+        matROTORHUBGLOB(vecROTORVEH==n,:) = matROTORHUB(vecROTORVEH==n,:)*dcm;
+    end
     
     % local to global translation
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
