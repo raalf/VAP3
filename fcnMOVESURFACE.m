@@ -88,8 +88,10 @@ for n = 1:valROTORS
     tempROTORVLST = tempROTORVLST - matROTORHUBGLOB(n,:) - matVEHORIG(vecROTORVEH(n),:);
 
     % timestep rotor in local XY hub plane
+    tempROTORVLST = tempROTORVLST * angle2dcm(-matVEHROT(vecROTORVEH(n),1),-matVEHROT(vecROTORVEH(n),2),-matVEHROT(vecROTORVEH(n),1),'XYZ');
     tempROTORVLST = tempROTORVLST * angle2dcm(0,0,vecROTORRAD(n),'XYZ');
-
+    tempROTORVLST = tempROTORVLST * angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),1),'XYZ');
+    
     % write rotated rotor to matVLST
     matVLST(idxVLSTROTOR,:) = tempROTORVLST + matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
 
