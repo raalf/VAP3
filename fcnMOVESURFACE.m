@@ -87,14 +87,8 @@ for n = 1:valROTORS
     tempROTORVLST = matVLST(idxVLSTROTOR,:);
     tempROTORVLST = tempROTORVLST - matROTORHUBGLOB(n,:) - matVEHORIG(vecROTORVEH(n),:);
 
-    % Rotate rotor from glob to hub
-    tempROTORVLST = tempROTORVLST * angle2dcm(deg2rad(-matVEHROT(vecROTORVEH(n),1)),deg2rad(-matVEHROT(vecROTORVEH(n),2)),deg2rad(-matVEHROT(vecROTORVEH(n),3)),'XYZ');
-    
-    % Rotate Rotor within Hub Plane
+    % timestep rotor in local XY hub plane
     tempROTORVLST = tempROTORVLST * angle2dcm(0,0,vecROTORRAD(n),'XYZ');
-    
-    % Rotate rotor from hub to glob
-    tempROTORVLST = tempROTORVLST * angle2dcm(deg2rad(matVEHROT(vecROTORVEH(n),1)),deg2rad(matVEHROT(vecROTORVEH(n),2)),deg2rad(matVEHROT(vecROTORVEH(n),3)),'XYZ');
 
     % write rotated rotor to matVLST
     matVLST(idxVLSTROTOR,:) = tempROTORVLST + matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
