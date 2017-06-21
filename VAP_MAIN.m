@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-% filename = 'inputs/2MotorGliders.vap';
-filename = 'inputs/rotors_only.vap'
+filename = 'inputs/2MotorGliders.vap';
+% filename = 'inputs/rotors_only.vap'
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
@@ -100,7 +100,7 @@ for n = 1:valROTORS
     for j = 1:vecROTORBLADES(n)-1
 
         radBLADE = 2*pi/vecROTORBLADES(n)*j; % radian
-        dcmBLADE = angle2dcm(radBLADE,0,0, 'XYZ');        
+        dcmBLADE = angle2dcm(0,0,radBLADE, 'XYZ');        
         
         %matDVE
         addDVEBLADE = offsetDVEBLADE + length(matVLST0(:,1));
@@ -144,6 +144,23 @@ for n = 1:valROTORS
     end
         
     % rotate rotor to axis 
+    idxVLSTROTOR = unique(matDVE(vecDVEROTOR==n,:));
+    idxDVEROTOR = vecDVEROTOR==n;
+    
+    dcmROTORHUB = angle2dcm(0,pi/2,0,'XYZ');
+    
+    matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
+    matNPVLST0(idxVLSTROTOR,:) = matNPVLST0(idxVLSTROTOR,:)- matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
+    matCENTER0(idxDVEROTOR,:)  = matCENTER0(idxDVEROTOR,:) - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
+    
+    matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  * dcmROTORHUB;
+    matNPVLST0(idxVLSTROTOR,:) = matNPVLST0(idxVLSTROTOR,:)* dcmROTORHUB;
+    matCENTER0(idxDVEROTOR,:)  = matCENTER0(idxDVEROTOR,:) * dcmROTORHUB;
+    
+    matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:) + matROTORHUB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+    matNPVLST0(idxVLSTROTOR,:) = matNPVLST0(idxVLSTROTOR,:)+ matROTORHUB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+    matCENTER0(idxDVEROTOR,:)  = matCENTER0(idxDVEROTOR,:) + matROTORHUB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+       
 end
 
 
