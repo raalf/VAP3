@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-% filename = 'inputs/2MotorGliders.vap';
-filename = 'inputs/QuadRotor.vap'
+filename = 'inputs/2MotorGliders.vap';
+% filename = 'inputs/QuadRotor.vap'
 % filename = 'inputs/TMotor.vap'
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
@@ -69,9 +69,6 @@ matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)
 vecDVEVEHICLE = vecSURFACEVEHICLE(vecDVESURFACE);
 vecDVEWING = vecDVESURFACE;
 
-% idx_rotor = sort(vecDVEPANEL == repmat(find(vecROTOR > 0)',valNELE,1),2); % Which surfaces are rotors
-% idx_rotor = idx_rotor(:,2);
-% vecDVEROTOR(idx_rotor) = vecDVESURFACE(idx_rotor);
 vecDVEROTOR = vecROTOR(vecDVEPANEL); % Alton-Y
 vecDVEROTORBLADE = vecDVEROTOR; % Current rotor DVEs are for Blade 1 (they are duplicated to Blade 2, 3, etc etc below)
 idx_rotor = vecDVEROTOR>0; % Alton-Y
@@ -148,12 +145,14 @@ for n = 1:valROTORS
     idxVLSTROTOR = unique(matDVE(vecDVEROTOR==n,:));
     idxDVEROTOR = vecDVEROTOR==n;
     
-    dcmROTORHUB = angle2dcm(0,0,0,'XYZ');
+    
     
     matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     matNPVLST0(idxVLSTROTOR,:) = matNPVLST0(idxVLSTROTOR,:)- matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     matCENTER0(idxDVEROTOR,:)  = matCENTER0(idxDVEROTOR,:) - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     
+    % transform rotor from xy plane to hub plane
+    dcmROTORHUB = quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
     matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  * dcmROTORHUB;
     matNPVLST0(idxVLSTROTOR,:) = matNPVLST0(idxVLSTROTOR,:)* dcmROTORHUB;
     matCENTER0(idxDVEROTOR,:)  = matCENTER0(idxDVEROTOR,:) * dcmROTORHUB;
