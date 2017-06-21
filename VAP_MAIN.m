@@ -94,7 +94,8 @@ for n = 1:valROTORS
     offsetDVEBLADE = reshape(c,[],4);
     
     % matADJE
-    offsetADJE = matADJE(sum(ismember(matADJE,idxDVEBLADE),2)==2,:);
+    checkADJE = ismember(matADJE,idxDVEBLADE);
+    offsetADJE = matADJE(and(checkADJE(:,1),checkADJE(:,3)),:);
       
     for j = 1:vecROTORBLADES(n)-1
 
