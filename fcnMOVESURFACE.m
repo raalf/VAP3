@@ -24,9 +24,6 @@ function [matUINF, matVEHORIG, ...
 %   matCENTER - New in-center list with moved points
 %   matNEWWAKE - Outputs a 4 x 3 x n matrix of points for the wake DVE generation
 
-% Current rotor origin global
-rotorHub = matVEHORIG(vecROTORVEH,:) + matROTORHUBGLOB; 
-
 
 % pre-calculate rad per timestep of rotors
 vecROTORRAD = vecROTORRPM.*2.*pi./60.*valDELTIME;
@@ -59,13 +56,6 @@ matFUSEGEOM = matFUSEGEOM + matFUSETRANS;
 
 
 
-% % Rotate Rotors
-% for i = 1:length(vecROTORVEH)
-%     idxVLSTROTOR = unique(matDVE(vecDVEROTOR==i,:));
-%     matVLST(idxVLSTROTOR,:)
-% end
-
-
 
 
 
@@ -88,6 +78,29 @@ matNPNEWWAKE(:,:,3) = matNTVLST(matDVE(vecDVETE>0,3),:);
 matVLST = matVLST + matVLSTTRANS;
 matCENTER = matCENTER + matDVETRANS;
 matNTVLST = matNTVLST + matVLSTTRANS;
+
+% Rotate Rotors
+valROTORS = length(vecROTORVEH);
+for n = 1:valROTORS
+
+    idxVLSTROTOR = unique(matDVE(vecDVEROTOR==n,:));
+    tempROTORVLST = matVLST(idxVLSTROTOR,:);
+    tempROTORVLST = tempROTORVLST - matROTORHUBGLOB(n,:) - matVEHORIG(vecROTORVEH(n),:);
+
+    % Rotate rotor from glob to hub
+    tempROTORVLST = tempROTORVLST * angle2dcm(deg2rad(-matVEHROT(vecROTORVEH(n),1)),deg2rad(-matVEHROT(vecROTORVEH(n),2)),deg2rad(-matVEHROT(vecROTORVEH(n),3)),'XYZ');
+    
+    % Rotate Rotor within Hub Plane
+    tempROTORVLST = tempROTORVLST * angle2dcm(vecROTORRAD(n),0,0,'XYZ');
+    
+    % Rotate rotor from hub to glob
+    tempROTORVLST = tempROTORVLST * angle2dcm(deg2rad(matVEHROT(vecROTORVEH(n),1)),deg2rad(matVEHROT(vecROTORVEH(n),2)),deg2rad(matVEHROT(vecROTORVEH(n),3)),'XYZ');
+
+    % write rotated rotor to matVLST
+    matVLST(idxVLSTROTOR,:) = tempROTORVLST + matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+
+end
+
 
 % New trailing edge vertices
 matNEWWAKE(:,:,1) = matVLST(matDVE(vecDVETE>0,4),:);

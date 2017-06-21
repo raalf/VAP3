@@ -7,7 +7,7 @@
 		<flagTRI>FALSE</flagTRI>
 		<valMAXTIME>40</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.25</valDELTIME>
+		<valDELTIME>0.1</valDELTIME>
 		<valDELTAE>0</valDELTAE>
 	</settings>
 
@@ -24,10 +24,10 @@
 		<vinf>2</vinf>
 
 		<alpha>6</alpha>
-		<beta>0</beta>
-		<roll>0</roll>
-		<fpa>0</fpa>
-		<trk>0</trk>
+		<beta>10</beta>
+		<roll>30</roll>
+		<fpa>10</fpa>
+		<trk>-5</trk>
 
 		<area>12.6</area>
 		<span>15</span>
@@ -186,7 +186,7 @@
 		</fuselage>
 
 		<rotor>
-			<rpm>1200</rpm>
+			<rpm>25</rpm>
 			<dia>2</dia>
 
 			<xhub>-1.6</xhub>
@@ -242,7 +242,7 @@
 		<alpha>3</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<fpa>0</fpa>
+		<fpa>-15</fpa>
 		<trk>0</trk>
 
 		<area>12.6</area>
@@ -369,7 +369,7 @@
 		</wing>
 
 		<rotor>
-			<rpm>1200</rpm>
+			<rpm>45</rpm>
 			<dia>2</dia>
 
 			<xhub>0</xhub>
@@ -414,7 +414,7 @@
 		</rotor>
 
 		<rotor>
-			<rpm>1200</rpm>
+			<rpm>45</rpm>
 			<dia>2</dia>
 
 			<xhub>0</xhub>
