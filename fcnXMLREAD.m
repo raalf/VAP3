@@ -85,6 +85,18 @@ matFGEOM = [];
 matSECTIONFUSELAGE = [];
 vecFUSEVEHICLE = [];
 
+vecWINGINCID = [];
+vecTRIMABLE = [];
+vecWINGM = [];
+matWINGORIG = [];
+vecPANELS = [];
+vecSYMtemp = [];
+vecNtemp = [];
+vecMtemp = [];
+vecSECTIONS = [];
+matSECTIONS = [];
+vecSECTIONPANEL = [];
+
 k = 1;
 kk = 1;
 kkk = 1;
@@ -116,7 +128,7 @@ for i = 1:valVEHICLES
     
     %% Loading Wings
     for j = 1:vecWINGS(i)
-        
+              
         try win = veh.wing{1,j}; catch; win = veh.wing; end
         
         vecWINGINCID(k) = str2double(win.incidence.Text);
