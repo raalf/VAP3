@@ -91,7 +91,7 @@ for n = 1:valROTORS
     tempROTORVLST = tempROTORVLST * angle2dcm(deg2rad(-matVEHROT(vecROTORVEH(n),1)),deg2rad(-matVEHROT(vecROTORVEH(n),2)),deg2rad(-matVEHROT(vecROTORVEH(n),3)),'XYZ');
     
     % Rotate Rotor within Hub Plane
-    tempROTORVLST = tempROTORVLST * angle2dcm(vecROTORRAD(n),0,0,'XYZ');
+    tempROTORVLST = tempROTORVLST * angle2dcm(0,0,vecROTORRAD(n),'XYZ');
     
     % Rotate rotor from hub to glob
     tempROTORVLST = tempROTORVLST * angle2dcm(deg2rad(matVEHROT(vecROTORVEH(n),1)),deg2rad(matVEHROT(vecROTORVEH(n),2)),deg2rad(matVEHROT(vecROTORVEH(n),3)),'XYZ');

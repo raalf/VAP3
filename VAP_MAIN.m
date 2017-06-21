@@ -148,7 +148,7 @@ for n = 1:valROTORS
     idxVLSTROTOR = unique(matDVE(vecDVEROTOR==n,:));
     idxDVEROTOR = vecDVEROTOR==n;
     
-    dcmROTORHUB = angle2dcm(0,pi/2,0,'XYZ');
+    dcmROTORHUB = angle2dcm(0,0,0,'XYZ');
     
     matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     matNPVLST0(idxVLSTROTOR,:) = matNPVLST0(idxVLSTROTOR,:)- matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
