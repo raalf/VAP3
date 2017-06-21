@@ -77,6 +77,14 @@ vecROTORAXIS = [];
 vecROTORBLADES = [];
 vecROTORM = [];
 
+vecFTURB = [];
+vecFUSESECTIONS = [];
+matFUSEAXIS = [];
+matFUSEORIG = [];
+matFGEOM = [];
+matSECTIONFUSELAGE = [];
+vecFUSEVEHICLE = [];
+
 k = 1;
 kk = 1;
 kkk = 1;
@@ -199,6 +207,7 @@ for i = 1:valVEHICLES
     end
     
     %% Fuselage
+   
     for j = 1:vecFUSELAGES(i)
         try fuse = veh.fuselage{1,j}; catch; fuse = veh.fuselage; end
         
