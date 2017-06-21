@@ -24,8 +24,8 @@ disp(' ');
 %% Reading in geometry
 
 % filename = 'inputs/2MotorGliders.vap';
-% filename = 'inputs/2QuadRotors.vap'
-filename = 'inputs/TMotor.vap'
+filename = 'inputs/QuadRotor.vap'
+% filename = 'inputs/TMotor.vap'
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
