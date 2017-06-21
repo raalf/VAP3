@@ -38,7 +38,7 @@ filename = 'inputs/2MotorGliders.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 25
+valMAXTIME = 20
 flagRELAX = 0
 
 seqALPHA = 0;
@@ -49,7 +49,7 @@ flagPLOT    = 1;
 flagGIF = 0;
 flagPREVIEW = 1;
 flagPLOTWAKEVEL = 0;
-flagPLOTUINF = 0;
+flagPLOTUINF = 1;
 flagVERBOSE = 0;
 
 %% Creating fuselage
@@ -271,7 +271,7 @@ for ai = 1:length(seqALPHA)
             %% Moving the wing
             %             [matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE] = fcnMOVEWING(valALPHA, valBETA, valDELTIME, matVLST, matCENTER, matDVE, vecDVETE.*(vecDVEWING > 0), matNPVLST);
 %             [matUINF, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE.*(vecDVEWING > 0), matNPVLST, matFUSEGEOM, vecFUSEVEHICLE);
-            [matUINF, matVEHORIG, ...
+            [matUINF, matUINFTE, matVEHORIG, ...
                 matVLST, matCENTER, ...
                 matNEWWAKE, matNPNEWWAKE, ...
                 matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
@@ -398,7 +398,9 @@ if flagPLOT == 1
     end
     if flagPLOTUINF == 1
         try
-            quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matUINF(:,1),matUINF(:,2),matUINF(:,3));
+%             quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matVEHUINF(:,1),matVEHUINF(:,2),matVEHUINF(:,3),'g');
+%             quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matROTORUINF(:,1),matROTORUINF(:,2),matROTORUINF(:,3),'c');
+            quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matUINF(:,1),matUINF(:,2),matUINF(:,3),'g');
         end
     end
     %     figure(1);

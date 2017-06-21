@@ -1,4 +1,4 @@
-function [matUINF, matVEHORIG, ...
+function [matUINF, matUINFTE, matVEHORIG, ...
     matVLST, matCENTER, ...
     matNEWWAKE, matNPNEWWAKE, ...
     matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
@@ -26,7 +26,8 @@ function [matUINF, matVEHORIG, ...
 
 
 % pre-calculate rad per timestep of rotors
-vecROTORRAD = vecROTORRPM.*2.*pi./60.*valDELTIME;
+vecROTORRADPS = vecROTORRPM.*2.*pi./60;
+vecROTORDEL = vecROTORRADPS.*valDELTIME;
 % TODO: insert warning if vecROTORRAD>2*pi
 
 % update matVEHORIG positions
@@ -63,8 +64,9 @@ matFUSEGEOM = matFUSEGEOM + matFUSETRANS;
 
 % matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
-matUINF = matDVETRANS;
-
+matUINFVEH = -matVEHUVW(vecDVEVEHICLE,:);
+matUINFROTOR = matUINFVEH.*0;
+matUINFTE = matUINFVEH.*0;
 
 % Old trailing edge vertices
 matNEWWAKE(:,:,4) = matVLST(matDVE(vecDVETE>0,4),:);
@@ -82,32 +84,47 @@ matNTVLST = matNTVLST + matVLSTTRANS;
 % Rotate Rotors
 valROTORS = length(vecROTORVEH);
 for n = 1:valROTORS
-
-    idxVLSTROTOR = unique(matDVE(vecDVEROTOR==n,:));
+    idxDVEROTOR = vecDVEROTOR==n;
+    idxVLSTROTOR = unique(matDVE(idxDVEROTOR,:));
+    
     tempROTORVLST = matVLST(idxVLSTROTOR,:);
     tempROTORVLST = tempROTORVLST - matROTORHUBGLOB(n,:) - matVEHORIG(vecROTORVEH(n),:);
-
+    
+    tempROTORCENTER = matCENTER(idxDVEROTOR,:);
+    tempROTORCENTER = tempROTORCENTER - matROTORHUBGLOB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     
     % transform rotor from global to hub plane
     tempROTORVLST = tempROTORVLST * angle2dcm(-matVEHROT(vecROTORVEH(n),1),-matVEHROT(vecROTORVEH(n),2),-matVEHROT(vecROTORVEH(n),1),'XYZ');
+    tempROTORCENTER = tempROTORCENTER * angle2dcm(-matVEHROT(vecROTORVEH(n),1),-matVEHROT(vecROTORVEH(n),2),-matVEHROT(vecROTORVEH(n),1),'XYZ');    
     
     % transform rotor from hub plane to xy plane
     tempROTORVLST = tempROTORVLST * quat2dcm(axang2quat(vrrotvec([0 0 1],matROTORAXIS(n,:))));
-    
+    tempROTORCENTER = tempROTORCENTER * quat2dcm(axang2quat(vrrotvec([0 0 1],matROTORAXIS(n,:))));
+
     % timestep rotor in local XY hub plane
-    tempROTORVLST = tempROTORVLST * angle2dcm(0,0,vecROTORRAD(n),'XYZ');
+    tempROTORVLST = tempROTORVLST * angle2dcm(0,0,vecROTORDEL(n),'XYZ');
+    tempROTORCENTER = tempROTORCENTER * angle2dcm(0,0,vecROTORDEL(n),'XYZ');
+    tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);    
     
     % transform rotor from xy plane to hub plane
     tempROTORVLST = tempROTORVLST * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+    tempROTORCENTER = tempROTORCENTER * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+    tempROTORUINF = tempROTORUINF * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
     
     % transform rotor from hub plane to global
     tempROTORVLST = tempROTORVLST * angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),1),'XYZ');
+    tempROTORCENTER = tempROTORCENTER * angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),1),'XYZ');
+    tempROTORUINF = tempROTORUINF * angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),1),'XYZ');
     
     % write rotated rotor to matVLST
     matVLST(idxVLSTROTOR,:) = tempROTORVLST + matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
-
+    matCENTER(idxDVEROTOR,:) = tempROTORCENTER + matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+    matUINFROTOR(idxDVEROTOR,:) = tempROTORUINF;
 end
 
+
+% combine matUINFROTOR and matUINFVEH
+matUINF = matUINFROTOR + matUINFVEH;
 
 % New trailing edge vertices
 matNEWWAKE(:,:,1) = matVLST(matDVE(vecDVETE>0,4),:);
