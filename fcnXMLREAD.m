@@ -187,6 +187,9 @@ for i = 1:valVEHICLES
         
         vecPANELS(k,1) = max(size(rot.panel));
         
+        flip = 1;
+        try if strcmpi(rot.flipy.Text,'TRUE'); flip = -1; end; end
+        
         for m = 1:vecPANELS(k,1)
             
             try pan = rot.panel{1,m}; catch; pan = rot.panel; end
@@ -200,7 +203,7 @@ for i = 1:valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) flip*str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;

@@ -23,8 +23,8 @@ disp(' ');
 
 %% Reading in geometry
 
-filename = 'inputs/2MotorGliders.vap';
-% filename = 'inputs/QuadRotor.vap'
+% filename = 'inputs/2MotorGliders.vap';
+filename = 'inputs/QuadRotor.vap'
 % filename = 'inputs/TMotor.vap'
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
@@ -47,7 +47,7 @@ seqBETA = 0;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagGIF = 0;
-flagPREVIEW = 0;
+flagPREVIEW = 1;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 1;
 flagVERBOSE = 0;
