@@ -26,7 +26,7 @@ disp(' ');
 filename = 'inputs/2MotorGliders.vap';
 % filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/TMotor.vap';
-% filename = 'inputs/StandardCirrus.vap';
+%filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
@@ -183,7 +183,7 @@ for ai = 1:length(seqALPHA)
         vecWDVEWING = [];
         
         % Building wing resultant
-        [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, vecUINF, valWNELE, matWDVE, ...
+        [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
             matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
             vecWDVETESWP, vecSYM, valWSIZE);
         
@@ -238,7 +238,7 @@ for ai = 1:length(seqALPHA)
                 [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
                 
                 %% Rebuilding and solving wing resultant
-                [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, vecUINF, valWNELE, matWDVE, ...
+                [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
                     matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                     vecWDVETESWP, vecSYM, valWSIZE);
                 
