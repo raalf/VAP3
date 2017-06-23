@@ -15,10 +15,12 @@ matWDVEEGR = zeros(valWNELE,1);
 % Find tip, tip right edge equals its own right edge
 % tipRightMP = reshape(mean(reshape(matWVLST(matWDVE(vecWDVETIP==2,[2,3])',:)',3,2,[]),2),3,[],1)';
 matWDVEEGR(vecWDVETIP==2,1:2) = [find(vecWDVETIP==2),2.*ones(sum(vecWDVETIP==2),1)];
+matWDVEEGL(vecWDVETIP==4,1:2) = [find(vecWDVETIP==4),ones(sum(vecWDVETIP==4),1)];
 
 % find symmetry, symm left edge equals its own left edge
 % symLeftMP = reshape(mean(reshape(matWVLST(matWDVE(vecWDVESYM==4,[1,4])',:)',3,2,[]),2),3,[],1)';
 matWDVEEGL(vecWDVESYM==4,1:2) = [find(vecWDVESYM==4),ones(sum(vecWDVESYM==4),1)];
+% matWDVEEGL(vecWDVESYM==2,1:2) = [find(vecWDVESYM==2),ones(sum(vecWDVESYM==2),1)];
 
 % Find edge with more than 2 panels/
 jointADJT = matWADJE(matWADJE(:,4)>0&matWADJE(:,2)==2,:);

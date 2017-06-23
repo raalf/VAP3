@@ -27,7 +27,8 @@ disp(' ');
 % filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrusSym.vap';
-filename = 'inputs/StandardCirrus.vap';
+% filename = 'inputs/StandardCirrus.vap';
+filename = 'inputs/StandardCirrusTail2.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
@@ -40,14 +41,14 @@ filename = 'inputs/StandardCirrus.vap';
     ] = fcnXMLREAD(filename);
 
 valMAXTIME = 10
-flagRELAX = 1
+flagRELAX = 0
 
 seqALPHA = 0;
 seqBETA = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagCIRCPLOT = 0;
+flagCIRCPLOT = 1;
 flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
@@ -363,6 +364,25 @@ if flagPLOT == 1
 
         end
     end
+    
+    
+    mx = 4;
+    my = [-8:0.2:8];
+    mz = [-2:0.2:2];
+    
+    [X,Y,Z] = meshgrid(mx,my,mz);
+    fpg = unique([reshape(X,[],1) reshape(Y,[],1) reshape(Z,[],1)],'rows');
+
+    q_ind = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
+        valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
+
+    % q_ind = s_ind;
+    hFig20 = figure(20);
+    clf(20);
+    % quiver3(fpg(:,1), fpg(:,2), fpg(:,3), w_ind(:,1), w_ind(:,2), w_ind(:,3))
+    quiver3(fpg(:,1), fpg(:,2), fpg(:,3), q_ind(:,1), q_ind(:,2), q_ind(:,3))
+    set(gcf,'Renderer','opengl');
+    
     
     %     figure(1);
     %     plot(1:valTIMESTEP, eltime)
