@@ -26,7 +26,7 @@ disp(' ');
 filename = 'inputs/2MotorGliders.vap';
 % filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/TMotor.vap';
-%filename = 'inputs/StandardCirrus.vap';
+% filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
@@ -38,15 +38,15 @@ filename = 'inputs/2MotorGliders.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-% valMAXTIME = 10
-flagRELAX = 0
+valMAXTIME = 30
+flagRELAX = 1
 
 seqALPHA = 0;
 seqBETA = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 1;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 1;
@@ -100,6 +100,8 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 
 
 [ matVEHUVW, matVEHROT, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
+
+
 [ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUBGLOB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, vecROTORVEH);
 
 [ matUINF ] = fcnINITUINF( matCENTER0, matVEHUVW, matVEHROT, vecDVEVEHICLE, ...
@@ -114,8 +116,12 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
 
-[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 
+% matXAXIS = 
+[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
+hold on
+quiver3(matVEHORIG(:,1),matVEHORIG(:,2),matVEHORIG(:,3),matVEHUVW(:,1),matVEHUVW(:,2),matVEHUVW(:,3),'g')
+hold off
 %%
 % valWSIZE = length(nonzeros(vecDVETE.*(vecDVEWING > 0))); % Amount of wake DVEs shed each timestep
 valWSIZE = length(nonzeros(vecDVETE));
