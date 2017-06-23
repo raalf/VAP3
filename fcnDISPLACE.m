@@ -8,7 +8,7 @@ function [x] = fcnDISPLACE(vup, vnow, vdown, x, valDELTIME)
 
 u = 0.25.*(vdown + 2.*vnow + vup);
 
-x = x + (u.*valDELTIME); % Should be: x + (u.*valDELTIME*magnitude of uinf)
+x = x + (u.*valDELTIME);
 
 end
 

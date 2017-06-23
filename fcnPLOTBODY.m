@@ -1,7 +1,7 @@
 function [hFig2] = fcnPLOTBODY(verbose, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM)
 
-hFig2 = figure(2);
-clf(2);
+hFig2 = figure(3);
+clf(3);
 
 patch('Faces',matDVE,'Vertices',matVLST,'FaceColor','r')
 hold on

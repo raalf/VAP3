@@ -61,7 +61,7 @@ oldestwake = reshape(matWDVELEMPIDX(end,:),[],1);
 secondoldestwake = reshape(matWDVELEMPIDX(end-1,:),[],1);
 WP1(oldestwake,:) = WP4(secondoldestwake,:);
 WP2(oldestwake,:) = WP3(secondoldestwake,:);
-timesteptranslate = matUINF(vecDVETE == 3)*valDELTIME;
+timesteptranslate = matUINF(vecDVETE == 3,:)*valDELTIME;
 WP4(oldestwake,:) = WP1(oldestwake,:)+timesteptranslate;
 WP3(oldestwake,:) = WP2(oldestwake,:)+timesteptranslate;
 matWCENTER(oldestwake,:) = (WP1(oldestwake,:)+WP2(oldestwake,:)+WP3(oldestwake,:)+WP4(oldestwake,:))./4;
