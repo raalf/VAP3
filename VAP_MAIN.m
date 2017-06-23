@@ -23,10 +23,11 @@ disp(' ');
 
 %% Reading in geometry
 
-filename = 'inputs/2MotorGliders.vap';
+% filename = 'inputs/2MotorGliders.vap';
 % filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/TMotor.vap';
-%filename = 'inputs/StandardCirrus.vap';
+filename = 'inputs/StandardCirrusSym.vap';
+% filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
@@ -38,8 +39,8 @@ filename = 'inputs/2MotorGliders.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-% valMAXTIME = 10
-flagRELAX = 0
+valMAXTIME = 10
+flagRELAX = 1
 
 seqALPHA = 0;
 seqBETA = 0;
@@ -47,9 +48,9 @@ seqBETA = 0;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagGIF = 1;
-flagPREVIEW = 1;
+flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
-flagPLOTUINF = 1;
+flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
 %% Creating fuselage

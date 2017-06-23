@@ -44,22 +44,8 @@
 			<zwingorig>0</zwingorig>
 
 			<panel>
-				<symmetry>0</symmetry>
+				<symmetry>1</symmetry>
 				<N>8</N>
-				<section>
-					<x>0.3</x>
-					<y>-7.5</y>
-					<z>0.3875</z>
-					<chord>0.375</chord>
-					<twist>1.8</twist>
-				</section>
-				<section>
-					<x>0.179</x>
-					<y>-4.464</y>
-					<z>0.234</z>
-					<chord>0.675</chord>
-					<twist>0.3</twist>
-				</section>	
 				<section>
 					<x>0</x>
 					<y>0</y>
@@ -95,26 +81,7 @@
 			<zwingorig>1.1</zwingorig>
 
 			<panel>
-				<symmetry>0</symmetry>
-				<N>4</N>
-				<section>
-					<x>-0.5</x>
-					<y>0</y>
-					<z>-1.1</z>
-					<chord>0.9</chord>
-					<twist>0</twist>
-				</section>
-				<section>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
-					<chord>0.5375</chord>
-					<twist>0</twist>
-				</section>
-			</panel>
-
-			<panel>
-				<symmetry>0</symmetry>
+				<symmetry>1</symmetry>
 				<N>3</N>
 				<section>
 					<x>0</x>
@@ -131,26 +98,6 @@
 					<twist>0</twist>
 				</section>
 			</panel>
-
-			<panel>
-				<symmetry>0</symmetry>
-				<N>3</N>
-				<section>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
-					<chord>0.5375</chord>
-					<twist>0</twist>
-				</section>
-				<section>
-					<x>0.2</x>
-					<y>-1.2</y>
-					<z>0</z>
-					<chord>0.3225</chord>
-					<twist>0</twist>
-				</section>
-			</panel>
-
 		</wing>
 
 		<fuselage>
