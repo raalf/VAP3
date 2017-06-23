@@ -7,10 +7,14 @@ vecVEHPITCH = vecVEHFPA + vecVEHALPHA;
 
 matVEHROT = deg2rad([vecVEHROLL, vecVEHPITCH, vecVEHYAW]);
 
-[x,y,z] = sph2cart(deg2rad(vecVEHTRK),deg2rad(vecVEHFPA),vecVEHVINF);
+% [x,y,z] = sph2cart(deg2rad(vecVEHTRK),deg2rad(vecVEHFPA),vecVEHVINF);
 
-matVEHUVW = [-x,y,z];
 
+% matVEHUVW = [-x,y,z];
+
+for n = 1:length(vecVEHVINF)
+    matVEHUVW(n,:) = -[vecVEHVINF(n) 0 0] * angle2dcm(deg2rad(vecVEHROLL(n)),deg2rad(vecVEHFPA(n)),deg2rad(vecVEHTRK(n)),'XYZ');
+end
 
 end
 
