@@ -287,7 +287,7 @@ for i = 1:valPANELS
         end
         
         if vecSYMtemp(i) == 1
-            vecSYM(k-len) = 1;
+            vecSYM(k-len + 1) = 1;
         elseif vecSYMtemp(i) == 2
             vecSYM(k-1) = 2;
         end
