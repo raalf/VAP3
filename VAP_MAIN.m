@@ -23,9 +23,9 @@ disp(' ');
 
 %% Reading in geometry
 
-% filename = 'inputs/2MotorGliders.vap';
-filename = 'inputs/QuadRotor.vap'
-% filename = 'inputs/TMotor.vap'
+filename = 'inputs/2MotorGliders.vap';
+% filename = 'inputs/QuadRotor.vap';
+% filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
@@ -38,7 +38,7 @@ filename = 'inputs/QuadRotor.vap'
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 20
+% valMAXTIME = 10
 flagRELAX = 0
 
 seqALPHA = 0;
@@ -46,7 +46,7 @@ seqBETA = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagGIF = 0;
+flagGIF = 1;
 flagPREVIEW = 1;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 1;
@@ -88,7 +88,7 @@ vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
 [ matVLST0, matNPVLST0, matCENTER0, matDVE, matADJE, vecDVEVEHICLE, ...
     vecDVEWING, vecDVEROTOR, matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, ...
     vecDVETIP, vecDVELE, vecDVETE, vecDVEROTORBLADE, vecDVESYM, ...
-    valPANELS, valNELE ] = fcnDUPBLADE( vecROTORVEH, vecDVEROTOR, ...
+    valNELE ] = fcnDUPBLADE( vecROTORVEH, vecDVEROTOR, ...
     matVLST0, matCENTER0, matNPVLST0, matDVE, matADJE, vecROTORBLADES, ...
     valNELE, matROTORHUB, matVEHORIG, vecDVEVEHICLE, vecDVEWING, ...
     matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, vecDVETIP, vecDVELE, ...
@@ -101,6 +101,13 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 
 [ matVEHUVW, matVEHROT, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
 [ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUBGLOB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, vecROTORVEH);
+
+[ matUINF ] = fcnINITUINF( matCENTER0, matVEHUVW, matVEHROT, vecDVEVEHICLE, ...
+    vecDVEROTOR, vecROTORVEH, matVEHORIG, matROTORHUBGLOB, matROTORAXIS, vecROTORRPM );
+%
+
+
+
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
