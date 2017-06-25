@@ -41,14 +41,14 @@ filename = 'inputs/StandardCirrusTail2.vap';
     ] = fcnXMLREAD(filename);
 
 valMAXTIME = 10
-flagRELAX = 0
+flagRELAX = 1
 
 seqALPHA = 0;
 seqBETA = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagCIRCPLOT = 1;
+flagCIRCPLOT = 0;
 flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
