@@ -1,4 +1,4 @@
-function [inddrag]=fcnDVEINDDRAG(matCOEFF,matDVE,matVLST,vecUINF,vecDVEHVSPN,vecDVEHVCRD, vecDVETE,...
+function [inddrag]=fcnDVEINDDRAG(valNELE, matCOEFF,matDVE,matVLST,matUINF,vecDVEHVSPN, vecDVEHVCRD, vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
     valWSIZE, valTIMESTEP,vecSYM,vecDVEWING,vecWDVEWING )
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
@@ -78,8 +78,11 @@ wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
 delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
 
 %project into freestream direction
-temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
-tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
+% temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
+% tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
+tempUINF = matUINF(idte,:);
+temps = dot(delx, repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]), 2);
+tempb = repmat(temps,1,3,1).*repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]);
 
 % original te point - tempb should be new te point
 newtepoint = tepoints - tempb;
@@ -175,6 +178,10 @@ R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDV
 % R(:,2) = R(:,2)+((7.*R1(:,2)-8.*Ro(:,2)+7.*R2(:,2)).*(vecDVEHVSPN(idte)-eta8)./3); %//Ry
 % R(:,3) = R(:,3)+((7.*R1(:,3)-8.*Ro(:,3)+7.*R2(:,3)).*(vecDVEHVSPN(idte)-eta8)./3); %//Rz
 %% FORCES
-inddrag(:,1) = dot(R,repmat(vecUINF,size(R,1),1),2);
+% inddrag(:,1) = dot(R,repmat(matUINF,size(R,1),1),2);
+inddrag = zeros(valNELE,1);
+inddrag(idte,1) = dot(R,matUINF(idte,:),2);
 
 end %end function
+
+

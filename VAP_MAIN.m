@@ -28,9 +28,9 @@ disp(' ');
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrusSym.vap';
 % filename = 'inputs/StandardCirrus.vap';
-filename = 'inputs/StandardCirrusTail2.vap';
+% filename = 'inputs/StandardCirrusTail2.vap';
 % filename = 'inputs/XMLtest.vap';
-% filename = 'inputs/twoVehicles.vap';
+filename = 'inputs/twoVehicles.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -41,7 +41,7 @@ filename = 'inputs/StandardCirrusTail2.vap';
     ] = fcnXMLREAD(filename);
 
 valMAXTIME = 10
-flagRELAX = 1
+flagRELAX = 0
 
 seqALPHA = 0;
 seqBETA = 0;
@@ -134,9 +134,11 @@ valWSIZE = length(nonzeros(vecDVETE));
 %% Alpha Loop
 
 % Preallocating for a turbo-boost in performance
-vecCL = zeros(valMAXTIME, length(seqALPHA));
-vecCDI = zeros(valMAXTIME, length(seqALPHA));
-vecE = zeros(valMAXTIME, length(seqALPHA));
+vecCL = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
+vecCLF = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
+vecCLI = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
+vecCDI = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
+vecE = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
 
 for ai = 1:length(seqALPHA)
     
@@ -266,7 +268,41 @@ for ai = 1:length(seqALPHA)
                     [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
                 end
                 
+                %% Forces
+                
+                [vecCL(valTIMESTEP,:,ai), vecCLF(valTIMESTEP,:,ai), vecCLI(valTIMESTEP,:,ai), vecCDI(valTIMESTEP,:,ai), vecE(valTIMESTEP,:,ai), vecDVENFREE, vecDVENIND, ...
+                    vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
+                    vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
+                    matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
+                    vecSYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVEWING, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE);
+                
             end
+            
+            %% Post-timestep outputs 
+            if flagPRINT == 1 && valTIMESTEP == 1
+                
+                header1 = ['             '];
+                header2 = [' ',sprintf('TIMESTEP'),'    '];
+                header3 = ['------------'];
+                for j = 1:valVEHICLES
+                    header1 = [header1,sprintf('VEHICLE %d',j),'                '];
+                    header2 = [header2,[sprintf('CL'),'          ',sprintf('CDI'),'          ']];
+                    header3 = [header3,['-------------------------']];
+                end
+                
+                disp(header1);
+                disp(header2);
+                disp(header3);
+            end
+            
+            txtout = ['  ', sprintf('%4d',valTIMESTEP),'       '];
+            for j = 1:valVEHICLES
+                txtout = [txtout, sprintf('%0.5f',vecCL(valTIMESTEP,j,ai)), '     ', sprintf('%0.5f',vecCDI(valTIMESTEP,j,ai)), '      '];
+            end
+            disp(txtout)
+            
+            
+            
             
             if flagGIF == 1
                 [hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
@@ -285,29 +321,7 @@ for ai = 1:length(seqALPHA)
                     imwrite(imind,cm,'GIF/output.gif','gif','WriteMode','append');
                 end
             end
-            %% Timing
-            %             eltime(valTIMESTEP) = toc;
-            %             ttime(valTIMESTEP) = sum(eltime);
             
-            %% Forces
-            
-            %             [vecCL(valTIMESTEP,ai), vecCLF(valTIMESTEP,ai),vecCLI(valTIMESTEP,ai),vecCDI(valTIMESTEP,ai), vecE(valTIMESTEP,ai), vecDVENFREE, vecDVENIND, ...
-            %                 vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, vecUINF, vecDVELESWP, ...
-            %                 vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
-            %                 matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
-            %                 vecSYM, vecDVETESWP, valAREA, valSPAN, valBETA, vecDVEWING, vecWDVEWING, vecN, vecM, vecDVEPANEL);
-            
-            if flagPRINT == 1 && valTIMESTEP == 1
-                fprintf(' TIMESTEP    CL          CDI\n'); %header
-                fprintf('----------------------------------------------\n');
-            end
-            if flagPRINT == 1
-                fprintf('  %4d     %0.5f     %0.5f\n',valTIMESTEP,vecCL(valTIMESTEP,ai),vecCDI(valTIMESTEP,ai)); %valTIMESTEP
-            end
-            
-            %             fprintf('\n\tTimestep = %0.0f', valTIMESTEP);
-            %             fprintf('\tCL = %0.5f',vecCL(valTIMESTEP,ai));
-            %             fprintf('\tCDi = %0.5f',vecCDI(valTIMESTEP,ai));
         end
         
         %% Viscous wrapper
@@ -347,41 +361,41 @@ if flagPLOT == 1
         for i = 1:valNELE
             endpoint_left = (sum(matVLST([matDVE(i,4); matDVE(i,1)],:),1)./2) - matCENTER(i,:);
             endpoint_right = (sum(matVLST([matDVE(i,2); matDVE(i,3)],:),1)./2) - matCENTER(i,:);
-
+            
             tt = fcnGLOBSTAR([endpoint_left; endpoint_right],repmat(vecDVEROLL(i),2,1), repmat(vecDVEPITCH(i),2,1), repmat(vecDVEYAW(i),2,1));
-
+            
             etas = linspace(tt(1,2),tt(2,2))';
             circ = matCOEFF(i,3).*etas.^2 + matCOEFF(i,2).*etas + matCOEFF(i,1);
-
+            
             pt_loc = [linspace(tt(1,1),tt(2,1))' etas circ];
-
+            
             len = size(circ,1);
             circ_glob = fcnSTARGLOB(pt_loc, repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1));
             circ_glob = circ_glob + matCENTER(i,:);
             hold on
             plot3(circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'-m','LineWidth',3)
             hold off
-
+            
         end
     end
     
     
-    mx = 4;
-    my = [-8:0.2:8];
-    mz = [-2:0.2:2];
-    
-    [X,Y,Z] = meshgrid(mx,my,mz);
-    fpg = unique([reshape(X,[],1) reshape(Y,[],1) reshape(Z,[],1)],'rows');
-
-    q_ind = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
-        valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
-
-    % q_ind = s_ind;
-    hFig20 = figure(20);
-    clf(20);
-    % quiver3(fpg(:,1), fpg(:,2), fpg(:,3), w_ind(:,1), w_ind(:,2), w_ind(:,3))
-    quiver3(fpg(:,1), fpg(:,2), fpg(:,3), q_ind(:,1), q_ind(:,2), q_ind(:,3))
-    set(gcf,'Renderer','opengl');
+    %     mx = 4;
+    %     my = [-8:0.2:8];
+    %     mz = [-2:0.2:2];
+    %
+    %     [X,Y,Z] = meshgrid(mx,my,mz);
+    %     fpg = unique([reshape(X,[],1) reshape(Y,[],1) reshape(Z,[],1)],'rows');
+    %
+    %     q_ind = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
+    %         valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
+    %
+    %     % q_ind = s_ind;
+    %     hFig20 = figure(20);
+    %     clf(20);
+    %     % quiver3(fpg(:,1), fpg(:,2), fpg(:,3), w_ind(:,1), w_ind(:,2), w_ind(:,3))
+    %     quiver3(fpg(:,1), fpg(:,2), fpg(:,3), q_ind(:,1), q_ind(:,2), q_ind(:,3))
+    %     set(gcf,'Renderer','opengl');
     
     
     %     figure(1);

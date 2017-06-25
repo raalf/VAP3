@@ -1,5 +1,5 @@
 function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF...
-    ,vecK,matDVE,valNELE,matCENTER,matVLST,vecUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEHVCRD,vecDVEROLL,...
+    ,vecK,matDVE,valNELE,matCENTER,matVLST,matUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEHVCRD,vecDVEROLL,...
     vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,...
     vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP)
 %DVE element normal forces
@@ -61,7 +61,8 @@ end
 eta8 = vecDVEHVSPN*0.8;
 
 % UxS
-tempb = cross(repmat(vecUINF,[valNELE,1]),s,2);
+% tempb = cross(repmat(matUINF,[valNELE,1]),s,2);
+tempb = cross(matUINF, s, 2);
 
 % norm(UxS)
 uxs = sqrt(sum(abs(tempb).^2,2));
@@ -70,12 +71,14 @@ uxs = sqrt(sum(abs(tempb).^2,2));
 en = tempb.*repmat((1./uxs),1,3);
 
 % the lift direction  eL=Ux[0,1,0]/|Ux[0,1,0]|
-el = repmat([-vecUINF(3)/norm(vecUINF) 0 vecUINF(1)/norm(vecUINF)],[valNELE,1]); %does this work with beta?
+% el = repmat([-matUINF(3)/norm(matUINF) 0 matUINF(1)/norm(matUINF)],[valNELE,1]); %does this work with beta?
+normUINF = sqrt(sum(matUINF.^2,2));
+len = size(normUINF,1);
+el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
 
 % the side force direction eS=UxeL/|UxeL|
 % clear tempa tempb
-
-tempc = cross(el,repmat(vecUINF,[valNELE,1]),2);
+tempc = cross(el,matUINF,2);
 es = tempc.*1./ repmat((sqrt(sum(abs(tempc).^2,2)) ),1,3);
 
 % clear tempa
