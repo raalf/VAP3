@@ -13,7 +13,7 @@ matVEHROT = deg2rad([vecVEHROLL, vecVEHPITCH, vecVEHYAW]);
 % matVEHUVW = [-x,y,z];
 
 for n = 1:length(vecVEHVINF)
-    matVEHUVW(n,:) = -[vecVEHVINF(n) 0 0] * angle2dcm(deg2rad(vecVEHROLL(n)),deg2rad(vecVEHFPA(n)),deg2rad(vecVEHTRK(n)),'XYZ');
+    matVEHUVW(n,:) = -[vecVEHVINF(n) 0 0] * angle2dcm(deg2rad(vecVEHTRK(n)),deg2rad(vecVEHROLL(n)),deg2rad(vecVEHFPA(n)),'ZXY');
 end
 
 end

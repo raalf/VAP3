@@ -87,9 +87,9 @@ for n = 1:valROTORS
     
     % pre-calculate trans and rot matrices
     transGLOB2VEH = matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
-    dcmHUB2GLOB = angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),3),'XYZ');
+    dcmHUB2GLOB = angle2dcm(matVEHROT(vecROTORVEH(n),3),matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),'ZXY');
     dcmXY2HUB = quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
-    dcmROTORSTEP = angle2dcm(0,0,vecROTORDEL(n),'XYZ');
+    dcmROTORSTEP = angle2dcm(vecROTORDEL(n),0,0,'ZXY');
     
     idxDVEROTOR = vecDVEROTOR==n;
     idxVLSTROTOR = unique(matDVE(idxDVEROTOR,:));

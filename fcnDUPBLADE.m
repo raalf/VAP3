@@ -27,7 +27,7 @@ for n = 1:valROTORS
     for j = 1:vecROTORBLADES(n)-1
         
         radBLADE = 2*pi/vecROTORBLADES(n)*j; % radian
-        dcmBLADE = angle2dcm(0,0,radBLADE, 'XYZ');
+        dcmBLADE = angle2dcm(radBLADE,0,0, 'ZXY');
         
         %matDVE
         addDVEBLADE = offsetDVEBLADE + length(matVLST0(:,1));
