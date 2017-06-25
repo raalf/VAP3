@@ -84,41 +84,49 @@ matNTVLST = matNTVLST + matVLSTTRANS;
 % Rotate Rotors
 valROTORS = length(vecROTORVEH);
 for n = 1:valROTORS
+    
+    % pre-calculate trans and rot matrices
+    transGLOB2VEH = matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+    dcmHUB2GLOB = angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),3),'XYZ');
+    dcmXY2HUB = quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+    dcmROTORSTEP = angle2dcm(0,0,vecROTORDEL(n),'XYZ');
+    
     idxDVEROTOR = vecDVEROTOR==n;
     idxVLSTROTOR = unique(matDVE(idxDVEROTOR,:));
     
     tempROTORVLST = matVLST(idxVLSTROTOR,:);
-    tempROTORVLST = tempROTORVLST - matROTORHUBGLOB(n,:) - matVEHORIG(vecROTORVEH(n),:);
-    
+    tempROTORVLST = tempROTORVLST - transGLOB2VEH;
+       
     tempROTORCENTER = matCENTER(idxDVEROTOR,:);
-    tempROTORCENTER = tempROTORCENTER - matROTORHUBGLOB(n,:) - matVEHORIG(vecROTORVEH(n),:);
-    
+    tempROTORCENTER = tempROTORCENTER - transGLOB2VEH;
+           
+        
     % transform rotor from global to hub plane
-    tempROTORVLST = tempROTORVLST * angle2dcm(-matVEHROT(vecROTORVEH(n),1),-matVEHROT(vecROTORVEH(n),2),-matVEHROT(vecROTORVEH(n),1),'XYZ');
-    tempROTORCENTER = tempROTORCENTER * angle2dcm(-matVEHROT(vecROTORVEH(n),1),-matVEHROT(vecROTORVEH(n),2),-matVEHROT(vecROTORVEH(n),1),'XYZ');    
+    tempROTORVLST = tempROTORVLST / dcmHUB2GLOB;
+    tempROTORCENTER = tempROTORCENTER / dcmHUB2GLOB;    
     
     % transform rotor from hub plane to xy plane
-    tempROTORVLST = tempROTORVLST * quat2dcm(axang2quat(vrrotvec([0 0 1],matROTORAXIS(n,:))));
-    tempROTORCENTER = tempROTORCENTER * quat2dcm(axang2quat(vrrotvec([0 0 1],matROTORAXIS(n,:))));
+    tempROTORVLST = tempROTORVLST / dcmXY2HUB;
+    tempROTORCENTER = tempROTORCENTER / dcmXY2HUB;
 
     % timestep rotor in local XY hub plane
-    tempROTORVLST = tempROTORVLST * angle2dcm(0,0,vecROTORDEL(n),'XYZ');
-    tempROTORCENTER = tempROTORCENTER * angle2dcm(0,0,vecROTORDEL(n),'XYZ');
+    tempROTORVLST = tempROTORVLST * dcmROTORSTEP;
+    tempROTORCENTER = tempROTORCENTER * dcmROTORSTEP;
     tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);    
     
     % transform rotor from xy plane to hub plane
-    tempROTORVLST = tempROTORVLST * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
-    tempROTORCENTER = tempROTORCENTER * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
-    tempROTORUINF = tempROTORUINF * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+    tempROTORVLST = tempROTORVLST * dcmXY2HUB;
+    tempROTORCENTER = tempROTORCENTER * dcmXY2HUB;
+    tempROTORUINF = tempROTORUINF * dcmXY2HUB;
     
     % transform rotor from hub plane to global
-    tempROTORVLST = tempROTORVLST * angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),1),'XYZ');
-    tempROTORCENTER = tempROTORCENTER * angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),1),'XYZ');
-    tempROTORUINF = tempROTORUINF * angle2dcm(matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),matVEHROT(vecROTORVEH(n),1),'XYZ');
+    tempROTORVLST = tempROTORVLST * dcmHUB2GLOB;
+    tempROTORCENTER = tempROTORCENTER * dcmHUB2GLOB;
+    tempROTORUINF = tempROTORUINF * dcmHUB2GLOB;
     
     % write rotated rotor to matVLST
-    matVLST(idxVLSTROTOR,:) = tempROTORVLST + matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
-    matCENTER(idxDVEROTOR,:) = tempROTORCENTER + matROTORHUBGLOB(n,:) + matVEHORIG(vecROTORVEH(n),:);
+    matVLST(idxVLSTROTOR,:) = tempROTORVLST + transGLOB2VEH;
+    matCENTER(idxDVEROTOR,:) = tempROTORCENTER + transGLOB2VEH;
     matUINFROTOR(idxDVEROTOR,:) = tempROTORUINF;
 end
 
