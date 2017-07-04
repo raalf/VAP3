@@ -1,5 +1,6 @@
 clc
 clear
+delete('size.txt');
 
 warning off
 
@@ -24,8 +25,8 @@ disp(' ');
 %% Reading in geometry
 
 % filename = 'inputs/2MotorGliders.vap';
-filename = 'inputs/QuadRotor.vap';
-% filename = 'inputs/TMotor.vap';
+% filename = 'inputs/QuadRotor.vap';
+filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrusSym.vap';
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/StandardCirrusTail2.vap';
@@ -40,7 +41,7 @@ filename = 'inputs/QuadRotor.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 50
+valMAXTIME = 80
 flagRELAX = 1
 
 seqALPHA = 0;
@@ -49,7 +50,7 @@ seqBETA = 0;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
@@ -416,6 +417,20 @@ if flagPLOT == 1
 end
 
 % profreport
+
+hFig23 = figure(23);
+clf(23)
+
+A = dlmread('size.txt');
+
+scatter(A(:,1), A(:,2),'kx');
+
+grid minor
+box on
+axis tight
+xlabel('Number of Input Points','FontSize',15);
+ylabel('Memory Used in VSIND (Gb)','FontSize',15);
+
 
 %% Viscous wrapper
 

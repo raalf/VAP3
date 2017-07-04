@@ -275,11 +275,14 @@ cloc(idx_LE,1:2) = zeros(size(cloc(idx_LE,1:2)));
 bloc(idx_LE,3) = 0.5.*log((t1s(idx_LE) + k(idx_LE))./(t2s(idx_LE) + k(idx_LE)));
 cloc(idx_LE,3) = -4.*hspan(idx_LE) + fp_0(idx_LE,2).*2.*bloc(idx_LE,3);
 
-% T = whos('fp_0');
-% fp2 = fopen('size.txt','at');
-% fprintf(fp2,'%f', T.size);
-% fprintf(fp2,'\r\n');
-% fclose(fp2);
+u = memory;
+mem2 = u.MemUsedMATLAB*1e-9;
+
+T = whos('fp_0');
+fp2 = fopen('size.txt','at');
+fprintf(fp2,'%d %f', T.size(1), mem2);
+fprintf(fp2,'\r\n');
+fclose(fp2);
 
 end
 
