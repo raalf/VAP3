@@ -1,6 +1,6 @@
 clc
 clear
-delete('size.txt');
+% delete('size.txt');
 
 warning off
 
@@ -418,18 +418,18 @@ end
 
 % profreport
 
-hFig23 = figure(23);
-clf(23)
-
-A = dlmread('size.txt');
-
-scatter(A(:,1), A(:,2),'kx');
-
-grid minor
-box on
-axis tight
-xlabel('Number of Input Points','FontSize',15);
-ylabel('Memory Used in VSIND (Gb)','FontSize',15);
+% hFig23 = figure(23);
+% clf(23)
+% 
+% A = dlmread('size.txt');
+% 
+% scatter(A(:,1), A(:,2),'kx');
+% 
+% grid minor
+% box on
+% axis tight
+% xlabel('Number of Input Points','FontSize',15);
+% ylabel('Memory Used in VSIND (Gb)','FontSize',15);
 
 
 %% Viscous wrapper
