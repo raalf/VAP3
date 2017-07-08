@@ -98,8 +98,11 @@ circ(~any(circ,2),:) = [];
 
 % Vorticity equations at leading and trailing edges -----------------------------------------------------------------
 
-[edge1,~] = find(vecDVELE == 1 | vecDVETE == 1);
-[edge3,~] = find(vecDVELE == 3 | vecDVETE == 3);
+% [edge1,~] = find(vecDVELE == 1 | vecDVETE == 1);
+% [edge3,~] = find(vecDVELE == 3 | vecDVETE == 3);
+
+[edge1,~] = find(vecDVETE == 1);
+[edge3,~] = find(vecDVETE == 3);
 
 if isempty(edge1)
     edge1 = double.empty(0,1); % Ensuring the empty is the correct size if this is empty

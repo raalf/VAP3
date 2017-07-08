@@ -42,7 +42,7 @@ filename = 'inputs/simple_wing.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 15
+valMAXTIME = 3
 flagRELAX = 1
 
 seqALPHA = 0;
@@ -142,7 +142,7 @@ matD = [matDxpand; matE];
 %% Add kinematic conditions to D-Matrix
 
 [vecK] = fcnSINGFCT(valNELE, vecDVESURFACE, vecDVETIP, vecDVEHVSPN);
-[matD] = fcnKINCON_OL(matD, valNELE, matDVE, matCENTER0, matVLST0, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD,vecSYM);
+[matD] = fcnKINCON_OL(matD, valNELE, matDVE, matCENTER0, matVLST0, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD,vecSYM, vecDVELE);
 
 %% Alpha Loop
 
@@ -203,7 +203,7 @@ for ai = 1:length(seqALPHA)
         % Building wing resultant
         [vecR] = fcnRWING_OL(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
             matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-            vecWDVETESWP, vecSYM, valWSIZE);
+            vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE);
         
         % Solving for wing coefficients
         [matCOEFF] = fcnSOLVED_OL(matD, vecR, valNELE);
@@ -258,7 +258,7 @@ for ai = 1:length(seqALPHA)
                 %% Rebuilding and solving wing resultant
                 [vecR] = fcnRWING_OL(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
                     matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                    vecWDVETESWP, vecSYM, valWSIZE);
+                    vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE);
                 
                 [matCOEFF] = fcnSOLVED_OL(matD, vecR, valNELE);
                 

@@ -75,7 +75,7 @@ for i = 1:chunk_sz:num_pts
     % xsiA = gather(xsiA);
     
     % Bound vortex on the leading edge
-    idx1 = dvetype == 2 | dvetype == -3 | dvetype == -4;
+    idx1 = dvetype == -3 | dvetype == -4;
     [a1le(idx1,:), b1le(idx1,:), c1le(idx1,:)] = fcnBOUNDIND(vecDVEHVSPN(dvenum(idx1)), vecDVELESWP(dvenum(idx1)), xsiA(idx1,:));
     
     % Vortex sheet at leading edge
