@@ -58,6 +58,10 @@ for i = 1:chunk_sz:num_pts
     
     b2te = zeros(len,3);
     c2te = zeros(len,3);
+    d2r = zeros(len,3);
+    e2r = zeros(len,3);
+    d2l = zeros(len,3);
+    e2l = zeros(len,3);
     
     %% Leading Edge
     
@@ -71,7 +75,7 @@ for i = 1:chunk_sz:num_pts
     % xsiA = gather(xsiA);
     
     % Bound vortex on the leading edge
-    idx1 = dvetype == 0 | dvetype == 2 | dvetype == -3 | dvetype == -4;
+    idx1 = dvetype == 2 | dvetype == -3 | dvetype == -4;
     [a1le(idx1,:), b1le(idx1,:), c1le(idx1,:)] = fcnBOUNDIND(vecDVEHVSPN(dvenum(idx1)), vecDVELESWP(dvenum(idx1)), xsiA(idx1,:));
     
     % Vortex sheet at leading edge
@@ -89,7 +93,7 @@ for i = 1:chunk_sz:num_pts
     % xsiA = gather(xsiA);
     
     % Bound vortex at the trailing edge
-    idx2 = dvetype == 0 | dvetype == -2;
+    idx2 = dvetype == -2;
     [a1te(idx2,:), b1te(idx2,:), c1te(idx2,:)] = fcnBOUNDIND(vecDVEHVSPN(dvenum(idx2)), vecDVETESWP(dvenum(idx2)), xsiA(idx2,:));
     
     % Vortex sheet at the trailing edge
@@ -97,8 +101,22 @@ for i = 1:chunk_sz:num_pts
     if any(idx3)
         [~, b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVEHVCRD(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
     end
-    %% Summing together the influences from the sheets and filaments
     
+    %% Right to left vortex sheets for HDVEs
+    idx4 = dvetype == 0;
+    
+    xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,2),:)+matVLST(matDVE(dvenum,3),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+    [~, d2r, e2r] = fcnVSIND(vecDVEHVCRD(dvenum(idx4)), vecDVEHVSPN(dvenum(idx4)), zeros(length(dvenum(idx4)),1), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)],vecK(dvenum(idx4)));
+    
+    xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:)+matVLST(matDVE(dvenum,4),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+    [~, d2l, e2l] = fcnVSIND(vecDVEHVCRD(dvenum(idx4)), vecDVEHVSPN(dvenum(idx4)), zeros(length(dvenum(idx4)),1), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)],vecK(dvenum(idx4)));
+    
+    d2r = [d2r(:,2) -d2r(:,1) d2r(:,3)];
+    e2r = [e2r(:,2) -e2r(:,1) e2r(:,3)];
+    d2l = [d2l(:,2) -d2l(:,1) d2l(:,3)];
+    e2l = [e2l(:,2) -e2l(:,1) e2l(:,3)];
+    
+    %% Summing together the influences from the sheets and filaments
     
     a3xi = a1le - a1te;
     b3xi = b1le + b2le - b1te - b2te;

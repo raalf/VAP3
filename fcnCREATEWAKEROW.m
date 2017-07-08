@@ -29,7 +29,7 @@ end
 % Assinging remaining values to wake parameters
 matWDVE(end+1:end+len,1:4) = newdves + length(matWVLST);
 matWVLST = cat(1, matWVLST, newvertices);
-matWCOEFF = cat(1, matWCOEFF, matCOEFF(vecDVETE>0,:));
+matWCOEFF = cat(1, matWCOEFF, matCOEFF(vecDVETE>0,1:3));
 vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
 vecWDVEPANEL = cat(1, vecWDVEPANEL, vecDVEPANEL(vecDVETE>0));
 vecWK = cat(1, vecWK, vecK(vecDVETE>0));

@@ -28,10 +28,11 @@ disp(' ');
 % filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrusSym.vap';
-filename = 'inputs/StandardCirrus.vap';
+% filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/StandardCirrusTail2.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
+filename = 'inputs/simple_wing.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -41,7 +42,7 @@ filename = 'inputs/StandardCirrus.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 4
+valMAXTIME = 15
 flagRELAX = 1
 
 seqALPHA = 0;
@@ -116,7 +117,7 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
 
-% [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,[]);
+[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0,[]);
 
 %%
 % valWSIZE = length(nonzeros(vecDVETE.*(vecDVEWING > 0))); % Amount of wake DVEs shed each timestep
@@ -200,12 +201,12 @@ for ai = 1:length(seqALPHA)
         vecWDVEWING = [];
         
         % Building wing resultant
-        [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+        [vecR] = fcnRWING_OL(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
             matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
             vecWDVETESWP, vecSYM, valWSIZE);
         
         % Solving for wing coefficients
-        [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
+        [matCOEFF] = fcnSOLVED_OL(matD, vecR, valNELE);
         
         for valTIMESTEP = 1:valMAXTIME
             %% Timestep to solution
@@ -255,11 +256,11 @@ for ai = 1:length(seqALPHA)
                 [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
                 
                 %% Rebuilding and solving wing resultant
-                [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+                [vecR] = fcnRWING_OL(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
                     matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
                     vecWDVETESWP, vecSYM, valWSIZE);
                 
-                [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
+                [matCOEFF] = fcnSOLVED_OL(matD, vecR, valNELE);
                 
                 %% Creating and solving WD-Matrix
                 [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
@@ -270,7 +271,7 @@ for ai = 1:length(seqALPHA)
                     
                     [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
                         vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
-                        matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(matUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+                        matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE_OL(matUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
                         matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVETE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
                         vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVELESWP, vecWDVEPITCH, ...
                         vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVEWING);
@@ -281,11 +282,11 @@ for ai = 1:length(seqALPHA)
                 end
                 
                 %% Forces
-                [vecCL(valTIMESTEP,:,ai), vecCLF(valTIMESTEP,:,ai), vecCLI(valTIMESTEP,:,ai), vecCDI(valTIMESTEP,:,ai), vecE(valTIMESTEP,:,ai), vecDVENFREE, vecDVENIND, ...
-                    vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
-                    vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
-                    matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
-                    vecSYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVEWING, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES);
+%                 [vecCL(valTIMESTEP,:,ai), vecCLF(valTIMESTEP,:,ai), vecCLI(valTIMESTEP,:,ai), vecCDI(valTIMESTEP,:,ai), vecE(valTIMESTEP,:,ai), vecDVENFREE, vecDVENIND, ...
+%                     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
+%                     vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
+%                     matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
+%                     vecSYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVEWING, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES);
                 
             end
             
@@ -370,6 +371,7 @@ if flagPLOT == 1
     
     if flagCIRCPLOT == 1
         for i = 1:valNELE
+            % Spanwise
             endpoint_left = (sum(matVLST([matDVE(i,4); matDVE(i,1)],:),1)./2) - matCENTER(i,:);
             endpoint_right = (sum(matVLST([matDVE(i,2); matDVE(i,3)],:),1)./2) - matCENTER(i,:);
             
@@ -385,6 +387,24 @@ if flagPLOT == 1
             circ_glob = circ_glob + matCENTER(i,:);
             hold on
             plot3(circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'-m','LineWidth',3)
+            hold off
+            
+            %Chordwise
+            endpoint_front = (sum(matVLST([matDVE(i,1); matDVE(i,2)],:),1)./2) - matCENTER(i,:);
+            endpoint_back = (sum(matVLST([matDVE(i,3); matDVE(i,4)],:),1)./2) - matCENTER(i,:);
+            
+            tt = fcnGLOBSTAR([endpoint_front; endpoint_back],repmat(vecDVEROLL(i),2,1), repmat(vecDVEPITCH(i),2,1), repmat(vecDVEYAW(i),2,1));
+            
+            xsis = linspace(tt(1,1),tt(2,1))';
+            circ = matCOEFF(i,5).*xsis.^2 + matCOEFF(i,4).*xsis + matCOEFF(i,1);
+            
+            pt_loc = [linspace(tt(1,1),tt(2,1))' xsis circ];
+            
+            len = size(circ,1);
+            circ_glob = fcnSTARGLOB(pt_loc, repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1));
+            circ_glob = circ_glob + matCENTER(i,:);
+            hold on
+            plot3(circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'-g','LineWidth',3)
             hold off
             
         end

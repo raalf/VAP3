@@ -69,14 +69,19 @@ else
     
     % Finding the DVE numbers with local edge 3 neighbouring the above corresponding DVEs
     [idx27,~] = find(repmat(matADJE(idx1,1),1,length(d2202)) == repmat(d2202',length(matADJE(idx1,1)),1));
-    d2204 = matADJE(matADJE(:,2) == 2,3);
+    d2204 = matADJE(matADJE(:,2) == 1,3);
     d2204 = d2204(idx27);
 end
 
+
+%%%%% WHY DO I NEED THE ABOVE D2202 AND D2204 STUFF??? SPLIT WING?
+d2202 = idx3;
+d2204 = idx4; 
+
 len3 = length(d2204);
 
-gamma1 = [nan(len,1) zeros(len,2) vecDVEHVCRD(d2202) vecDVEHVCRD(d2202).^2];
-gamma2 = [nan(len,1) zeros(len,2) -vecDVEHVCRD(d2204) vecDVEHVCRD(d2204).^2].*-1;
+gamma1 = [ones(len3,1) zeros(len3,2) vecDVEHVCRD(d2202) vecDVEHVCRD(d2202).^2];
+gamma2 = [ones(len3,1) zeros(len3,2) -vecDVEHVCRD(d2204) vecDVEHVCRD(d2204).^2].*-1;
 
 % Getting appropriate row and column numbers to assign the above
 % gamma1 and gamma2 into the D-matrix
@@ -102,8 +107,10 @@ elseif isempty(edge3)
     edge3 = double.empty(0,1);
 end
 
-dgamma1t = [zeros(length(edge1),3) ones(length(edge1),1) 2.*vecDVEHVCRD(edge1)];
-dgamma2t = [zeros(length(edge3),3) ones(length(edge3),1) -2.*vecDVEHVCRD(edge3)];
+% dgamma1t = [zeros(length(edge1),3) ones(length(edge1),1) 2.*vecDVEHVCRD(edge1)];
+% dgamma2t = [zeros(length(edge3),3) ones(length(edge3),1) -2.*vecDVEHVCRD(edge3)];
+dgamma1t = [ones(length(edge1),1) zeros(length(edge1),2) vecDVEHVCRD(edge1) vecDVEHVCRD(edge1).^2];
+dgamma2t = [ones(length(edge3),1) zeros(length(edge3),2) -vecDVEHVCRD(edge3) vecDVEHVCRD(edge3).^2];
 dgammat = [dgamma1t; dgamma2t];
 
 col1 = reshape([repmat((edge1.*5)-4,1,5) + repmat([0:4], length(edge1),1)]',[],1);
