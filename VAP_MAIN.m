@@ -1,4 +1,4 @@
-clc
+% clc
 clear
 % delete('size.txt');
 
@@ -26,11 +26,11 @@ disp(' ');
 
 % filename = 'inputs/2MotorGliders.vap';
 % filename = 'inputs/QuadRotor.vap';
-filename = 'inputs/TMotor.vap';
+% filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrusSym.vap';
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/StandardCirrusTail2.vap';
-% filename = 'inputs/XMLtest.vap';
+filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
@@ -41,8 +41,10 @@ filename = 'inputs/TMotor.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 80
-flagRELAX = 1
+valMAXTIME = 1
+vecVEHFPA = 0
+
+flagRELAX = 0
 
 seqALPHA = 0;
 seqBETA = 0;
@@ -87,7 +89,6 @@ matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(v
 % Identifying which ROTOR belongs to which vehicle.
 vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
 
-
 % Duplicate Blades in a Rotor
 [ matVLST0, matNPVLST0, matCENTER0, matDVE, matADJE, vecDVEVEHICLE, ...
     vecDVEWING, vecDVEROTOR, matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, ...
@@ -99,7 +100,6 @@ vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
     vecDVETE, vecDVEROTORBLADE, vecDVESYM, matROTORAXIS );
 
 
-
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
 
@@ -108,15 +108,12 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 
 [ matUINF ] = fcnINITUINF( matCENTER0, matVEHUVW, matVEHROT, vecDVEVEHICLE, ...
     vecDVEROTOR, vecROTORVEH, matVEHORIG, matROTORHUBGLOB, matROTORAXIS, vecROTORRPM );
-%
-
 
 
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
-
 
 [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
 
