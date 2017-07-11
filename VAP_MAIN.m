@@ -131,17 +131,22 @@ for i = 1:valWINGS
     vecDVEAREA = [vecDVEAREA; tvecDVEAREA];
     matDVENORM = [matDVENORM; tmatDVENORM];
 
-%     valNELE = [valNELE; tvalNELE];
-
     vecDVESYM = [vecDVESYM; tvecDVESYM];
     vecDVETIP = [vecDVETIP; tvecDVETIP];
-    vecDVESURFACE = [vecDVESURFACE; tvecDVESURFACE];
+
     vecDVELE = [vecDVELE; tvecDVELE];
     vecDVETE = [vecDVETE; tvecDVETE];
-    vecDVEPANEL = [vecDVEPANEL; tvecDVEPANEL];
-    matPANELTE = [matPANELTE; tmatPANELTE];
     
     valNELE = valNELE + tvalNELE;
+    
+    if i == 1; surfaceoffset = 0;
+    else; surfaceoffset = max(vecDVESURFACE);
+    end
+    
+    vecDVESURFACE = [vecDVESURFACE; tvecDVESURFACE + surfaceoffset];
+    vecDVEPANEL = [vecDVEPANEL; tvecDVEPANEL];
+    
+    matPANELTE = [matPANELTE; tmatPANELTE];
     
     vlstoffset = size(matVLST0,1);
     dveoffset = size(matDVE,1);
