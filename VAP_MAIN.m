@@ -42,10 +42,9 @@ filename = 'inputs/twoVehicles.vap';
     ] = fcnXMLREAD(filename);
 
 % For debugging:
-valMAXTIME = 10
-% vecVEHFPA = 0
 % vecVEHTRK = 0
 % flagRELAX = 0
+% vecVEHVINF = [100;100]
 
 seqALPHA = 0;
 seqBETA = 0;
@@ -215,7 +214,7 @@ for ai = 1:length(seqALPHA)
                 matVLST, matCENTER, ...
                 matNEWWAKE, matNPNEWWAKE, ...
                 matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
-                matVEHROTRATE, matCIRORIG, ...
+                matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
                 valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
                 vecDVETE, matNPVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
                 matVEHROT, vecROTORVEH, matROTORHUBGLOB, ...
@@ -339,7 +338,7 @@ fprintf('\n');
 %% Plotting
 
 if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, []);
+    [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
     [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
     [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
     
