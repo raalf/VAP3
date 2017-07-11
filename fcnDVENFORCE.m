@@ -75,7 +75,7 @@ en = tempb.*repmat((1./uxs),1,3);
 normUINF = sqrt(sum(matUINF.^2,2));
 
 len = size(normUINF,1);
-% el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
+el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
 
 % I didn't want to do this, Alton made me because he is cruel and gross
 % T.D.K 2017-07-10
@@ -84,7 +84,7 @@ for i = 1:max(vecDVEVEHICLE)
     spandir(vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(matVEHROT(i,3), matVEHROT(i,1), matVEHROT(i,2),'ZXY'),length(nonzeros(vecDVEVEHICLE == i)),1);
 end
 
-% Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
+Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
 el = cross(matUINF,spandir,2);
 
 % the side force direction eS=UxeL/|UxeL|

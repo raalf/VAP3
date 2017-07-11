@@ -42,8 +42,8 @@ filename = 'inputs/XMLtest.vap';
     ] = fcnXMLREAD(filename);
 
 valMAXTIME = 1
-vecVEHFPA = 90
-vecVEHTRK = 90
+vecVEHFPA = 0
+vecVEHTRK = 0
 
 flagRELAX = 0
 
