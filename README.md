@@ -58,27 +58,38 @@ would yield the same result as
 		- `area` Reference area of the wing (m^2)
 		- `span` Reference span of the wing (m)
 		- `cmac` Mean aerodynamic chord of the wing (m)
+		
+		- `M` Number of chordwise elements
+		
+		- `xwingorig`
+		- `ywingorig`
+		- `zwingorig`
+		
 		- `panel*`
 			- `symmetry` Symmetry edge (0, 1 or 2)
 			- `N` Number of spanwise elements
-			- `M` Number of chordwise elements
+			
 			- `section*`
 				- `X` X position of section leading edge with respect to vehicle origin(m)
 				- `Y` Y position of section leading edge with respect to vehicle origin(m)
 				- `Z` Z position of section leading edge with respect to vehicle origin(m)
 				- `chord` Chord length of section (m)
-				- `epsilon` Twist angle of section (deg)
+				- `twist` Twist angle of section (deg)
 				- `airfoil`
 
 	- `rotor*`
-		- `RPM` Rotational speed of rotor (RPM) 
+		- `RPM` Rotational speed of rotor (RPM) [Positive RPM = Counter-clockwise]
 		- `dia` Rotor diameter (m) 
+		- `flipY` Flip rotor geometry in Y direction for clockwise rotation (True | False)
+		
 		- `xhub` X location of center of rotor with respect to vehicle origin (m)
 		- `yhub` Y location of center of rotor with respect to vehicle origin (m)
 		- `zhub` Z location of center of rotor with respect to vehicle origin (m)
+		
 		- `axisx` Axis of rotation unit vector X-component with respect to vehicle origin (m)
 		- `axisy` Axis of rotation unit vector Y-component with respect to vehicle origin (m)
 		- `axisz` Axis of rotation unit vector Z-component with respect to vehicle origin (m)
+		
 		- `blades` Number of blades
 		- `panel*`
 			- `N` Number of spanwise elements
@@ -88,9 +99,24 @@ would yield the same result as
 				- `Y` Y position of section leading edge with respect to `hub` and XY plane (m)
 				- `Z` Z position of section leading edge with respect to `hub` and XY plane (m)
 				- `chord` Chord length of section (m)
-				- `epsilon` Twist angle of section (deg)
+				- `twist` Twist angle of section (deg)
 				- `airfoil`
 	- `fuselage*`
+		- `transitionpanel`
+		
+		- `xaxis`
+		- `yaxis`
+		- `zaxis`
+		
+		- `xorig`
+		- `yorig`
+		- `zorig`
+		
+		- `fsection*`
+			- `diameter`
+			- `x`
+
+		
 	- `mass`
 	- `viscous`
 
