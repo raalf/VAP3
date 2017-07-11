@@ -1,7 +1,7 @@
 function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF...
     ,vecK,matDVE,valNELE,matCENTER,matVLST,matUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEHVCRD,vecDVEROLL,...
     vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,...
-    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP)
+    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, matVEHROT, vecDVEVEHICLE)
 %DVE element normal forces
 
 % //computes lift and side force/density acting on surface DVE's. The local
@@ -77,7 +77,12 @@ normUINF = sqrt(sum(matUINF.^2,2));
 len = size(normUINF,1);
 % el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
 
-spandir = fcnSTARGLOB(repmat([0 1 0], len, 1), zeros(len,1), zeros(len,1), vecDVEYAW);
+% I didn't want to do this, Alton made me because he is cruel and gross
+% T.D.K 2017-07-10
+spandir = zeros(len,3);
+for i = 1:max(vecDVEVEHICLE)
+    spandir(vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(matVEHROT(i,3), matVEHROT(i,1), matVEHROT(i,2),'ZXY'),length(nonzeros(vecDVEVEHICLE == i)),1);
+end
 
 % Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
 el = cross(matUINF,spandir,2);
