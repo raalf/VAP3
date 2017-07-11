@@ -1,7 +1,7 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matNPVLST, matPANELTE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -18,6 +18,9 @@ function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVET
 %        infomation of non-twisted wing
 %      - new matNPVLST will now hold non-planer dve coordinates of
 %        non-modified wing geometry specified in input file
+% (3.6)- vecWINGVEHICLE to handle multiple vehicles
+%  WIP   vertices in matVLST should not be welded if they belong to
+%        different vehicles.(June 14, 2017)
 %
 % Fixed how DVEs matrix is converted from 2D grid to 1D array. 16/01/2016 (Alton)
 
@@ -74,7 +77,13 @@ vecEnd      = cumsum(vecN.*vecM);
 
 
 %% Assign Wing to Panel
-panelEdges = reshape(permute(matGEOM,[1 3 2]),[],5);
+
+% panelEdges = reshape(permute(matGEOM,[1 3 2]),[],5); % VAP2 method
+% VAP3 - make sure wings get different id if belong to different vehicles
+% any touching panels in same vehicel would still get deteced and merged into a same wing. 
+% *same wing id WOULD NEVER exist in different vehicle
+panelEdges = reshape(permute(matGEOM,[1 3 2]),[],6);
+
 [~,tempB,tempC] = unique(panelEdges,'rows','stable');
 panelEdgesIdx = reshape(tempC,2,[])';
 edge2wing = [(1:length(tempB))',nan(length(tempB),1)];
@@ -159,7 +168,7 @@ end
     vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEAREA, matDVENORM, ...
-    matVLST, matDVE, ~, idxVLST] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 );
+    matVLST, matDVE, ~, idxVLST] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4, vecDVEWING );
 
 
 %% Create nonplaner VLST

@@ -192,7 +192,7 @@ elseif isempty(tip4)
 end
 
 gamma1t = [vecWDVEHVSPN(tip2) (2/3).*vecWDVEHVSPN(tip2).^2];
-gamma2t = [-vecWDVEHVSPN(tip4) (2/3).*vecWDVEHVSPN(tip4).^2];
+gamma2t = [vecWDVEHVSPN(tip4) -(2/3).*vecWDVEHVSPN(tip4).^2];
 gammat = [gamma1t; gamma2t];
 
 col1 = reshape((repmat((tip2.*2)-1,1,2) + repmat((0:1), length(tip2),1))',[],1);
@@ -209,8 +209,8 @@ r_circ_tip = [-vecWKGAM(tip2); vecWKGAM(tip4)];
 
 % END Circulation equations at wingtip ----------------------------------------------------------------------------------
 
-matWD = [vort; circ; vort_sym; circ_tip];
-vecWR = [r_vort; r_circ; r_vort_sym; r_circ_tip];
+    matWD = [vort; circ; vort_sym; circ_tip];      
+    vecWR = [r_vort; r_circ; r_vort_sym; r_circ_tip];
 
 end
 

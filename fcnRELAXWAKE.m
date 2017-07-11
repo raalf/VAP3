@@ -1,16 +1,16 @@
 function [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
     vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
-    matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(vecUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
-    matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
+    matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(matUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+    matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVETE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
     vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVELESWP, vecWDVEPITCH, ...
-    vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVEWING, flagTRI)
+    vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVEWING)
 %FCNRLXWAKE Summary of this function goes here
 %   Detailed explanation goes here
 [ matWDVEMP, matWDVEMPIDX, vecWMPUP, vecWMPDN ] = fcnWDVEMP(matWDVE, matWVLST, matWADJE, valWNELE, vecWDVESYM, vecWDVETIP);
 
 % Get mid-points induced velocity
 [ matWDVEMPIND ] = fcnINDVEL(matWDVEMP,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
-    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI);
+    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
 
 % Assemble matrices for fcnDISPLACE (vup, vnow, vdown)
 [ matVUP, matVNOW, matVDOWN ] = fcnDISPMAT(matWDVEMPIND, vecWMPUP, vecWMPDN );
@@ -44,9 +44,7 @@ semiinfvec = matWCENTER(matWDVELEMPIDX(end-1,:),:)-matWDVELEMP(matWDVELEMPIDX(en
 % matWCENTER(matWDVELEMPIDX(end,:),:) = matWDVELEMP(matWDVELEMPIDX(end,:),:)+semiinfvec;
 
 xsi0 = repmat(sqrt(semiinfvec(:,1).^2+semiinfvec(:,2).^2+semiinfvec(:,3).^2),1,3);
-fs = repmat(vecUINF,length(xsi0(:,1)),1);
-matWCENTER(matWDVELEMPIDX(end,:),:) = matWCENTER(matWDVELEMPIDX(end-1,:),:)+semiinfvec+fs.*xsi0;
-
+matWCENTER(matWDVELEMPIDX(end,:),:) = matWCENTER(matWDVELEMPIDX(end-1,:),:)+semiinfvec+matUINF(vecDVETE == 3).*xsi0;
 % crdvec(matWDVELEMPIDX(end,:),:) = crdvec(matWDVELEMPIDX(end-1,:),:);
 % spnvec(matWDVELEMPIDX(end,:),:) = spnvec(matWDVELEMPIDX(end-1,:),:);
 
@@ -63,7 +61,7 @@ oldestwake = reshape(matWDVELEMPIDX(end,:),[],1);
 secondoldestwake = reshape(matWDVELEMPIDX(end-1,:),[],1);
 WP1(oldestwake,:) = WP4(secondoldestwake,:);
 WP2(oldestwake,:) = WP3(secondoldestwake,:);
-timesteptranslate = repmat(vecUINF,length(oldestwake),1).*valDELTIME;
+timesteptranslate = matUINF(vecDVETE == 3,:)*valDELTIME;
 WP4(oldestwake,:) = WP1(oldestwake,:)+timesteptranslate;
 WP3(oldestwake,:) = WP2(oldestwake,:)+timesteptranslate;
 matWCENTER(oldestwake,:) = (WP1(oldestwake,:)+WP2(oldestwake,:)+WP3(oldestwake,:)+WP4(oldestwake,:))./4;

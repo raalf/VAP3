@@ -1,4 +1,4 @@
-function [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, vecUINF, valWNELE, matWDVE, ...
+function [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
     matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
     vecWDVETESWP, vecSYM, valWSIZE, flagTRI)
 % Resultant
@@ -11,13 +11,13 @@ vecR = zeros(valNELE*3,1);
 
 if valTIMESTEP < 1;
     % Flow tangency at control points goes at the bottom of the resultant
-    vecR(end-(len-1):end) = (4*pi).*dot(repmat(vecUINF,len,1), matDVENORM,2);    
+    vecR(end-(len-1):end) = (4*pi).*dot(matUINF, matDVENORM,2);    
 else
     [w_wake] = fcnWDVEVEL(matCENTER, valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, ...
         vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, vecSYM, valWSIZE, valTIMESTEP, flagTRI);
 
     % Including the wake-induced velocities,
-    vecR(end-(len-1):end) = (4*pi).*dot(repmat(vecUINF,len,1)+w_wake, matDVENORM,2);  
+    vecR(end-(len-1):end) = (4*pi).*dot(matUINF+w_wake, matDVENORM,2);  
 
 end
 

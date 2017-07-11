@@ -1,4 +1,4 @@
-function [inddrag]=fcnDVEINDDRAG(matCOEFF,matDVE,matVLST,vecUINF,vecDVEHVSPN,vecDVEHVCRD, vecDVETE,...
+function [inddrag]=fcnDVEINDDRAG(valNELE, matCOEFF,matDVE,matVLST,matUINF,vecDVEHVSPN, vecDVEHVCRD, vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
     valWSIZE, valTIMESTEP,vecSYM,vecDVEWING,vecWDVEWING, flagTRI)
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
@@ -48,7 +48,7 @@ tepoints(:,:,3) = (xte + s.*repmat(eta8,1,3)); %right ride
 % newest_row = [((valWNELE-valWSIZE)+1):1:valWNELE]';
 % if on same wing!
 % we won't use fcnWDVEVEL because we have to change the induced point for each
-% column of wake elements, and change dve type for current timestep to 1.
+% column of wake elements, and change dve type for current timestep to 1. 
 % So we will call fcnDVEVEL directly. So we have to set up all points/inducers
 
 %need to repmat te points to get each tepoint numte times (induced)
@@ -99,8 +99,11 @@ wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
     delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
 % end
 %project into freestream direction
-temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
-tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
+% temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
+% tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
+tempUINF = matUINF(idte,:);
+temps = dot(delx, repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]), 2);
+tempb = repmat(temps,1,3,1).*repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]);
 
 % original te point - tempb should be new te point
 newtepoint = tepoints - tempb;
@@ -179,11 +182,9 @@ w_total = permute(reshape(w_ind,[],3,3),[1 3 2]);
 
 %add up influence of every dve on each point (every WSIZE value corresponds
 %to the ind. vel on one point
-
-
-w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', (valWSIZE)*3, [])',1),3,[])';
-w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', (valWSIZE)*3, [])',1),3,[])';
-w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', (valWSIZE)*3, [])',1),3,[])';
+w_wake(:,:,1) = reshape(sum(reshape(w_total(:,:,1)', valWSIZE*3, [])',1),3,[])';
+w_wake(:,:,2) = reshape(sum(reshape(w_total(:,:,2)', valWSIZE*3, [])',1),3,[])';
+w_wake(:,:,3) = reshape(sum(reshape(w_total(:,:,3)', valWSIZE*3, [])',1),3,[])';
 
 % if flagTRI == 1
 %    w_wake = w_wake(1:end/2,:,:) + w_wake((end/2)+1:end,:,:);
@@ -210,8 +211,8 @@ tempr = tempa.*repmat(permute(gamma,[1 3 2]),[1,3,1]);
 % R2 = tempa(:,:,3).*repmat(gamma(:,3),1,3);
 
 % simpsons rule:
-R(:,:)  = (tempr(:,:,1)+4.*tempr(:,:,2)+tempr(:,:,3)).*repmat(eta8,[1 3])./3;
-% R(:,:)  = (R1(:,:)+4*Ro(:,:)+R2(:,:)).*repmat(eta8,1,3)./3;
+R(:,:)  = (tempr(:,:,1)+4.*tempr(:,:,2)+tempr(:,:,3)).*repmat(eta8,[1 3])./3;	
+% R(:,:)  = (R1(:,:)+4*Ro(:,:)+R2(:,:)).*repmat(eta8,1,3)./3;	
 
 % plus overhanging parts:
 R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDVEHVSPN(idte)-eta8,[1 3])./3);
@@ -226,6 +227,8 @@ R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDV
 % R(:,2) = R(:,2)+((7.*R1(:,2)-8.*Ro(:,2)+7.*R2(:,2)).*(vecDVEHVSPN(idte)-eta8)./3); %//Ry
 % R(:,3) = R(:,3)+((7.*R1(:,3)-8.*Ro(:,3)+7.*R2(:,3)).*(vecDVEHVSPN(idte)-eta8)./3); %//Rz
 %% FORCES
-inddrag(:,1) = dot(R,repmat(vecUINF,size(R,1),1),2);
+% inddrag(:,1) = dot(R,repmat(matUINF,size(R,1),1),2);
+inddrag = zeros(valNELE,1);
+inddrag(idte,1) = dot(R,matUINF(idte,:),2);
 
 end %end function

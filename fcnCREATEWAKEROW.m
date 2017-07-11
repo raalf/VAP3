@@ -14,7 +14,7 @@ matWCENTER(end+1:end+len,:) = mean(matNEWWAKE,3);
 % Getting wake parameter values from fcnDVECORNER2PARAM
 [wdve_eta, vecWDVEHVCRD(end+1:end+len,1), vecWDVEROLL(end+1:end+len,1), vecWDVEPITCH(end+1:end+len,1), vecWDVEYAW(end+1:end+len,1), vecWDVELESWP(end+1:end+len,1), vecWDVEMCSWP(end+1:end+len,1), vecWDVETESWP(end+1:end+len,1), ...
     vecWDVEAREA(end+1:end+len,1), matWDVENORM(end+1:end+len,1:3), ...
-    newvertices, newdves, ~] = fcnDVECORNER2PARAM(mean(matNEWWAKE,3), matNEWWAKE(:,:,1), matNEWWAKE(:,:,2), matNEWWAKE(:,:,3), matNEWWAKE(:,:,4));
+    newvertices, newdves, ~] = fcnDVECORNER2PARAM(mean(matNEWWAKE,3), matNEWWAKE(:,:,1), matNEWWAKE(:,:,2), matNEWWAKE(:,:,3), matNEWWAKE(:,:,4), vecWDVEWING);
 
 valWNELE = valWNELE + len;
 
