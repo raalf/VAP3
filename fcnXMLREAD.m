@@ -4,8 +4,8 @@ function [...
     vecVEHFPA, vecVEHTRK, vecWINGS, vecWINGINCID, vecAREA, vecSPAN, vecCMAC, vecWINGM, ...
     vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
     vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, matROTORHUB, vecROTORAXIS, vecROTORBLADES,...
-    vecROTORM, vecROTOR, vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
-    ] = fcnXMLREAD(filename)
+    vecROTORM, vecROTOR, vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG,...
+    vecVEHRADIUS] = fcnXMLREAD(filename)
 
 % clc
 % clear
@@ -66,6 +66,8 @@ vecVEHROLL = nan(valVEHICLES,1);
 vecVEHFPA = nan(valVEHICLES,1);
 vecVEHTRK = nan(valVEHICLES,1);
 
+vecVEHRADIUS = nan(valVEHICLES,1);
+
 vecWINGS = nan(valVEHICLES,1);
 vecROTORS = nan(valVEHICLES,1);
 vecFUSELAGES = nan(valVEHICLES,1);
@@ -117,6 +119,8 @@ for i = 1:valVEHICLES
     vecVEHROLL(i,1) = str2double(veh.roll.Text);
     vecVEHFPA(i,1) = str2double(veh.fpa.Text);
     vecVEHTRK(i,1) = str2double(veh.trk.Text);
+    
+    try vecVEHRADIUS(i,1) = str2double(veh.radius.Text); end
     
     try vecWINGS(i,1) = max(size(veh.wing)); catch; vecWINGS(i,1) = 0; end
     try vecROTORS(i,1) = max(size(veh.rotor)); catch; vecROTORS(i,1) = 0; end

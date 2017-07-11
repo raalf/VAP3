@@ -30,22 +30,22 @@ disp(' ');
 % filename = 'inputs/StandardCirrusSym.vap';
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/StandardCirrusTail2.vap';
-filename = 'inputs/XMLtest.vap';
-% filename = 'inputs/twoVehicles.vap';
+% filename = 'inputs/XMLtest.vap';
+filename = 'inputs/twoVehicles.vap';
 
 [flagRELAX, flagSTEADY, flagTRI, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
     vecVEHFPA, vecVEHTRK, ~, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
     ~, vecSYM, vecN, vecM, ~, ~, ~, ~, ...
     vecSURFACEVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, matROTORHUB, matROTORAXIS, vecROTORBLADES, ~, vecROTOR,...
-    vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
+    vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 1
-vecVEHFPA = 0
-vecVEHTRK = 0
-
-flagRELAX = 0
+% For debugging:
+% valMAXTIME = 1
+% vecVEHFPA = 0
+% vecVEHTRK = 0
+% flagRELAX = 0
 
 seqALPHA = 0;
 seqBETA = 0;
