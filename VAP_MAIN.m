@@ -42,7 +42,7 @@ filename = 'inputs/twoVehicles.vap';
     ] = fcnXMLREAD(filename);
 
 % For debugging:
-% valMAXTIME = 1
+valMAXTIME = 10
 % vecVEHFPA = 0
 % vecVEHTRK = 0
 % flagRELAX = 0
@@ -54,7 +54,7 @@ flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
 flagGIF = 0;
-flagPREVIEW = 0;
+flagPREVIEW = 1;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
@@ -73,7 +73,7 @@ matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)
     vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
 
 
-% Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
+% % Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
 vecDVEVEHICLE = vecSURFACEVEHICLE(vecDVESURFACE);
 vecDVEWING = vecDVESURFACE;
 
@@ -104,7 +104,7 @@ vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
 
-[ matVEHUVW, matVEHROT, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK );
+[ matVEHUVW, matVEHROT, matVEHROTRATE, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS );
 [ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUBGLOB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, vecROTORVEH);
 
 [ matUINF ] = fcnINITUINF( matCENTER0, matVEHUVW, matVEHROT, vecDVEVEHICLE, ...
