@@ -1,4 +1,4 @@
-% clc
+clc
 clear
 % delete('size.txt');
 
@@ -36,19 +36,17 @@ filename = 'inputs/twoVehicles.vap';
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
     vecVEHFPA, vecVEHTRK, ~, vecWINGTRI, vecWAKETRI, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
-    ~, vecSYM, vecN, vecM, ~, ~, ~, ~, ...
+    ~, vecSYM, vecN, vecM, ~, ~, ~, vecPANELWING, ...
     vecSURFACEVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, matROTORHUB, matROTORAXIS, vecROTORBLADES, ~, vecROTOR,...
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS...
     ] = fcnXMLREAD(filename);
 
 % For debugging:
-valMAXTIME = 100
+% valMAXTIME = 1
 % vecVEHFPA = 0
 % vecVEHTRK = 0
 
-
 flagRELAX = 0;
-
 flagTRI = 0;
 
 flagPRINT   = 1;
@@ -66,11 +64,89 @@ flagVERBOSE = 0;
 % tranlsate matGEOM to vehicle origin
 matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
 
-[matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
-    vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
-    matVLST0, matNPVLST0, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM);
+valWINGS = length(vecWINGTRI);
 
+matCENTER0 = [];
+vecDVEHVSPN = [];
+vecDVEHVCRD = [];
+vecDVELESWP = [];
+vecDVEMCSWP = [];
+vecDVETESWP = [];
+vecDVEROLL = [];
+vecDVEPITCH = [];
+vecDVEYAW = [];
+vecDVEAREA = [];
+matDVENORM = [];
+matVLST0 = [];
+matNTVLST0 = [];
+matNPVLST0 = [];
+matDVE = [];
+valNELE = 0;
+matADJE = [];
+vecDVESYM = [];
+vecDVETIP = [];
+vecDVESURFACE = [];
+vecDVELE = [];
+vecDVETE = [];
+vecDVEPANEL = [];
+matPANELTE = [];
+
+
+for i = 1:valWINGS
+    
+    panels = length(nonzeros(vecPANELWING == i));    
+    
+    if isnan(vecWINGTRI(i))
+        [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
+            tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
+            tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
+            tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, tvecDVEPANEL, tmatNPVLST0, tmatPANELTE] = ...
+            fcnGENERATEDVES(panels, matGEOM(:,:,(vecPANELWING == i)), vecSYM(vecPANELWING == i), vecN(vecPANELWING == i), vecM(vecPANELWING == i));
+    else
+       
+        [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
+            tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
+            tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
+            tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, ...
+            tvecDVEPANEL, tmatNPVLST0, vecM(vecPANELWING == i,1), vecN(vecPANELWING == i), tmatPANELTE] = ...
+            fcnGENERATEDVESTRI(panels, matGEOM(:,:,(vecPANELWING == i)), vecSYM(vecPANELWING == i), vecN(vecPANELWING == i), vecM(vecPANELWING == i));
+        
+    end
+    
+    matCENTER0 = [matCENTER0; tmatCENTER0];
+    vecDVEHVSPN = [vecDVEHVSPN; tvecDVEHVSPN];
+    vecDVEHVCRD = [vecDVEHVCRD; tvecDVEHVCRD];
+    vecDVELESWP = [vecDVELESWP; tvecDVELESWP];
+    vecDVEMCSWP = [vecDVEMCSWP; tvecDVEMCSWP];
+    vecDVETESWP = [vecDVETESWP; tvecDVETESWP];
+    vecDVEROLL = [vecDVEROLL; tvecDVEROLL];
+    vecDVEPITCH = [vecDVEPITCH; tvecDVEPITCH];
+    vecDVEYAW = [vecDVEYAW; tvecDVEYAW];
+    vecDVEAREA = [vecDVEAREA; tvecDVEAREA];
+    matDVENORM = [matDVENORM; tmatDVENORM];
+
+%     valNELE = [valNELE; tvalNELE];
+
+    vecDVESYM = [vecDVESYM; tvecDVESYM];
+    vecDVETIP = [vecDVETIP; tvecDVETIP];
+    vecDVESURFACE = [vecDVESURFACE; tvecDVESURFACE];
+    vecDVELE = [vecDVELE; tvecDVELE];
+    vecDVETE = [vecDVETE; tvecDVETE];
+    vecDVEPANEL = [vecDVEPANEL; tvecDVEPANEL];
+    matPANELTE = [matPANELTE; tmatPANELTE];
+    
+    valNELE = valNELE + tvalNELE;
+    
+    dveoffset = size(matVLST0,1);
+    matDVE = [matDVE; tmatDVE + dveoffset];
+    matVLST0 = [matVLST0; tmatVLST0];
+    matNTVLST0 = [matNTVLST0; tmatNTVLST0];
+    matNPVLST0 = [matNPVLST0; tmatNPVLST0];
+    
+    tmatADJE = [tmatADJE(:,1) + dveoffset tmatADJE(:,2) tmatADJE(:,3) + dveoffset tmatADJE(:,4)];
+    matADJE = [matADJE; tmatADJE];
+        
+end
 
 % % Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
 vecDVEVEHICLE = vecSURFACEVEHICLE(vecDVESURFACE);
@@ -109,13 +185,12 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 [ matUINF ] = fcnINITUINF( matCENTER0, matVEHUVW, matVEHROT, vecDVEVEHICLE, ...
     vecDVEROTOR, vecROTORVEH, matVEHORIG, matROTORHUBGLOB, matROTORAXIS, vecROTORRPM );
 
-
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
-% [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0,matFUSEGEOM);
+[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0, []);
 
 %%
 % valWSIZE = length(nonzeros(vecDVETE.*(vecDVEWING > 0))); % Amount of wake DVEs shed each timestep

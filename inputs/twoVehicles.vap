@@ -262,6 +262,7 @@
 			<incidence>0</incidence>
 			<trimable>TRUE</trimable>
             <waketri>TRUE</waketri>
+            <surfacetri>TRUE</surfacetri>
 
 			<M>1</M>
 

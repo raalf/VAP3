@@ -1,7 +1,7 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, vecM, vecN, matPANELTE] = fcnGENERATEDVESTRI(valPANELS, matGEOM, vecSYM, vecN, vecM)
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matNPVLST, vecM, vecN, matPANELTE] = fcnGENERATEDVESTRI(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -75,7 +75,7 @@ vecEnd      = cumsum(vecN.*vecM.*4);
 
 
 %% Assign Wing to Panel
-panelEdges = reshape(permute(matGEOM,[1 3 2]),[],5);
+panelEdges = reshape(permute(matGEOM,[1 3 2]),[],6);
 [~,tempB,tempC] = unique(panelEdges,'rows','stable');
 panelEdgesIdx = reshape(tempC,2,[])';
 edge2wing = [(1:length(tempB))',nan(length(tempB),1)];
