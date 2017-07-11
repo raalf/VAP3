@@ -41,10 +41,16 @@ filename = 'inputs/twoVehicles.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS...
     ] = fcnXMLREAD(filename);
 
+vecWINGTRI(~isnan(vecWINGTRI)) = nan;
+vecWAKETRI(~isnan(vecWAKETRI)) = nan;
+
 % For debugging:
-% valMAXTIME = 1
+valMAXTIME = 100
 % vecVEHFPA = 0
 % vecVEHTRK = 0
+% vecVEHTRK = 0
+% flagRELAX = 0
+% vecVEHVINF = [100;100]
 
 flagRELAX = 0;
 flagTRI = 0;
@@ -137,8 +143,9 @@ for i = 1:valWINGS
     
     valNELE = valNELE + tvalNELE;
     
-    dveoffset = size(matVLST0,1);
-    matDVE = [matDVE; tmatDVE + dveoffset];
+    vlstoffset = size(matVLST0,1);
+    dveoffset = size(matDVE,1);
+    matDVE = [matDVE; tmatDVE + vlstoffset];
     matVLST0 = [matVLST0; tmatVLST0];
     matNTVLST0 = [matNTVLST0; tmatNTVLST0];
     matNPVLST0 = [matNPVLST0; tmatNPVLST0];
@@ -178,19 +185,20 @@ vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
 
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
-
-[ matVEHUVW, matVEHROT, matVEHROTRATE, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS );
+[ matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, matVEHORIG, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS );
 [ matVLST0, matCENTER0, matFUSEGEOM, matROTORHUBGLOB] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, vecROTORVEH);
 
 [ matUINF ] = fcnINITUINF( matCENTER0, matVEHUVW, matVEHROT, vecDVEVEHICLE, ...
     vecDVEROTOR, vecROTORVEH, matVEHORIG, matROTORHUBGLOB, matROTORAXIS, vecROTORRPM );
+
 
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
-[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0, []);
+
+% [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0, []);
 
 %%
 % valWSIZE = length(nonzeros(vecDVETE.*(vecDVEWING > 0))); % Amount of wake DVEs shed each timestep
@@ -291,6 +299,7 @@ for ai = 1:length(seqALPHA)
                 matVLST, matCENTER, ...
                 matNEWWAKE, matNPNEWWAKE, ...
                 matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
+                matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
                 valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
                 vecDVETE, matNPVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
                 matVEHROT, vecROTORVEH, matROTORHUBGLOB, ...

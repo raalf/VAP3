@@ -1,11 +1,12 @@
 function [matUINF, matUINFTE, matVEHORIG, ...
     matVLST, matCENTER, ...
     matNEWWAKE, matNPNEWWAKE, ...
-    matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
+    matFUSEGEOM] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
+    matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
     valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
     vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
     matVEHROT, vecROTORVEH, matROTORHUBGLOB, ...
-    matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM)
+    matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM )
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
@@ -23,7 +24,7 @@ function [matUINF, matUINFTE, matVEHORIG, ...
 %   matVLST - New vertex list with moved points
 %   matCENTER - New in-center list with moved points
 %   matNEWWAKE - Outputs a 4 x 3 x n matrix of points for the wake DVE generation
-
+valVEHICLES = length(matVEHUVW(:,1));
 
 % pre-calculate rad per timestep of rotors
 vecROTORRADPS = vecROTORRPM.*2.*pi./60;
@@ -57,11 +58,6 @@ matFUSEGEOM = matFUSEGEOM + matFUSETRANS;
 
 
 
-
-
-
-
-
 % matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
 matUINFVEH = -matVEHUVW(vecDVEVEHICLE,:);
@@ -80,6 +76,48 @@ matNPNEWWAKE(:,:,3) = matNTVLST(matDVE(vecDVETE>0,3),:);
 matVLST = matVLST + matVLSTTRANS;
 matCENTER = matCENTER + matDVETRANS;
 matNTVLST = matNTVLST + matVLSTTRANS;
+
+
+% Circling Flight
+% "backtrack" the UVW translation from previous lines of code, and apply the circling instead
+for n = 1:valVEHICLES
+   if ~isnan(vecVEHRADIUS(n)) == 1
+        idxDVEVEH = vecDVEVEHICLE == n;
+        idxVLSTVEH = unique(matDVE(idxDVEVEH,:));
+        idxFUSEVEH = vecFUSEVEHICLE == n;
+        
+        matVLST(idxVLSTVEH,1:2)   = matVLST(idxVLSTVEH,1:2)   - matVLSTTRANS(idxVLSTVEH,1:2);
+        matNTVLST(idxVLSTVEH,1:2) = matNTVLST(idxVLSTVEH,1:2) - matVLSTTRANS(idxVLSTVEH,1:2);
+        matCENTER(idxDVEVEH,1:2)  = matCENTER(idxDVEVEH,1:2)  - matDVETRANS(idxDVEVEH,1:2);
+        matFUSEGEOM(:,:,1:2,idxFUSEVEH) = matFUSEGEOM(:,:,1:2,idxFUSEVEH) + matFUSETRANS(:,:,1:2,idxFUSEVEH);
+
+        % reposition to vecCIRORIG to rotate the vehicle
+        matVLST(idxVLSTVEH,1:2)   = matVLST(idxVLSTVEH,1:2)   - matCIRORIG(n,1:2);
+        matNTVLST(idxVLSTVEH,1:2) = matNTVLST(idxVLSTVEH,1:2) - matCIRORIG(n,1:2);
+        matCENTER(idxDVEVEH,1:2)  = matCENTER(idxDVEVEH,1:2)  - matCIRORIG(n,1:2);
+%         matFUSEGEOM(:,:,1:2,idxFUSEVEH) = matFUSEGEOM(:,:,1:2,idxFUSEVEH) + matCIRORIG(n,1:2);
+        
+        % rotate(YAW) vehicle by matVEHROTRATE(n,3)*valDELTIME
+        dcmVEHSTEP = angle2dcm(-matVEHROTRATE(n,3)*valDELTIME,0,0,'ZXY');
+        
+        matVLST(idxVLSTVEH,:)   = matVLST(idxVLSTVEH,:)   * dcmVEHSTEP;
+        matNTVLST(idxVLSTVEH,:) = matNTVLST(idxVLSTVEH,:) * dcmVEHSTEP;
+        matCENTER(idxDVEVEH,:)  = matCENTER(idxDVEVEH,:)  * dcmVEHSTEP;
+        
+        % 
+        matVLST(idxVLSTVEH,1:2)   = matVLST(idxVLSTVEH,1:2)   + matCIRORIG(n,1:2);
+        matNTVLST(idxVLSTVEH,1:2) = matNTVLST(idxVLSTVEH,1:2) + matCIRORIG(n,1:2);
+        matCENTER(idxDVEVEH,1:2)  = matCENTER(idxDVEVEH,1:2)  + matCIRORIG(n,1:2);
+%       matVEHROTRATE(n,:)
+%       matCIRORIG(n,:)
+   end
+end
+
+
+
+
+
+
 
 % Rotate Rotors
 valROTORS = length(vecROTORVEH);
