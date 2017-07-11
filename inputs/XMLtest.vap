@@ -39,9 +39,9 @@
 
 			<M>1</M>
 
-			<xwingorig>0</xwingorig>
-			<ywingorig>0</ywingorig>
-			<zwingorig>0</zwingorig>
+			<xorig>0</xorig>
+			<yorig>0</yorig>
+			<zorig>0</zorig>
 
 			<panel>		
 				<symmetry>0</symmetry>

@@ -136,7 +136,7 @@ for i = 1:valVEHICLES
         
         vecWINGM(k,1) = str2double(win.M.Text);
         
-        try matWINGORIG(k,:) = [str2double(win.xwingorig.Text) str2double(win.ywingorig.Text) str2double(win.zwingorig.Text)];
+        try matWINGORIG(k,:) = [str2double(win.xorig.Text) str2double(win.yorig.Text) str2double(win.zorig.Text)];
         catch; matWINGORIG(k,:) = [0 0 0]; end
         
         vecPANELS(k,1) = max(size(win.panel));

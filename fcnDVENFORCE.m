@@ -84,7 +84,7 @@ for i = 1:max(vecDVEVEHICLE)
     spandir(vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(matVEHROT(i,3), matVEHROT(i,1), matVEHROT(i,2),'ZXY'),length(nonzeros(vecDVEVEHICLE == i)),1);
 end
 
-Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
+% Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
 el = cross(matUINF,spandir,2);
 
 % the side force direction eS=UxeL/|UxeL|
