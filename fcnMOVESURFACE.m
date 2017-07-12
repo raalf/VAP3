@@ -1,12 +1,12 @@
 function [matUINF, matUINFTE, matVEHORIG, ...
     matVLST, matCENTER, ...
     matNEWWAKE, matNPNEWWAKE, ...
-    matFUSEGEOM] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
+    matFUSEGEOM, matNEWWAKEPANEL] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
     matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
     valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
     vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
     matVEHROT, vecROTORVEH, matROTORHUBGLOB, ...
-    matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM )
+    matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE)
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
@@ -24,6 +24,13 @@ function [matUINF, matUINFTE, matVEHORIG, ...
 %   matVLST - New vertex list with moved points
 %   matCENTER - New in-center list with moved points
 %   matNEWWAKE - Outputs a 4 x 3 x n matrix of points for the wake DVE generation
+
+% Saving panel corner points, this helps with triangular wake generation
+matNEWWAKEPANEL = zeros(size(matPANELTE,1),3,4);
+matNEWWAKEPANEL(:,:,3) = matVLST(matPANELTE(:,2),:);
+matNEWWAKEPANEL(:,:,4) = matVLST(matPANELTE(:,1),:);
+
+
 valVEHICLES = length(matVEHUVW(:,1));
 
 % pre-calculate rad per timestep of rotors
@@ -113,12 +120,6 @@ for n = 1:valVEHICLES
    end
 end
 
-
-
-
-
-
-
 % Rotate Rotors
 valROTORS = length(vecROTORVEH);
 for n = 1:valROTORS
@@ -168,7 +169,6 @@ for n = 1:valROTORS
     matUINFROTOR(idxDVEROTOR,:) = tempROTORUINF;
 end
 
-
 % combine matUINFROTOR and matUINFVEH
 matUINF = matUINFROTOR + matUINFVEH;
 
@@ -179,3 +179,6 @@ matNEWWAKE(:,:,2) = matVLST(matDVE(vecDVETE>0,3),:);
 % New non-planar trailing edge vertices (used to calculate matWADJE)
 matNPNEWWAKE(:,:,1) = matNTVLST(matDVE(vecDVETE>0,4),:);
 matNPNEWWAKE(:,:,2) = matNTVLST(matDVE(vecDVETE>0,3),:);
+
+matNEWWAKEPANEL(:,:,1) = matVLST(matPANELTE(:,1),:);
+matNEWWAKEPANEL(:,:,2) = matVLST(matPANELTE(:,2),:);

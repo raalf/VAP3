@@ -1,9 +1,9 @@
 function [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
     vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNTVLST, vecWDVEPANEL, ...
-    valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] = fcnCREATEWAKEROWTRI(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, ...
+    valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING, vecWDVETRI] = fcnCREATEWAKEROWTRI(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, ...
     vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, ...
     matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
-    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE, matNEWWAKEPANEL, vecN)
+    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE, matNEWWAKEPANEL, vecN, vecWDVETRI)
 
 matWAKEGEOM = cat(1, matWAKEGEOM, matNEWWAKE);
 matNPWAKEGEOM = cat(1, matNPWAKEGEOM, matNPNEWWAKE);
@@ -13,6 +13,8 @@ len = length(matNEWWAKE(:,1))*4;
 % Similar to GenerateDVESTRI
 panels = max(vecDVEPANEL);
 len = sum(vecN).*2;
+
+vecWDVETRI = [vecWDVETRI; ones(len,1)];
 
 P1          = nan(panels*2,3);
 P2          = nan(panels*2,3);
@@ -98,7 +100,7 @@ valWNELE = valWNELE + len;
 %% Assigning circulation values to wake DVEs
 % K_g = A + ((eta.^2)/3) * C
 if flagSTEADY == 1
-    vecWKGAM = repmat([reshape(repmat(matCOEFF(vecDVETE>0,1),1,2)',[],1) + ((wdve_eta.^2)./3).*reshape(repmat(matCOEFF(vecDVETE>0,3),1,2)',[],1)], valWNELE/(2*valWSIZE), 1);
+    vecWKGAM = repmat([reshape(repmat(matCOEFF(vecDVETE>0,1),1,2)',[],1) + ((wdve_eta.^2)./3).*reshape(repmat(matCOEFF(vecDVETE>0,3),1,2)',[],1)], valWNELE/(valWSIZE), 1);
 else %unsteady is incorrect
     vecWKGAM(end+1:end+len,1) = [repmat(matCOEFF(vecDVETE>0,1),2,1) + ((wdve_eta.^2)./3).*repmat(matCOEFF(vecDVETE>0,3),2,1)];
 end

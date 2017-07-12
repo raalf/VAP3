@@ -168,8 +168,8 @@ for i = 1:valPANELS
    xsi_vec = (P4(idxStart:idxEnd,:) - P1(idxStart:idxEnd,:) + P3(idxStart:idxEnd,:) - P2(idxStart:idxEnd,:))./2;
    matCENTER(idxStart:idxEnd,:) = ((P1(idxStart:idxEnd,:) + P2(idxStart:idxEnd,:))./2) + xsi_vec./2;
    
-   matPANELTE(i,:,1) = panel4corners(4,:); % Rear Left
-   matPANELTE(i,:,2) = panel4corners(3,:); % Rear Right
+    panelte(i,:,1) = panel4corners(4,:); % Rear Left
+    panelte(i,:,2) = panel4corners(3,:); % Rear Right
 
     clear LE_Left LE_Mid LE_Right TE_Right TE_Left ...
         imLEL imLER imTER imTEL ...
@@ -206,7 +206,9 @@ valNELE = sum(vecM.*vecN);
 
 [ matADJE, vecDVESYM, vecDVETIP, vecDVELE, vecDVETE ] = fcnDVEADJT( imP1, imP2, imP3, imP4, valNELE, vecDVEPANEL, vecSYM );
 
-
+% Getting the VLST idx of the trailing edge corner points for triangular wake creation
+[~,matPANELTE(:,1)] = ismember(panelte(:,:,1),matNPVLST,'rows');
+[~,matPANELTE(:,2)] = ismember(panelte(:,:,2),matNPVLST,'rows');
 
 
 end

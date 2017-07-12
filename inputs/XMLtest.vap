@@ -22,6 +22,9 @@
 
 		<vinf>1</vinf>
 
+		<surfacetri>TRUE</surfacetri>
+		<waketri>TRUE</waketri>
+
 		<alpha>15</alpha>
 		<beta>0</beta>
 		<roll>0</roll>

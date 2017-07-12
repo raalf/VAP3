@@ -3,7 +3,8 @@ function [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVE
     matADJE, vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE,...
     valWINGS,vecDVEVEHICLE, vecDVEWING, vecDVEROTOR, vecDVEROTORBLADE, matSURFACETYPE, vecROTORVEH, ...
     matFUSEGEOM, matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW,...
-    matROTORHUBGLOB, matUINF] = fcnGEOM2DVE(matGEOM, matVEHORIG, vecWINGTRI, vecN, vecM, vecPANELWING,...
+    matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI] = fcnGEOM2DVE(matGEOM, ...
+    matVEHORIG, vecWINGTRI, vecWAKETRI, vecN, vecM, vecPANELWING,...
     vecSYM, vecSURFACEVEHICLE, vecROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM)
@@ -37,11 +38,14 @@ vecDVELE = [];
 vecDVETE = [];
 vecDVEPANEL = [];
 matPANELTE = [];
+vecDVETRI = [];
 
+valWSIZETRI = 0;
+valWSIZE = 0;
 
 for i = 1:valWINGS
     
-    panels = length(nonzeros(vecPANELWING == i));    
+    panels = length(nonzeros(vecPANELWING == i));
     
     if isnan(vecWINGTRI(i))
         [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
@@ -49,8 +53,11 @@ for i = 1:valWINGS
             tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
             tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, tvecDVEPANEL, tmatNPVLST0, tmatPANELTE] = ...
             fcnGENERATEDVES(panels, matGEOM(:,:,(vecPANELWING == i)), vecSYM(vecPANELWING == i), vecN(vecPANELWING == i), vecM(vecPANELWING == i));
+        
+        vecDVETRI = [vecDVETRI; zeros(tvalNELE,1)];
+        
     else
-       
+        
         [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
             tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
             tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
@@ -58,8 +65,18 @@ for i = 1:valWINGS
             tvecDVEPANEL, tmatNPVLST0, vecM(vecPANELWING == i,1), vecN(vecPANELWING == i), tmatPANELTE] = ...
             fcnGENERATEDVESTRI(panels, matGEOM(:,:,(vecPANELWING == i)), vecSYM(vecPANELWING == i), vecN(vecPANELWING == i), vecM(vecPANELWING == i));
         
+        vecDVETRI = [vecDVETRI; ones(tvalNELE,1)];
+        
+        
     end
     
+    if isnan(vecWAKETRI(i))
+        valWSIZE = valWSIZE + sum(nonzeros(tvecDVETE > 0));
+    else
+        valWSIZETRI = valWSIZETRI + sum(nonzeros(tvecDVETE > 0))*2;
+    end
+    
+    valNELE = valNELE + tvalNELE;
     matCENTER0 = [matCENTER0; tmatCENTER0];
     vecDVEHVSPN = [vecDVEHVSPN; tvecDVEHVSPN];
     vecDVEHVCRD = [vecDVEHVCRD; tvecDVEHVCRD];
@@ -71,14 +88,11 @@ for i = 1:valWINGS
     vecDVEYAW = [vecDVEYAW; tvecDVEYAW];
     vecDVEAREA = [vecDVEAREA; tvecDVEAREA];
     matDVENORM = [matDVENORM; tmatDVENORM];
-
     vecDVESYM = [vecDVESYM; tvecDVESYM];
     vecDVETIP = [vecDVETIP; tvecDVETIP];
-
     vecDVELE = [vecDVELE; tvecDVELE];
     vecDVETE = [vecDVETE; tvecDVETE];
-    
-    valNELE = valNELE + tvalNELE;
+    matPANELTE = [matPANELTE; tmatPANELTE];
     
     if i == 1; surfaceoffset = 0; paneloffset = 0;
     else; surfaceoffset = max(vecDVESURFACE); paneloffset = max(vecDVEPANEL);
@@ -86,8 +100,6 @@ for i = 1:valWINGS
     
     vecDVESURFACE = [vecDVESURFACE; tvecDVESURFACE + surfaceoffset];
     vecDVEPANEL = [vecDVEPANEL; tvecDVEPANEL + paneloffset];
-    
-    matPANELTE = [matPANELTE; tmatPANELTE];
     
     vlstoffset = size(matVLST0,1);
     dveoffset = size(matDVE,1);
@@ -98,7 +110,7 @@ for i = 1:valWINGS
     
     tmatADJE = [tmatADJE(:,1) + dveoffset tmatADJE(:,2) tmatADJE(:,3) + dveoffset tmatADJE(:,4)];
     matADJE = [matADJE; tmatADJE];
-        
+    
 end
 
 
