@@ -12,7 +12,11 @@ function [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVE
 % tranlsate matGEOM to vehicle origin
 matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
 
-valWINGS = length(vecWINGTRI);
+
+vecPANELSURFACE = sort([vecPANELWING vecROTOR],2,'descend');
+vecPANELSURFACE = vecPANELSURFACE(:,1);
+
+valWINGS = max(vecPANELSURFACE);
 
 matCENTER0 = [];
 vecDVEHVSPN = [];
@@ -45,36 +49,36 @@ valWSIZE = 0;
 
 for i = 1:valWINGS
     
-    panels = length(nonzeros(vecPANELWING == i));
+    panels = length(nonzeros(vecPANELSURFACE == i));
     
-    if isnan(vecWINGTRI(i))
+%     if isnan(vecWINGTRI(i))
         [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
             tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
             tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
             tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, tvecDVEPANEL, tmatNPVLST0, tmatPANELTE] = ...
-            fcnGENERATEDVES(panels, matGEOM(:,:,(vecPANELWING == i)), vecSYM(vecPANELWING == i), vecN(vecPANELWING == i), vecM(vecPANELWING == i));
+            fcnGENERATEDVES(panels, matGEOM(:,:,(vecPANELSURFACE == i)), vecSYM(vecPANELSURFACE == i), vecN(vecPANELSURFACE == i), vecM(vecPANELSURFACE == i));
         
         vecDVETRI = [vecDVETRI; zeros(tvalNELE,1)];
         
-    else
+%     else
+%         
+%         [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
+%             tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
+%             tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
+%             tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, ...
+%             tvecDVEPANEL, tmatNPVLST0, vecM(vecPANELSURFACE == i,1), vecN(vecPANELSURFACE == i), tmatPANELTE] = ...
+%             fcnGENERATEDVESTRI(panels, matGEOM(:,:,(vecPANELSURFACE == i)), vecSYM(vecPANELSURFACE == i), vecN(vecPANELSURFACE == i), vecM(vecPANELSURFACE == i));
+%         
+%         vecDVETRI = [vecDVETRI; ones(tvalNELE,1)];
         
-        [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
-            tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
-            tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
-            tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, ...
-            tvecDVEPANEL, tmatNPVLST0, vecM(vecPANELWING == i,1), vecN(vecPANELWING == i), tmatPANELTE] = ...
-            fcnGENERATEDVESTRI(panels, matGEOM(:,:,(vecPANELWING == i)), vecSYM(vecPANELWING == i), vecN(vecPANELWING == i), vecM(vecPANELWING == i));
         
-        vecDVETRI = [vecDVETRI; ones(tvalNELE,1)];
-        
-        
-    end
+%     end
     
-    if isnan(vecWAKETRI(i))
-        valWSIZE = valWSIZE + sum(nonzeros(tvecDVETE > 0));
-    else
-        valWSIZETRI = valWSIZETRI + sum(nonzeros(tvecDVETE > 0))*2;
-    end
+%     if isnan(vecWAKETRI(i))
+
+%     else
+%         valWSIZETRI = valWSIZETRI + sum(nonzeros(tvecDVETE > 0))*2;
+%     end
     
     valNELE = valNELE + tvalNELE;
     matCENTER0 = [matCENTER0; tmatCENTER0];
@@ -156,6 +160,8 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
+
+valWSIZE = length(nonzeros(vecDVETE));
 
 end
 

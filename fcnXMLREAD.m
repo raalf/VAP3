@@ -78,6 +78,7 @@ matROTORHUB = [];
 vecROTORAXIS = [];
 vecROTORBLADES = [];
 vecROTORM = [];
+vecCOLLECTIVE = [];
 
 vecFTURB = [];
 vecFUSESECTIONS = [];
@@ -98,6 +99,9 @@ vecMtemp = [];
 vecSECTIONS = [];
 matSECTIONS = [];
 vecSECTIONPANEL = [];
+
+vecWINGTRI = [];
+vecWAKETRI = [];
 
 k = 1;
 kk = 1;
@@ -194,6 +198,8 @@ for i = 1:valVEHICLES
         
         vecROTORM(p,1) = floor(str2double(rot.M.Text));
         
+        try vecCOLLECTIVE(p,1) = str2double(rot.collective.Text); catch; vecCOLLECTIVE(p,1) = 0; end;
+        
         vecPANELS(k,1) = max(size(rot.panel));
         
         flip = 1;
@@ -212,7 +218,7 @@ for i = 1:valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) flip*str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) flip*str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) + vecCOLLECTIVE(p,1) i];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
