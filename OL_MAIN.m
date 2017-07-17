@@ -42,7 +42,7 @@ filename = 'inputs/simple_wing.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG...
     ] = fcnXMLREAD(filename);
 
-valMAXTIME = 3
+valMAXTIME = 1
 flagRELAX = 1
 
 seqALPHA = 0;
@@ -50,7 +50,7 @@ seqBETA = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagCIRCPLOT = 0;
+flagCIRCPLOT = 1;
 flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
@@ -253,6 +253,18 @@ for ai = 1:length(seqALPHA)
                 temp_WADJE = [matWADJE(idx,1) - (valTIMESTEP-1)*valWSIZE matWADJE(idx,2) matWADJE(idx,3) - (valTIMESTEP-1)*valWSIZE];
                 
                 [matWD, vecWR] = fcnWDWAKE([1:valWSIZE]', temp_WADJE, vecWDVEHVSPN(end-valWSIZE+1:end), vecWDVESYM(end-valWSIZE+1:end), vecWDVETIP(end-valWSIZE+1:end), vecWKGAM(end-valWSIZE+1:end));
+                
+                matWDxpand = zeros(valWNELE*2, valWNELE*4);
+
+                % Getting old column numbers and new column numbers
+                old_col = [1:valWNELE*2];
+                new_col = [1:2:valWNELE*2]-1;
+                new_col = old_col + reshape(repmat(new_col',1,2)',[],1)';
+                matWDxpand(:,new_col) = matWD;
+                [matWE] = fcnWEWAKE(valWNELE, matWADJE, vecWDVEHVCRD, vecWDVELE, vecWDVETE);
+                matWD = [matWDxpand; matWE];
+                vecWR = [vecWR; zeros(size(matWE,1),1)];
+                
                 [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
                 
                 %% Rebuilding and solving wing resultant
@@ -398,7 +410,7 @@ if flagPLOT == 1
             xsis = linspace(tt(1,1),tt(2,1))';
             circ = matCOEFF(i,5).*xsis.^2 + matCOEFF(i,4).*xsis + matCOEFF(i,1);
             
-            pt_loc = [linspace(tt(1,1),tt(2,1))' xsis circ];
+            pt_loc = [xsis linspace(tt(1,2),tt(2,2))' circ];
             
             len = size(circ,1);
             circ_glob = fcnSTARGLOB(pt_loc, repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1));
