@@ -26,13 +26,13 @@ disp(' ');
 
 % filename = 'inputs/2MotorGliders.vap';
 % filename = 'inputs/QuadRotor.vap';
-% filename = 'inputs/TMotor.vap';
+filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrusSym.vap';
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/StandardCirrusTail2.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
-filename = 'inputs/chinook.vap';
+% filename = 'inputs/chinook.vap';
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -43,7 +43,7 @@ filename = 'inputs/chinook.vap';
     ] = fcnXMLREAD(filename);
 
 % For debugging:
-valMAXTIME = 30
+valMAXTIME = 50
 % vecVEHFPA = 0
 % vecVEHTRK = 0
 % vecVEHTRK = 0
