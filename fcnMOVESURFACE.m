@@ -135,6 +135,9 @@ for n = 1:valROTORS
     
     tempROTORVLST = matVLST(idxVLSTROTOR,:);
     tempROTORVLST = tempROTORVLST - transGLOB2VEH;
+    
+    tempROTORNTVLST = matNTVLST(idxVLSTROTOR,:);
+    tempROTORNTVLST = tempROTORNTVLST - transGLOB2VEH;
        
     tempROTORCENTER = matCENTER(idxDVEROTOR,:);
     tempROTORCENTER = tempROTORCENTER - transGLOB2VEH;
@@ -142,29 +145,35 @@ for n = 1:valROTORS
         
     % transform rotor from global to hub plane
     tempROTORVLST = tempROTORVLST / dcmHUB2GLOB;
+    tempROTORNTVLST = tempROTORNTVLST / dcmHUB2GLOB;
     tempROTORCENTER = tempROTORCENTER / dcmHUB2GLOB;    
     
     % transform rotor from hub plane to xy plane
     tempROTORVLST = tempROTORVLST / dcmXY2HUB;
+    tempROTORNTVLST = tempROTORNTVLST / dcmXY2HUB;
     tempROTORCENTER = tempROTORCENTER / dcmXY2HUB;
 
     % timestep rotor in local XY hub plane
     tempROTORVLST = tempROTORVLST * dcmROTORSTEP;
+    tempROTORNTVLST = tempROTORNTVLST * dcmROTORSTEP;
     tempROTORCENTER = tempROTORCENTER * dcmROTORSTEP;
     tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);    
     
     % transform rotor from xy plane to hub plane
     tempROTORVLST = tempROTORVLST * dcmXY2HUB;
+    tempROTORNTVLST = tempROTORNTVLST * dcmXY2HUB;
     tempROTORCENTER = tempROTORCENTER * dcmXY2HUB;
     tempROTORUINF = tempROTORUINF * dcmXY2HUB;
     
     % transform rotor from hub plane to global
     tempROTORVLST = tempROTORVLST * dcmHUB2GLOB;
+    tempROTORNTVLST = tempROTORNTVLST * dcmHUB2GLOB;
     tempROTORCENTER = tempROTORCENTER * dcmHUB2GLOB;
     tempROTORUINF = tempROTORUINF * dcmHUB2GLOB;
     
     % write rotated rotor to matVLST
     matVLST(idxVLSTROTOR,:) = tempROTORVLST + transGLOB2VEH;
+    matNTVLST(idxVLSTROTOR,:) = tempROTORNTVLST + transGLOB2VEH;
     matCENTER(idxDVEROTOR,:) = tempROTORCENTER + transGLOB2VEH;
     matUINFROTOR(idxDVEROTOR,:) = tempROTORUINF;
 end
