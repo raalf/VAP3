@@ -152,8 +152,8 @@ for i = 1:valPANELS
     imP3(idxStart:idxEnd,:) = reshape(permute(imTER, [2 1 3]),count,3);
     imP4(idxStart:idxEnd,:) = reshape(permute(imTEL, [2 1 3]),count,3);
     
-    panelte(i,:,1) = panel4corners(4,:); % Rear Left
-    panelte(i,:,2) = panel4corners(3,:); % Rear Right
+    panelte(i,:,1) = impanel4corners(4,:); % Rear Left
+    panelte(i,:,2) = impanel4corners(3,:); % Rear Right
     
     clear LE_Left LE_Mid LE_Right TE_Right TE_Left ...
         imLEL imLER imTER imTEL ...
@@ -172,7 +172,8 @@ end
 
 
 %% Create nonplaner VLST
-nonplanerVLST = [P1;P2;P3;P4];
+% nonplanerVLST = [P1;P2;P3;P4];
+nonplanerVLST = [imP1; imP2; imP3; imP4];
 matNPVLST = nonplanerVLST(idxVLST,:);
 
 %% Solve ADJT DVE
