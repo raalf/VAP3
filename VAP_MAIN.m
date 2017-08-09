@@ -26,13 +26,15 @@ disp(' ');
 
 % filename = 'inputs/2MotorGliders.vap';
 % filename = 'inputs/QuadRotor.vap';
-filename = 'inputs/TMotor.vap';
+% filename = 'inputs/TMotor.vap';
 % filename = 'inputs/StandardCirrusSym.vap';
 % filename = 'inputs/StandardCirrus.vap';
 % filename = 'inputs/StandardCirrusTail2.vap';
 % filename = 'inputs/XMLtest.vap';
 % filename = 'inputs/twoVehicles.vap';
 % filename = 'inputs/chinook.vap';
+% filename = 'inputs/simple-wing.vap';
+filename = 'inputs/test1.vap';
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -42,20 +44,13 @@ filename = 'inputs/TMotor.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS...
     ] = fcnXMLREAD(filename);
 
-% For debugging:
-valMAXTIME = 50
-% vecVEHFPA = 0
-% vecVEHTRK = 0
-% vecVEHTRK = 0
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
-
-flagRELAX = 1;
 flagTRI = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagCIRCPLOT = 0;
+flagCIRCPLOT = 1;
 flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
@@ -76,7 +71,7 @@ flagVERBOSE = 0;
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
-[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST0, matCENTER0, []);
+[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0, []);
 
 %% Add boundary conditions to D-Matrix
 
@@ -91,6 +86,7 @@ flagVERBOSE = 0;
 
 seqALPHA = 0;
 seqBETA = 0;
+
 % Preallocating for a turbo-boost in performance
 vecCL = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
 vecCLF = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
@@ -366,9 +362,18 @@ if flagPLOT == 1
     %     [X,Y,Z] = meshgrid(mx,my,mz);
     %     fpg = unique([reshape(X,[],1) reshape(Y,[],1) reshape(Z,[],1)],'rows');
     %
-    %     q_ind = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
-    %         valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
-    %
+    
+    fpg = [matVLST(1,1)-2 0 0];
+        q_ind = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
+            valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI);
+        
+    q_ind = q_ind + matUINF(1,:)
+    alf = atan2d(q_ind(3),q_ind(1))
+    
+    hold on
+    quiver3(fpg(1), fpg(2), fpg(3), q_ind(1), q_ind(2), q_ind(3))
+    hold off
+        %
     %     % q_ind = s_ind;
     %     hFig20 = figure(20);
     %     clf(20);
