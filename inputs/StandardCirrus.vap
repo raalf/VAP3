@@ -2,10 +2,10 @@
 
 <VAP>
 	<settings>
-		<flagRELAX>FALSE</flagRELAX>
+		<flagRELAX>TRUE</flagRELAX>
 		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
-		<valMAXTIME>40</valMAXTIME>
+		<valMAXTIME>15</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
 		<valDELTIME>0.25</valDELTIME>
 		<valDELTAE>0</valDELTAE>
