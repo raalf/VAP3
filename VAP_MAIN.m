@@ -44,8 +44,8 @@ flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
 %% Discretizing geometry into DVEs
-[matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEROLL,...
-    vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, matVLST0, matNTVLST0, matNPVLST0, matDVE, valNELE,...
+[matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEROLL,...
+    vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, matVLST, matNTVLST, matNPVLST, matDVE, valNELE,...
     matADJE, vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE,...
     valWINGS,vecDVEVEHICLE, vecDVEWING, vecDVEROTOR, vecDVEROTORBLADE, matSURFACETYPE, vecROTORVEH, ...
     matFUSEGEOM, matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW,...
@@ -55,213 +55,188 @@ flagVERBOSE = 0;
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
-[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST0, matCENTER0, []);
+[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
 %% Add boundary conditions to D-Matrix
 [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
 
 %% Add kinematic conditions to D-Matrix
 [vecK] = fcnSINGFCT(valNELE, vecDVESURFACE, vecDVETIP, vecDVEHVSPN);
-[matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER0, matVLST0, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD,vecSYM);
+[matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD,vecSYM);
 
-%% Alpha Loop
-
-seqALPHA = 0;
-seqBETA = 0;
-
+%% Preparing to timestep
 % Preallocating for a turbo-boost in performance
-vecCL = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
-vecCLF = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
-vecCLI = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
-vecCDI = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
-vecE = nan(valMAXTIME,valVEHICLES,length(seqALPHA));
-toc
-for ai = 1:length(seqALPHA)
+vecCL = nan(valMAXTIME,valVEHICLES);
+vecCLF = nan(valMAXTIME,valVEHICLES);
+vecCLI = nan(valMAXTIME,valVEHICLES);
+vecCDI = nan(valMAXTIME,valVEHICLES);
+vecE = nan(valMAXTIME,valVEHICLES);
+
+% Initializing wake parameters
+matWAKEGEOM = [];
+matNPWAKEGEOM = [];
+vecWDVEHVSPN = [];
+vecWDVEHVCRD = [];
+vecWDVEROLL = [];
+vecWDVEPITCH = [];
+vecWDVEYAW = [];
+vecWDVELESWP = [];
+vecWDVEMCSWP = [];
+vecWDVETESWP = [];
+vecWDVEAREA = [];
+matWDVENORM = [];
+matWVLST = [];
+matWDVE = [];
+valWNELE = 0;
+matWCENTER = [];
+matWCOEFF = [];
+vecWK = [];
+matWADJE = [];
+vecWDVEPANEL = [];
+valLENWADJE = 0;
+vecWKGAM = [];
+vecWDVESYM = [];
+vecWDVETIP = [];
+vecWDVESURFACE = [];
+vecWDVETRI = [];
+
+% Building wing resultant
+[vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+    matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
+    vecWDVETESWP, vecSYM, valWSIZE, flagTRI);
+
+% Solving for wing coefficients
+[matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
+
+%% Timestepping
+for valTIMESTEP = 1:valMAXTIME
+    %% Timestep to solution
+    %   Move wing
+    %   Generate new wake elements
+    %   Create and solve WD-Matrix for new elements
+    %   Solve wing D-Matrix with wake-induced velocities
+    %   Solve entire WD-Matrix
+    %   Relaxation procedure (Relax, create W-Matrix and W-Resultant, solve W-Matrix)
+    %   Calculate surface normal forces
+    %   Calculate DVE normal forces
+    %   Calculate induced drag
+    %   Calculate cn, cl, cy, cdi
+    %   Calculate viscous effects
     
-    valALPHA = deg2rad(seqALPHA(ai));
+    %% Moving the vehicles
     
-    % This is done for when we are using a parfor loop
-    matCENTER = matCENTER0;
-    matVLST = matVLST0;
-    matNPVLST = matNPVLST0;
+    [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
+        matFUSEGEOM, matNEWWAKEPANEL] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
+        valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNPVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
+        matVEHROT, vecROTORVEH, matROTORHUBGLOB, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE);
     
-    for bi = 1:length(seqBETA)
+    %% Generating new wake elements
+    
+    idxtri = vecDVETRI == 1;
+    widxtri = vecWDVETRI == 1;
+    
+    [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
+        vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVESURFACE] ...
+        = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
+        vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNPVLST, vecDVEPANEL, ...
+        vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVESURFACE, flagSTEADY, valWSIZE);
+    
+
+    if flagPREVIEW ~= 1
+        %% Creating and solving WD-Matrix for latest row of wake elements
+        % We need to grab from matWADJE only the values we need for this latest row of wake DVEs
+        idx = sparse(sum(ismember(matWADJE,[((valWNELE - valWSIZE) + 1):valWNELE]'),2)>0 & (matWADJE(:,2) == 4 | matWADJE(:,2) == 2));
+        temp_WADJE = [matWADJE(idx,1) - (valTIMESTEP-1)*valWSIZE matWADJE(idx,2) matWADJE(idx,3) - (valTIMESTEP-1)*valWSIZE];
         
-        fprintf('      ANGLE OF ATTACK = %0.3f DEG\n',seqALPHA(ai));
-        fprintf('    ANGLE OF SIDESLIP = %0.3f DEG\n',seqBETA(bi));
-        fprintf('\n');
+        [matWD, vecWR] = fcnWDWAKE([1:valWSIZE]', temp_WADJE, vecWDVEHVSPN(end-valWSIZE+1:end), vecWDVESYM(end-valWSIZE+1:end), vecWDVETIP(end-valWSIZE+1:end), vecWKGAM(end-valWSIZE+1:end));
+        [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
         
-        valBETA = deg2rad(seqBETA(bi));
-        
-        % Determining freestream vector
-        vecUINF = fcnUINFWING(valALPHA, valBETA);
-        
-        % Initializing wake parameters
-        matWAKEGEOM = [];
-        matNPWAKEGEOM = [];
-        vecWDVEHVSPN = [];
-        vecWDVEHVCRD = [];
-        vecWDVEROLL = [];
-        vecWDVEPITCH = [];
-        vecWDVEYAW = [];
-        vecWDVELESWP = [];
-        vecWDVEMCSWP = [];
-        vecWDVETESWP = [];
-        vecWDVEAREA = [];
-        matWDVENORM = [];
-        matWVLST = [];
-        matWDVE = [];
-        valWNELE = 0;
-        matWCENTER = [];
-        matWCOEFF = [];
-        vecWK = [];
-        matWADJE = [];
-        vecWDVEPANEL = [];
-        valLENWADJE = 0;
-        vecWKGAM = [];
-        vecWDVESYM = [];
-        vecWDVETIP = [];
-        vecWDVESURFACE = [];
-        vecWDVETRI = [];
-        
-        % Building wing resultant
-        [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+        %% Rebuilding and solving wing resultant
+        [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
             matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
             vecWDVETESWP, vecSYM, valWSIZE, flagTRI);
         
-        % Solving for wing coefficients
         [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
         
-        for valTIMESTEP = 1:valMAXTIME
-            %% Timestep to solution
-            %   Move wing
-            %   Generate new wake elements
-            %   Create and solve WD-Matrix for new elements
-            %   Solve wing D-Matrix with wake-induced velocities
-            %   Solve entire WD-Matrix
-            %   Relaxation procedure (Relax, create W-Matrix and W-Resultant, solve W-Matrix)
-            %   Calculate surface normal forces
-            %   Calculate DVE normal forces
-            %   Calculate induced drag
-            %   Calculate cn, cl, cy, cdi
-            %   Calculate viscous effects
+        %% Creating and solving WD-Matrix
+        [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
+        [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
+        
+        %% Relaxing wake
+        if valTIMESTEP > 2 && flagRELAX == 1
             
-            %% Moving the vehicles
+            [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
+                vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
+                matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(matUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+                matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVETE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
+                vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVELESWP, vecWDVEPITCH, ...
+                vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVESURFACE);
             
-            [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
-                matFUSEGEOM, matNEWWAKEPANEL] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
-                valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matNPVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
-                matVEHROT, vecROTORVEH, matROTORHUBGLOB, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE);
-                        
-            %% Generating new wake elements
-            
-            idxtri = vecDVETRI == 1;
-            widxtri = vecWDVETRI == 1;
-            
-            [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNPVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVESURFACE] ...
-                = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNPVLST, vecDVEPANEL, ...
-                vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVESURFACE, flagSTEADY, valWSIZE);
-            
-            %%
-            if flagPREVIEW ~= 1
-                %% Creating and solving WD-Matrix for latest row of wake elements
-                % We need to grab from matWADJE only the values we need for this latest row of wake DVEs
-                idx = sparse(sum(ismember(matWADJE,[((valWNELE - valWSIZE) + 1):valWNELE]'),2)>0 & (matWADJE(:,2) == 4 | matWADJE(:,2) == 2));
-                temp_WADJE = [matWADJE(idx,1) - (valTIMESTEP-1)*valWSIZE matWADJE(idx,2) matWADJE(idx,3) - (valTIMESTEP-1)*valWSIZE];
-                
-                [matWD, vecWR] = fcnWDWAKE([1:valWSIZE]', temp_WADJE, vecWDVEHVSPN(end-valWSIZE+1:end), vecWDVESYM(end-valWSIZE+1:end), vecWDVETIP(end-valWSIZE+1:end), vecWKGAM(end-valWSIZE+1:end));
-                [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
-                
-                %% Rebuilding and solving wing resultant
-                [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
-                    matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-                    vecWDVETESWP, vecSYM, valWSIZE, flagTRI);
-                
-                [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
-                
-                %% Creating and solving WD-Matrix
-                [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
-                [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
-                
-                %% Relaxing wake
-                if valTIMESTEP > 2 && flagRELAX == 1
-                    
-                    [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
-                        vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
-                        matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(matUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
-                        matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVETE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
-                        vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVELESWP, vecWDVEPITCH, ...
-                        vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVESURFACE);
-                    
-                    % Creating and solving WD-Matrix
-                    [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
-                    [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
-                end
-                
-                %% Forces
-                [vecCL(valTIMESTEP,:,ai), vecCLF(valTIMESTEP,:,ai), vecCLI(valTIMESTEP,:,ai), vecCDI(valTIMESTEP,:,ai), vecE(valTIMESTEP,:,ai), vecDVENFREE, vecDVENIND, ...
-                    vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
-                    vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
-                    matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
-                    vecSYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI);
-                
-            end
-            
-            %% Post-timestep outputs
-            if flagPRINT == 1 && valTIMESTEP == 1
-                
-                header1 = ['             '];
-                header2 = [' ',sprintf('TIMESTEP'),'    '];
-                header3 = ['------------'];
-                for j = 1:valVEHICLES
-                    header1 = [header1,sprintf('VEHICLE %d',j),'                '];
-                    header2 = [header2,[sprintf('CL'),'          ',sprintf('CDI'),'          ']];
-                    header3 = [header3,['-------------------------']];
-                end
-                
-                disp(header1);
-                disp(header2);
-                disp(header3);
-            end
-            
-            txtout = ['  ', sprintf('%4d',valTIMESTEP),'       '];
-            for j = 1:valVEHICLES
-                txtout = [txtout, sprintf('%0.5f',vecCL(valTIMESTEP,j,ai)), '     ', sprintf('%0.5f',vecCDI(valTIMESTEP,j,ai)), '      '];
-            end
-            disp(txtout)
-            
-            if flagGIF == 1
-                [hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
-                [hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER);
-                view([33 22])
-                
-                frame = getframe(hFig3);
-                im = frame2im(frame);
-                [imind,cm] = rgb2ind(im,256);
-                
-                % Write to the GIF File
-                
-                if valTIMESTEP == 1
-                    imwrite(imind,cm,'GIF/output.gif','gif', 'Loopcount',inf);
-                else
-                    imwrite(imind,cm,'GIF/output.gif','gif','WriteMode','append');
-                end
-            end
-            
+            % Creating and solving WD-Matrix
+            [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
+            [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
         end
         
-        %% Viscous wrapper
-        
-        %         [vecCLv(1,ai), vecCD(1,ai), vecPREQ(1,ai), valVINF(1,ai), valLD(1,ai)] = fcnVISCOUS(vecCL(end,ai), vecCDI(end,ai), ...
-        %             valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
-        %             vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-        %             matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-        %             valFPWIDTH, valINTERF, vecDVEROLL);
+        %% Forces
+        [vecCL(valTIMESTEP,:), vecCLF(valTIMESTEP,:), vecCLI(valTIMESTEP,:), vecCDI(valTIMESTEP,:), vecE(valTIMESTEP,:), vecDVENFREE, vecDVENIND, ...
+            vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
+            vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
+            matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
+            vecSYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI);
         
     end
+    
+    %% Post-timestep outputs
+    if flagPRINT == 1 && valTIMESTEP == 1
+        
+        header1 = ['             '];
+        header2 = [' ',sprintf('TIMESTEP'),'    '];
+        header3 = ['------------'];
+        for j = 1:valVEHICLES
+            header1 = [header1,sprintf('VEHICLE %d',j),'                '];
+            header2 = [header2,[sprintf('CL'),'          ',sprintf('CDI'),'          ']];
+            header3 = [header3,['-------------------------']];
+        end
+        
+        disp(header1);
+        disp(header2);
+        disp(header3);
+    end
+    
+    txtout = ['  ', sprintf('%4d',valTIMESTEP),'       '];
+    for j = 1:valVEHICLES
+        txtout = [txtout, sprintf('%0.5f',vecCL(valTIMESTEP,j)), '     ', sprintf('%0.5f',vecCDI(valTIMESTEP,j)), '      '];
+    end
+    disp(txtout)
+    
+    if flagGIF == 1
+        [hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
+        [hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER);
+        view([33 22])
+        
+        frame = getframe(hFig3);
+        im = frame2im(frame);
+        [imind,cm] = rgb2ind(im,256);
+        
+        % Write to the GIF File
+        
+        if valTIMESTEP == 1
+            imwrite(imind,cm,'GIF/output.gif','gif', 'Loopcount',inf);
+        else
+            imwrite(imind,cm,'GIF/output.gif','gif','WriteMode','append');
+        end
+    end
+    
 end
+
+%% Viscous wrapper
+
+%         [vecCLv(1,ai), vecCD(1,ai), vecPREQ(1,ai), valVINF(1,ai), valLD(1,ai)] = fcnVISCOUS(vecCL(end,ai), vecCDI(end,ai), ...
+%             valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+%             vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
+%             matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
+%             valFPWIDTH, valINTERF, vecDVEROLL);
+
 
 fprintf('\n');
 
