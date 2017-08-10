@@ -36,7 +36,7 @@ flagTRI = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagCIRCPLOT = 1;
+flagCIRCPLOT = 0;
 flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
@@ -55,7 +55,7 @@ flagVERBOSE = 0;
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
-[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
+% [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
 %% Add boundary conditions to D-Matrix
 [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
@@ -187,44 +187,10 @@ for valTIMESTEP = 1:valMAXTIME
     end
     
     %% Post-timestep outputs
-    if flagPRINT == 1 && valTIMESTEP == 1
-        
-        header1 = ['             '];
-        header2 = [' ',sprintf('TIMESTEP'),'    '];
-        header3 = ['------------'];
-        for j = 1:valVEHICLES
-            header1 = [header1,sprintf('VEHICLE %d',j),'                '];
-            header2 = [header2,[sprintf('CL'),'          ',sprintf('CDI'),'          ']];
-            header3 = [header3,['-------------------------']];
-        end
-        
-        disp(header1);
-        disp(header2);
-        disp(header3);
-    end
+    scrPRINTOUT % Printing out results
     
-    txtout = ['  ', sprintf('%4d',valTIMESTEP),'       '];
-    for j = 1:valVEHICLES
-        txtout = [txtout, sprintf('%0.5f',vecCL(valTIMESTEP,j)), '     ', sprintf('%0.5f',vecCDI(valTIMESTEP,j)), '      '];
-    end
-    disp(txtout)
-    
-    if flagGIF == 1
-        [hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
-        [hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER);
-        view([33 22])
-        
-        frame = getframe(hFig3);
-        im = frame2im(frame);
-        [imind,cm] = rgb2ind(im,256);
-        
-        % Write to the GIF File
-        
-        if valTIMESTEP == 1
-            imwrite(imind,cm,'GIF/output.gif','gif', 'Loopcount',inf);
-        else
-            imwrite(imind,cm,'GIF/output.gif','gif','WriteMode','append');
-        end
+    if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)
+        fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER);
     end
     
 end
@@ -243,42 +209,6 @@ fprintf('\n');
 %% Plotting
 
 if flagPLOT == 1
-    [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, []);
-    [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
-    [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
-    
-    if flagPLOTWAKEVEL == 1
-        try
-            quiver3(matWDVEMP(:,1),matWDVEMP(:,2),matWDVEMP(:,3),matWDVEMPIND(:,1),matWDVEMPIND(:,2),matWDVEMPIND(:,3));
-        end
-    end
-    if flagPLOTUINF == 1
-        try
-            %             quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matVEHUINF(:,1),matVEHUINF(:,2),matVEHUINF(:,3),'g');
-            %             quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matROTORUINF(:,1),matROTORUINF(:,2),matROTORUINF(:,3),'c');
-            quiver3(matCENTER(:,1),matCENTER(:,2),matCENTER(:,3),matUINF(:,1),matUINF(:,2),matUINF(:,3),'g');
-        end
-    end
-    
-    if flagCIRCPLOT == 1
-        for i = 1:valNELE
-            endpoint_left = (sum(matVLST([matDVE(i,4); matDVE(i,1)],:),1)./2) - matCENTER(i,:);
-            endpoint_right = (sum(matVLST([matDVE(i,2); matDVE(i,3)],:),1)./2) - matCENTER(i,:);
-            
-            tt = fcnGLOBSTAR([endpoint_left; endpoint_right],repmat(vecDVEROLL(i),2,1), repmat(vecDVEPITCH(i),2,1), repmat(vecDVEYAW(i),2,1));
-            
-            etas = linspace(tt(1,2),tt(2,2))';
-            circ = matCOEFF(i,3).*etas.^2 + matCOEFF(i,2).*etas + matCOEFF(i,1);
-            
-            pt_loc = [linspace(tt(1,1),tt(2,1))' etas circ];
-            
-            len = size(circ,1);
-            circ_glob = fcnSTARGLOB(pt_loc, repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1));
-            circ_glob = circ_glob + matCENTER(i,:);
-            hold on
-            plot3(circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'-m','LineWidth',3)
-            hold off
-            
-        end
-    end
+    fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
+                matWDVEMP, matWDVEMPIND, matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
 end
