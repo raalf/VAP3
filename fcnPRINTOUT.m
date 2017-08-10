@@ -1,3 +1,4 @@
+function [] = fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI)
 if flagPRINT == 1 && valTIMESTEP == 1
     
     header1 = ['             '];

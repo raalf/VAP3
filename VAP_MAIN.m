@@ -187,7 +187,7 @@ for valTIMESTEP = 1:valMAXTIME
     end
     
     %% Post-timestep outputs
-    scrPRINTOUT % Printing out results
+    fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI)
     
     if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)
         fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER);
