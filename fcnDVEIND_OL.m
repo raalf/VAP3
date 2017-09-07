@@ -116,6 +116,11 @@ for i = 1:chunk_sz:num_pts
     d2l = [d2l(:,2) -d2l(:,1) d2l(:,3)];
     e2l = [e2l(:,2) -e2l(:,1) e2l(:,3)];
     
+    if isempty(e2r); e2r = zeros(size(c1le)); end
+    if isempty(e2l); e2l = zeros(size(c1le)); end
+    if isempty(d2r); d2r = zeros(size(c1le)); end
+    if isempty(d2l); d2l = zeros(size(c1le)); end   
+    
     %% Summing together the influences from the sheets and filaments
     
     a3xi = a1le - a1te;
@@ -123,7 +128,7 @@ for i = 1:chunk_sz:num_pts
     c3xi = c1le + c2le - c1te - c2te;
     d3xi = d2r - d2l;
     e3xi = e2r - e2l;
-    
+   
     a(idx_chunk,:) = fcnSTARGLOB(a3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     b(idx_chunk,:) = fcnSTARGLOB(b3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     c(idx_chunk,:) = fcnSTARGLOB(c3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));

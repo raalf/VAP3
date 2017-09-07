@@ -32,12 +32,14 @@ end
 % Assinging remaining values to wake parameters
 matWDVE(end+1:end+len,1:4) = newdves + length(matWVLST);
 matWVLST = cat(1, matWVLST, newvertices);
-matWCOEFF = cat(1, matWCOEFF, [matCOEFF(vecDVETE>0,1:3) zeros(length(nonzeros(vecDVETE>0)),2)]);
 vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
 vecWDVEHVCRD(end+1:end+len,1) = wdve_xsi;
 vecWDVEPANEL = cat(1, vecWDVEPANEL, vecDVEPANEL(vecDVETE>0));
 vecWK = cat(1, vecWK, vecK(vecDVETE>0));
 vecWDVEWING = cat(1, vecWDVEWING, vecDVEWING(vecDVETE > 0));
+
+matWCOEFF = cat(1, matWCOEFF, [matCOEFF(vecDVETE>0,1:3) zeros(length(nonzeros(vecDVETE>0)),2)]);
+% matWCOEFF = cat(1, matWCOEFF, [matCOEFF(vecDVETE>0,1:3)]);
 
 if valWNELE - len == 0
     [ matWADJE, vecWDVESYM, vecWDVETIP, ~, ~ ] = fcnDVEADJT(matNPNEWWAKE(:,:,1), matNPNEWWAKE(:,:,2), matNPNEWWAKE(:,:,3), matNPNEWWAKE(:,:,4), valWNELE, vecWDVEPANEL, vecSYM );
