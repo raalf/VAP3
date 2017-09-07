@@ -2,10 +2,10 @@
 
 <VAP>
 	<settings>
-		<flagRELAX>FALSE</flagRELAX>
+		<flagRELAX>TRUE</flagRELAX>
 		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
-		<valMAXTIME>40</valMAXTIME>
+		<valMAXTIME>15</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
 		<valDELTIME>0.25</valDELTIME>
 		<valDELTAE>0</valDELTAE>
@@ -37,15 +37,15 @@
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
 
-			<M>3</M>
+			<M>1</M>
 
-			<xwingorig>0</xwingorig>
-			<ywingorig>0</ywingorig>
-			<zwingorig>0</zwingorig>
+			<xorig>0</xorig>
+			<yorig>0</yorig>
+			<zorig>0</zorig>
 
 			<panel>
 				<symmetry>0</symmetry>
-				<N>8</N>
+				<N>3</N>
 				<section>
 					<x>0.3</x>
 					<y>-7.5</y>
@@ -90,9 +90,9 @@
 
 			<M>1</M>
 
-			<xwingorig>3.9</xwingorig>
-			<ywingorig>0</ywingorig>
-			<zwingorig>1.1</zwingorig>
+			<xorig>3.9</xorig>
+			<yorig>0</yorig>
+			<zorig>1.1</zorig>
 
 			<panel>
 				<symmetry>0</symmetry>

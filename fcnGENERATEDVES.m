@@ -1,7 +1,7 @@
 function [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, ...
     matVLST, matNTVLST, matDVE, valNELE, matADJE, ...
-    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matNPVLST] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
+    vecDVESYM, vecDVETIP, vecDVEWING, vecDVELE, vecDVETE, vecDVEPANEL, matNPVLST, matPANELTE] = fcnGENERATEDVES(valPANELS, matGEOM, vecSYM, vecN, vecM)
 
 %   V0 - before fixing spanwise interp
 %   V1 - fixed vertical panel (90deg dihedral)
@@ -131,26 +131,29 @@ for i = 1:valPANELS
     idxEnd = vecEnd(i);
     
     
-
+    
     vecDVEPANEL(idxStart:idxEnd,:) = repmat(i,count,1);
     
     % Write DVE WING Index
     vecDVEWING(idxStart:idxEnd,:) = repmat(panel2wing(i),count,1);
-
+    
     % Write DVE CENTER POINT Coordinates
     matCENTER(idxStart:idxEnd,:) = reshape(permute(CP, [2 1 3]),count,3);%reshape(CP(:),count,3);
-
+    
     % Write non-planer DVE coordinates
     P1(idxStart:idxEnd,:) = reshape(permute(LE_Left, [2 1 3]),count,3);
     P2(idxStart:idxEnd,:) = reshape(permute(LE_Right, [2 1 3]),count,3);
     P3(idxStart:idxEnd,:) = reshape(permute(TE_Right, [2 1 3]),count,3);
     P4(idxStart:idxEnd,:) = reshape(permute(TE_Left, [2 1 3]),count,3);
-
+    
     % Write Imeragary Wings
     imP1(idxStart:idxEnd,:) = reshape(permute(imLEL, [2 1 3]),count,3);
     imP2(idxStart:idxEnd,:) = reshape(permute(imLER, [2 1 3]),count,3);
     imP3(idxStart:idxEnd,:) = reshape(permute(imTER, [2 1 3]),count,3);
     imP4(idxStart:idxEnd,:) = reshape(permute(imTEL, [2 1 3]),count,3);
+    
+    panelte(i,:,1) = impanel4corners(4,:); % Rear Left
+    panelte(i,:,2) = impanel4corners(3,:); % Rear Right
     
     clear LE_Left LE_Mid LE_Right TE_Right TE_Left ...
         imLEL imLER imTER imTEL ...
@@ -169,20 +172,20 @@ end
 
 
 %% Create nonplaner VLST
-nonplanerVLST = [P1;P2;P3;P4];
+% nonplanerVLST = [P1;P2;P3;P4];
+nonplanerVLST = [imP1; imP2; imP3; imP4];
 matNPVLST = nonplanerVLST(idxVLST,:);
-
-
 
 %% Solve ADJT DVE
 % Grab the imaginary (no-twist) non-planer vertex list to avoid the gaps between DVEs
 notwistnonplanerVLST = [imP1;imP2;imP3;imP4];
 matNTVLST = notwistnonplanerVLST(idxVLST,:);
 
-
 [ matADJE, vecDVESYM, vecDVETIP, vecDVELE, vecDVETE ] = fcnDVEADJT( imP1, imP2, imP3, imP4, valNELE, vecDVEPANEL, vecSYM );
 
-
+% Getting the VLST idx of the trailing edge corner points for triangular wake creation
+[~,matPANELTE(:,1)] = ismember(panelte(:,:,1),matNPVLST,'rows');
+[~,matPANELTE(:,2)] = ismember(panelte(:,:,2),matNPVLST,'rows');
 
 end
 

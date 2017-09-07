@@ -1,7 +1,7 @@
 function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF...
     ,vecK,matDVE,valNELE,matCENTER,matVLST,matUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEHVCRD,vecDVEROLL,...
     vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,...
-    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP)
+    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, matVEHROT, vecDVEVEHICLE, flagTRI)
 %DVE element normal forces
 
 % //computes lift and side force/density acting on surface DVE's. The local
@@ -31,8 +31,19 @@ function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF.
 
 %% preliminary stuff
 
-idx1 = vecDVELE == 1; %index of LE vectors (will be the same)
+%for quad elements:
+%we need to average mid chord velocities of each
+%chordwise row to estimate LE vels, since there may be a gap at the LE
 
+%for triangle elements:
+%we find all velocities directly at the LE
+
+if flagTRI ==1  %tri elements
+    idx1 = ones(valNELE,1) == 1 ;
+    
+else %quad elements,
+    idx1 = vecDVELE == 1; %index of LE vectors (will be the same)
+end
 % find vector across element (should already have this somewhere...)
 % for first spanwise row, vector is LE vect, for all other spanwise rows,
 % vector is halfchord vect.
@@ -70,11 +81,22 @@ uxs = sqrt(sum(abs(tempb).^2,2));
 % eN = tempa.*(1/UxS);
 en = tempb.*repmat((1./uxs),1,3);
 
-% the lift direction  eL=Ux[0,1,0]/|Ux[0,1,0]|
-% el = repmat([-matUINF(3)/norm(matUINF) 0 matUINF(1)/norm(matUINF)],[valNELE,1]); %does this work with beta?
+% % the lift direction  eL=Ux[0,1,0]/|Ux[0,1,0]|
+% % el = repmat([-matUINF(3)/norm(matUINF) 0 matUINF(1)/norm(matUINF)],[valNELE,1]); %does this work with beta?
 normUINF = sqrt(sum(matUINF.^2,2));
+
 len = size(normUINF,1);
-el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
+% el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
+
+% I didn't want to do this, Alton made me because he is cruel and gross
+% T.D.K 2017-07-10
+spandir = zeros(len,3);
+for i = 1:max(vecDVEVEHICLE)
+    spandir(vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(matVEHROT(i,3), matVEHROT(i,1), matVEHROT(i,2),'ZXY'),length(nonzeros(vecDVEVEHICLE == i)),1);
+end
+
+% Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
+el = cross(matUINF,spandir,2);
 
 % the side force direction eS=UxeL/|UxeL|
 % clear tempa tempb
@@ -94,16 +116,20 @@ A(idx1) = matCOEFF(idx1,1);
 B(idx1) = matCOEFF(idx1,2);
 C(idx1) = matCOEFF(idx1,3);
 % if any other row, A= A-Aupstream, B= B-Bupstream, C= C-Cupstream
-dvenum = find(idx1==0); %dvenum in question
+
+idx2 = vecDVELE == 1; %idx2 since we need to do this even for triangles
+dvenum = find(idx2==0); %dvenum in question
 idxf = matADJE((ismember(matADJE(:,1), dvenum) & matADJE(:,2) == 1),3); %upstream dve num
-A(idx1 ==0) = (matCOEFF(idx1==0,1)-matCOEFF(idxf,1));
-B(idx1 ==0) = (matCOEFF(idx1==0,2)-matCOEFF(idxf,2));
-C(idx1 ==0) = (matCOEFF(idx1==0,3)-matCOEFF(idxf,3));
+A(idx2 ==0) = (matCOEFF(idx2==0,1)-matCOEFF(idxf,1));
+B(idx2 ==0) = (matCOEFF(idx2==0,2)-matCOEFF(idxf,2));
+C(idx2 ==0) = (matCOEFF(idx2==0,3)-matCOEFF(idxf,3));
 
 
 nfree = ((A .*2 .* vecDVEHVSPN'+  C./3.*2.*vecDVEHVSPN'.*vecDVEHVSPN'.*vecDVEHVSPN') .*uxs')';
 
 %% induced force
+% for triangluar elements we compute velocities directly at LE. idx1 = 1
+% for all elements. 
 
 % for first row (m=1):
 %	compute 3 velocities along LE of DVE
@@ -147,7 +173,7 @@ fpg = reshape(permute(fpg,[1 3 2]),[],3);
 
 % get velocities
 [w_total] = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
-    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP);
+    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI);
 
 % undo reshape and permute
 % matrix is now LE vels for all LE elements, center vels for remaining DVES,

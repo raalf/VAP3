@@ -3,7 +3,7 @@ function [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, v
     valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, ...
     vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, ...
     matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
-    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE)
+    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE, vecDVETIP)
 
 matWAKEGEOM = cat(1, matWAKEGEOM, matNEWWAKE);
 matNPWAKEGEOM = cat(1, matNPWAKEGEOM, matNPNEWWAKE);
@@ -29,7 +29,7 @@ end
 % Assinging remaining values to wake parameters
 matWDVE(end+1:end+len,1:4) = newdves + length(matWVLST);
 matWVLST = cat(1, matWVLST, newvertices);
-matWCOEFF = cat(1, matWCOEFF, [matCOEFF(vecDVETE>0,1:3) zeros(length(nonzeros(vecDVETE>0)),2)]);
+matWCOEFF = cat(1, matWCOEFF, matCOEFF(vecDVETE>0,:));
 vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
 vecWDVEPANEL = cat(1, vecWDVEPANEL, vecDVEPANEL(vecDVETE>0));
 vecWK = cat(1, vecWK, vecK(vecDVETE>0));

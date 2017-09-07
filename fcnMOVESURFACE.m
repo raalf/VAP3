@@ -1,11 +1,12 @@
 function [matUINF, matUINFTE, matVEHORIG, ...
     matVLST, matCENTER, ...
     matNEWWAKE, matNPNEWWAKE, ...
-    matFUSEGEOM] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, ...
+    matFUSEGEOM, matNEWWAKEPANEL] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
+    matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
     valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, ...
     vecDVETE, matNTVLST, matFUSEGEOM, vecFUSEVEHICLE, ...
     matVEHROT, vecROTORVEH, matROTORHUBGLOB, ...
-    matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM)
+    matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE)
 % This function moves a wing (NOT rotor) by translating all of the vertices
 % in the VLST and the in-centers of each triangle in CENTER.
 
@@ -24,6 +25,13 @@ function [matUINF, matUINFTE, matVEHORIG, ...
 %   matCENTER - New in-center list with moved points
 %   matNEWWAKE - Outputs a 4 x 3 x n matrix of points for the wake DVE generation
 
+% Saving panel corner points, this helps with triangular wake generation
+matNEWWAKEPANEL = zeros(size(matPANELTE,1),3,4);
+matNEWWAKEPANEL(:,:,3) = matVLST(matPANELTE(:,2),:);
+matNEWWAKEPANEL(:,:,4) = matVLST(matPANELTE(:,1),:);
+
+
+valVEHICLES = length(matVEHUVW(:,1));
 
 % pre-calculate rad per timestep of rotors
 vecROTORRADPS = vecROTORRPM.*2.*pi./60;
@@ -57,11 +65,6 @@ matFUSEGEOM = matFUSEGEOM + matFUSETRANS;
 
 
 
-
-
-
-
-
 % matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
 matUINFVEH = -matVEHUVW(vecDVEVEHICLE,:);
@@ -81,6 +84,42 @@ matVLST = matVLST + matVLSTTRANS;
 matCENTER = matCENTER + matDVETRANS;
 matNTVLST = matNTVLST + matVLSTTRANS;
 
+
+% Circling Flight
+% "backtrack" the UVW translation from previous lines of code, and apply the circling instead
+for n = 1:valVEHICLES
+   if ~isnan(vecVEHRADIUS(n)) == 1
+        idxDVEVEH = vecDVEVEHICLE == n;
+        idxVLSTVEH = unique(matDVE(idxDVEVEH,:));
+        idxFUSEVEH = vecFUSEVEHICLE == n;
+        
+        matVLST(idxVLSTVEH,1:2)   = matVLST(idxVLSTVEH,1:2)   - matVLSTTRANS(idxVLSTVEH,1:2);
+        matNTVLST(idxVLSTVEH,1:2) = matNTVLST(idxVLSTVEH,1:2) - matVLSTTRANS(idxVLSTVEH,1:2);
+        matCENTER(idxDVEVEH,1:2)  = matCENTER(idxDVEVEH,1:2)  - matDVETRANS(idxDVEVEH,1:2);
+        matFUSEGEOM(:,:,1:2,idxFUSEVEH) = matFUSEGEOM(:,:,1:2,idxFUSEVEH) + matFUSETRANS(:,:,1:2,idxFUSEVEH);
+
+        % reposition to vecCIRORIG to rotate the vehicle
+        matVLST(idxVLSTVEH,1:2)   = matVLST(idxVLSTVEH,1:2)   - matCIRORIG(n,1:2);
+        matNTVLST(idxVLSTVEH,1:2) = matNTVLST(idxVLSTVEH,1:2) - matCIRORIG(n,1:2);
+        matCENTER(idxDVEVEH,1:2)  = matCENTER(idxDVEVEH,1:2)  - matCIRORIG(n,1:2);
+%         matFUSEGEOM(:,:,1:2,idxFUSEVEH) = matFUSEGEOM(:,:,1:2,idxFUSEVEH) + matCIRORIG(n,1:2);
+        
+        % rotate(YAW) vehicle by matVEHROTRATE(n,3)*valDELTIME
+        dcmVEHSTEP = angle2dcm(-matVEHROTRATE(n,3)*valDELTIME,0,0,'ZXY');
+        
+        matVLST(idxVLSTVEH,:)   = matVLST(idxVLSTVEH,:)   * dcmVEHSTEP;
+        matNTVLST(idxVLSTVEH,:) = matNTVLST(idxVLSTVEH,:) * dcmVEHSTEP;
+        matCENTER(idxDVEVEH,:)  = matCENTER(idxDVEVEH,:)  * dcmVEHSTEP;
+        
+        % 
+        matVLST(idxVLSTVEH,1:2)   = matVLST(idxVLSTVEH,1:2)   + matCIRORIG(n,1:2);
+        matNTVLST(idxVLSTVEH,1:2) = matNTVLST(idxVLSTVEH,1:2) + matCIRORIG(n,1:2);
+        matCENTER(idxDVEVEH,1:2)  = matCENTER(idxDVEVEH,1:2)  + matCIRORIG(n,1:2);
+%       matVEHROTRATE(n,:)
+%       matCIRORIG(n,:)
+   end
+end
+
 % Rotate Rotors
 valROTORS = length(vecROTORVEH);
 for n = 1:valROTORS
@@ -96,6 +135,9 @@ for n = 1:valROTORS
     
     tempROTORVLST = matVLST(idxVLSTROTOR,:);
     tempROTORVLST = tempROTORVLST - transGLOB2VEH;
+    
+    tempROTORNTVLST = matNTVLST(idxVLSTROTOR,:);
+    tempROTORNTVLST = tempROTORNTVLST - transGLOB2VEH;
        
     tempROTORCENTER = matCENTER(idxDVEROTOR,:);
     tempROTORCENTER = tempROTORCENTER - transGLOB2VEH;
@@ -103,33 +145,38 @@ for n = 1:valROTORS
         
     % transform rotor from global to hub plane
     tempROTORVLST = tempROTORVLST / dcmHUB2GLOB;
+    tempROTORNTVLST = tempROTORNTVLST / dcmHUB2GLOB;
     tempROTORCENTER = tempROTORCENTER / dcmHUB2GLOB;    
     
     % transform rotor from hub plane to xy plane
     tempROTORVLST = tempROTORVLST / dcmXY2HUB;
+    tempROTORNTVLST = tempROTORNTVLST / dcmXY2HUB;
     tempROTORCENTER = tempROTORCENTER / dcmXY2HUB;
 
     % timestep rotor in local XY hub plane
     tempROTORVLST = tempROTORVLST * dcmROTORSTEP;
+    tempROTORNTVLST = tempROTORNTVLST * dcmROTORSTEP;
     tempROTORCENTER = tempROTORCENTER * dcmROTORSTEP;
     tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);    
     
     % transform rotor from xy plane to hub plane
     tempROTORVLST = tempROTORVLST * dcmXY2HUB;
+    tempROTORNTVLST = tempROTORNTVLST * dcmXY2HUB;
     tempROTORCENTER = tempROTORCENTER * dcmXY2HUB;
     tempROTORUINF = tempROTORUINF * dcmXY2HUB;
     
     % transform rotor from hub plane to global
     tempROTORVLST = tempROTORVLST * dcmHUB2GLOB;
+    tempROTORNTVLST = tempROTORNTVLST * dcmHUB2GLOB;
     tempROTORCENTER = tempROTORCENTER * dcmHUB2GLOB;
     tempROTORUINF = tempROTORUINF * dcmHUB2GLOB;
     
     % write rotated rotor to matVLST
     matVLST(idxVLSTROTOR,:) = tempROTORVLST + transGLOB2VEH;
+    matNTVLST(idxVLSTROTOR,:) = tempROTORNTVLST + transGLOB2VEH;
     matCENTER(idxDVEROTOR,:) = tempROTORCENTER + transGLOB2VEH;
     matUINFROTOR(idxDVEROTOR,:) = tempROTORUINF;
 end
-
 
 % combine matUINFROTOR and matUINFVEH
 matUINF = matUINFROTOR + matUINFVEH;
@@ -141,3 +188,6 @@ matNEWWAKE(:,:,2) = matVLST(matDVE(vecDVETE>0,3),:);
 % New non-planar trailing edge vertices (used to calculate matWADJE)
 matNPNEWWAKE(:,:,1) = matNTVLST(matDVE(vecDVETE>0,4),:);
 matNPNEWWAKE(:,:,2) = matNTVLST(matDVE(vecDVETE>0,3),:);
+
+matNEWWAKEPANEL(:,:,1) = matVLST(matPANELTE(:,1),:);
+matNEWWAKEPANEL(:,:,2) = matVLST(matPANELTE(:,2),:);
