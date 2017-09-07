@@ -2,7 +2,7 @@ clc
 clear
 % delete('size.txt');
 
-warning off
+% warning off
 
 % profile -memory on
 disp('======================================================================================');
@@ -35,6 +35,9 @@ filename = 'inputs/simple_wing.vap';
 valMAXTIME = 0
 flagRELAX = 0
 
+vecM = [2 2]';
+vecN = [10 10]';
+
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
@@ -64,7 +67,7 @@ flagVERBOSE = 0;
 
 %% Add boundary conditions to D-Matrix
 
-[matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
+[matD] = fcnDWING_OL(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
 [matE] = fcnEWING(valNELE, matADJE, vecDVEHVCRD, vecDVELE, vecDVETE);
 [matD] = fcnDEXPAND_OL(matD, matE, valNELE);
 
@@ -109,8 +112,6 @@ vecWDVESURFACE = [];
 vecWDVETRI = [];
 vecWDVEWING = [];
 vecWKEGAM = [];
-
-
 
 % Building wing resultant
 [vecR] = fcnRWING_OL(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
