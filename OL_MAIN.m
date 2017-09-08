@@ -35,7 +35,7 @@ filename = 'inputs/simple_wing.vap';
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [2 2]';
+vecM = [3 3]';
 vecN = [10 10]';
 
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
@@ -219,4 +219,28 @@ if flagPLOT == 1
         fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF)
     end
 end
+
+% gran = 0.05;
+% x = -1:gran:1.5;
+% y = 0:gran:0;
+% z = -0.5:gran:0.5;
+% [X,Y,Z] = meshgrid(x,y,z);
+% fpg = [X(:) Y(:) Z(:)];
+% 
+% % fpg = matCENTER;
+% % fpg_le = (matVLST(matDVE(vecDVELE > 0,1),:) + matVLST(matDVE(vecDVELE > 0,2),:))./2;
+% % fpg = [fpg; fpg_le];
+% 
+% w_surf = fcnSDVEVEL_OL(fpg, valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
+% 
+% w = w_surf + matUINF(1,:)
+% % w = w_surf;
+% hold on
+% quiver3(fpg(:,1), fpg(:,2), fpg(:,3), w(:,1), w(:,2), w(:,3))
+% hold off
+
+
+
+
+
 

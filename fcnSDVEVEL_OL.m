@@ -1,9 +1,6 @@
 function [w_surf] = fcnSDVEVEL_OL(fpg, valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM)
 %finds the velocity induced at a point due to all surface elements
 
-
-% INPUT:
-%  
 % OUTPUT:
 %   w_surf - [number points x 3] surface induced velocities
 
