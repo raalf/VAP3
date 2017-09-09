@@ -42,7 +42,7 @@ vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 
-% vecWINGTRI = 1
+vecWINGTRI = 1
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -219,7 +219,7 @@ if flagPLOT == 1
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
     
     if flagCIRCPLOT == 1
-        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 100)
+        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 1000)
     end
 end
 
