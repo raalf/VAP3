@@ -1,8 +1,8 @@
-function [] = fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF)
+function [] = fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, ppa)
 
 for i = 1:valNELE
     corners = fcnGLOBSTAR(matVLST(matDVE(i,:),:) - matCENTER(i,:), repmat(vecDVEROLL(i),4,1), repmat(vecDVEPITCH(i),4,1), repmat(vecDVEYAW(i),4,1));
-    points = polygrid(corners(:,1), corners(:,2), 100);
+    points = polygrid(corners(:,1), corners(:,2), ppa);
     
     % points(:,2) is eta in local, points(:,1) is xsi
     circ = matCOEFF(i,3).*points(:,2).^2 + matCOEFF(i,2).*points(:,2) + matCOEFF(i,5).*points(:,1).^2 + matCOEFF(i,4).*points(:,1) + matCOEFF(i,1);

@@ -63,40 +63,12 @@ for i = 1:chunk_sz:num_pts
     d2l = zeros(len,3);
     e2l = zeros(len,3);
     
-    %% Leading Edge
-    
-    % Leading edge coordinates, used to find the midpoint of the leading edge
-    % A vector is then made between this midpoint and the field point, which is
-    % then rotated into the DVE reference frame.
-    
+    %% Leading Edge    
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:)+matVLST(matDVE(dvenum,2),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-    
-    % xsiA = fcnGLOBSTARGPU(gpuArray(fpg - (matVLST(matDVE(dvenum,1),:)+matVLST(matDVE(dvenum,2),:))./2), gpuArray(vecDVEROLL(dvenum)), gpuArray(vecDVEPITCH(dvenum)), gpuArray(vecDVEYAW(dvenum)));
-    % xsiA = gather(xsiA);
-    
-    % Bound vortex on the leading edge
-    idx1 = dvetype == -3 | dvetype == -4;
-    [a1le(idx1,:), b1le(idx1,:), c1le(idx1,:)] = fcnBOUNDIND(vecDVEHVSPN(dvenum(idx1)), vecDVELESWP(dvenum(idx1)), xsiA(idx1,:));
-    
-    % Vortex sheet at leading edge
     [~, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVEHVCRD(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum));
     
     %% Trailing Edge
-    
-    % Trailing edge coordinates, used to find the midpoint of the trailing edge
-    % A vector is then made between this midpoint and the field point, which is
-    % then rotated into the DVE reference frame.
-    
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,3),:)+matVLST(matDVE(dvenum,4),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-    
-    % xsiA = fcnGLOBSTARGPU(gpuArray(fpg - (matVLST(matDVE(dvenum,3),:)+matVLST(matDVE(dvenum,4),:))./2), gpuArray(vecDVEROLL(dvenum)), gpuArray(vecDVEPITCH(dvenum)), gpuArray(vecDVEYAW(dvenum)));
-    % xsiA = gather(xsiA);
-    
-    % Bound vortex at the trailing edge
-    idx2 = dvetype == -2;
-    [a1te(idx2,:), b1te(idx2,:), c1te(idx2,:)] = fcnBOUNDIND(vecDVEHVSPN(dvenum(idx2)), vecDVETESWP(dvenum(idx2)), xsiA(idx2,:));
-    
-    % Vortex sheet at the trailing edge
     idx3 = dvetype ~= 3 & dvetype ~= -3;
     if any(idx3)
         [~, b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVEHVCRD(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
@@ -109,6 +81,7 @@ for i = 1:chunk_sz:num_pts
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:) + matVLST(matDVE(dvenum,2),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     hspan = fcnGLOBSTAR((matVLST(matDVE(dvenum(idx4),1),:) - matVLST(matDVE(dvenum(idx4),2),:)), vecDVEROLL(dvenum(idx4)), vecDVEPITCH(dvenum(idx4)), vecDVEYAW(dvenum(idx4)));
     [~, d2f, e2f] = fcnVSIND(abs(hspan(:,1)), vecDVEHVSPN(dvenum(idx4)), zeros(length(dvenum(idx4)),1), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)));
+       
     d2f = [d2f(:,2) -d2f(:,1) d2f(:,3)];
     e2f = [e2f(:,2) -e2f(:,1) e2f(:,3)];
     

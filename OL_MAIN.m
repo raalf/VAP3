@@ -22,7 +22,7 @@ disp(' ');
 % 2. When using symmetry, define from symmetry plane outward
 
 %% Reading in geometry
-filename = 'inputs/simpler_wing.vap';
+filename = 'inputs/single_dve.vap';
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -35,8 +35,8 @@ filename = 'inputs/simpler_wing.vap';
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [2]';
-vecN = [2]';
+vecM = [1]';
+vecN = [1]';
 
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
@@ -219,13 +219,13 @@ if flagPLOT == 1
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
     
     if flagCIRCPLOT == 1
-        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF)
+        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 100)
     end
 end
 
 % gran = 0.1;
 % x = -1:gran:1.5;
-% y = 2:gran:2;
+% y = -1:0.5:1;
 % z = -0.5:gran:0.5;
 % [X,Y,Z] = meshgrid(x,y,z);
 % fpg = [X(:) Y(:) Z(:)];
@@ -236,8 +236,8 @@ end
 % 
 % w_surf = fcnSDVEVEL_OL(fpg, valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM, matESHEETS);
 % 
-% w = w_surf + matUINF(1,:)
-% % w = w_surf;
+% % w = w_surf + matUINF(1,:);
+% w = w_surf;
 % hold on
 % quiver3(fpg(:,1), fpg(:,2), fpg(:,3), w(:,1), w(:,2), w(:,3))
 % hold off
