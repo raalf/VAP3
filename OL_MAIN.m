@@ -22,7 +22,7 @@ disp(' ');
 % 2. When using symmetry, define from symmetry plane outward
 
 %% Reading in geometry
-filename = 'inputs/simple_wing.vap';
+filename = 'inputs/simpler_wing.vap';
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -35,12 +35,14 @@ filename = 'inputs/simple_wing.vap';
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [3 3]';
-vecN = [10 10]';
+vecM = [2]';
+vecN = [2]';
 
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
+
+% vecWINGTRI = 1
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -63,17 +65,18 @@ flagVERBOSE = 0;
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
+[matESHEETS] = fcnESHEETS_OL(valNELE, matVLST, matDVE, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW);
+
 [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
 %% Add boundary conditions to D-Matrix
-
 [matD] = fcnDWING_OL(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
 [matE] = fcnEWING(valNELE, matADJE, vecDVEHVCRD, vecDVELE, vecDVETE);
 [matD] = fcnDEXPAND_OL(matD, matE, valNELE);
 
 %% Add kinematic conditions to D-Matrix
 [vecK] = fcnSINGFCT(valNELE, vecDVESURFACE, vecDVETIP, vecDVEHVSPN);
-[matD] = fcnKINCON_OL(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD,vecSYM, vecDVELE);
+[matD] = fcnKINCON_OL(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD, vecSYM, vecDVELE, matESHEETS);
 
 %% Preparing to timestep
 % Preallocating for a turbo-boost in performance
@@ -220,9 +223,9 @@ if flagPLOT == 1
     end
 end
 
-% gran = 0.05;
+% gran = 0.1;
 % x = -1:gran:1.5;
-% y = 0:gran:0;
+% y = 2:gran:2;
 % z = -0.5:gran:0.5;
 % [X,Y,Z] = meshgrid(x,y,z);
 % fpg = [X(:) Y(:) Z(:)];
@@ -231,7 +234,7 @@ end
 % % fpg_le = (matVLST(matDVE(vecDVELE > 0,1),:) + matVLST(matDVE(vecDVELE > 0,2),:))./2;
 % % fpg = [fpg; fpg_le];
 % 
-% w_surf = fcnSDVEVEL_OL(fpg, valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
+% w_surf = fcnSDVEVEL_OL(fpg, valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM, matESHEETS);
 % 
 % w = w_surf + matUINF(1,:)
 % % w = w_surf;
