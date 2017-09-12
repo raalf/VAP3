@@ -4,6 +4,10 @@ for i = 1:valNELE
     corners = fcnGLOBSTAR(matVLST(matDVE(i,:),:) - matCENTER(i,:), repmat(vecDVEROLL(i),4,1), repmat(vecDVEPITCH(i),4,1), repmat(vecDVEYAW(i),4,1));
     points = polygrid(corners(:,1), corners(:,2), ppa);
     
+    len = size(points,1);
+    vort_p = fcnSTARGLOB([points(:,1) points(:,2) zeros(len,1)], repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1)) + matCENTER(i,:);
+    vort = fcnSTARGLOB([2.*matCOEFF(i,5).*points(:,1) + matCOEFF(i,4) 2.*matCOEFF(i,3).*points(:,2) + matCOEFF(i,2) zeros(len,1)], repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1)) + matCENTER(i,:);
+    
     % points(:,2) is eta in local, points(:,1) is xsi
     circ = matCOEFF(i,3).*points(:,2).^2 + matCOEFF(i,2).*points(:,2) + matCOEFF(i,5).*points(:,1).^2 + matCOEFF(i,4).*points(:,1) + matCOEFF(i,1);
         
@@ -13,12 +17,10 @@ for i = 1:valNELE
     circ_glob = fcnSTARGLOB([points circ], repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1));
     circ_glob = circ_glob + matCENTER(i,:);
     hold on
-%     scatter3(circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'xk')
-%     tri = delaunay(circ_glob(:,1), circ_glob(:,2));
-    trisurf(tri, circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'edgealpha',0,'facealpha',0.8);
-    
+%     trisurf(tri, circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'edgealpha',0,'facealpha',0.8);
+    quiver3(vort_p(:,1), vort_p(:,2), vort_p(:,3), vort(:,1), vort(:,2), vort(:,3))
     hold off
-    
+      
 end
 
 

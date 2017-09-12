@@ -39,8 +39,8 @@ flagTRI = 0;
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [1]';
-vecN = [1]';
+vecM = [2]';
+vecN = [2]';
 % vecWINGTRI = 1
 
 flagPRINT   = 1;
@@ -218,7 +218,7 @@ if flagPLOT == 1
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
     
     if flagCIRCPLOT == 1
-        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 5e4)
+        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 100)
     end
 end
 
