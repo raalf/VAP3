@@ -1,4 +1,4 @@
-function [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP)
+function [matD] = fcnDWING_OL(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN)
 % Currently creates the upper 2/3rds of the D-matrix, which are the boundary conditions based
 % on adjacent DVEs, etc.
 %
@@ -61,7 +61,9 @@ end
 [tip2,~] = find(vecDVETIP == 2);
 [tip4,~] = find(vecDVETIP == 4);
 
-if valNELE == 1; tip2 = 1; tip4 = 1; end
+if vecN == 1; tip2 = [1:length(vecDVETIP)]'; tip4 = [1:length(vecDVETIP)]'; end
+
+len = length(tip2) + length(tip4);
 
 if isempty(tip2); tip2 = double.empty(0,1); % Ensuring the empty is the correct size if this is empty
 elseif isempty(tip4); tip4 = double.empty(0,1);
@@ -71,8 +73,8 @@ gamma1t = [ones(length(tip2),1) vecDVEHVSPN(tip2) vecDVEHVSPN(tip2).^2];
 gamma2t = [ones(length(tip4),1) -vecDVEHVSPN(tip4) vecDVEHVSPN(tip4).^2];
 gammat = [gamma1t; gamma2t];
 
-circ_tip = sparse(length(tip2) + length(tip4), valNELE*3);
-circ_tip = fcnCREATEDSECT(circ_tip, length(tip2) + length(tip4), 3, [tip2; tip4], [], gammat, []);
+circ_tip = sparse(len, valNELE*3);
+circ_tip = fcnCREATEDSECT(circ_tip, len, 3, [tip2; tip4], [], gammat, []);
 
 %% Combining all elements into matD
 matD = [vort; circ; vort_sym; circ_tip];

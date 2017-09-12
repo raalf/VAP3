@@ -32,17 +32,16 @@ filename = 'inputs/single_dve.vap';
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS...
     ] = fcnXMLREAD(filename);
 
+vecWINGTRI(~isnan(vecWINGTRI)) = nan;
+vecWAKETRI(~isnan(vecWAKETRI)) = nan;
+flagTRI = 0;
+
 valMAXTIME = 0
 flagRELAX = 0
 
 vecM = [1]';
 vecN = [1]';
-
-vecWINGTRI(~isnan(vecWINGTRI)) = nan;
-vecWAKETRI(~isnan(vecWAKETRI)) = nan;
-flagTRI = 0;
-
-vecWINGTRI = 1
+% vecWINGTRI = 1
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -70,7 +69,7 @@ flagVERBOSE = 0;
 [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
 %% Add boundary conditions to D-Matrix
-[matD] = fcnDWING_OL(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP);
+[matD] = fcnDWING_OL(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
 [matE] = fcnEWING(valNELE, matADJE, vecDVEHVCRD, vecDVELE, vecDVETE);
 [matD] = fcnDEXPAND_OL(matD, matE, valNELE);
 
@@ -219,9 +218,11 @@ if flagPLOT == 1
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
     
     if flagCIRCPLOT == 1
-        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 1000)
+        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 5e4)
     end
 end
+
+axis off
 
 % gran = 0.1;
 % x = -1:gran:1.5;
