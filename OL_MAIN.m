@@ -39,9 +39,9 @@ flagTRI = 0;
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [2]';
-vecN = [2]';
-% vecWINGTRI = 1
+vecM = [1]';
+vecN = [1]';
+vecWINGTRI = 1
 
 flagPRINT   = 1;
 flagPLOT    = 1;

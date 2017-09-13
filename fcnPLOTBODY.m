@@ -3,11 +3,11 @@ function [hFig2] = fcnPLOTBODY(verbose, valNELE, matDVE, matVLST, matCENTER, mat
 hFig2 = figure(3);
 clf(3);
 
-patch('Faces',matDVE,'Vertices',matVLST,'FaceColor','r')
+patch('Faces',matDVE,'Vertices',matVLST,'FaceColor','r','FaceAlpha',0,'LineWidth',2)
 hold on
 
 
-alpha(0.5)
+% alpha(0.5)
 
 if verbose == 1
     for ii = 1:valNELE

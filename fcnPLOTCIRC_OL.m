@@ -6,7 +6,7 @@ for i = 1:valNELE
     
     len = size(points,1);
     vort_p = fcnSTARGLOB([points(:,1) points(:,2) zeros(len,1)], repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1)) + matCENTER(i,:);
-    vort = fcnSTARGLOB([2.*matCOEFF(i,5).*points(:,1) + matCOEFF(i,4) 2.*matCOEFF(i,3).*points(:,2) + matCOEFF(i,2) zeros(len,1)], repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1)) + matCENTER(i,:);
+    vort = fcnSTARGLOB([(2.*matCOEFF(i,5).*points(:,1) + matCOEFF(i,4)) (2.*matCOEFF(i,3).*points(:,2) + matCOEFF(i,2)) zeros(len,1)], repmat(vecDVEROLL(i),len,1), repmat(vecDVEPITCH(i),len,1), repmat(vecDVEYAW(i),len,1));
     
     % points(:,2) is eta in local, points(:,1) is xsi
     circ = matCOEFF(i,3).*points(:,2).^2 + matCOEFF(i,2).*points(:,2) + matCOEFF(i,5).*points(:,1).^2 + matCOEFF(i,4).*points(:,1) + matCOEFF(i,1);

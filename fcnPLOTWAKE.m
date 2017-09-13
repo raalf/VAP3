@@ -2,10 +2,10 @@ function [hFig2] = fcnPLOTWAKE(verbose, hFig2, valWNELE, matWDVE, matWVLST, matW
 
 fig = hFig2;
 
-patch('Faces',matWDVE,'Vertices',matWVLST,'FaceColor','b')
+patch('Faces',matWDVE,'Vertices',matWVLST,'FaceColor','b','FaceAlpha',0.5,'LineWidth',2)
 hold on
 
-alpha(0.5)
+% alpha(0.5)
 
 if verbose == 1
     for ii = 1:valWNELE
