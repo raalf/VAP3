@@ -47,11 +47,11 @@ dgamma1t = [zeros(length(edge1),3) ones(length(edge1),1) -2.*vecDVEHVCRD(edge1)]
 dgamma2t = [zeros(length(edge3),3) ones(length(edge3),1) 2.*vecDVEHVCRD(edge3)];
 dgammat = [dgamma1t; dgamma2t];
 
-circ_freeedge = sparse(length(edge1) + length(edge3), valNELE*5);
-circ_freeedge = fcnCREATEDSECT(circ_freeedge, length(edge1) + length(edge3), 5, [edge1; edge3], [], dgammat, []);
+vort_te = sparse(length(edge1) + length(edge3), valNELE*5);
+vort_te = fcnCREATEDSECT(vort_te, length(edge1) + length(edge3), 5, [edge1; edge3], [], dgammat, []);
 
 %% Combining all elements into matE
-matE = [vort; circ; circ_freeedge];
+matE = [vort; circ; vort_te];
 
 end
 

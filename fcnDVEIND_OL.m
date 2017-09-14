@@ -1,4 +1,4 @@
-function [a, b, c, d, e] = fcnDVEIND_OL(dvenum_all, dvetype_all, fpg_all, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, matESHEETS)
+function [a, b, c, d, e, f] = fcnDVEIND_OL(dvenum_all, dvetype_all, fpg_all, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, matESHEETS)
 
 % This function gives the influence of a DVE.
 
@@ -33,6 +33,7 @@ b = a;
 c = a;
 d = a;
 e = a;
+f = a;
 
 for i = 1:chunk_sz:num_pts
     
@@ -58,10 +59,6 @@ for i = 1:chunk_sz:num_pts
     
     b2te = zeros(len,3);
     c2te = zeros(len,3);
-    d2r = zeros(len,3);
-    e2r = zeros(len,3);
-    d2l = zeros(len,3);
-    e2l = zeros(len,3);
     
     %% Leading Edge    
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:) + matVLST(matDVE(dvenum,2),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
@@ -118,15 +115,20 @@ for i = 1:chunk_sz:num_pts
     a3xi = a1le - a1te;
     b3xi = b1le + b2le - b1te - b2te;
     c3xi = c1le + c2le - c1te - c2te;
+    
     d3xi = matESHEETS(dvenum,1,1).*d2f + matESHEETS(dvenum,2,1).*d2r + matESHEETS(dvenum,3,1).*d2re + matESHEETS(dvenum,4,1).*d2l;
     e3xi = matESHEETS(dvenum,1,1).*e2f + matESHEETS(dvenum,2,1).*e2r + matESHEETS(dvenum,3,1).*e2re + matESHEETS(dvenum,4,1).*e2l;
-   
-    a(idx_chunk,:) = fcnSTARGLOB(a3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+    f3xi = a3xi;
+
+    % Pay attention to the lettering here. D-matrix is a,b,c for spanwise sheets, d,e,f for chordwise
+    % 2nd, 1st, 0th order terms in that order
+    a(idx_chunk,:) = fcnSTARGLOB(c3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     b(idx_chunk,:) = fcnSTARGLOB(b3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-    c(idx_chunk,:) = fcnSTARGLOB(c3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-    d(idx_chunk,:) = fcnSTARGLOB(d3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-    e(idx_chunk,:) = fcnSTARGLOB(e3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-    
+    c(idx_chunk,:) = fcnSTARGLOB(a3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+
+    d(idx_chunk,:) = fcnSTARGLOB(e3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+    e(idx_chunk,:) = fcnSTARGLOB(d3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+    f(idx_chunk,:) = fcnSTARGLOB(f3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     
 end
 

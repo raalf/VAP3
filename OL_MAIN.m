@@ -39,9 +39,9 @@ flagTRI = 0;
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [1]';
-vecN = [1]';
-vecWINGTRI = 1
+vecM = [2]';
+vecN = [2]';
+% vecWINGTRI = 1
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -69,9 +69,7 @@ flagVERBOSE = 0;
 [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
 %% Add boundary conditions to D-Matrix
-[matD] = fcnDWING_OL(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
-[matE] = fcnEWING(valNELE, matADJE, vecDVEHVCRD, vecDVELE, vecDVETE);
-[matD] = fcnDEXPAND_OL(matD, matE, valNELE);
+matD = fcnDEWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN, vecDVEHVCRD, vecDVELE, vecDVETE);
 
 %% Add kinematic conditions to D-Matrix
 [vecK] = fcnSINGFCT(valNELE, vecDVESURFACE, vecDVETIP, vecDVEHVSPN);
@@ -116,7 +114,7 @@ vecWDVEWING = [];
 vecWKEGAM = [];
 
 % Building wing resultant
-[vecR] = fcnRWING_OL(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+[vecR] = fcnRWING_OL(size(matD,1), 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
     matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
     vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE);
 
@@ -163,7 +161,7 @@ for valTIMESTEP = 1:valMAXTIME
     [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD_OL(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end), vecWDVEHVCRD(end-valWSIZE+1:end));
     
     %% Rebuilding and solving wing resultant
-    [vecR] = fcnRWING_OL(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+    [vecR] = fcnRWING_OL(size(matD,1), valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
         matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
         vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE);
     
@@ -218,7 +216,7 @@ if flagPLOT == 1
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
     
     if flagCIRCPLOT == 1
-        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 100)
+        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 1000)
     end
 end
 
