@@ -9,37 +9,34 @@ matESHEET = zeros(valNELE,4,2);
 DBL_EPS = 1e-14;
 
 %% First edge
-temp = zeros(valNELE,3,2);
-temp(:,:,1) = fcnGLOBSTAR(matVLST(matDVE(:,1),:) - matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW);
-temp(:,:,2) = fcnGLOBSTAR(matVLST(matDVE(:,2),:) - matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW);
-ab = (temp(:,:,2) - temp(:,:,1))./sqrt(sum((temp(:,:,2) - temp(:,:,1)).^2,2));
-xdir = repmat([1 0 0], size(ab,1),1);
+temp = fcnGLOBSTAR(matVLST(matDVE(:,2),:) - matVLST(matDVE(:,1),:), vecDVEROLL, vecDVEPITCH, vecDVEYAW);
+ab = temp./sqrt(sum(temp.^2,2));
 
-idx = temp(:,1,1) - temp(:,1,2) >= DBL_EPS;
+idx = ab(:,1) <= -DBL_EPS;
 matESHEET(idx,1,1) = -1;
-matESHEET(idx,1,2) = abs(acos(dot(ab(idx), xdir(idx), 2)));
 
-idx = temp(:,1,1) - temp(:,1,2) <= -DBL_EPS;
+idx = ab(:,1) >= DBL_EPS;
 matESHEET(idx,1,1) = 1;
-matESHEET(idx,1,2) = -abs(acos(dot(ab(idx), xdir(idx), 2)));
+
+idx = abs(ab(:,1)) >= DBL_EPS;
+matESHEET(idx,1,2) = -atan(ab(idx,1)./ab(idx,2));
 
 %% Second edge
 idx = sqrt(sum((matVLST(matDVE(:,2),:) - matVLST(matDVE(:,3),:)).^2,2)) > DBL_EPS;
 matESHEET(idx,2,1) = 1;
 
 %% Third edge
-temp = zeros(valNELE,3,2);
-temp(:,:,1) = fcnGLOBSTAR(matVLST(matDVE(:,3),:) - matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW);
-temp(:,:,2) = fcnGLOBSTAR(matVLST(matDVE(:,4),:) - matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW);
-ab = (temp(:,:,2) - temp(:,:,1))./sqrt(sum((temp(:,:,2) - temp(:,:,1)).^2,2));
+temp = fcnGLOBSTAR(matVLST(matDVE(:,3),:) - matVLST(matDVE(:,4),:), vecDVEROLL, vecDVEPITCH, vecDVEYAW);
+ab = temp./sqrt(sum(temp.^2,2));
 
-idx = temp(:,1,1) - temp(:,1,2) >= DBL_EPS;
-matESHEET(idx,3,1) = -1;
-matESHEET(idx,3,2) = -abs(acos(dot(ab(idx), xdir(idx), 2)));
-
-idx = temp(:,1,1) - temp(:,1,2) <= -DBL_EPS;
+idx = ab(:,1) <= -DBL_EPS;
 matESHEET(idx,3,1) = 1;
-matESHEET(idx,3,2) = abs(acos(dot(ab(idx), xdir(idx), 2)));
+
+idx = ab(:,1) >= DBL_EPS;
+matESHEET(idx,3,1) = -1;
+
+idx = abs(ab(:,1)) >= DBL_EPS;
+matESHEET(idx,3,2) = -atan(ab(idx,1)./ab(idx,2));
 
 %% Fourth edge
 idx = sqrt(sum((matVLST(matDVE(:,1),:) - matVLST(matDVE(:,4),:)).^2,2)) > DBL_EPS;

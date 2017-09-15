@@ -17,13 +17,21 @@ else; idx5 = idx4(eqn_num); % Corresponding edge 4 DVE for every edge 2 DVE
 end
 
 %% Vorticity equations between DVEs in Spanwise Direction
-dgamma1 = [2.*vecDVEHVSPN(idx3) ones(len,1) zeros(len,4); ... % Spanwise
-          zeros(len,4), ones(len,1) zeros(len,1)];                          % Chordwise, at midchord
-      
-dgamma2 = [-2.*vecDVEHVSPN(idx5) ones(len,1) zeros(len,4); ... % Spanwise
-          zeros(len,4), ones(len,1) zeros(len,1)].*-1;
+% dgamma1 = [2.*vecDVEHVSPN(idx3) ones(len,1) zeros(len,4); ... % Spanwise
+%           zeros(len,4), ones(len,1) zeros(len,1)];                          % Chordwise, at midchord    
+% dgamma2 = [-2.*vecDVEHVSPN(idx5) ones(len,1) zeros(len,4); ... % Spanwise
+%           zeros(len,4), ones(len,1) zeros(len,1)].*-1;
+% vort_span = fcnCREATEDSECT(sparse(len*2,valNELE*6), len*2, 6, [idx3; idx3], [idx5; idx5], dgamma1, dgamma2);
 
-vort_span = fcnCREATEDSECT(sparse(len*2,valNELE*6), len*2, 6, [idx3; idx3], [idx5; idx5], dgamma1, dgamma2);
+% dgamma1 = [2.*vecDVEHVSPN(idx3) ones(len,1) zeros(len,2) ones(len,1) zeros(len,1)];   
+% dgamma2 = [-2.*vecDVEHVSPN(idx5) ones(len,1) zeros(len,2) ones(len,1) zeros(len,1)].*-1;
+%     
+% vort_span = fcnCREATEDSECT(sparse(len,valNELE*6), len, 6, idx3, idx5, dgamma1, dgamma2);
+
+dgamma1 = [2.*vecDVEHVSPN(idx3) ones(len,1) zeros(len,4)];    
+dgamma2 = [-2.*vecDVEHVSPN(idx5) ones(len,1) zeros(len,4)].*-1;
+
+vort_span = fcnCREATEDSECT(sparse(len,valNELE*6), len, 6, idx3, idx5, dgamma1, dgamma2);
 
 %% Circulation equations between DVEs in Spanwise Direction
 gamma1 = [vecDVEHVSPN(idx3).^2 vecDVEHVSPN(idx3) ones(len,1) zeros(len,2) ones(len,1)];
@@ -47,13 +55,21 @@ else; idx5 = idx4(eqn_num); % Corresponding edge 3 DVE for every edge 1 DVE
 end
 
 %% Vorticity equations between DVEs in Chordwise Direction
-dgamma1 = [zeros(len,1) ones(len,1) zeros(len,4); ... % Spanwise, at midspan
-          zeros(len,3) -2.*vecDVEHVCRD(idx3) ones(len,1) zeros(len,1)]; % Chordwise
-      
-dgamma2 = [zeros(len,1) ones(len,1) zeros(len,4); ... % Spanwise, at midspan
-          zeros(len,3) 2.*vecDVEHVCRD(idx5) ones(len,1) zeros(len,1)].*-1; % Chordwise
+% dgamma1 = [zeros(len,1) ones(len,1) zeros(len,4); ... % Spanwise, at midspan
+%           zeros(len,3) -2.*vecDVEHVCRD(idx3) ones(len,1) zeros(len,1)]; % Chordwise   
+% dgamma2 = [zeros(len,1) ones(len,1) zeros(len,4); ... % Spanwise, at midspan
+%           zeros(len,3) 2.*vecDVEHVCRD(idx5) ones(len,1) zeros(len,1)].*-1; % Chordwise      
+% vort_chord = fcnCREATEDSECT(sparse(len*2,valNELE*6), len*2, 6, [idx3; idx3], [idx5; idx5], dgamma1, dgamma2);
 
-vort_chord = fcnCREATEDSECT(sparse(len*2,valNELE*6), len*2, 6, [idx3; idx3], [idx5; idx5], dgamma1, dgamma2);
+% dgamma1 = [zeros(len,1) ones(len,1) zeros(len,1) -2.*vecDVEHVCRD(idx3) ones(len,1) zeros(len,1)];
+% dgamma2 = [zeros(len,1) ones(len,1) zeros(len,1) 2.*vecDVEHVCRD(idx5) ones(len,1) zeros(len,1)].*-1;
+%       
+% vort_chord = fcnCREATEDSECT(sparse(len,valNELE*6), len, 6, idx3, idx5, dgamma1, dgamma2);
+
+dgamma1 = [zeros(len,3) -2.*vecDVEHVCRD(idx3) ones(len,1) zeros(len,1)]; % Chordwise      
+dgamma2 = [zeros(len,3) 2.*vecDVEHVCRD(idx5) ones(len,1) zeros(len,1)].*-1; % Chordwise
+
+vort_chord = fcnCREATEDSECT(sparse(len,valNELE*6), len, 6, idx3, idx5, dgamma1, dgamma2);
 
 %% Circulation equations between DVEs in Chordwise Direction
 gamma1 = [zeros(len,2) ones(len,1) vecDVEHVCRD(idx3).^2 -vecDVEHVCRD(idx3) ones(len,1)];

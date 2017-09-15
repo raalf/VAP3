@@ -48,60 +48,20 @@
 				<N>4</N>
 				<section>
 					<x>0</x>
-					<y>-5</y>
-					<z>0</z>
-					<chord>1</chord>
-					<twist>0</twist>
-				</section>
-				<section>
-					<x>0</x>
 					<y>0</y>
 					<z>0</z>
 					<chord>1</chord>
 					<twist>0</twist>
 				</section>
 				<section>
-					<x>0</x>
-					<y>5</y>
+					<x>1</x>
+					<y>2</y>
 					<z>0</z>
 					<chord>1</chord>
 					<twist>0</twist>
 				</section>				
 			</panel>
 		</wing>
-
-		<fuselage>
-			<transitionpanel>2</transitionpanel>
-
-			<xaxis>1</xaxis>
-			<yaxis>0</yaxis>
-			<zaxis>0</zaxis>
-
-			<xorig>-1.5</xorig>
-			<yorig>0</yorig>
-			<zorig>0</zorig>
-
-			<fsection>
-				<diameter>0.01</diameter>
-				<x>0</x>
-			</fsection>
-			<fsection>
-				<diameter>0.5</diameter>
-				<x>0.4</x>
-			</fsection>
-			<fsection>
-				<diameter>0.5</diameter>
-				<x>1.05</x>
-			</fsection>
-			<fsection>
-				<diameter>0.4</diameter>
-				<x>4.5</x>
-			</fsection>
-			<fsection>
-				<diameter>0.2</diameter>
-				<x>5.9</x>
-			</fsection>
-		</fuselage>
 
 	</vehicle>				
 

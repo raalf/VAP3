@@ -22,7 +22,7 @@ disp(' ');
 % 2. When using symmetry, define from symmetry plane outward
 
 %% Reading in geometry
-filename = 'inputs/single_dve.vap';
+filename = 'inputs/simpler_wing.vap';
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -39,9 +39,11 @@ flagTRI = 0;
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [2]';
-vecN = [2]';
+vecM = [1]';
+vecN = [20]';
 % vecWINGTRI = 1
+
+vecVEHALPHA = 15
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -216,7 +218,7 @@ if flagPLOT == 1
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
     
     if flagCIRCPLOT == 1
-        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 1000)
+        fcnPLOTCIRC_OL(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 100*max(vecN))
     end
 end
 
