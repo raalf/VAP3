@@ -1,4 +1,4 @@
-function [ ] = saveFig2Latex( varargin )
+function [ ] = fcnFIG2LATEX( varargin )
 %SAVEFIG2LATEX Save Matlab figure to EPS or PDF for latex document
 %   saveFig2Latex(FILENAME) saves current active figure as 6"x4" pdf to
 %   default folder location 'Proposal/figures/' with FILENAME.

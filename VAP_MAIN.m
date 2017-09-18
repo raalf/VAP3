@@ -21,6 +21,7 @@ disp(' ');
 
 %% Reading in geometry
 filename = 'inputs/StandardCirrus.vap';
+% filename = 'inputs/rotors_only.vap'
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -34,6 +35,10 @@ vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 
+valMAXTIME = 4
+flagRELAX = 0
+
+%%
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
@@ -207,9 +212,10 @@ fprintf('\n');
 
 %% Plotting
 
-if flagPLOT == 1
+if flagPLOT == 1 && flagRELAX == 1
     fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
                 matWDVEMP, matWDVEMPIND, matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
+elseif flagPLOT == 1 && flagRELAX ~= 1
+    fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
+                [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);    
 end
-
-% profreport
