@@ -20,8 +20,9 @@ disp(' ');
 % 1. Define wing from one wingtip to another in one direction
 
 %% Reading in geometry
-filename = 'inputs/StandardCirrus.vap';
-% filename = 'inputs/rotors_only.vap'
+% filename = 'inputs/simple-wing.vap';
+% filename = 'inputs/rotors_only.vap';
+filename = 'inputs/TMotor.vap'
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -35,8 +36,8 @@ vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 
-valMAXTIME = 4
-flagRELAX = 0
+valMAXTIME = 15
+flagRELAX = 1
 
 %%
 flagPRINT   = 1;
