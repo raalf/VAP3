@@ -1,0 +1,96 @@
+Input file for FreeWake 2014
+	Format will not work with older versions
+Input File of Brican TD 100
+all units in ft/lbf/sec
+
+Please note that the program uses equal, number, and : signs as special recognizers!
+The results are written to the sub-directory 'output'
+
+Relaxed wake (yes 1, no 0):		relax= 1
+steady (1) or unsteady (0): 		aerodynamics: = 1
+Symmetrical geometry (yes 1,no 0):	sym= 1
+Longitudinal trim (yes 1, no 0):	trim = 0 		(yes means m has to be 1)
+
+Max. number of time steps:	Maxtime	= 30  
+Width of each time step (sec):	deltime	= 0.0800
+Convergence delta-span efffic.:	deltae 	= 0.0000 	(0 if only time stepping)
+
+Free Stream Velocity (leave value 1):	Uinf	= 1		
+AOA beginning, end, step size [deg]:	alpha	= 3 12 0.5  
+Sideslip Angle [deg]:			beta	= 0
+
+Denity:					density	= 1.225
+Kinematic viscosity			nu 	= 1.450000e-05
+
+Reference Area:			S	= 1.18776537
+Refernce Span:			b	= 4.974336 
+
+Mean aerodynanic chord		cmac	= 0.1003353
+Aircraft Weight	(N or lbs)	W	= 66.708
+
+CG-location (x y z)		xcg	= 0.2 0 0 
+
+CMo of wing			CMo	= -.1
+
+No. of Wings (max. 5)		wings 	= 2
+No. of panels:			panels	= 3
+No. of chordwise lifting lines:	m	= 1 
+No. of airfoils (max. 15)	airfoils= 9
+
+
+
+Panel Boundary Conditions:
+First Digit: 	0 - undefined circulation strength
+(circ strength)	1 - zero circulation (free end)
+		2 - circulation strength equal to neighboring elementary wing
+Second Digit: 	0 - undefined vorticity
+(vorticity)	1 - zero vorticity (free end, or symmetry)
+		2 - vorticity equal to neighboring elementary wing
+Third Digit: 	0 - undefined vorticity gradient
+(vorticity)	1 - zero voriticity gradient
+(gradient )	2 - vorticity gradient equal to neighboring elementary wing
+	
+
+Defines leading edge of wing all measures in meters	
+
+panel #:1 number of spanwise elements: n=4  airfoil no. = 9
+neighboring panels (0 for none) left:0	right:2
+xleft	yleft	zleft	chord	epsilon	Bound.Cond.
+0.	0.	0.	0.3048	0.	10
+xright	yright	zright	chord	epsilon	Bound.Cond.
+0.044196	2.2808184	0.16002	0.2185416	0.	220
+
+panel #:2 number of spanwise elements: n=8  airfoil no. = 9
+neighboring panels (0 for none) left:1	right:0
+xleft	yleft	zleft	chord	epsilon	Bound.Cond.
+0.044196	2.2808184	0.16002	0.2185416	0.	220
+xright	yright	zright	chord	epsilon	Bound.Cond.
+0.2286	2.4893016	0.17526	0.1271016	0.	100
+
+panel #:3 number of spanwise elements: n=6  airfoil no. = 7
+neighboring panels (0 for none) left:0	right:0
+xleft	yleft	zleft	chord	epsilon	Bound.Cond.
+1.2548616	0.	0.3048	0.2033016	0.	10
+xright	yright	zright	chord	epsilon	Bound.Cond.
+1.2548616	0.381	0.3048	0.2033016	0.	100
+
+
+%<-special identifier
+Vertical-tail information: number of panels (max 5) = 1
+no.  panel-chord  panel-area   panel-airfoil
+1    0.23241		0.03539606	7
+
+
+Fuselage information: 
+no. of sections (max 20) = 0  
+width of each section = 0
+index of panel where transition to turbulent flow occurs = 0
+
+no.	Diameter 
+
+
+Interference Drag = 10%
+
+
+##############
+
