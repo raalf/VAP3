@@ -22,7 +22,7 @@ function [valCL,valCLF, valCLI, valCDI, valE, vecDVENFREE, vecDVENIND, vecDVELFR
 %% Induced Drag force
 
 [inddrag] =fcnDVEINDDRAG(matCOEFF, matDVE, matVLST, vecUINF, vecDVEHVSPN, vecDVEHVCRD, vecDVETE, valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-    valWSIZE, valTIMESTEP, vecSYM, vecDVEWING, vecWDVEWING);
+    valWSIZE, valTIMESTEP, vecSYM, vecDVEWING, vecWDVEWING, flagSTEADY);
 
 %% Sum up element forces to generate total wing forces
 
