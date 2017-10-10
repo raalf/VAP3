@@ -34,6 +34,8 @@ vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 
+flagSTEADY = 1
+
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
@@ -101,9 +103,9 @@ vecWDVESURFACE = [];
 vecWDVETRI = [];
 
 % Building wing resultant
-[vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+[vecR] = fcnRWING_VAP3(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
     matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-    vecWDVETESWP, vecSYM, valWSIZE, flagTRI);
+    vecWDVETESWP, vecSYM, valWSIZE, flagTRI, flagSTEADY);
 
 % Solving for wing coefficients
 [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
@@ -151,9 +153,9 @@ for valTIMESTEP = 1:valMAXTIME
         [matWCOEFF(end-valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, vecWR, valWSIZE, vecWKGAM(end-valWSIZE+1:end), vecWDVEHVSPN(end-valWSIZE+1:end));
         
         %% Rebuilding and solving wing resultant
-        [vecR] = fcnRWING(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
+        [vecR] = fcnRWING_VAP3(valNELE, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
             matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-            vecWDVETESWP, vecSYM, valWSIZE, flagTRI);
+            vecWDVETESWP, vecSYM, valWSIZE, flagTRI, flagSTEADY);
         
         [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
         
@@ -166,10 +168,10 @@ for valTIMESTEP = 1:valMAXTIME
             
             [vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW,...
                 vecWDVELESWP, vecDVEWMCSWP, vecDVEWTESWP, vecWDVEAREA, matWCENTER, matWDVENORM, ...
-                matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE(matUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
+                matWVLST, matWDVE, matWDVEMP, matWDVEMPIND, idxWVLST, vecWK] = fcnRELAXWAKE_VAP3(matUINF, matCOEFF, matDVE, matVLST, matWADJE, matWCOEFF, ...
                 matWDVE, matWVLST, valDELTIME, valNELE, valTIMESTEP, valWNELE, valWSIZE, vecDVETE, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, ...
                 vecDVEPITCH, vecDVEROLL, vecDVETESWP, vecDVEYAW, vecK, vecSYM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVELESWP, vecWDVEPITCH, ...
-                vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVESURFACE);
+                vecWDVEROLL, vecWDVESYM, vecWDVETESWP, vecWDVETIP, vecWDVEYAW, vecWK, vecWDVESURFACE, flagSTEADY);
             
             % Creating and solving WD-Matrix
             [matWD, vecWR] = fcnWDWAKE([1:valWNELE]', matWADJE, vecWDVEHVSPN, vecWDVESYM, vecWDVETIP, vecWKGAM);
@@ -178,10 +180,10 @@ for valTIMESTEP = 1:valMAXTIME
         
         %% Forces
         [vecCL(valTIMESTEP,:), vecCLF(valTIMESTEP,:), vecCLI(valTIMESTEP,:), vecCDI(valTIMESTEP,:), vecE(valTIMESTEP,:), vecDVENFREE, vecDVENIND, ...
-            vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
+            vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES_VAP3(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
             vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
             matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
-            vecSYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI);
+            vecSYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, flagSTEADY);
         
     end
     
