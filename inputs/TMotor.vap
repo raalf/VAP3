@@ -21,9 +21,9 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>0.2</vinf>
+		<vinf>5</vinf>
 
-		<alpha>-90</alpha>
+		<alpha>0</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>90</fpa>
@@ -34,16 +34,16 @@
 		<cmac>0.707</cmac>
 
 		<rotor>
-			<rpm>50</rpm>
+			<rpm>2000</rpm>
 			<dia>0.4572</dia>
 
 			<xhub>0</xhub>
 			<yhub>0</yhub>
 			<zhub>0</zhub>
 
-			<axisx>0</axisx>
+			<axisx>1</axisx>
 			<axisy>0</axisy>
-			<axisz>1</axisz>
+			<axisz>0</axisz>
 
 			<blades>2</blades>
 
