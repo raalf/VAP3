@@ -24,6 +24,7 @@ disp(' ');
 % filename = 'inputs/rotors_only.vap';
 filename = 'inputs/TMotor.vap'
 % filename = 'inputs/single_dve_rotor.vap';
+% filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -39,13 +40,13 @@ flagTRI = 0;
 
 flagSTEADY = 1
 flagRELAX = 1
-valMAXTIME = 20
+valMAXTIME = 100
 valDELTIME = 0.001
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagCIRCPLOT = 1;
-flagGIF = 0;
+flagCIRCPLOT = 0;
+flagGIF = 1;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
@@ -63,7 +64,8 @@ flagVERBOSE = 0;
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
-[hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
+
+% [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
 %% Add boundary conditions to D-Matrix
 [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);

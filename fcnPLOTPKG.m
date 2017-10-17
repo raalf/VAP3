@@ -21,7 +21,7 @@ if flagPLOTUINF == 1
 end
 
 if flagCIRCPLOT == 1
-    fcnPLOTCIRC(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 1e6)
+    fcnPLOTCIRC(valNELE, matDVE, matVLST, matCENTER, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, 1e2)
 end
 
 end

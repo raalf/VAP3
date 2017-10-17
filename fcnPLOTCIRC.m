@@ -25,9 +25,8 @@ for i = 1:valNELE
 end
 
 
-function [inPoints] = polygrid( xv, yv, ppa)
+function [inPoints] = polygrid( xv, yv, N)
 
-	N = sqrt(ppa);
 %Find the bounding rectangle
 	lower_x = min(xv);
 	higher_x = max(xv);
@@ -35,8 +34,10 @@ function [inPoints] = polygrid( xv, yv, ppa)
 	lower_y = min(yv);
 	higher_y = max(yv);
 %Create a grid of points within the bounding rectangle
-	inc_x = 1/N;
-	inc_y = 1/N;
+
+	inc_x = (higher_x - lower_x)/N;
+	inc_y = (higher_y - lower_y)/N;
+
 	
 	interval_x = lower_x:inc_x:higher_x;
 	interval_y = lower_y:inc_y:higher_y;
