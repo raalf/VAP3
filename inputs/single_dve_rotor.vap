@@ -2,12 +2,12 @@
 
 <VAP>
 	<settings>
-		<flagRELAX>TRUE</flagRELAX>
+		<flagRELAX>FALSE</flagRELAX>
 		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
-		<valMAXTIME>10</valMAXTIME>
+		<valMAXTIME>40</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.01</valDELTIME>
+		<valDELTIME>0.025</valDELTIME>
 		<valDELTAE>0</valDELTAE>
 	</settings>
 
@@ -21,7 +21,7 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>1</vinf>
+		<vinf>5</vinf>
 
 		<alpha>0</alpha>
 		<beta>0</beta>
@@ -29,13 +29,13 @@
 		<fpa>90</fpa>
 		<trk>0</trk>
 
-		<area>1</area>
-		<span>1</span>
-		<cmac>1.0</cmac>
+		<area>12.6</area>
+		<span>15</span>
+		<cmac>0.707</cmac>
 
 		<rotor>
-			<rpm>200</rpm>
-			<dia>1</dia>
+			<rpm>2000</rpm>
+			<dia>0.4572</dia>
 
 			<xhub>0</xhub>
 			<yhub>0</yhub>
@@ -45,7 +45,7 @@
 			<axisy>0</axisy>
 			<axisz>0</axisz>
 
-			<blades>1</blades>
+			<blades>2</blades>
 
 			<M>1</M>
 
@@ -56,14 +56,14 @@
 					<x>0</x>
 					<y>0.5</y>
 					<z>0</z>
-					<chord>1</chord>
-					<twist>10</twist>
+					<chord>0.05</chord>
+					<twist>0</twist>
 				</section>
 				<section>
-					<x>1</x>
-					<y>1.5</y>
+					<x>0</x>
+					<y>0.25</y>
 					<z>0</z>
-					<chord>1</chord>
+					<chord>0.05</chord>
 					<twist>10</twist>
 				</section>	
 			</panel>

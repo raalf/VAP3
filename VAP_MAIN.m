@@ -39,14 +39,14 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 
 flagSTEADY = 1
-flagRELAX = 0
-valMAXTIME = 60
+flagRELAX = 1
+valMAXTIME = 100
 valDELTIME = 0.001
 
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
@@ -196,7 +196,9 @@ for valTIMESTEP = 1:valMAXTIME
     end
     
     %% Post-timestep outputs
-    fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI)
+    if flagPRINT == 1
+        fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI)
+    end
     
     if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)
         fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER);
