@@ -1,8 +1,8 @@
 function [matVLST, matCENTER, matFUSEGEOM, ...
-    matROTORHUBGLOB, matROTORAXIS, matNPVLST, matNTVLST] = fcnROTVEHICLE( matDVE, matVLST, ...
+    matROTORHUBGLOB, matROTORAXIS, matNTVLST] = fcnROTVEHICLE( matDVE, matVLST, ...
     matCENTER, valVEHICLES, vecDVEVEHICLE, matVEHORIG, ...
     matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, ...
-    matROTORHUB, matROTORAXIS, vecROTORVEH, matNPVLST, matNTVLST)
+    matROTORHUB, matROTORAXIS, vecROTORVEH, matNTVLST)
 %FCNROTVEHICLE Summary of this function goes here
 %   using for loop to rotate each vehicle with respect with their origin
 %   position in global coordinates
@@ -22,7 +22,6 @@ for n = 1:valVEHICLES
     
     % glob to local translation
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) - repmat(matVEHORIG(n,:),valVLSTVEH,1);
-    matNPVLST(idxVLSTVEH,:) = matNPVLST(idxVLSTVEH,:) - repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matNTVLST(idxVLSTVEH,:) = matNTVLST(idxVLSTVEH,:) - repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) - repmat(matVEHORIG(n,:),valDVEVEH,1);
     
@@ -30,7 +29,6 @@ for n = 1:valVEHICLES
 %     dcm = angle2dcm(matVEHROT(n,1), matVEHROT(n,2), matVEHROT(n,3), 'XYZ');
     dcm = angle2dcm(matVEHROT(n,3), matVEHROT(n,1), matVEHROT(n,2), 'ZXY');
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:)*dcm;
-    matNPVLST(idxVLSTVEH,:) = matNPVLST(idxVLSTVEH,:)*dcm;
     matNTVLST(idxVLSTVEH,:) = matNTVLST(idxVLSTVEH,:)*dcm;
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:)*dcm;
     
@@ -41,7 +39,6 @@ for n = 1:valVEHICLES
     
     % local to global translation
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
-    matNPVLST(idxVLSTVEH,:) = matNPVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matNTVLST(idxVLSTVEH,:) = matNTVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) + repmat(matVEHORIG(n,:),valDVEVEH,1); 
     
