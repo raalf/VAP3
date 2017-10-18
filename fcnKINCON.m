@@ -1,4 +1,4 @@
-function [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD,vecSYM)
+function [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD, vecSYM, flagGPU)
 
 % Flow tangency is to be enforced at all control points on the surface HDVEs
 % In the D-Matrix, dot (a,b,c) of our influencing HDVE with the normal of the point we are influencing on
@@ -19,7 +19,7 @@ dvetype = zeros(length(dvenum),1);
 
 %set singfct to zero temporarily. Why? Not gonna do this, we have NaN CL because of this. T.D.K 2017-04-26
 % [a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, zeros(size(vecK,1),1), matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
-[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM);
+[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM, flagGPU);
 
 % List of normals we are to dot the above with
 normals = repmat(matDVENORM,valNELE,1); % Repeated so we can dot all at once
