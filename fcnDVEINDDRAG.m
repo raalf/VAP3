@@ -1,6 +1,6 @@
 function [inddrag] = fcnDVEINDDRAG(valNELE, matCOEFF,matDVE,matVLST,matUINF,vecDVEHVSPN, vecDVEHVCRD, vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-    valWSIZE, valTIMESTEP,vecSYM,vecDVEWING,vecWDVEWING, flagTRI, flagSTEADY)
+    valWSIZE, valTIMESTEP,vecDVESYM,vecDVEWING,vecWDVEWING, flagTRI, flagSTEADY)
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
 % non-dimensionalized to q.
 
@@ -192,7 +192,7 @@ elseif flagSTEADY == 0 || flagSTEADY == 2
 end
 
 %get all velocities %need to set singfct = 0 for le row of elements!!!
-[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, tempwk, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, zeros(size(vecWDVELESWP)), zeros(size(vecWDVETESWP)), vecSYM);
+[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, tempwk, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, zeros(size(vecWDVELESWP)), zeros(size(vecWDVETESWP)), vecDVESYM);
 
 % idxnans = sum(isnan(w_ind),2);
 % idxnans = idxnans > 0;

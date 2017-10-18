@@ -1,4 +1,4 @@
-function [valCL, valCLF, valCLI, valCY, valCYF, valCYI, valCDI, valE]= fcnWINGNFORCE(liftfree, liftind, sidefree, sideind, inddrag, matUINF, vecAREA, vecSPAN, vecSYM, valBETA, vecDVEVEHICLE, vecDVEWING, valVEHICLES)
+function [valCL, valCLF, valCLI, valCY, valCYF, valCYI, valCDI, valE]= fcnWINGNFORCE(liftfree, liftind, sidefree, sideind, inddrag, matUINF, vecAREA, vecSPAN, vecDVESYM, valBETA, vecDVEVEHICLE, vecDVEWING, valVEHICLES)
 %% Wing Normal Force
 % this routine adds up the DVE's normal forces in order to compute the
 % total wing normal forces/density and coefficients based on free stream
@@ -45,8 +45,8 @@ for i = 1:valVEHICLES
         inddragsum = sum(inddrag(idxvehwing));
         %double the force if we are using symmetry. This only works with sym for
         %the whole system
-        if any(vecSYM) == 1 && valBETA ==0 %not sure why beta has to be zero
-            disp('Symmetry is not currently working here! fcnWINGNFORCE');
+        if any(vecDVESYM) == 1 && ~any(valBETA) %not sure why beta has to be zero
+%             disp('Symmetry is not currently working here! fcnWINGNFORCE');
             ntfree(1) = ntfree(1)*2; %why dont we double the side force?
             ntind(1) = ntind(1)*2;
             ntind(2) = ntind(2)*2;

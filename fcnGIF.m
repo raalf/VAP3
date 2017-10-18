@@ -3,7 +3,8 @@ function [hFig3] = fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, ma
 
 [hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
 [hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER);
-view([33 22])
+% view([33 22])
+view([-45 20])
 
 frame = getframe(hFig3);
 im = frame2im(frame);
