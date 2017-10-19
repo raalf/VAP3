@@ -21,12 +21,12 @@ disp(' ');
 
 %% Reading in geometry
 % filename = 'inputs/simple-wing.vap';
-filename = 'inputs/simple-wing-sym.vap';
+% filename = 'inputs/simple-wing-sym.vap';
 % filename = 'inputs/rotors_only.vap';
 % filename = 'inputs/TMotor.vap'
 % filename = 'inputs/single_dve_rotor.vap';va
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
-% filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -42,13 +42,10 @@ flagTRI = 0;
 
 flagGPU = 1
 
-vecN = 25
-vecM = 10
-
 flagSTEADY = 1
-flagRELAX = 1
-valMAXTIME = 60
-valDELTIME = 0.1
+flagRELAX = 0
+valMAXTIME = 5
+valDELTIME = 0.001
 
 flagPRINT   = 1;
 flagPLOT    = 1;
@@ -214,14 +211,28 @@ for valTIMESTEP = 1:valMAXTIME
 end
 
 %% Viscous wrapper
+valWEIGHT = 1000;
+valAREA = 1;
+valCMAC = 1;
+vecAIRFOIL = 6;
+valDENSITY = 1.225;
+valKINV = 1.45e-5;
+valVSPANELS = 0;
+matVSGEOM = [];
+valFPANELS = [];
+matFGEOM = [];
+valFTURB = [];
+valFPWIDTH = [];
+valINTERF = 10;
 
-%         [vecCLv(1,ai), vecCD(1,ai), vecPREQ(1,ai), valVINF(1,ai), valLD(1,ai)] = fcnVISCOUS(vecCL(end,ai), vecCDI(end,ai), ...
-%             valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
-%             vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-%             matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-%             valFPWIDTH, valINTERF, vecDVEROLL);
+[vecCLv, vecCD, vecPREQ, vecVINF, vecLD] = fcnVISCOUS(vecCL(end), vecCDI(end), valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+    vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
+    matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
+    valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE);
 
-
+        
+        
+%%
 fprintf('\n');
 
 toc
