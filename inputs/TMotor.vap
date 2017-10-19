@@ -7,7 +7,7 @@
 		<flagTRI>FALSE</flagTRI>
 		<valMAXTIME>40</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.025</valDELTIME>
+		<valDELTIME>0.001</valDELTIME>
 		<valDELTAE>0</valDELTAE>
 	</settings>
 
@@ -19,11 +19,11 @@
 	<vehicle>
 		<x>0</x>
 		<y>0</y>
-		<z>0</z>
+		<z>1</z>
 
-		<vinf>5</vinf>
+		<vinf>9.1440</vinf>
 
-		<alpha>0</alpha>
+		<alpha>-90</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>90</fpa>
@@ -34,16 +34,16 @@
 		<cmac>0.707</cmac>
 
 		<rotor>
-			<rpm>2000</rpm>
+			<rpm>3000</rpm>
 			<dia>0.4572</dia>
 
 			<xhub>0</xhub>
 			<yhub>0</yhub>
 			<zhub>0</zhub>
 
-			<axisx>1</axisx>
+			<axisx>0</axisx>
 			<axisy>0</axisy>
-			<axisz>0</axisz>
+			<axisz>1</axisz>
 
 			<blades>2</blades>
 
