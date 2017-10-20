@@ -19,9 +19,9 @@
 	<vehicle>
 		<x>0</x>
 		<y>0</y>
-		<z>1</z>
+		<z>0</z>
 
-		<vinf>9.1440</vinf>
+		<vinf>1</vinf>
 
 		<alpha>-90</alpha>
 		<beta>0</beta>
@@ -34,7 +34,7 @@
 		<cmac>0.707</cmac>
 
 		<rotor>
-			<rpm>3000</rpm>
+			<rpm>215</rpm>
 			<dia>0.4572</dia>
 
 			<xhub>0</xhub>
@@ -195,7 +195,6 @@
 					<chord>0.009098</chord>
 					<twist>7.526000</twist>
 				</section>
-
 			</panel>
 		</rotor>
 

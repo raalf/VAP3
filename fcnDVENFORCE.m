@@ -59,7 +59,7 @@ if any(idx1 == 0)
     tempa(idx1==0,1) = tan(vecDVEMCSWP(idx1==0));
     tempa= [tempa ones(valNELE,1)  zeros(valNELE,1)];
     
-    % global vectors to find ind. velocities
+    % global vectors to find ind. velocitiess
     s(idx1 ==0,:)= fcnSTARGLOB(tempa(idx1==0,:), vecDVEROLL(idx1==0), vecDVEPITCH(idx1==0), vecDVEYAW(idx1==0));
     
     %using the verticies to do this doesn't match the results from above for idx1 ==0
@@ -80,6 +80,7 @@ uxs = sqrt(sum(abs(tempb).^2,2));
 
 % eN = tempa.*(1/UxS);
 en = tempb.*repmat((1./uxs),1,3);
+% en = s.*repmat((1./uxs),1,3);
 
 % % the lift direction  eL=Ux[0,1,0]/|Ux[0,1,0]|
 % % el = repmat([-matUINF(3)/norm(matUINF) 0 matUINF(1)/norm(matUINF)],[valNELE,1]); %does this work with beta?

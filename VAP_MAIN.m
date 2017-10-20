@@ -24,7 +24,7 @@ disp(' ');
 % filename = 'inputs/simple-wing-sym.vap';
 % filename = 'inputs/rotors_only.vap';
 filename = 'inputs/TMotor.vap';
-% filename = 'inputs/single_dve_rotor.vap';va
+% filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 
@@ -44,13 +44,13 @@ flagGPU = 1
 
 % flagSTEADY = 1
 % flagRELAX = 0
-% valMAXTIME = 5
+valMAXTIME = 150
 % valDELTIME = 0.001
 
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
@@ -68,6 +68,12 @@ flagVERBOSE = 0;
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
+for jj = 1:length(vecROTORRPM)
+    vecROTORJ(jj,1) = (vecVEHVINF(vecROTORVEH(jj))*60)./(vecROTORRPM(jj).*vecROTDIAM(jj));
+end
+if flagPRINT == 1
+    fprintf('\nADVANCE RATIO == %g\n\n',vecROTORJ);
+end
 
 % [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
@@ -85,6 +91,7 @@ vecCLF = nan(valMAXTIME,valVEHICLES);
 vecCLI = nan(valMAXTIME,valVEHICLES);
 vecCDI = nan(valMAXTIME,valVEHICLES);
 vecE = nan(valMAXTIME,valVEHICLES);
+vecCT = nan(valMAXTIME,valVEHICLES);
 
 % Initializing wake parameters
 matWAKEGEOM = [];
@@ -138,7 +145,7 @@ for valTIMESTEP = 1:valMAXTIME
     %   Calculate viscous effects
     
     %% Moving the vehicles
-        
+    
     [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
         matFUSEGEOM, matNEWWAKEPANEL, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, matROTORHUBGLOB, matNTVLST] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
         valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matFUSEGEOM, vecFUSEVEHICLE, ...
@@ -154,7 +161,7 @@ for valTIMESTEP = 1:valMAXTIME
         = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
         vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
         vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVESURFACE, flagSTEADY, valWSIZE);
-
+    
     if flagPREVIEW ~= 1
         %% Creating and solving WD-Matrix for latest row of wake elements
         % We need to grab from matWADJE only the values we need for this latest row of wake DVEs
@@ -190,17 +197,19 @@ for valTIMESTEP = 1:valMAXTIME
             [matWCOEFF] = fcnSOLVEWD(matWD, vecWR, valWNELE, vecWKGAM, vecWDVEHVSPN);
         end
         %[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, [])
+        
         %% Forces
-        [vecCL(valTIMESTEP,:), vecCLF(valTIMESTEP,:), vecCLI(valTIMESTEP,:), vecCDI(valTIMESTEP,:), vecE(valTIMESTEP,:), vecDVENFREE, vecDVENIND, ...
+        [vecCL(valTIMESTEP,:), vecCLF(valTIMESTEP,:), vecCLI(valTIMESTEP,:), vecCDI(valTIMESTEP,:), vecCT(valTIMESTEP,:), vecE(valTIMESTEP,:), vecDVENFREE, vecDVENIND, ...
             vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
             vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
             matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
             vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM);
+        
     end
     
-    %% Post-timestep outputs
+    %% Post-timestep outputs    
     if flagPRINT == 1
-        fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI)
+        fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCT)
     end
     
     if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)
@@ -210,27 +219,27 @@ for valTIMESTEP = 1:valMAXTIME
 end
 
 %% Viscous wrapper
-valWEIGHT = 1000;
-valAREA = 1;
-valCMAC = 1;
-vecAIRFOIL = 6;
-valDENSITY = 1.225;
-valKINV = 1.45e-5;
-valVSPANELS = 0;
-matVSGEOM = [];
-valFPANELS = [];
-matFGEOM = [];
-valFTURB = [];
-valFPWIDTH = [];
-valINTERF = 10;
-% 
+% valWEIGHT = 1000;
+% valAREA = 1;
+% valCMAC = 1;
+% vecAIRFOIL = 6;
+% valDENSITY = 1.225;
+% valKINV = 1.45e-5;
+% valVSPANELS = 0;
+% matVSGEOM = [];
+% valFPANELS = [];
+% matFGEOM = [];
+% valFTURB = [];
+% valFPWIDTH = [];
+% valINTERF = 10;
+%
 % [vecCLv, vecCD, vecPREQ, vecVINF, vecLD] = fcnVISCOUS(vecCL(end), vecCDI(end), valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
 %     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
 %     matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
 %     valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR);
 
-        
-        
+
+
 %%
 fprintf('\n');
 
@@ -241,8 +250,8 @@ if flagPREVIEW == 1; flagRELAX = 0; end
 
 if flagPLOT == 1 && flagRELAX == 1 && valMAXTIME > 0
     fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
-                matWDVEMP, matWDVEMPIND, matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
+        matWDVEMP, matWDVEMPIND, matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
 elseif flagPLOT == 1 && (flagRELAX ~= 1 || valMAXTIME == 0)
     fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
-                [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);    
+        [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
 end

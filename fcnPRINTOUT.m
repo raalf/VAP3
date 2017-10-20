@@ -1,4 +1,4 @@
-function [] = fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI)
+function [] = fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCT)
 if flagPRINT == 1 && valTIMESTEP == 1
     
     header1 = ['             '];
@@ -6,7 +6,7 @@ if flagPRINT == 1 && valTIMESTEP == 1
     header3 = ['------------'];
     for j = 1:valVEHICLES
         header1 = [header1,sprintf('VEHICLE %d',j),'                '];
-        header2 = [header2,[sprintf('CL'),'          ',sprintf('CDI'),'          ']];
+        header2 = [header2,[sprintf('CL'),'          ',sprintf('CDI'),'          ',sprintf('CT'),'          ']];
         header3 = [header3,['-------------------------']];
     end
     
@@ -17,6 +17,6 @@ end
 
 txtout = ['  ', sprintf('%4d',valTIMESTEP),'       '];
 for j = 1:valVEHICLES
-    txtout = [txtout, sprintf('%0.5f',vecCL(valTIMESTEP,j)), '     ', sprintf('%0.5f',vecCDI(valTIMESTEP,j)), '      '];
+    txtout = [txtout, sprintf('%0.5f',vecCL(valTIMESTEP,j)), '     ', sprintf('%0.5f',vecCDI(valTIMESTEP,j)), '      ',sprintf('%0.5f',vecCT(valTIMESTEP,j))];
 end
 disp(txtout)

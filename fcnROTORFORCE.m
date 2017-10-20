@@ -1,4 +1,4 @@
-function [ et ] = fcnROTORFORCE( en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matCENTER)
+function [ vecCT ] = fcnROTORFORCE( en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matCENTER)
 
 % Thrust direction in global reference frame
 et = repmat(fcnSTARGLOB(matROTORAXIS, matVEHROT(:,1), matVEHROT(:,2), matVEHROT(:,3)),size(vecDVENFREE,1),1);
