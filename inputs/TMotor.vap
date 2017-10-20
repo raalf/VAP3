@@ -34,7 +34,11 @@
 		<cmac>0.707</cmac>
 
 		<rotor>
+<<<<<<< HEAD
 			<rpm>500</rpm>
+=======
+			<rpm>3000</rpm>
+>>>>>>> refs/remotes/origin/master
 			<dia>0.4572</dia>
 
 			<xhub>0</xhub>

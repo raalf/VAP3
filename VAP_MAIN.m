@@ -23,7 +23,7 @@ disp(' ');
 % filename = 'inputs/simple-wing.vap';
 % filename = 'inputs/simple-wing-sym.vap';
 % filename = 'inputs/rotors_only.vap';
-% filename = 'inputs/TMotor.vap';
+filename = 'inputs/TMotor.vap';
 % filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
@@ -46,14 +46,14 @@ flagTRI = 0;
 flagGPU = 1
 
 % flagSTEADY = 1
-flagRELAX = 1
-valMAXTIME = 150
-valDELTIME = 0.002
+% flagRELAX = 0
+% valMAXTIME = 150
+% valDELTIME = 0.001
 
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
