@@ -34,7 +34,7 @@
 		<cmac>0.707</cmac>
 
 		<rotor>
-			<rpm>3000</rpm>
+			<rpm>500</rpm>
 			<dia>0.4572</dia>
 
 			<xhub>0</xhub>

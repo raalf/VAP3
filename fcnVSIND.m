@@ -1,7 +1,7 @@
 function [aloc, bloc, cloc] = fcnVSIND(hspan, hchord, phi, fp_0, k, flagGPU)
 % This function finds the influence of a semi-infinite vortex sheet on a
 % point
-
+% length(fp_0)
 % INPUT:
 %   hspan - half-span of the DVE
 %   phi - sweep of the vortex sheet leading edge

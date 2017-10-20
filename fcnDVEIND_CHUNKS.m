@@ -34,10 +34,10 @@ c = a;
 
 for i = 1:chunk_sz:num_pts
     
-    idx_chunk = [i:i + chunk_sz - 1];
-    
-    if idx_chunk(end) > num_pts
-        idx_chunk = [i:num_pts];
+    if num_pts <= chunk_sz
+        idx_chunk = [1:num_pts];
+    else
+        idx_chunk = [i:i + chunk_sz - 1];
     end
     
     fpg = fpg_all(idx_chunk,:);
