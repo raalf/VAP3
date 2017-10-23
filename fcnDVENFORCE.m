@@ -93,6 +93,8 @@ len = size(normUINF,1);
 % T.D.K 2017-07-10
 spandir = zeros(len,3);
 for i = 1:max(vecDVEVEHICLE)
+%     l = sum(nonzeros(vecDVEVEHICLE == i));
+%     spandir(vecDVEVEHICLE == i,:) = fcnSTARGLOB([0 1 0], matVEHROT(i,1), matVEHROT(i,2), matVEHROT(i,3));
     spandir(vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(matVEHROT(i,3), matVEHROT(i,1), matVEHROT(i,2),'ZXY'),length(nonzeros(vecDVEVEHICLE == i)),1);
 end
 

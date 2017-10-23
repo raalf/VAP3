@@ -20,7 +20,10 @@ end
 
 tempCT = thrust'./(((vecROTORRPM/60).^2).*((vecROTDIAM).^4));
 vecAZNUM = (1./(abs(vecROTORRPM)/60))./valDELTIME;
-temp = valTIMESTEP - (floor((valTIMESTEP-1)/vecAZNUM))*(vecAZNUM);
+if vecAZNUM < 1
+    disp('Timestep size too great, error in fcnROTORFORCE.')
+end
+temp = valTIMESTEP - ( floor( (valTIMESTEP-1)/vecAZNUM))*(vecAZNUM);
 
 vecCTCONV(temp,:) = tempCT';
 
