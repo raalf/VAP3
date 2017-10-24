@@ -22,7 +22,8 @@ for n = 1:valROTORS
     tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);    
     
     % transform rotor from xy plane to hub plane
-	tempROTORUINF = tempROTORUINF * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+% 	tempROTORUINF = tempROTORUINF * quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+    tempROTORUINF = tempROTORUINF * quat2dcm(axang2quat(vrrotvec([0 0 1],matROTORAXIS(n,:))));
     
     % transform rotor from hub plane to global
     tempROTORUINF = tempROTORUINF * angle2dcm(matVEHROT(vecROTORVEH(n),3),matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),'ZXY');

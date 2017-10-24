@@ -113,7 +113,8 @@ for n = 1:valROTORS
     transGLOB2VEH = matROTORHUB(n,:) + matVEHORIG(vecROTORVEH(n),:);
 
     dcmHUB2GLOB = angle2dcm(matVEHROT(vecROTORVEH(n),3),matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),'ZXY');
-    dcmXY2HUB = quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+%     dcmXY2HUB = quat2dcm(axang2quat(vrrotvec(matROTORAXIS(n,:),[0 0 1])));
+    dcmXY2HUB = quat2dcm(axang2quat(vrrotvec([0 0 1], matROTORAXIS(n,:))));
     dcmROTORSTEP = angle2dcm(vecROTORDEL(n),0,0,'ZXY');
     
     idxDVEROTOR = vecDVEROTOR==n;
@@ -144,7 +145,7 @@ for n = 1:valROTORS
     tempROTORNTVLST = tempROTORNTVLST * dcmROTORSTEP;
     tempROTORCENTER = tempROTORCENTER * dcmROTORSTEP;
     tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);    
-    
+
     % transform rotor from xy plane to hub plane
     tempROTORVLST = tempROTORVLST * dcmXY2HUB;
     tempROTORNTVLST = tempROTORNTVLST * dcmXY2HUB;

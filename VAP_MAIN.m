@@ -24,11 +24,15 @@ disp(' ');
 % filename = 'inputs/simple-wing-sym.vap';
 % filename = 'inputs/rotors_only.vap';
 % filename = 'inputs/TMotor.vap';
-filename = 'inputs/single_dve_rotor.vap';
+% filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 % filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/QuadRotor.vap'
+
+filename = 'inputs/simple_rotor_plane_orientation.vap'
+% filename = 'inputs/simple_rotor_quad_orientation.vap'
+
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -44,15 +48,15 @@ flagTRI = 0;
 flagGPU = 1;
 
 J = 0.4;
-vecVEHVINF = J*(vecROTORRPM/60)*vecROTDIAM 
+vecVEHVINF = J*(vecROTORRPM/60)*vecROTDIAM ;
 
-flagSTEADY = 1
-flagRELAX = 0
-valMAXTIME = 10
-valDELTIME = 0.001
+flagSTEADY = 1;
+flagRELAX = 0;
+valMAXTIME = 10;
+valDELTIME = 0.001;
 
 flagPRINT   = 1;
-flagPLOT    = 0;
+flagPLOT    = 1;
 flagCIRCPLOT = 0;
 flagGIF = 0;
 flagPREVIEW = 0;
