@@ -48,7 +48,7 @@ vecVEHVINF = J*(vecROTORRPM/60)*vecROTDIAM
 
 flagSTEADY = 1
 flagRELAX = 0
-valMAXTIME = 1
+valMAXTIME = 10
 valDELTIME = 0.001
 
 flagPRINT   = 1;
