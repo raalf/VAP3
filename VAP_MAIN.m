@@ -1,4 +1,4 @@
-% clc
+clc
 clear
 % warning off
 tic
@@ -27,10 +27,9 @@ disp(' ');
 % filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-% filename = 'inputs/QuadRotor.vap';
-% filename = 'inputs/QuadRotor.vap'
+filename = 'inputs/QuadRotor.vap';
 
-filename = 'inputs/simple_rotor_plane_orientation.vap'
+% filename = 'inputs/simple_rotor_plane_orientation.vap'
 % filename = 'inputs/simple_rotor_quad_orientation.vap'
 
 
@@ -47,8 +46,8 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 flagGPU = 1;
 
-J = 0.4;
-vecVEHVINF = J*(vecROTORRPM/60)*vecROTDIAM ;
+% J = 0.4;
+% vecVEHVINF = J*(vecROTORRPM/60)*vecROTDIAM ;
 
 flagSTEADY = 1;
 flagRELAX = 0;
@@ -56,7 +55,7 @@ valMAXTIME = 10;
 valDELTIME = 0.001;
 
 flagPRINT   = 1;
-flagPLOT    = 1;
+flagPLOT    = 0;
 flagCIRCPLOT = 0;
 flagGIF = 0;
 flagPREVIEW = 0;
@@ -77,10 +76,7 @@ flagVERBOSE = 0;
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
 for jj = 1:length(vecROTORRPM)
-    vecROTORJ(jj,1) = (vecVEHVINF(vecROTORVEH(jj))*60)./(vecROTORRPM(jj).*vecROTDIAM(jj));
-end
-if flagPRINT == 1
-    fprintf('\nADVANCE RATIO == %g\n\n',vecROTORJ);
+    vecROTORJ(1,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
 end
 
 % [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
@@ -218,7 +214,7 @@ for valTIMESTEP = 1:valMAXTIME
     
     %% Post-timestep outputs    
     if flagPRINT == 1
-        fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCT)
+        fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCTCONV, vecROTORJ, vecROTORVEH)
     end
     
     if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)

@@ -23,10 +23,10 @@
 
 		<vinf>13.7160</vinf>
 
-		<alpha>-90</alpha>
+		<alpha>0</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<fpa>90</fpa>
+		<fpa>0</fpa>
 		<trk>0</trk>
 
 		<area>12.6</area>
@@ -41,9 +41,9 @@
 			<yhub>0</yhub>
 			<zhub>0</zhub>
 
-			<axisx>0</axisx>
+			<axisx>-1</axisx>
 			<axisy>0</axisy>
-			<axisz>1</axisz>
+			<axisz>0</axisz>
 
 			<blades>2</blades>
 
