@@ -1,4 +1,4 @@
-clc
+% clc
 clear
 % warning off
 tic
@@ -48,11 +48,11 @@ vecVEHVINF = J*(vecROTORRPM/60)*vecROTDIAM
 
 flagSTEADY = 1
 flagRELAX = 0
-valMAXTIME = 4
+valMAXTIME = 1
 valDELTIME = 0.001
 
 flagPRINT   = 1;
-flagPLOT    = 1;
+flagPLOT    = 0;
 flagCIRCPLOT = 0;
 flagGIF = 0;
 flagPREVIEW = 0;

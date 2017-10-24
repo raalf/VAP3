@@ -28,7 +28,8 @@ for n = 1:valROTORS
     tempROTORUINF = tempROTORUINF * angle2dcm(matVEHROT(vecROTORVEH(n),3),matVEHROT(vecROTORVEH(n),1),matVEHROT(vecROTORVEH(n),2),'ZXY');
     
     % write rotated rotor to matVLST
-    matUINF(idxDVEROTOR,:) = tempROTORUINF;
+%     matUINF(idxDVEROTOR,:) = tempROTORUINF;
+    matUINF(idxDVEROTOR,:) = matUINF(idxDVEROTOR,:) + tempROTORUINF;
 end
 
 
