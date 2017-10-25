@@ -2,15 +2,13 @@ function [hFig2] = fcnPLOTWAKE(verbose, hFig2, valWNELE, matWDVE, matWVLST, matW
 
 fig = hFig2;
 
-patch('Faces',matWDVE,'Vertices',matWVLST,'FaceColor','b')
+patch('Faces',matWDVE,'Vertices',matWVLST,'FaceColor','b','EdgeColor','b','FaceAlpha',0.5);
 hold on
-
-alpha(0.5)
 
 if verbose == 1
     for ii = 1:valWNELE
         str = sprintf('%d',ii);
-        text(matWCENTER(ii,1),matWCENTER(ii,2),matWCENTER(ii,3),str,'Color','k','FontSize',15);
+        text(matWCENTER(ii,1),matWCENTER(ii,2),matWCENTER(ii,3),str,'Color','k','FontSize',15)
     end
     
 %     for ii = 1:length(matWVLST(:,1))

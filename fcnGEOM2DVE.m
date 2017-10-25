@@ -78,7 +78,6 @@ for i = 1:valWINGS
 %     else
 %         valWSIZETRI = valWSIZETRI + sum(nonzeros(tvecDVETE > 0))*2;
 %     end
-    
     valNELE = valNELE + tvalNELE;
     matCENTER0 = [matCENTER0; tmatCENTER0];
     vecDVEHVSPN = [vecDVEHVSPN; tvecDVEHVSPN];
@@ -144,6 +143,20 @@ vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
 
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
+
+% flap = 40;
+% idx = find(vecDVETE > 0 & vecDVEWING > 0);
+% for i = idx'
+% u = matVLST0(matDVE(i,2),:) - matVLST0(matDVE(i,1),:);
+% uo = (matVLST0(matDVE(i,2),:) + matVLST0(matDVE(i,1),:))./2;
+% 
+% R = columbia_rotation(u, -flap);
+% matVLST0(matDVE(i,3),:) = (matVLST0(matDVE(i,3),:) - uo)*R + uo;
+% matVLST0(matDVE(i,4),:) = (matVLST0(matDVE(i,4),:) - uo)*R + uo;
+% end
+
+
+
 [ matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, matVEHORIG, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS );
 [matVLST0, matCENTER0, matFUSEGEOM, matROTORHUBGLOB, matROTORAXIS, matNTVLST0] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, vecROTORVEH, matNTVLST0);
 
@@ -153,10 +166,26 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
 
 % update DVE params after vehicle rotation
 [ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
-    vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, ~ ] ...
+    vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, matCENTER0 ] ...
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
 valWSIZE = length(nonzeros(vecDVETE));
 
 end
 
+function [R] = columbia_rotation(u,theta)
+%ROTATION Summary of this function goes here
+%   Detailed explanation goes here
+ux = u(1);
+uy = u(2);
+uz = u(3);
+
+cost = cosd(theta);
+sint = sind(theta);
+
+R = [cost + ux.^2*(1 - cost) ux*uy*(1 - cost) - uz*sint ux*uz*(1 - cost) + uy*sint; ...
+    uy*ux*(1 - cost) + uz*sint cost + uy.^2*(1 - cost) uy*uz*(1 - cost) - ux*sint; ...
+    uz*ux*(1 - cost) - uy*sint uz*uy*(1 - cost) + ux*sint cost + uz.^2*(1 - cost); ...
+    ];
+
+end

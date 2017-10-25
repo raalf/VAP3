@@ -26,8 +26,8 @@ disp(' ');
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
-% filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-filename = 'inputs/QuadRotor.vap';
+filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+% filename = 'inputs/QuadRotor.vap';
 
 % filename = 'inputs/simple_rotor_plane_orientation.vap'
 % filename = 'inputs/simple_rotor_quad_orientation.vap'
@@ -48,7 +48,7 @@ flagGPU = 1;
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
@@ -65,6 +65,8 @@ flagVERBOSE = 0;
     vecSYM, vecSURFACEVEHICLE, vecPANELROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
+
+vecROTORJ = []
 
 for jj = 1:length(vecROTORRPM)
     vecROTORJ(1,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));

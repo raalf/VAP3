@@ -50,28 +50,28 @@
 					<x>0</x>
 					<y>0</y>
 					<z>0</z>
-					<chord>0.675</chord>
-					<twist>0.3</twist>
+					<chord>0.756</chord>
+					<twist>5</twist>
 				</section>	
 				<section>
-					<x>0.1</x>
-					<y>4.8</y>
+					<x>0.226</x>
+					<y>4.82</y>
 					<z>0</z>
-					<chord>0.5</chord>
-					<twist>1.8</twist>
+					<chord>0.530</chord>
+					<twist>1</twist>
 				</section>	
 			</panel>
 		</wing>
 
 		<rotor>
-			<rpm>2400</rpm>
-			<dia>0.2921</dia>
+			<rpm>2250</rpm>
+			<dia>1.524</dia>
 
 			<xhub>-.4</xhub>
-			<yhub>4.8</yhub>
+			<yhub>4.82</yhub>
 			<zhub>0</zhub>
 
-			<axisx>1</axisx>
+			<axisx>-1</axisx>
 			<axisy>0</axisy>
 			<axisz>0</axisz>
 
