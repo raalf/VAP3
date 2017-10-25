@@ -32,7 +32,6 @@ disp(' ');
 % filename = 'inputs/simple_rotor_plane_orientation.vap'
 filename = 'inputs/simple_rotor_quad_orientation.vap'
 
-
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
     vecVEHFPA, vecVEHTRK, ~, vecWINGTRI, vecWAKETRI, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
@@ -46,7 +45,8 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 flagGPU = 1;
 
-valMAXTIME = 0
+valMAXTIME = 10
+vecROTORRPM = -3000
 
 flagPRINT   = 1;
 flagPLOT    = 1;
