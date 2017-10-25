@@ -23,10 +23,10 @@
 
 		<vinf>9</vinf>
 
-		<alpha>-90</alpha>
+		<alpha>-20</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<fpa>90</fpa>
+		<fpa>0</fpa>
 		<trk>0</trk>
 
 		<area>12.6</area>
@@ -34,7 +34,8 @@
 		<cmac>0.707</cmac>
 
 		<rotor>
-			<rpm>-3000</rpm>
+			<rpm>3000</rpm>
+			<flipy>FALSE</flipy>
 			<dia>0.4572</dia>
 
 			<xhub>0</xhub>

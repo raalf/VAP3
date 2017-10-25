@@ -21,12 +21,12 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>2</vinf>
+		<vinf>10</vinf>
 
-		<alpha>-90</alpha>
+		<alpha>-20</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<fpa>20</fpa>
+		<fpa>0</fpa>
 		<trk>0</trk>
 
 		<area>12.6</area>
