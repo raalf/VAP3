@@ -72,9 +72,7 @@ for n = 1:valROTORS
     
     % rotate rotor to axis
     idxVLSTROTOR = unique(matDVE(vecDVEROTOR==n,:));
-    idxDVEROTOR = vecDVEROTOR==n;
-    
-    
+    idxDVEROTOR = vecDVEROTOR==n; 
     
     matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     matNTVLST0(idxVLSTROTOR,:) = matNTVLST0(idxVLSTROTOR,:)- matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
