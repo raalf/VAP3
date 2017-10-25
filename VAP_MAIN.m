@@ -45,8 +45,6 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 flagGPU = 1;
 
-flagRELAX = 0
-
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
