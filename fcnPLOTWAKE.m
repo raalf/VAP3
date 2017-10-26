@@ -1,9 +1,17 @@
-function [hFig2] = fcnPLOTWAKE(verbose, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER)
+function [hFig2] = fcnPLOTWAKE(verbose, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER, vecWDVESURFACE)
 
 fig = hFig2;
 
-patch('Faces',matWDVE,'Vertices',matWVLST,'FaceColor','b','EdgeColor','b','FaceAlpha',0.5);
+col = vecWDVESURFACE./max(vecWDVESURFACE);
+% col = vecWDVESURFACE;
 hold on
+colormap parula
+patch('Faces',matWDVE,'Vertices',matWVLST,'FaceVertexCData',col,'FaceColor','flat','EdgeAlpha',0.6,'FaceAlpha',0.4);
+
+
+% for i = 1:max(vecWDVESURFACE)
+% patch('Faces',matWDVE,'Vertices',matWVLST,'FaceColor','b','EdgeColor','b','FaceAlpha',0.5);
+% end
 
 if verbose == 1
     for ii = 1:valWNELE

@@ -1,8 +1,8 @@
 function [hFig3] = fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM,...
-                    valWNELE, matWDVE, matWVLST, matWCENTER)
+                    valWNELE, matWDVE, matWVLST, matWCENTER, vecWDVESURFACE)
 
 [hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM);
-[hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER);
+[hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER, vecWDVESURFACE);
 % view([33 22])
 view([-45 20])
 

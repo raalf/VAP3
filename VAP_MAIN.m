@@ -45,10 +45,12 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 flagGPU = 1;
 
+flagRELAX = 1;
+
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
-flagGIF = 0;
+flagGIF = 1;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
@@ -66,8 +68,8 @@ flagVERBOSE = 0;
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
     vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
-vecROTORJ = []
 
+vecROTORJ = [];
 for jj = 1:length(vecROTORRPM)
     vecROTORJ(1,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
 end
@@ -118,6 +120,7 @@ vecWDVESYM = [];
 vecWDVETIP = [];
 vecWDVESURFACE = [];
 vecWDVETRI = [];
+vecWPLOTSURF = [];
 
 % Building wing resultant
 [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
@@ -155,10 +158,10 @@ for valTIMESTEP = 1:valMAXTIME
     widxtri = vecWDVETRI == 1;
     
     [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-        vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNTVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVESURFACE] ...
+        vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNTVLST, vecWDVEPANEL, valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVESURFACE, vecWPLOTSURF] ...
         = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
         vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
-        vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVESURFACE, flagSTEADY, valWSIZE);
+        vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVESURFACE, flagSTEADY, valWSIZE, vecWPLOTSURF, vecDVEWING, vecDVEROTOR);
     
     if flagPREVIEW ~= 1
         %% Creating and solving WD-Matrix for latest row of wake elements
@@ -211,7 +214,7 @@ for valTIMESTEP = 1:valMAXTIME
     end
     
     if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)
-        fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER);
+        fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, vecWPLOTSURF);
     end
     
 end
@@ -248,8 +251,8 @@ if flagPREVIEW == 1; flagRELAX = 0; end
 
 if flagPLOT == 1 && flagRELAX == 1 && valMAXTIME > 0
     fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
-        matWDVEMP, matWDVEMPIND, matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
+        matWDVEMP, matWDVEMPIND, matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, vecWDVESURFACE);
 elseif flagPLOT == 1 && (flagRELAX ~= 1 || valMAXTIME == 0)
     fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
-        [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF);
+        [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, vecWPLOTSURF);
 end

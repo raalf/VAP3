@@ -1,10 +1,10 @@
 function [] = fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, ....
     matCENTER, matFUSEGEOM, ...
     valWNELE, matWDVE, matWVLST, matWCENTER, matWDVEMP, matWDVEMPIND, matUINF, ...
-    vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF)
+    vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, vecWDVESURFACE)
 
 [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, []);
-[hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER);
+[hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER, vecWDVESURFACE);
 [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 
 if flagPLOTWAKEVEL == 1
