@@ -61,7 +61,7 @@ end
 [tip2,~] = find(vecDVETIP == 2);
 [tip4,~] = find(vecDVETIP == 4);
 
-if sum(vecN) == 1; tip2 = [1:length(vecDVETIP)]'; tip4 = [1:length(vecDVETIP)]'; end
+if sum(vecN) == 1 && ~any(vecDVESYM); tip2 = [1:length(vecDVETIP)]'; tip4 = [1:length(vecDVETIP)]'; end
 
 len = length(tip2) + length(tip4);
 

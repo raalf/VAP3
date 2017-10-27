@@ -25,8 +25,9 @@ disp(' ');
 % filename = 'inputs/rotors_only.vap';
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/single_dve_rotor.vap';
-% filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
-filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
+% filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+filename = 'inputs/J_COLE_BASELINE_WING.vap';
 % filename = 'inputs/QuadRotor.vap';
 
 % filename = 'inputs/simple_rotor_plane_orientation.vap'
@@ -46,10 +47,15 @@ flagTRI = 0;
 flagGPU = 1;
 
 flagRELAX = 1;
+% vecN = 1;
+% vecM = 1;
+% vecVEHVINF = 1
+vecSYM = 0
+valMAXTIME = 10
 
 flagPRINT   = 1;
 flagPLOT    = 1;
-flagCIRCPLOT = 0;
+flagCIRCPLOT = 1;
 flagGIF = 1;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;

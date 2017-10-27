@@ -271,10 +271,10 @@ bloc = [b2_xsi b2_eta b2_zeta];
 cloc = [c2_xsi c2_eta c2_zeta];
 aloc = [];
 
-% % If the point lies on a swept leading edge
-idx_LE = abs(fp_0(:,3)) <= dbl_eps & abs(le_vect) <= dbl_eps; %& abs(phi) <= dbl_eps;
-bloc(idx_LE,:) = zeros(size(bloc(idx_LE,:)));
-cloc(idx_LE,:) = zeros(size(cloc(idx_LE,:)));
+% % % If the point lies on a swept leading edge
+% idx_LE = abs(fp_0(:,3)) <= dbl_eps & abs(le_vect) <= dbl_eps; %& abs(phi) <= dbl_eps;
+% bloc(idx_LE,:) = zeros(size(bloc(idx_LE,:)));
+% cloc(idx_LE,:) = zeros(size(cloc(idx_LE,:)));
 
 % If the point lies on an unswept leading edge
 % a23ind.f - Line 604
