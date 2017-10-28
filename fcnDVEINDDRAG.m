@@ -101,7 +101,7 @@ wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
 %project into freestream direction
 % temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
 % tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
-tempUINF = matUINF(idte,:);
+tempUINF = matUINF(idte,:)./sqrt(sum(matUINF(idte,:).^2,2));
 temps = dot(delx, repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]), 2);
 tempb = repmat(temps,1,3,1).*repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]);
 
@@ -249,6 +249,6 @@ R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDV
 %% FORCES
 % inddrag(:,1) = dot(R,repmat(matUINF,size(R,1),1),2);
 inddrag = zeros(valNELE,1);
-inddrag(idte,1) = dot(R,matUINF(idte,:),2);
+inddrag(idte,1) = dot(R,tempUINF,2);
 
 end %end function

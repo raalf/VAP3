@@ -73,21 +73,15 @@ eta8 = vecDVEHVSPN*0.8;
 
 % UxS
 % tempb = cross(repmat(matUINF,[valNELE,1]),s,2);
+nUINF = matUINF ./ sqrt(sum(matUINF.^2,2));
 tempb = cross(matUINF, s, 2);
 
-% norm(UxS)
+
 uxs = sqrt(sum(abs(tempb).^2,2));
 
-% eN = tempa.*(1/UxS);
 en = tempb.*repmat((1./uxs),1,3);
-% en = s.*repmat((1./uxs),1,3);
 
-% % the lift direction  eL=Ux[0,1,0]/|Ux[0,1,0]|
-% % el = repmat([-matUINF(3)/norm(matUINF) 0 matUINF(1)/norm(matUINF)],[valNELE,1]); %does this work with beta?
-normUINF = sqrt(sum(matUINF.^2,2));
-
-len = size(normUINF,1);
-% el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
+len = size(nUINF,1);
 
 % I didn't want to do this, Alton made me because he is cruel and gross
 % T.D.K 2017-07-10
@@ -99,7 +93,7 @@ for i = 1:max(vecDVEVEHICLE)
 end
 
 % Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
-el = cross(matUINF,spandir,2);
+el = cross(nUINF,spandir,2);
 
 % the side force direction eS=UxeL/|UxeL|
 % clear tempa tempb

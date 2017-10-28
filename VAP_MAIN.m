@@ -51,13 +51,13 @@ flagGPU = 1;
 % flagRELAX = 1;
 % vecN = 1;
 % vecM = 1;
-vecVEHVINF = 100
+vecVEHVINF = 1000
 valMAXTIME = 10
 
 flagPRINT   = 1;
-flagPLOT    = 1;
-flagCIRCPLOT = 1;
-flagGIF = 1;
+flagPLOT    = 0;
+flagCIRCPLOT = 0;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;

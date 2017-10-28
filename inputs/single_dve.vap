@@ -29,8 +29,8 @@
 		<fpa>0</fpa>
 		<trk>0</trk>
 
-		<area>1</area>
-		<span>1</span>
+		<area>4</area>
+		<span>4</span>
 		<cmac>1.0</cmac>
 
 		<wing>
@@ -45,7 +45,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
-				<N>1</N>
+				<N>2</N>
 				<section>
 					<x>0</x>
 					<y>-2</y>
