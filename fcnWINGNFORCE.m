@@ -29,7 +29,8 @@ for i = 1:valVEHICLES
     if any(idxvehwing)
 
         %     q = 0.5.*sum(abs(vecUINF).^2,2).*valAREA;
-        q(i) = 0.5.*mean((sqrt(sum(matUINF(idxvehwing,:).^2,2)).^2)).*vecAREA(i);
+%         q(i) = 0.5.*mean((sqrt(sum(matUINF(idxvehwing,:).^2,2)).^2)).*vecAREA(i);
+        q(i) = 0.5* sqrt(sum(abs(matUINF).^2,2)) * sqrt(sum(abs(matUINF).^2,2)) * vecAREA(i);
         
         ntfree = zeros(2,1);
         ntind = zeros(2,1);

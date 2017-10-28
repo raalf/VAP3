@@ -25,13 +25,15 @@ disp(' ');
 % filename = 'inputs/rotors_only.vap';
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/single_dve_rotor.vap';
-filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
+% filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-filename = 'inputs/J_COLE_BASELINE_WING.vap';
+% filename = 'inputs/J_COLE_BASELINE_WING.vap';
 % filename = 'inputs/QuadRotor.vap';
 
 % filename = 'inputs/simple_rotor_plane_orientation.vap'
 % filename = 'inputs/simple_rotor_quad_orientation.vap'
+
+filename = 'inputs/single_dve.vap'
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -46,11 +48,10 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 flagGPU = 1;
 
-flagRELAX = 1;
+% flagRELAX = 1;
 % vecN = 1;
 % vecM = 1;
-% vecVEHVINF = 1
-vecSYM = 0
+vecVEHVINF = 100
 valMAXTIME = 10
 
 flagPRINT   = 1;
