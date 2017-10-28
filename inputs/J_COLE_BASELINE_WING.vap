@@ -2,7 +2,7 @@
 
 <VAP>
 	<settings>
-		<flagRELAX>FALSE</flagRELAX>
+		<flagRELAX>TRUE</flagRELAX>
 		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
 		<valMAXTIME>40</valMAXTIME>
@@ -51,14 +51,14 @@
 					<y>0</y>
 					<z>0</z>
 					<chord>0.756</chord>
-					<twist>0</twist>
+					<twist>5</twist>
 				</section>	
 				<section>
-					<x>0</x>
+					<x>0.226</x>
 					<y>4.82</y>
 					<z>0</z>
-					<chord>0.756</chord>
-					<twist>0</twist>
+					<chord>0.530</chord>
+					<twist>1</twist>
 				</section>	
 			</panel>
 		</wing>
