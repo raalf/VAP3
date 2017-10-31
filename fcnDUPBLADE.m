@@ -11,11 +11,11 @@ function [ matVLST0, matCENTER0, matDVE, matADJE, vecDVEVEHICLE, ...
 %   Duplicate blades within a rotor
 % Add Duplicate Rotor Blades
 
-rotorpanels = unique(vecDVEROTOR(vecDVEROTOR > 0));
+
 
 valROTORS = length(vecROTORVEH);
 for n = 1:valROTORS
-    idxDVEBLADE = find(vecDVEROTOR==rotorpanels(n));
+    idxDVEBLADE = find(vecDVEROTOR==n);
     matDVEBLADE = matDVE(idxDVEBLADE,:);
     [idxVLSTBLADE,~,c] = unique(matDVEBLADE);
     offsetDVEBLADE = reshape(c,[],4);
@@ -71,8 +71,8 @@ for n = 1:valROTORS
     end
     
     % rotate rotor to axis
-    idxVLSTROTOR = unique(matDVE(vecDVEROTOR==rotorpanels(n),:));
-    idxDVEROTOR = vecDVEROTOR==rotorpanels(n); 
+    idxVLSTROTOR = unique(matDVE(vecDVEROTOR==n,:));
+    idxDVEROTOR = vecDVEROTOR==n; 
     
     matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     matNTVLST0(idxVLSTROTOR,:) = matNTVLST0(idxVLSTROTOR,:)- matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);

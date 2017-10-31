@@ -225,7 +225,7 @@ for i = 1:valVEHICLES
             end
             
             vecPANELWING(kk,1) = 0;
-            vecPANELROTOR(kk,1) = k;
+            vecPANELROTOR(kk,1) = p;
             
             kk = kk + 1;
         end
