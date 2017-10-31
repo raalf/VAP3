@@ -30,6 +30,8 @@ filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 % filename = 'inputs/J_COLE_BASELINE_WING.vap';
 % filename = 'inputs/QuadRotor.vap';
 
+% filename = 'inputs/2MotorGliders.vap'
+
 % filename = 'inputs/simple_rotor_plane_orientation.vap'
 % filename = 'inputs/simple_rotor_quad_orientation.vap'
 % filename = 'inputs/single_dve.vap'
@@ -51,9 +53,9 @@ flagGPU = 1;
 % vecN = 1;
 % vecM = 1;
 % vecVEHVINF = 1000
-valMAXTIME = 5
+% valMAXTIME = 5
 
-vecVEHALPHA = [5 10 15];
+% vecVEHALPHA = [5 10 15];
 
 flagPRINT   = 1;
 flagPLOT    = 0;
@@ -91,10 +93,11 @@ for i = 1:valCASES
         vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
     vecROTORJ = [];
+    
     for jj = 1:length(vecROTORRPM)
         vecROTORJ(i,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
     end
-    % [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
+    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
 
     %% Add boundary conditions to D-Matrix
     [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
