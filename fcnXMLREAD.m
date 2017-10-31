@@ -108,6 +108,7 @@ kk = 1;
 kkk = 1;
 kkkk = 1;
 
+o = 1;
 p = 1;
 
 q = 1;
@@ -173,11 +174,13 @@ for i = 1:valVEHICLES
                 kkk = kkk + 1;
             end
             
-            vecPANELWING(kk,1) = k;
+            vecPANELWING(kk,1) = o;
             vecPANELROTOR(kk,1) = 0;
             
             kk = kk + 1;
         end
+        
+        o = o + 1;
         
         vecWINGVEHICLE(k,1) = i;
         k = k + 1;

@@ -13,7 +13,7 @@ function [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVE
 matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
 
 
-vecPANELSURFACE = sort([vecPANELWING vecROTOR],2,'descend');
+vecPANELSURFACE = sort([vecPANELWING vecROTOR + max(vecPANELWING).*(vecROTOR > 0)],2,'descend');
 vecPANELSURFACE = vecPANELSURFACE(:,1);
 
 valWINGS = max(vecPANELSURFACE);
@@ -46,10 +46,10 @@ vecDVETRI = [];
 valWSIZETRI = 0;
 valWSIZE = 0;
 
-for i = 1:valWINGS
+for i = unique(vecPANELSURFACE,'stable')'
     
     panels = length(nonzeros(vecPANELSURFACE == i));
-    
+   
 %     if isnan(vecWINGTRI(i))
         [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
             tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
@@ -111,7 +111,6 @@ for i = 1:valWINGS
   
     tmatADJE = [tmatADJE(:,1) + dveoffset tmatADJE(:,2) tmatADJE(:,3) + dveoffset tmatADJE(:,4)];
     matADJE = [matADJE; tmatADJE];
-    
 end
 
 % % Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)

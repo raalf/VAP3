@@ -29,8 +29,9 @@ disp(' ');
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 % filename = 'inputs/J_COLE_BASELINE_WING.vap';
 % filename = 'inputs/QuadRotor.vap';
+filename = 'inputs/QuadPlane.vap';
 
-filename = 'inputs/2MotorGliders_simple.vap'
+% filename = 'inputs/2MotorGliders_simple.vap'
 
 % filename = 'inputs/simple_rotor_plane_orientation.vap'
 % filename = 'inputs/simple_rotor_quad_orientation.vap'
@@ -61,24 +62,26 @@ flagPRINT   = 1;
 flagPLOT    = 0;
 flagCIRCPLOT = 0;
 flagGIF = 1;
-flagPREVIEW = 0;
+flagPREVIEW = 1;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
-valCASES = length(vecVEHALPHA);
+% valCASES = length(vecVEHALPHA);
+valCASES = 1;
 
 
+valROTORS = max(vecPANELROTOR);
 % Preallocating for a turbo-boost in performance
 vecCL = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCLF = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCLI = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCDI = nan(valMAXTIME,valVEHICLES,valCASES);
 vecE = nan(valMAXTIME,valVEHICLES,valCASES);
-vecCT = nan(valMAXTIME,1,valCASES);
-vecCTCONV = nan(valMAXTIME, 1,valCASES);
+vecCT = nan(valMAXTIME,valROTORS,valCASES);
+vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 
-for i = 1:valCASES
+for i = 1:1
     
     %% Discretizing geometry into DVEs
     [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEROLL,...
@@ -89,7 +92,7 @@ for i = 1:valCASES
         matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI] = fcnGEOM2DVE(matGEOM, ...
         matVEHORIG, vecWINGTRI, vecWAKETRI, vecN, vecM, vecPANELWING,...
         vecSYM, vecSURFACEVEHICLE, vecPANELROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
-        vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA(i), vecVEHBETA, ...
+        vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
         vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
     vecROTORJ = [];
@@ -97,7 +100,7 @@ for i = 1:valCASES
     for jj = 1:length(vecROTORRPM)
         vecROTORJ(i,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
     end
-%     [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
+    [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, []);
 
     %% Add boundary conditions to D-Matrix
     [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
