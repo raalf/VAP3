@@ -26,11 +26,11 @@ disp(' ');
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
-filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+% filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 % filename = 'inputs/J_COLE_BASELINE_WING.vap';
 % filename = 'inputs/QuadRotor.vap';
 
-% filename = 'inputs/2MotorGliders.vap'
+filename = 'inputs/2MotorGliders.vap'
 
 % filename = 'inputs/simple_rotor_plane_orientation.vap'
 % filename = 'inputs/simple_rotor_quad_orientation.vap'
@@ -97,7 +97,7 @@ for i = 1:valCASES
     for jj = 1:length(vecROTORRPM)
         vecROTORJ(i,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
     end
-    [hFig2] = fcnPLOTBODY(1, valNELE, matDVE, matVLST, matCENTER, []);
+    [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, []);
 
     %% Add boundary conditions to D-Matrix
     [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
