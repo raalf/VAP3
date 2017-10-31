@@ -27,11 +27,12 @@ function [vecCTCONV, valCL, valCLF, valCLI, valCDI, valCT, valE, vecDVENFREE, ve
 
 [valCL, valCLF, valCLI, valCY, valCYF, valCYI, valCDI, valE]= fcnWINGNFORCE(vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, inddrag, matUINF, valAREA, valSPAN, vecDVESYM, valBETA, vecDVEVEHICLE, vecDVEWING, valVEHICLES);
 
-if max(vecDVEROTOR) > 0
-    [valCT, vecCTCONV] = fcnROTORFORCE( en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matCENTER, valDELTIME, valTIMESTEP, vecCTCONV);
-else
-    valCT = nan;
-end
-
+% if max(vecDVEROTOR) > 0
+%     [valCT, vecCTCONV] = fcnROTORFORCE( en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matCENTER, valDELTIME, valTIMESTEP, vecCTCONV);
+% else
+% %     valCT = nan;
+% end
+vecCTCONV = nan;
+valCT = nan;
 end
 
