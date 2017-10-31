@@ -49,7 +49,8 @@ rt_2 = sqrt((t2s).*a2 + 2.*t2.*b2 + c2);
 eps = (le_vect.^2) - (zeta_0sq).*(tanphi).^2;
 rho = sqrt(eps.^2 + 4.*(zeta_0sq).*(b2.^2));
 beta1 = -sqrt((rho + eps)./2);
-beta2 = -sqrt((rho - eps)./2);
+beta2(rho - eps >= 0,1) = -sqrt((rho(rho - eps >= 0) - eps(rho - eps >= 0))./2);
+beta2(rho - eps < 0,1) = zeros(length(nonzeros((rho - eps < 0))),1);
 
 % Corrections to beta for special conditions
 beta1(0.5.*(rho + eps) <= dbl_eps) = 0;

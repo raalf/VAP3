@@ -1,42 +1,4 @@
-% clc
-clear
-% warning off
-tic
-% profile -memory on
-
-disp('=============================================================================');
-disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$$$$$ ');
-disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$_  $$');
-disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$$$\ $$');
-disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$ $$ $$');
-disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   | $$\ $$$$');
-disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$   | $$ \ $$$');
-disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
-disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/');
-disp('=============================================================================');
-disp(' ');
-
-%% Best Practices
-% 1. Define wing from one wingtip to another in one direction
-
-%% Reading in geometry
-% filename = 'inputs/simple-wing.vap';
-% filename = 'inputs/simple-wing-sym.vap';
-% filename = 'inputs/rotors_only.vap';
-% filename = 'inputs/TMotor.vap';
-% filename = 'inputs/single_dve_rotor.vap';
-% filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
-% filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-filename = 'inputs/J_COLE_BASELINE_SYM_CLOCKWISE.vap';
-% filename = 'inputs/J_COLE_BASELINE_WING.vap';
-% filename = 'inputs/QuadRotor.vap';
-% filename = 'inputs/QuadPlane.vap';
-
-% filename = 'inputs/2MotorGliders_simple.vap'
-
-% filename = 'inputs/simple_rotor_plane_orientation.vap'
-% filename = 'inputs/simple_rotor_quad_orientation.vap'
-% filename = 'inputs/single_dve.vap'
+function [vecCL, vecCDI, vecE, vecCT] = fcnVAP_MAIN(filename)
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -51,28 +13,19 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 flagGPU = 1;
 
-% flagRELAX = 1;
-% vecN = 1;
-% vecM = 1;
-% vecVEHVINF = 1000
-% valMAXTIME = 5
-
-% vecVEHALPHA = [5 10 15];
-
 flagPRINT   = 1;
 flagPLOT    = 0;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
-% valCASES = length(vecVEHALPHA);
 valCASES = 1;
 
-
 valROTORS = max(vecPANELROTOR);
+
 % Preallocating for a turbo-boost in performance
 vecCL = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCLF = nan(valMAXTIME,valVEHICLES,valCASES);
@@ -284,4 +237,7 @@ if flagPLOT == 1 && flagRELAX == 1 && valMAXTIME > 0
 elseif flagPLOT == 1 && (flagRELAX ~= 1 || valMAXTIME == 0)
     fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, vecWPLOTSURF);
+end
+
+
 end

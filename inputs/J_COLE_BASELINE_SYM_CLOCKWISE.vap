@@ -64,7 +64,8 @@
 		</wing>
 
 		<rotor>
-			<rpm>2600</rpm>
+			<rpm>-2600</rpm>
+			<flipy>TRUE</flipy>
 			<dia>1.524</dia>
 
 			<xhub>-.4</xhub>
