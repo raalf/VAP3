@@ -27,9 +27,9 @@ disp(' ');
 % filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-filename = 'inputs/J_COLE_BASELINE_SYM_CLOCKWISE.vap';
+% filename = 'inputs/J_COLE_BASELINE_SYM_CLOCKWISE.vap';
 % filename = 'inputs/J_COLE_BASELINE_WING.vap';
-% filename = 'inputs/QuadRotor.vap';
+filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/QuadPlane.vap';
 
 % filename = 'inputs/2MotorGliders_simple.vap'
