@@ -1,8 +1,8 @@
 function [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
     matFUSEGEOM, matNEWWAKEPANEL, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, ...
-    matROTORHUBGLOB, matNTVLST] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
+    matNTVLST] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
     matVEHROTRATE, matCIRORIG, vecVEHRADIUS, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matFUSEGEOM, vecFUSEVEHICLE, ...
-    matVEHROT, vecROTORVEH, matROTORHUBGLOB, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE, matNTVLST)
+    matVEHROT, vecROTORVEH, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE, matNTVLST)
 
 
 % Do the following need updating?
@@ -162,7 +162,6 @@ for n = 1:valROTORS
     matVLST(idxVLSTROTOR,:) = tempROTORVLST + transGLOB2VEH;
     matNTVLST(idxVLSTROTOR,:) = tempROTORNTVLST + transGLOB2VEH;
     matCENTER(idxDVEROTOR,:) = tempROTORCENTER + transGLOB2VEH;
-    matROTORHUBGLOB(n,:) = matROTORHUBGLOB(n,:) + transGLOB2VEH;
     matUINFROTOR(idxDVEROTOR,:) = tempROTORUINF;
 end
 
