@@ -20,7 +20,7 @@ disp(' ');
 % 1. Define wing from one wingtip to another in one direction
 
 %% Reading in geometry
-% filename = 'inputs/simple-wing.vap';
+filename = 'inputs/simple-wing.vap';
 % filename = 'inputs/simple-wing-sym.vap';
 % filename = 'inputs/rotors_only.vap';
 % filename = 'inputs/TMotor.vap';
@@ -29,7 +29,7 @@ disp(' ');
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 % filename = 'inputs/J_COLE_BASELINE_SYM_CLOCKWISE.vap';
 % filename = 'inputs/J_COLE_BASELINE_WING.vap';
-filename = 'inputs/QuadRotor.vap';
+% filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/QuadPlane.vap';
 
 % filename = 'inputs/2MotorGliders_simple.vap'
@@ -49,11 +49,11 @@ filename = 'inputs/QuadRotor.vap';
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
-flagGPU = 1;
+flagGPU = 0;
 
 % flagRELAX = 1;
-% vecN = 1;
-% vecM = 1;
+% vecN = [50;50];
+% vecM = [50;50];
 % vecVEHVINF = 1000
 % valMAXTIME = 5
 
@@ -67,6 +67,7 @@ flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
+flagSAVETIMESTEP = 1;
 
 % valCASES = length(vecVEHALPHA);
 valCASES = 1;
@@ -242,6 +243,13 @@ for i = 1:1
         end
 
         %% Post-timestep outputs    
+        if flagSAVETIMESTEP == 1
+            allvars = whos;
+            tosave = cellfun(@isempty, regexp({allvars.class}, '^matlab\.(ui|graphics)\.'));
+            matfilename = sprintf('timesteps/TS_%d',valTIMESTEP);
+            save(matfilename, allvars(tosave).name);
+        end
+        
         if flagPRINT == 1
             fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCTCONV, vecROTORJ, vecROTORVEH,i)
         end
@@ -249,6 +257,7 @@ for i = 1:1
         if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)
             fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, vecWPLOTSURF);
         end
+        
 
     end
 
