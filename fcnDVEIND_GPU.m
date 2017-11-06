@@ -24,9 +24,13 @@ function [a, b, c] = fcnDVEIND_GPU(dvenum_all, dvetype_all, fpg_all, vecK, matDV
 % OUTPUT:
 %   a,b,c - influence coefficients (each are (x,y,z))
 
-chunk_sz = 36e6;
+chunk_sz = 18e6;
 
 num_pts = length(dvenum_all);
+
+fp = fopen('memory.txt','a');
+fprintf(fp,'%d\n',num_pts);
+fclose(fp);
 
 a = zeros(num_pts,3);
 b = a;

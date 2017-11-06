@@ -20,7 +20,7 @@ disp(' ');
 % 1. Define wing from one wingtip to another in one direction
 
 %% Reading in geometry
-filename = 'inputs/simple-wing.vap';
+% filename = 'inputs/simple-wing.vap';
 % filename = 'inputs/simple-wing-sym.vap';
 % filename = 'inputs/rotors_only.vap';
 % filename = 'inputs/TMotor.vap';
@@ -29,7 +29,7 @@ filename = 'inputs/simple-wing.vap';
 % filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 % filename = 'inputs/J_COLE_BASELINE_SYM_CLOCKWISE.vap';
 % filename = 'inputs/J_COLE_BASELINE_WING.vap';
-% filename = 'inputs/QuadRotor.vap';
+filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/QuadPlane.vap';
 
 % filename = 'inputs/2MotorGliders_simple.vap'
@@ -49,7 +49,7 @@ filename = 'inputs/simple-wing.vap';
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
-flagGPU = 0;
+flagGPU = 1;
 
 % flagRELAX = 1;
 % vecN = [50;50];
@@ -62,7 +62,7 @@ flagGPU = 0;
 flagPRINT   = 1;
 flagPLOT    = 0;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
@@ -102,7 +102,7 @@ for i = 1:1
     for jj = 1:length(vecROTORRPM)
         vecROTORJ(i,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
     end
-    [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, []);
+%     [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, []);
 
     %% Add boundary conditions to D-Matrix
     [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
@@ -150,8 +150,24 @@ for i = 1:1
     % Solving for wing coefficients
     [matCOEFF] = fcnSOLVED(matD, vecR, valNELE);
 
+    start = 1;
+%     load('timesteps/TS_31.mat')
+%     start = valTIMESTEP;
+    
     %% Timestepping
-    for valTIMESTEP = 1:valMAXTIME
+    for valTIMESTEP = start:valMAXTIME
+%         
+        fp = fopen('memory.txt','a');
+        fprintf(fp,'TIMESTEP %d\n',valTIMESTEP);
+        fclose(fp);
+        
+        if flagSAVETIMESTEP == 1
+            allvars = whos;
+            tosave = cellfun(@isempty, regexp({allvars.class}, '^matlab\.(ui|graphics)\.'));
+            matfilename = sprintf('timesteps/TS_%d',valTIMESTEP);
+            save(matfilename, allvars(tosave).name);
+        end
+        
         %% Timestep to solution
         %   Move wing
         %   Generate new wake elements
@@ -242,14 +258,8 @@ for i = 1:1
             
         end
 
-        %% Post-timestep outputs    
-        if flagSAVETIMESTEP == 1
-            allvars = whos;
-            tosave = cellfun(@isempty, regexp({allvars.class}, '^matlab\.(ui|graphics)\.'));
-            matfilename = sprintf('timesteps/TS_%d',valTIMESTEP);
-            save(matfilename, allvars(tosave).name);
-        end
-        
+        %% Post-timestep outputs
+       
         if flagPRINT == 1
             fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCTCONV, vecROTORJ, vecROTORVEH,i)
         end
