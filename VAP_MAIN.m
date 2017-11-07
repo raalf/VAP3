@@ -52,7 +52,7 @@ flagTRI = 0;
 flagGPU = 1;
 
 flagRELAX = 0;
-valMAXTIME = 10
+valMAXTIME = 200
 
 % vecVEHALPHA = 6
 vecVEHALPHA = [3:9];
