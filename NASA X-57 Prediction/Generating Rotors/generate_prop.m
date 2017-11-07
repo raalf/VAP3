@@ -1,20 +1,20 @@
 clc
 clear
 
-load('NASA_MIL_Propeller.mat');
+load('NASA_MIL_SCEPTOR.mat');
 
 sections = 10;
-root = 2;
-tip = 11.5;
+root = 0.5;
+tip = 2.5;
 section_loc = root:(tip-root)/sections:tip;
 
-[twist, ~] = fcnCREATEFIT(Beta_vs_r(:,1), Beta_vs_r(:,2));
-[le, ~] = fcnCREATEFIT(LE_vs_r(:,1), LE_vs_r(:,2));
-[te, ~] = fcnCREATEFIT(TE_vs_r(:,1), TE_vs_r(:,2));
+[twist, ~] = fcnCREATEFIT(Beta_vs_R(:,1), Beta_vs_R(:,2));
+[le, ~] = fcnCREATEFIT(LE_vs_R(:,1), LE_vs_R(:,2));
+[te, ~] = fcnCREATEFIT(TE_vs_R(:,1), TE_vs_R(:,2));
 
 twist = twist(section_loc);
-chord = (le(section_loc) - te(section_loc)).*0.0254;
-le = [-le(section_loc) section_loc' zeros(length(section_loc),1)].*0.0254;
+chord = (le(section_loc) - te(section_loc)).*0.3048;
+le = [-le(section_loc) section_loc' zeros(length(section_loc),1)].*0.3048;
 
 %%
 % chord = chord.*2.5;
@@ -23,7 +23,7 @@ le = [-le(section_loc) section_loc' zeros(length(section_loc),1)].*0.0254;
 symmetry = 0;
 N = 1;
 
-filename = 'inputs/NASA_MIL_Propeller_Large.vapgeom';
+filename = 'NASA_MIL_SCEPTOR.vapgeom';
 fp = fopen(filename,'w');
 
 fprintf(fp,'<panel>\n');

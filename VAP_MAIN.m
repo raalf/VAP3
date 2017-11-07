@@ -26,10 +26,10 @@ disp(' ');
 % filename = 'inputs/TMotor.vap';
 % filename = 'inputs/single_dve_rotor.vap';
 % filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
-% filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 % filename = 'inputs/J_COLE_BASELINE_SYM_CLOCKWISE.vap';
 % filename = 'inputs/J_COLE_BASELINE_WING.vap';
-filename = 'inputs/QuadRotor.vap';
+% filename = 'inputs/QuadRotor.vap';
 % filename = 'inputs/QuadPlane.vap';
 
 % filename = 'inputs/2MotorGliders_simple.vap'
@@ -51,26 +51,22 @@ vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
 flagGPU = 1;
 
-% flagRELAX = 1;
-% vecN = 1;
-% vecM = 1;
-% vecVEHVINF = 1000
-% valMAXTIME = 5
+flagRELAX = 0;
+valMAXTIME = 200
 
-% vecVEHALPHA = [5 10 15];
+vecVEHALPHA = [3:9];
 
 flagPRINT   = 1;
 flagPLOT    = 0;
 flagCIRCPLOT = 0;
-flagGIF = 1;
+flagGIF = 0;
 flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
-% valCASES = length(vecVEHALPHA);
-valCASES = 1;
-
+% valCASES = 1;
+valCASES = length(vecVEHALPHA);
 
 valROTORS = max(vecPANELROTOR);
 % Preallocating for a turbo-boost in performance
@@ -82,7 +78,7 @@ vecE = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCT = nan(valMAXTIME,valROTORS,valCASES);
 vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 
-for i = 1:1
+for i = 1:valCASES
     
     %% Discretizing geometry into DVEs
     [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEROLL,...
@@ -93,7 +89,7 @@ for i = 1:1
         matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI] = fcnGEOM2DVE(matGEOM, ...
         matVEHORIG, vecWINGTRI, vecWAKETRI, vecN, vecM, vecPANELWING,...
         vecSYM, vecSURFACEVEHICLE, vecPANELROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
-        vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
+        vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA(i), vecVEHBETA, ...
         vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
 
     vecROTORJ = [];

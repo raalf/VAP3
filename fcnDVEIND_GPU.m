@@ -24,7 +24,7 @@ function [a, b, c] = fcnDVEIND_GPU(dvenum_all, dvetype_all, fpg_all, vecK, matDV
 % OUTPUT:
 %   a,b,c - influence coefficients (each are (x,y,z))
 
-chunk_sz = 36e6;
+chunk_sz = 18e6;
 
 num_pts = length(dvenum_all);
 
