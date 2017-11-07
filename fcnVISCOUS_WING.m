@@ -1,10 +1,9 @@
-function [valCL, valCD, valPREQ, valVINF, valLD] = fcnVISCOUS_WING(valCL, valCDI, valWEIGHT, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+function [valCL, valCD, valPREQ, valLD] = fcnVISCOUS_WING(valCL, valCDI, valVINF, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-    valFPWIDTH, valINTERF, vecDVEROLL)
+    valFPWIDTH, valINTERF, vecDVEROLL, matUINF)
 
-q_inf = valWEIGHT/(valCL*valAREA);
-valVINF = sqrt(2*q_inf/valDENSITY);
+q_inf = ((valVINF^2)*valDENSITY)/2;
 di = valCDI*valAREA*q_inf;
 
 % Summing freestream and induced forces of each DVE
@@ -48,9 +47,9 @@ for i = 1:max(vecDVEWING)
     
     % This will NOT work with rotors, it does not take into
     % account freestream! UINF^2*AREA should be the denominator
-    vecCNDIST = [vecCNDIST; (sum(vecDVECN(rows),2).*2)./(sum(vecDVEAREA(rows),2))];
-    vecCLDIST = [vecCLDIST; (sum(vecDVECL(rows),2).*2)./(sum(vecDVEAREA(rows),2))];
-    vecCYDIST = [vecCYDIST; (sum(vecDVECY(rows),2).*2)./(sum(vecDVEAREA(rows),2))];
+    vecCNDIST = [vecCNDIST; (sum(vecDVECN(rows),2).*2)./((valVINF^2)*sum(vecDVEAREA(rows),2))];
+    vecCLDIST = [vecCLDIST; (sum(vecDVECL(rows),2).*2)./((valVINF^2)*sum(vecDVEAREA(rows),2))];
+    vecCYDIST = [vecCYDIST; (sum(vecDVECY(rows),2).*2)./((valVINF^2)*sum(vecDVEAREA(rows),2))];
     
     % The average coordinates for this row of elements
     matXYZDIST = [matXYZDIST; mean(permute(reshape(matCENTER(rows,:)',3,[],m),[2 1 3]),3)];
@@ -183,8 +182,6 @@ valCD = dtot/(q_inf*valAREA);
 valCL = sum(vecCNDIST.*vecAREADIST.*cos(vecDVEROLL(vecLEDVEDIST)))/valAREA*2;
 
 %% Final calculations
-
-valVINF = sqrt((2.*valWEIGHT)./(valDENSITY.*valAREA.*valCL));
 valLD = valCL./valCD;
 valPREQ = dtot.*valVINF;
 

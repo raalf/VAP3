@@ -1,6 +1,6 @@
 % clc
 clear
-% warning off
+warning off
 tic
 % profile -memory on
 
@@ -52,8 +52,9 @@ flagTRI = 0;
 flagGPU = 1;
 
 flagRELAX = 0;
-valMAXTIME = 200
+valMAXTIME = 10
 
+% vecVEHALPHA = 6
 vecVEHALPHA = [3:9];
 
 flagPRINT   = 1;
@@ -97,7 +98,7 @@ for i = 1:valCASES
     for jj = 1:length(vecROTORRPM)
         vecROTORJ(i,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
     end
-    [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, []);
+%     [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, []);
 
     %% Add boundary conditions to D-Matrix
     [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
@@ -249,25 +250,28 @@ for i = 1:valCASES
     end
 
     %% Viscous wrapper
-%     vecWEIGHT = 15000;
-%     valDENSITY = 1.225;
-%     valKINV = 1.45e-5;
-% 
-%     vecAIRFOIL = 6;
-% 
-%     valVSPANELS = 0;
-%     matVSGEOM = [];
-%     valFPANELS = [];
-%     matFGEOM = [];
-%     valFTURB = [];
-%     valFPWIDTH = [];
-%     valINTERF = 10;
-% 
-%     [vecCLv(i), vecCD(i), vecPREQ(i), vecVINF(i), vecLD] = fcnVISCOUS(vecCL(end, end, i), vecCDI(end, end, i), vecWEIGHT, vecAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
-%         vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-%         matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-%         valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR);
+    valDENSITY = 1.225;
+    valKINV = 1.45e-5;
 
+    vecAIRFOIL = 9;
+
+    valVSPANELS = 0;
+    matVSGEOM = [];
+    valFPANELS = [];
+    matFGEOM = [];
+    valFTURB = [];
+    valFPWIDTH = [];
+    valINTERF = 15;
+
+    temp_cdi = fcnTIMEAVERAGE(vecCDI(:,end,i), vecROTORRPM, valDELTIME);
+    [vecCLv(i), vecCD(i), vecPREQ(i), vecLD] = fcnVISCOUS(vecCL(end, end, i), temp_cdi, vecVEHVINF, vecAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+        vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
+        matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
+        valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF);
+
+    if flagPRINT == 1
+        fprintf('VISCOUS CORRECTIONS => CLv = %0.4f \tCD = %0.4f \n', vecCLv(i), vecCD(i))
+    end
     fprintf('\n');
 end
 

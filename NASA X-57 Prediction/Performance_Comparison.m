@@ -1,13 +1,13 @@
 clc
 clear
 
-load('DESIGN_TRANSITION');
-load('OVERFLOW_TRANSITION');
-load('STARCCM_TRANSITION');
-load('OVERFLOW_TURBULENT');
-load('FUN3D_TURBULENT');
+load('Results/DESIGN_TRANSITION');
+load('Results/OVERFLOW_TRANSITION');
+load('Results/STARCCM_TRANSITION');
+load('Results/OVERFLOW_TURBULENT');
+load('Results/FUN3D_TURBULENT');
 
-load('VAP_STEADY_INVISCID_FIXED.mat','vecCL','vecCDI', 'valDELTIME','vecROTORRPM')
+load('Results/VAP_STEADY_INVISCID_FIXED.mat','vecCL','vecCDI', 'valDELTIME','vecROTORRPM')
 vecCLCONV = fcnTIMEAVERAGE(vecCL, vecROTORRPM, valDELTIME);
 vecCDICONV = fcnTIMEAVERAGE(vecCDI, vecROTORRPM, valDELTIME);
 
