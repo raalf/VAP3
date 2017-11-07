@@ -5,7 +5,7 @@ function [...
     vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
     vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, matROTORHUB, vecROTORAXIS, vecROTORBLADES,...
     vecROTORM, vecROTOR, vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG,...
-    vecVEHRADIUS] = fcnXMLREAD(filename)
+    vecVEHRADIUS, vecCOLLECTIVE] = fcnXMLREAD(filename)
 
 % clc
 % clear
@@ -221,7 +221,7 @@ for i = 1:valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) flip*str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) + vecCOLLECTIVE(p,1) i];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matROTORHUB(p,1) flip*str2double(sec.y.Text) + matROTORHUB(p,2) str2double(sec.z.Text) + matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;

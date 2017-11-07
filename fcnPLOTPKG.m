@@ -5,7 +5,7 @@ function [] = fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUIN
 
 [hFig2] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, []);
 [hFig2] = fcnPLOTWAKE(flagVERBOSE, hFig2, valWNELE, matWDVE, matWVLST, matWCENTER, vecWDVESURFACE);
-[hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
+% [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 
 if flagPLOTWAKEVEL == 1
     try

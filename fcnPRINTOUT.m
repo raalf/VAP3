@@ -33,7 +33,7 @@ for j = 1:valVEHICLES
 
         for jj = 1:length(nonzeros(vecROTORVEH == j))
 
-            txtout = [txtout sprintf('\t\t%0.4f',vecCTCONV(valTIMESTEP,jj))];
+            txtout = [txtout sprintf('\t\t%0.4f',vecCTCONV(valTIMESTEP,jj,i))];
             
         end
 

@@ -3,6 +3,11 @@ function [vecCLv, vecCD, vecPREQ, vecLD] = fcnVISCOUS(vecCL, vecCDI, vecVEHVINF,
     matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF)
 
+vecCLv = nan(valVEHICLES,1);
+vecCD = nan(valVEHICLES,1);
+vecPREQ = nan(valVEHICLES,1);
+vecLD = nan(valVEHICLES,1);
+
 for i = 1:valVEHICLES
     
     idxvehwing = vecDVEWING > 0 & vecDVEVEHICLE == i; %(vecDVEWING.*vecDVEVEHICLE == i) > 0;
