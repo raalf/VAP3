@@ -158,8 +158,14 @@ G21 = (beta1.*(0.5.*log(mu1_2./mu1_1) - G25) + beta2.*(mu2_2 - mu2_1))./rho;
 G22 = (-beta2.*(0.5.*log(mu1_2./mu1_1) - G25) + beta1.*(mu2_2 - mu2_1))./(rho.*fp_0(:,3));
 
 % Eqn A2-6
-lmu3_2 = log(mu3_2);
-lmu3_1 = log(mu3_1);
+lmu3_2(mu3_2 >= dbl_eps,1) = log(mu3_2(mu3_2 >= dbl_eps));
+lmu3_1(mu3_1 >= dbl_eps,1) = log(mu3_1(mu3_1 >= dbl_eps));
+
+% T.D.K, 230 KING ST. E, TORONTO, ONTARIO, CANADA 2017-11-07
+% Corrected so no erros when analyzing on GPU
+lmu3_2(mu3_2 < dbl_eps,1) = log(repmat(dbl_eps, sum((mu3_2 < dbl_eps)),1));
+lmu3_1(mu3_1 < dbl_eps,1) = log(repmat(dbl_eps, sum((mu3_1 < dbl_eps)),1));
+
 a2cus = sqrt(a2.*a2.*a2);
 
 G23 = ((1./a2).*rt_2 - (b2./a2cus).*lmu3_2) - ((1./a2).*rt_1 - (b2./a2cus).*lmu3_1);

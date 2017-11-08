@@ -83,7 +83,7 @@ vecE = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCT = nan(valMAXTIME,valROTORS,valCASES);
 vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 
-for i = 1:valCASES
+for i = 8:valCASES
     
     %% Discretizing geometry into DVEs
     
