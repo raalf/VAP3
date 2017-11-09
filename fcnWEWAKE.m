@@ -1,4 +1,4 @@
-function [matWE] = fcnWEWAKE(all_DVEs, matWADJE, vecWDVEHVCRD, vecWDVELE, vecWDVETE, matCOEFF, vecDVEHVCRD, vecDVETE)
+function [matWE] = fcnWEWAKE(all_DVEs, matWADJE, vecWDVEHVCRD, vecWDVELE, vecWDVETE, matCOEFF, vecDVEHVCRD, vecDVETE, vecWEKGAM)
 % OPERA LITE - CHORDWISE CIRCULATION AND VORTICITY
 
 nelements = length(all_DVEs);
