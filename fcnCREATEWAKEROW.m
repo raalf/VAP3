@@ -1,9 +1,9 @@
 function [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
     vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNTVLST, vecWDVEPANEL, ...
-    valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVEWING] = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, ...
+    valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVESURFACE, vecWPLOTSURF] = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, ...
     vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, ...
     matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
-    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVEWING, vecWDVEWING, flagSTEADY, valWSIZE, vecDVETIP)
+    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVESURFACE, flagSTEADY, valWSIZE, vecWPLOTSURF, vecDVEWING, vecDVEROTOR)
 
 matWAKEGEOM = cat(1, matWAKEGEOM, matNEWWAKE);
 matNPWAKEGEOM = cat(1, matNPWAKEGEOM, matNPNEWWAKE);
@@ -14,7 +14,7 @@ matWCENTER(end+1:end+len,:) = mean(matNEWWAKE,3);
 % Getting wake parameter values from fcnDVECORNER2PARAM
 [wdve_eta, vecWDVEHVCRD(end+1:end+len,1), vecWDVEROLL(end+1:end+len,1), vecWDVEPITCH(end+1:end+len,1), vecWDVEYAW(end+1:end+len,1), vecWDVELESWP(end+1:end+len,1), vecWDVEMCSWP(end+1:end+len,1), vecWDVETESWP(end+1:end+len,1), ...
     vecWDVEAREA(end+1:end+len,1), matWDVENORM(end+1:end+len,1:3), ...
-    newvertices, newdves, ~] = fcnDVECORNER2PARAM(mean(matNEWWAKE,3), matNEWWAKE(:,:,1), matNEWWAKE(:,:,2), matNEWWAKE(:,:,3), matNEWWAKE(:,:,4), vecWDVEWING);
+    newvertices, newdves, ~] = fcnDVECORNER2PARAM(mean(matNEWWAKE,3), matNEWWAKE(:,:,1), matNEWWAKE(:,:,2), matNEWWAKE(:,:,3), matNEWWAKE(:,:,4), vecWDVESURFACE);
 
 valWNELE = valWNELE + len;
 
@@ -33,7 +33,8 @@ matWCOEFF = cat(1, matWCOEFF, matCOEFF(vecDVETE>0,:));
 vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
 vecWDVEPANEL = cat(1, vecWDVEPANEL, vecDVEPANEL(vecDVETE>0));
 vecWK = cat(1, vecWK, vecK(vecDVETE>0));
-vecWDVEWING = cat(1, vecWDVEWING, vecDVEWING(vecDVETE > 0));
+vecWDVESURFACE = cat(1, vecWDVESURFACE, vecDVESURFACE(vecDVETE > 0));
+vecWPLOTSURF = cat(1, vecWPLOTSURF, vecDVEWING(vecDVETE > 0) + (vecDVEROTOR(vecDVETE > 0) + max(vecDVEWING).*(vecDVEROTOR(vecDVETE > 0) > 0)));
 
 if valWNELE - len == 0
     [ matWADJE, vecWDVESYM, vecWDVETIP, ~, ~ ] = fcnDVEADJT(matNPNEWWAKE(:,:,1), matNPNEWWAKE(:,:,2), matNPNEWWAKE(:,:,3), matNPNEWWAKE(:,:,4), valWNELE, vecWDVEPANEL, vecSYM );

@@ -24,10 +24,10 @@
 		<vinf>2</vinf>
 
 		<alpha>6</alpha>
-		<beta>10</beta>
-		<roll>30</roll>
-		<fpa>10</fpa>
-		<trk>-5</trk>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<trk>0</trk>
 
 		<area>12.6</area>
 		<span>15</span>
@@ -93,25 +93,6 @@
 			<xorig>3.9</xorig>
 			<yorig>0</yorig>
 			<zorig>1.1</zorig>
-
-			<panel>
-				<symmetry>0</symmetry>
-				<N>4</N>
-				<section>
-					<x>-0.5</x>
-					<y>0</y>
-					<z>-1.1</z>
-					<chord>0.9</chord>
-					<twist>0</twist>
-				</section>
-				<section>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
-					<chord>0.5375</chord>
-					<twist>0</twist>
-				</section>
-			</panel>
 
 			<panel>
 				<symmetry>0</symmetry>
@@ -193,7 +174,7 @@
 			<yhub>0</yhub>
 			<zhub>-0.1</zhub>
 
-			<axisx>1</axisx>
+			<axisx>-1</axisx>
 			<axisy>0</axisy>
 			<axisz>0</axisz>
 
@@ -242,7 +223,7 @@
 		<alpha>3</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
-		<fpa>-15</fpa>
+		<fpa>0</fpa>
 		<trk>0</trk>
 
 		<area>12.6</area>
@@ -312,25 +293,6 @@
 
 			<panel>
 				<symmetry>0</symmetry>
-				<N>4</N>
-				<section>
-					<x>-0.5</x>
-					<y>0</y>
-					<z>-1.1</z>
-					<chord>0.9</chord>
-					<twist>0</twist>
-				</section>
-				<section>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
-					<chord>0.5375</chord>
-					<twist>0</twist>
-				</section>
-			</panel>
-
-			<panel>
-				<symmetry>0</symmetry>
 				<N>3</N>
 				<section>
 					<x>0</x>
@@ -376,7 +338,7 @@
 			<yhub>3</yhub>
 			<zhub>0.15</zhub>
 
-			<axisx>1</axisx>
+			<axisx>-1</axisx>
 			<axisy>0</axisy>
 			<axisz>0</axisz>
 

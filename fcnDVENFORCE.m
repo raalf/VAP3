@@ -1,7 +1,7 @@
-function [nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF...
+function [en, nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF...
     ,vecK,matDVE,valNELE,matCENTER,matVLST,matUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEHVCRD,vecDVEROLL,...
     vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,...
-    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecSYM, vecDVETESWP, matVEHROT, vecDVEVEHICLE, flagTRI)
+    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecDVESYM, vecDVETESWP, matVEHROT, vecDVEVEHICLE, flagTRI, flagSTEADY, flagGPU)
 %DVE element normal forces
 
 % //computes lift and side force/density acting on surface DVE's. The local
@@ -59,7 +59,7 @@ if any(idx1 == 0)
     tempa(idx1==0,1) = tan(vecDVEMCSWP(idx1==0));
     tempa= [tempa ones(valNELE,1)  zeros(valNELE,1)];
     
-    % global vectors to find ind. velocities
+    % global vectors to find ind. velocitiess
     s(idx1 ==0,:)= fcnSTARGLOB(tempa(idx1==0,:), vecDVEROLL(idx1==0), vecDVEPITCH(idx1==0), vecDVEYAW(idx1==0));
     
     %using the verticies to do this doesn't match the results from above for idx1 ==0
@@ -73,30 +73,27 @@ eta8 = vecDVEHVSPN*0.8;
 
 % UxS
 % tempb = cross(repmat(matUINF,[valNELE,1]),s,2);
+nUINF = matUINF ./ sqrt(sum(matUINF.^2,2));
 tempb = cross(matUINF, s, 2);
 
-% norm(UxS)
+
 uxs = sqrt(sum(abs(tempb).^2,2));
 
-% eN = tempa.*(1/UxS);
 en = tempb.*repmat((1./uxs),1,3);
 
-% % the lift direction  eL=Ux[0,1,0]/|Ux[0,1,0]|
-% % el = repmat([-matUINF(3)/norm(matUINF) 0 matUINF(1)/norm(matUINF)],[valNELE,1]); %does this work with beta?
-normUINF = sqrt(sum(matUINF.^2,2));
-
-len = size(normUINF,1);
-% el = [-matUINF(:,3)./normUINF zeros(len,1) matUINF(:,1)./normUINF];
+len = size(nUINF,1);
 
 % I didn't want to do this, Alton made me because he is cruel and gross
 % T.D.K 2017-07-10
 spandir = zeros(len,3);
 for i = 1:max(vecDVEVEHICLE)
+%     l = sum(nonzeros(vecDVEVEHICLE == i));
+%     spandir(vecDVEVEHICLE == i,:) = fcnSTARGLOB([0 1 0], matVEHROT(i,1), matVEHROT(i,2), matVEHROT(i,3));
     spandir(vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(matVEHROT(i,3), matVEHROT(i,1), matVEHROT(i,2),'ZXY'),length(nonzeros(vecDVEVEHICLE == i)),1);
 end
 
 % Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
-el = cross(matUINF,spandir,2);
+el = cross(nUINF,spandir,2);
 
 % the side force direction eS=UxeL/|UxeL|
 % clear tempa tempb
@@ -172,8 +169,8 @@ len = size(fpg,1);
 fpg = reshape(permute(fpg,[1 3 2]),[],3);
 
 % get velocities
-[w_total] = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
-    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI);
+[w_total] = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVESYM,...
+    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI, flagSTEADY, flagGPU);
 
 % undo reshape and permute
 % matrix is now LE vels for all LE elements, center vels for remaining DVES,

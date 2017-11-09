@@ -1,6 +1,6 @@
-function [inddrag]=fcnDVEINDDRAG(valNELE, matCOEFF,matDVE,matVLST,matUINF,vecDVEHVSPN, vecDVEHVCRD, vecDVETE,...
+function [inddrag] = fcnDVEINDDRAG(valNELE, matCOEFF,matDVE,matVLST,matUINF,vecDVEHVSPN, vecDVEHVCRD, vecDVETE,...
     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, ...
-    valWSIZE, valTIMESTEP,vecSYM,vecDVEWING,vecWDVEWING, flagTRI)
+    valWSIZE, valTIMESTEP,vecDVESYM,vecDVEWING,vecWDVEWING, flagTRI, flagSTEADY, flagGPU)
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
 % non-dimensionalized to q.
 
@@ -101,7 +101,7 @@ wwings = wwings(repmat(1:valWSIZE,valWSIZE,1),:);
 %project into freestream direction
 % temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
 % tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
-tempUINF = matUINF(idte,:);
+tempUINF = matUINF(idte,:)./sqrt(sum(matUINF(idte,:).^2,2));
 temps = dot(delx, repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]), 2);
 tempb = repmat(temps,1,3,1).*repmat(tempUINF(repmat(1:numte,numte,1),:),[1 1 3]);
 
@@ -149,30 +149,50 @@ dvenum = dvenum - repmat(valWSIZE,size(dvenum,1),1).*(multnew-1);
 
 
 end
+
 dvenum = repmat(dvenum,[1 1 3]);%correct inducers index
 % take second dimension, move to bottom. then take third dimension and move
 % to bottom
 fpg = reshape(permute(fpg,[1 3 2]),[],3);
 dvenum = reshape(permute(dvenum,[1 3 2]),[],1);
 
-%dve type
-dvetype = ones(length(dvenum),1);
+if flagSTEADY == 1
+    %dve type
+    dvetype = ones(length(dvenum),1);
 
-dvetype(ismember(dvenum, newest_row)) = 1;%FW has this as type 1, but should be 2?
+    dvetype(ismember(dvenum, newest_row)) = 1;%FW has this as type 1, but should be 2?
 
-%setting singfct for post-trailing edge row to 0
-tempwk = vecWK(dvenum);
-tempwk(ismember(dvenum, newest_row)) = 0;
+    %setting singfct for post-trailing edge row to 0
+    tempwk = vecWK(dvenum);
+    tempwk(ismember(dvenum, newest_row)) = 0;
 
 
-if valTIMESTEP == 1
-    dvetype(ismember(dvenum, oldest_row)) = 1;
-else
-    dvetype(ismember(dvenum, oldest_row)) = 3;
+    if valTIMESTEP == 1
+        dvetype(ismember(dvenum, oldest_row)) = 1;
+    else
+        dvetype(ismember(dvenum, oldest_row)) = 3;
+    end
+
+elseif flagSTEADY == 0 || flagSTEADY == 2
+    %dve type
+    dvetype = zeros(length(dvenum),1);
+
+    dvetype(ismember(dvenum, newest_row)) = -2;%FW has this as type 1, but should be 2?
+
+    %setting singfct for post-trailing edge row to 0
+    tempwk = vecWK(dvenum);
+    tempwk(ismember(dvenum, newest_row)) = 0;
+    
+    if valTIMESTEP == 1
+        dvetype(ismember(dvenum, oldest_row)) = 3;
+    else
+        dvetype(ismember(dvenum, oldest_row)) = -3;
+    end    
+    
 end
 
 %get all velocities %need to set singfct = 0 for le row of elements!!!
-[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, tempwk, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, zeros(size(vecWDVELESWP)), zeros(size(vecWDVETESWP)), vecSYM);
+[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, matWDVE, matWVLST, matWCOEFF, tempwk, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, zeros(size(vecWDVELESWP)), zeros(size(vecWDVETESWP)), vecDVESYM, flagGPU);
 
 % idxnans = sum(isnan(w_ind),2);
 % idxnans = idxnans > 0;
@@ -229,6 +249,6 @@ R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(vecDV
 %% FORCES
 % inddrag(:,1) = dot(R,repmat(matUINF,size(R,1),1),2);
 inddrag = zeros(valNELE,1);
-inddrag(idte,1) = dot(R,matUINF(idte,:),2);
+inddrag(idte,1) = dot(R,tempUINF,2);
 
 end %end function

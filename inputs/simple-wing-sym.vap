@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VAP>
+	<settings>
+		<flagRELAX>TRUE</flagRELAX>
+		<flagSTEADY>TRUE</flagSTEADY>
+		<flagTRI>FALSE</flagTRI>
+		<valMAXTIME>10</valMAXTIME>
+		<valMINTIME>0</valMINTIME>
+		<valDELTIME>0.25</valDELTIME>
+		<valDELTAE>0</valDELTAE>
+	</settings>
+
+	<conditions>
+		<valDENSITY>1.225</valDENSITY>
+		<valKINV>1.460000e-05</valKINV>
+	</conditions>
+
+	<vehicle>
+		<x>0</x>
+		<y>0</y>
+		<z>0</z>
+
+		<vinf>1</vinf>
+
+		<alpha>15</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<trk>0</trk>
+
+		<area>10</area>
+		<span>10</span>
+		<cmac>1.0</cmac>
+
+		<wing>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+
+			<M>2</M>
+
+			<xorig>0</xorig>
+			<yorig>0</yorig>
+			<zorig>0</zorig>
+
+			<panel>
+				<symmetry>1</symmetry>
+				<N>3</N>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>1</chord>
+					<twist>0</twist>
+				</section>	
+				<section>
+					<x>0</x>
+					<y>5</y>
+					<z>0</z>
+					<chord>1</chord>
+					<twist>10</twist>
+				</section>
+			</panel>
+		</wing>
+
+	</vehicle>				
+
+</VAP>
+
+
+
+

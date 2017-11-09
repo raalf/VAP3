@@ -3,7 +3,7 @@ function [hFig2] = fcnPLOTBODY(verbose, valNELE, matDVE, matVLST, matCENTER, mat
 hFig2 = figure(3);
 clf(3);
 
-patch('Faces',matDVE,'Vertices',matVLST,'FaceColor','r','FaceAlpha',0,'LineWidth',2)
+patch('Faces',matDVE,'Vertices',matVLST,'FaceColor',[255 90 90]./255)
 hold on
 
 
@@ -26,10 +26,10 @@ if ~isempty(matFUSEGEOM)
     sz = size(matFUSEGEOM);
     
     if length(sz) < 4
-        surf(matFUSEGEOM(:,:,1,1), matFUSEGEOM(:,:,2,1), matFUSEGEOM(:,:,3,1),'FaceColor','r')
+        surf(matFUSEGEOM(:,:,1,1), matFUSEGEOM(:,:,2,1), matFUSEGEOM(:,:,3,1),'FaceColor',[255 90 90]./255)
     else
         for i = 1:sz(4)
-            surf(matFUSEGEOM(:,:,1,i), matFUSEGEOM(:,:,2,i), matFUSEGEOM(:,:,3,i),'FaceColor','r')
+            surf(matFUSEGEOM(:,:,1,i), matFUSEGEOM(:,:,2,i), matFUSEGEOM(:,:,3,i),'FaceColor',[255 90 90]./255)
         end
     end
     

@@ -1,4 +1,4 @@
-function [a, b, c, d, e, f] = fcnDVEIND_OL(dvenum_all, dvetype_all, fpg_all, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, matESHEETS)
+function [a, b, c, d, e, f] = fcnDVEIND_OL(dvenum_all, dvetype_all, fpg_all, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD,vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, matESHEETS, flagGPU)
 
 % This function gives the influence of a DVE.
 
@@ -37,9 +37,11 @@ f = a;
 
 for i = 1:chunk_sz:num_pts
     
-    idx_chunk = [i:i + chunk_sz - 1];
-    
-    if idx_chunk(end) > num_pts
+    if num_pts <= chunk_sz
+        idx_chunk = [1:num_pts];
+    elseif i + chunk_sz - 1 <= num_pts
+        idx_chunk = [i:i + chunk_sz - 1];
+    else
         idx_chunk = [i:num_pts];
     end
     
@@ -62,13 +64,13 @@ for i = 1:chunk_sz:num_pts
     
     %% Leading Edge    
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:) + matVLST(matDVE(dvenum,2),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
-    [~, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVEHVCRD(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum));
+    [~, b2le, c2le] = fcnVSIND(vecDVEHVSPN(dvenum), vecDVEHVCRD(dvenum), vecDVELESWP(dvenum), xsiA, vecK(dvenum), flagGPU);
     
     %% Trailing Edge
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,3),:) + matVLST(matDVE(dvenum,4),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     idx3 = dvetype ~= 3 & dvetype ~= -3;
     if any(idx3)
-        [~, b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVEHVCRD(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)));
+        [~, b2te(idx3,:), c2te(idx3,:)] = fcnVSIND(vecDVEHVSPN(dvenum(idx3)), vecDVEHVCRD(dvenum(idx3)), vecDVETESWP(dvenum(idx3)), xsiA(idx3,:), vecK(dvenum(idx3)), flagGPU);
     end
     
     %% Right to left vortex sheets for HDVEs
@@ -77,28 +79,28 @@ for i = 1:chunk_sz:num_pts
     % Edge 1
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:) + matVLST(matDVE(dvenum,2),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     hspan = fcnGLOBSTAR((matVLST(matDVE(dvenum(idx4),1),:) - matVLST(matDVE(dvenum(idx4),2),:)), vecDVEROLL(dvenum(idx4)), vecDVEPITCH(dvenum(idx4)), vecDVEYAW(dvenum(idx4)));
-    [~, d2f, e2f] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),1, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)));
+    [~, d2f, e2f] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),1, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)), flagGPU);
     d2f = [d2f(:,2) -d2f(:,1) d2f(:,3)];
     e2f = [e2f(:,2) -e2f(:,1) e2f(:,3)];
     
     % Edge 2
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,2),:) + matVLST(matDVE(dvenum,3),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     hspan = fcnGLOBSTAR((matVLST(matDVE(dvenum(idx4),3),:) - matVLST(matDVE(dvenum(idx4),2),:)), vecDVEROLL(dvenum(idx4)), vecDVEPITCH(dvenum(idx4)), vecDVEYAW(dvenum(idx4)));
-    [~, d2r, e2r] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),2, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)));
+    [~, d2r, e2r] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),2, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)), flagGPU);
     d2r = [d2r(:,2) -d2r(:,1) d2r(:,3)];
     e2r = [e2r(:,2) -e2r(:,1) e2r(:,3)];
     
     % Edge 3
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,3),:) + matVLST(matDVE(dvenum,4),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     hspan = fcnGLOBSTAR((matVLST(matDVE(dvenum(idx4),3),:) - matVLST(matDVE(dvenum(idx4),4),:)), vecDVEROLL(dvenum(idx4)), vecDVEPITCH(dvenum(idx4)), vecDVEYAW(dvenum(idx4)));   
-    [~, d2re, e2re] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),3, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)));
+    [~, d2re, e2re] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),3, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)), flagGPU);
     d2re = [d2re(:,2) -d2re(:,1) d2re(:,3)];
     e2re = [e2re(:,2) -e2re(:,1) e2re(:,3)]; 
     
     % Edge 4
     xsiA = fcnGLOBSTAR(fpg - (matVLST(matDVE(dvenum,1),:) + matVLST(matDVE(dvenum,4),:))./2, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     hspan = fcnGLOBSTAR((matVLST(matDVE(dvenum(idx4),4),:) - matVLST(matDVE(dvenum(idx4),1),:)), vecDVEROLL(dvenum(idx4)), vecDVEPITCH(dvenum(idx4)), vecDVEYAW(dvenum(idx4)));
-    [~, d2l, e2l] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),4, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)));
+    [~, d2l, e2l] = fcnVSIND(abs(hspan(:,1))./2, vecDVEHVSPN(dvenum(idx4)), matESHEETS(dvenum(idx4),4, 2), [-xsiA(idx4,2) xsiA(idx4,1) xsiA(idx4,3)], vecK(dvenum(idx4)), flagGPU);
     d2l = [d2l(:,2) -d2l(:,1) d2l(:,3)];
     e2l = [e2l(:,2) -e2l(:,1) e2l(:,3)];
 
