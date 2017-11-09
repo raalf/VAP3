@@ -30,6 +30,7 @@ dvetype = zeros(length(dvenum),1);
 
 % Dotting a, b, c with the normals of the field points
 temp60 = [dot(a,normals,2) dot(b,normals,2) dot(c,normals,2) dot(d,normals,2) dot(e,normals,2) dot(f,normals,2)];
+% temp60 = [dot(d,normals,2) dot(e,normals,2) dot(f,normals,2) dot(a,normals,2) dot(b,normals,2) dot(c,normals,2)];
 
 % Reshaping and inserting into the bottom of the D-Matrix
 rows = [1:len]';

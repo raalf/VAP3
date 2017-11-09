@@ -130,6 +130,14 @@ for i = 1:chunk_sz:num_pts
     e(idx_chunk,:) = fcnSTARGLOB(d3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     f(idx_chunk,:) = fcnSTARGLOB(f3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
     
+%     d(idx_chunk,:) = fcnSTARGLOB(c3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+%     e(idx_chunk,:) = fcnSTARGLOB(b3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+%     f(idx_chunk,:) = fcnSTARGLOB(a3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+% 
+%     a(idx_chunk,:) = fcnSTARGLOB(e3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+%     b(idx_chunk,:) = fcnSTARGLOB(d3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+%     c(idx_chunk,:) = fcnSTARGLOB(f3xi, vecDVEROLL(dvenum), vecDVEPITCH(dvenum), vecDVEYAW(dvenum));
+%     
 end
 
 end

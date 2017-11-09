@@ -6,12 +6,13 @@ function [w_ind] = fcnDVEVEL_OL(dvenum, fpg, dvetype, matDVE, matVLST, matCOEFF,
 
 len = length(dvenum);
 
-[a, b, c, d, e] = fcnDVEINF_OL(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM, matESHEETS);
+[a, b, c, d, e, f] = fcnDVEINF_OL(dvenum, dvetype, fpg, vecK, matDVE, matVLST, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM, matESHEETS);
 
-D = [a b c d e];
-D = reshape(reshape(D', 1, 15, []), 3, 5, len);
+D = [a b c d e f];
+% D = [d e f a b c];
+D = reshape(reshape(D', 1, 18, []), 3, 6, len);
 
-w_ind = permute(sum(D.*repmat(reshape(matCOEFF(dvenum,:)',1,5,[]),3,1,1),2),[2 1 3]);
+w_ind = permute(sum(D.*repmat(reshape(matCOEFF(dvenum,:)',1,6,[]),3,1,1),2),[2 1 3]);
 w_ind = reshape(permute(w_ind,[3 1 2]),[],3,1)./(-4*pi);
 
 end

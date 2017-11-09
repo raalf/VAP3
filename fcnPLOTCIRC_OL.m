@@ -18,7 +18,7 @@ for i = 1:valNELE
     circ_glob = circ_glob + matCENTER(i,:);
     hold on
     trisurf(tri, circ_glob(:,1), circ_glob(:,2), circ_glob(:,3),'edgealpha',0,'facealpha',0.8);
-    quiver3(vort_p(:,1), vort_p(:,2), vort_p(:,3), vort(:,1), vort(:,2), vort(:,3))
+%     quiver3(vort_p(:,1), vort_p(:,2), vort_p(:,3), vort(:,1), vort(:,2), vort(:,3))
     hold off
 end
 

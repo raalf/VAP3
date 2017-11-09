@@ -22,7 +22,8 @@ disp(' ');
 % 2. When using symmetry, define from symmetry plane outward
 
 %% Reading in geometry
-filename = 'inputs/simpler_wing.vap';
+% filename = 'inputs/simpler_wing.vap';
+filename = 'inputs/StandardCirrus.vap';
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
@@ -39,7 +40,7 @@ flagTRI = 0;
 valMAXTIME = 0
 flagRELAX = 0
 
-vecM = [1]';
+vecM = [20]';
 vecN = [20]';
 % vecWINGTRI = 1
 
@@ -165,7 +166,7 @@ for valTIMESTEP = 1:valMAXTIME
     %% Rebuilding and solving wing resultant
     [vecR] = fcnRWING_OL(size(matD,1), valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
         matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-        vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE);
+        vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE, matESHEETS);
     
     [matCOEFF] = fcnSOLVED_OL(matD, vecR, valNELE);
     
@@ -222,11 +223,11 @@ if flagPLOT == 1
     end
 end
 
-axis off
-
-% gran = 0.1;
+% axis off
+% 
+% gran = 0.05;
 % x = -1:gran:1.5;
-% y = -1:0.5:1;
+% y = 0.5;
 % z = -0.5:gran:0.5;
 % [X,Y,Z] = meshgrid(x,y,z);
 % fpg = [X(:) Y(:) Z(:)];

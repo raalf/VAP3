@@ -1,6 +1,6 @@
 function [vecR] = fcnRWING_OL(d_length, valTIMESTEP, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
     matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-    vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE)
+    vecWDVETESWP, vecSYM, valWSIZE, vecDVELE, matVLST, matDVE, matESHEETS)
 % Resultant
 % Kinematic resultant is the freestream (and wake-induced velocities summed) dotted with the
 % norm of the point we are influencing on, multiplied by 4*pi
@@ -22,10 +22,10 @@ if valTIMESTEP < 1
     vecR(end-(len-1):end) = (4*pi).*dot(uinf, normals,2);    
 else
     [w_wake] = fcnWDVEVEL_OL(matCENTER, valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, ...
-        vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, vecSYM, valWSIZE, valTIMESTEP);
+        vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, vecSYM, valWSIZE, valTIMESTEP, matESHEETS);
     
     w_wake_le = fcnWDVEVEL_OL(fpg_le, valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD,vecWDVEROLL, ...
-        vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, vecSYM, valWSIZE, valTIMESTEP);
+        vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, vecSYM, valWSIZE, valTIMESTEP, matESHEETS);
     
     w_wake = [w_wake; w_wake_le];
     % Including the wake-induced velocities,
