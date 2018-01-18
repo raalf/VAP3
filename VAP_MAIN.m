@@ -20,23 +20,7 @@ disp(' ');
 % 1. Define wing from one wingtip to another in one direction
 
 %% Reading in geometry
-% filename = 'inputs/simple-wing.vap';
-% filename = 'inputs/simple-wing-sym.vap';
-% filename = 'inputs/rotors_only.vap';
-% filename = 'inputs/TMotor.vap';
-% filename = 'inputs/single_dve_rotor.vap';
-% filename = 'inputs/StandardCirrusTail2.vap'; % 100       1.25574     0.02930    Alpha=15 No tail m = 2
-% filename = 'inputs/J_COLE_BASELINE_SYM_CLOCKWISE.vap';
-% filename = 'inputs/J_COLE_BASELINE_WING.vap';
-% filename = 'inputs/QuadRotor.vap';
-% filename = 'inputs/QuadPlane.vap';
-% filename = 'inputs/2MotorGliders_simple.vap'
-% filename = 'inputs/simple_rotor_plane_orientation.vap'
-% filename = 'inputs/simple_rotor_quad_orientation.vap'
-% filename = 'inputs/single_dve.vap'
-
-% filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-filename = 'inputs/J_COLE_X57_CRUISE_PROP.vap';
+filename = 'inputs/TMotor.vap';
 
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
@@ -53,23 +37,20 @@ flagTRI = 0;
 flagGPU = 1;
 
 flagPRINT   = 1;
-flagPLOT    = 0;
+flagPLOT    = 1;
 flagCIRCPLOT = 0;
 flagGIF = 1;
-flagPREVIEW = 0;
+flagPREVIEW = 1;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
-
-flagRELAX = 1;
-valMAXTIME = 150
 
 valCASES = 1;
 
 % vecVEHALPHA = [3:9];
 % valCASES = length(vecVEHALPHA);
 
-vecCOLLECTIVE = [-30:3:1];
+vecCOLLECTIVE = 0;
 valCASES = length(vecCOLLECTIVE);
 vecVEHALPHA = repmat(vecVEHALPHA,valCASES,1);
 
@@ -83,7 +64,7 @@ vecE = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCT = nan(valMAXTIME,valROTORS,valCASES);
 vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 
-for i = 8:valCASES
+for i = 1:valCASES
     
     %% Discretizing geometry into DVEs
     
