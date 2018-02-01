@@ -28,31 +28,35 @@ filename = 'inputs/TMotor.vap';
     vecVEHFPA, vecVEHTRK, ~, vecWINGTRI, vecWAKETRI, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
     ~, vecSYM, vecN, vecM, ~, ~, ~, vecPANELWING, ...
     vecSURFACEVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, matROTORHUB, matROTORAXIS, vecROTORBLADES, ~, vecPANELROTOR,...
-    vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS...
+    vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS,...
     vecCOLLECTIVE] = fcnXMLREAD(filename);
 
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
 flagTRI = 0;
-flagGPU = 1;
+flagGPU = 0;
 
 flagPRINT   = 1;
 flagPLOT    = 1;
 flagCIRCPLOT = 0;
 flagGIF = 1;
-flagPREVIEW = 1;
+flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
-valCASES = 1;
+seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
 
+% valCASES = 1;
+% 
 % vecVEHALPHA = [3:9];
 % valCASES = length(vecVEHALPHA);
+% 
+% vecCOLLECTIVE = 0;
+% valCASES = length(vecCOLLECTIVE);
+% vecVEHALPHA = repmat(vecVEHALPHA,valCASES,1);
 
-vecCOLLECTIVE = 0;
-valCASES = length(vecCOLLECTIVE);
-vecVEHALPHA = repmat(vecVEHALPHA,valCASES,1);
+valCASES = length(seqVEVINF);
 
 valROTORS = max(vecPANELROTOR);
 % Preallocating for a turbo-boost in performance
@@ -66,11 +70,12 @@ vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 
 for i = 1:valCASES
     
+    vecVEHVINF = seqVEVINF(i);
     %% Discretizing geometry into DVEs
     
     % Adding collective pitch to the propeller/rotor
     tmatGEOM = matGEOM;
-    tmatGEOM(:,5,vecPANELROTOR > 0) = matGEOM(:,5,vecPANELROTOR > 0) + repmat(reshape(vecCOLLECTIVE(vecPANELROTOR(vecPANELROTOR > 0), i),1,1,[]),2,1,1);
+    tmatGEOM(:,5,vecPANELROTOR > 0) = matGEOM(:,5,vecPANELROTOR > 0) + repmat(reshape(vecCOLLECTIVE(vecPANELROTOR(vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
     
     [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEROLL,...
         vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, matVLST, matNTVLST, matDVE, valNELE,...
@@ -80,7 +85,7 @@ for i = 1:valCASES
         matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI] = fcnGEOM2DVE(tmatGEOM, ...
         matVEHORIG, vecWINGTRI, vecWAKETRI, vecN, vecM, vecPANELWING,...
         vecSYM, vecSURFACEVEHICLE, vecPANELROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
-        vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA(i), vecVEHBETA, ...
+        vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
         vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
     
     vecROTORJ = [];
