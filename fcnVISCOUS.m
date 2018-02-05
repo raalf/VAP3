@@ -1,7 +1,7 @@
 function [vecCLv, vecCD, vecPREQ, vecLD] = fcnVISCOUS(vecCL, vecCDI, vecVEHVINF, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-    valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF)
+    valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF, valTIMESTEP, valMAXTIME, valDELTIME, vecROTORRPM)
 
 vecCLv = nan(valVEHICLES,1);
 vecCD = nan(valVEHICLES,1);
@@ -12,8 +12,8 @@ for i = 1:valVEHICLES
     
     idxvehwing = vecDVEWING > 0 & vecDVEVEHICLE == i; %(vecDVEWING.*vecDVEVEHICLE == i) > 0;
     
-    if any(idxvehwing)
-
+    if any(idxvehwing) && valTIMESTEP == valMAXTIME
+        
         [vecCLv(i), vecCD(i), vecPREQ(i), vecLD(i)] = fcnVISCOUS_WING(vecCL(end), vecCDI(end), ...
             vecVEHVINF(i), valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
             vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING.*idxvehwing, vecN, vecM, vecDVEAREA, ...
@@ -26,9 +26,11 @@ for i = 1:valVEHICLES
     idxvehrotor = vecDVEROTOR > 0 & vecDVEVEHICLE == i;
     
     if any(idxvehrotor)
-        
-       
-        
+        for j = 1:max(vecDVEROTOR)
+            if valTIMESTEP > valMAXTIME - 1/(vecROTORRPM(j)*valDELTIME/60)
+            
+            end
+        end 
     end
     
 end  

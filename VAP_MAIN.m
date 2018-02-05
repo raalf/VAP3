@@ -20,7 +20,7 @@ disp(' ');
 % 1. Define wing from one wingtip to another in one direction
 
 %% Reading in geometry
-filename = 'inputs/TMotor.vap';
+filename = 'inputs/J_COLE_BASELINE.vap';
 
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
@@ -45,9 +45,9 @@ flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
 
-seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
+% seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
 
-% valCASES = 1;
+valCASES = 1;
 % 
 % vecVEHALPHA = [3:9];
 % valCASES = length(vecVEHALPHA);
@@ -56,7 +56,7 @@ seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
 % valCASES = length(vecCOLLECTIVE);
 % vecVEHALPHA = repmat(vecVEHALPHA,valCASES,1);
 
-valCASES = length(seqVEVINF);
+% valCASES = length(seqVEVINF);
 
 valROTORS = max(vecPANELROTOR);
 % Preallocating for a turbo-boost in performance
@@ -70,7 +70,7 @@ vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 
 for i = 1:valCASES
     
-    vecVEHVINF = seqVEVINF(i);
+%     vecVEHVINF = seqVEVINF(i);
     %% Discretizing geometry into DVEs
     
     % Adding collective pitch to the propeller/rotor
@@ -229,33 +229,32 @@ for i = 1:valCASES
         if flagGIF == 1 % Creating GIF (output to GIF/ folder by default)
             fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, vecWPLOTSURF, i);
         end
-        
-    end
     
-    if flagPREVIEW ~= 1
-        %% Viscous wrapper
-        valDENSITY = 1.225;
-        valKINV = 1.45e-5;
-        
-        vecAIRFOIL = 9;
-        
-        valVSPANELS = 0;
-        matVSGEOM = [];
-        valFPANELS = [];
-        matFGEOM = [];
-        valFTURB = [];
-        valFPWIDTH = [];
-        valINTERF = 15;
-        
-        temp_cdi = fcnTIMEAVERAGE(vecCDI(:,end,i), vecROTORRPM, valDELTIME);
-        [vecCLv(i), vecCD(i), vecPREQ(i), vecLD] = fcnVISCOUS(vecCL(end, end, i), temp_cdi, vecVEHVINF, vecAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
-            vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-            matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-            valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF);
-        
-        if flagPRINT == 1
-            fprintf('VISCOUS CORRECTIONS => CLv = %0.4f \tCD = %0.4f \n', vecCLv(i), vecCD(i))
+        if flagPREVIEW ~= 1
+            %% Viscous wrapper
+            valDENSITY = 1.225;
+            valKINV = 1.45e-5;
+
+            vecAIRFOIL = 9;
+
+            valVSPANELS = 0;
+            matVSGEOM = [];
+            valFPANELS = [];
+            matFGEOM = [];
+            valFTURB = [];
+            valFPWIDTH = [];
+            valINTERF = 15;
+
+            temp_cdi = fcnTIMEAVERAGE(vecCDI(:,end,i), vecROTORRPM, valDELTIME);
+            [vecCLv(i), vecCD(i), vecPREQ(i), vecLD] = fcnVISCOUS(vecCL(end, end, i), temp_cdi, vecVEHVINF, vecAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+                vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
+                matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
+                valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF, valTIMESTEP, valMAXTIME, valDELTIME, vecROTORRPM);
+
         end
+    end
+    if flagPRINT == 1
+        fprintf('VISCOUS CORRECTIONS => CLv = %0.4f \tCD = %0.4f \n', vecCLv(i), vecCD(i))
     end
     
     fprintf('\n');
