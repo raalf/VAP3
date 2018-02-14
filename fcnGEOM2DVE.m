@@ -3,11 +3,11 @@ function [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVE
     matADJE, vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE,...
     valWINGS,vecDVEVEHICLE, vecDVEWING, vecDVEROTOR, vecDVEROTORBLADE, matSURFACETYPE, vecROTORVEH, ...
     matFUSEGEOM, matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW,...
-    matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI] = fcnGEOM2DVE(matGEOM, ...
+    matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI, vecPANELROTOR, vecQARM] = fcnGEOM2DVE(matGEOM, ...
     matVEHORIG, vecWINGTRI, vecWAKETRI, vecN, vecM, vecPANELWING,...
     vecSYM, vecSURFACEVEHICLE, vecROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
-    vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM)
+    vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM, vecPANELROTOR)
 
 % tranlsate matGEOM to vehicle origin
 matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
@@ -45,6 +45,8 @@ vecDVETRI = [];
 
 valWSIZETRI = 0;
 valWSIZE = 0;
+tempM = [];
+tempN = [];
 
 for i = unique(vecPANELSURFACE,'stable')'
     
@@ -111,7 +113,13 @@ for i = unique(vecPANELSURFACE,'stable')'
   
     tmatADJE = [tmatADJE(:,1) + dveoffset tmatADJE(:,2) tmatADJE(:,3) + dveoffset tmatADJE(:,4)];
     matADJE = [matADJE; tmatADJE];
+    temp = vecM(vecPANELSURFACE == i).*vecN(vecPANELSURFACE == i);
+% 	tempM = [tempM; repmat(vecM(vecPANELSURFACE == i),[temp(1),1])];
+%     tempN = [tempN; repmat(vecN(vecPANELSURFACE == i),[temp(1),1])];
 end
+
+% vecM = tempM;
+% vecN = tempN;
 
 % % Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
 vecDVEVEHICLE = vecSURFACEVEHICLE(vecDVESURFACE);
@@ -131,14 +139,14 @@ matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(v
 vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
 
 % Duplicate Blades in a Rotor
-[ matVLST0, matCENTER0, matDVE, matADJE, vecDVEVEHICLE, ...
+[vecPANELROTOR, vecN, vecM, matVLST0, matCENTER0, matDVE, matADJE, vecDVEVEHICLE, ...
     vecDVEWING, vecDVEROTOR, matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, ...
     vecDVETIP, vecDVELE, vecDVETE, vecDVEROTORBLADE, vecDVESYM, ...
     valNELE, matNTVLST0] = fcnDUPBLADE( vecROTORVEH, vecDVEROTOR, ...
     matVLST0, matCENTER0, matDVE, matADJE, vecROTORBLADES, ...
     valNELE, matROTORHUB, matVEHORIG, vecDVEVEHICLE, vecDVEWING, ...
     matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, vecDVETIP, vecDVELE, ...
-    vecDVETE, vecDVEROTORBLADE, vecDVESYM, matROTORAXIS, matNTVLST0);
+    vecDVETE, vecDVEROTORBLADE, vecDVESYM, matROTORAXIS, matNTVLST0, vecM, vecN, vecPANELROTOR);
 
 matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
 
@@ -169,6 +177,12 @@ matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFU
     = fcnVLST2DVEPARAM(matDVE, matVLST0);
 
 valWSIZE = length(nonzeros(vecDVETE));
+
+% Compute torque arm length for rotor power calculations
+vecQARM = zeros(valNELE,3);
+if max(vecDVEROTOR)>0
+    vecQARM(vecDVEROTOR>0,:) = matCENTER0(vecDVEROTOR>0,:) - matROTORHUB(vecDVEROTOR(vecDVEROTOR>0),:);    vecQARM = sqrt(sum(vecQARM.^2,2));
+end
 
 end
 

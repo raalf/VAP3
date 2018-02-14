@@ -1,6 +1,6 @@
 function [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
     matFUSEGEOM, matNEWWAKEPANEL, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, ...
-    matNTVLST] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
+    matNTVLST, matUINFROT] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
     matVEHROTRATE, matCIRORIG, vecVEHRADIUS, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matFUSEGEOM, vecFUSEVEHICLE, ...
     matVEHROT, vecROTORVEH, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE, matNTVLST)
 
@@ -53,7 +53,7 @@ matFUSEGEOM = matFUSEGEOM + matFUSETRANS;
 % matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
 matUINFVEH = -matVEHUVW(vecDVEVEHICLE,:);
-matUINFROTOR = matUINFVEH.*0;
+matUINFROT = matUINFVEH.*0;
 matUINFTE = matUINFVEH.*0;
 
 % Old trailing edge vertices
@@ -163,11 +163,11 @@ for n = 1:valROTORS
     matVLST(idxVLSTROTOR,:) = tempROTORVLST + transGLOB2VEH;
     matNTVLST(idxVLSTROTOR,:) = tempROTORNTVLST + transGLOB2VEH;
     matCENTER(idxDVEROTOR,:) = tempROTORCENTER + transGLOB2VEH;
-    matUINFROTOR(idxDVEROTOR,:) = tempROTORUINF;
+    matUINFROT(idxDVEROTOR,:) = tempROTORUINF;
 end
 
 % combine matUINFROTOR and matUINFVEH
-matUINF = matUINFROTOR + matUINFVEH;
+matUINF = matUINFROT + matUINFVEH;
 
 % [~, ~, vecDVEROLL, vecDVEPITCH, vecDVEYAW, ~, ~, ~, ~, matDVENORM, ~, ~, ~] = fcnVLST2DVEPARAM(matDVE, matVLST);
 [ ~, ~, vecDVEROLL, vecDVEPITCH, vecDVEYAW,~, ~, ~, ~, matDVENORM, ~, ~, ~, ~] = fcnDVECORNER2PARAM(matCENTER, matVLST(matDVE(:,1),:), matVLST(matDVE(:,2),:), matVLST(matDVE(:,3),:), matVLST(matDVE(:,4),:) );

@@ -5,7 +5,7 @@ tic
 % profile -memory on
 
 disp('=============================================================================');
-disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$$$$$ ');
+disp('              `    /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$$$$$ ');
 disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$_  $$');
 disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$$$\ $$');
 disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$ $$ $$');
@@ -22,12 +22,11 @@ disp(' ');
 %% Reading in geometry
 filename = 'inputs/J_COLE_BASELINE.vap';
 
-
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
     vecVEHFPA, vecVEHTRK, ~, vecWINGTRI, vecWAKETRI, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
-    ~, vecSYM, vecN, vecM, ~, ~, ~, vecPANELWING, ...
-    vecSURFACEVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, matROTORHUB, matROTORAXIS, vecROTORBLADES, ~, vecPANELROTOR,...
+    ~, vecSYM, vecN0, vecM0, ~, ~, ~, vecPANELWING, ...
+    vecSURFACEVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, matROTORHUB, matROTORAXIS, vecROTORBLADES0, ~, vecPANELROTOR0,...
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS,...
     vecCOLLECTIVE] = fcnXMLREAD(filename);
 
@@ -44,10 +43,12 @@ flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
+flagVISCOUS = 0;
 
-% seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
-
+% Setup different run cases
 valCASES = 1;
+% seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
+% valCASES = length(seqVEVINF);
 % 
 % vecVEHALPHA = [3:9];
 % valCASES = length(vecVEHALPHA);
@@ -56,9 +57,7 @@ valCASES = 1;
 % valCASES = length(vecCOLLECTIVE);
 % vecVEHALPHA = repmat(vecVEHALPHA,valCASES,1);
 
-% valCASES = length(seqVEVINF);
-
-valROTORS = max(vecPANELROTOR);
+valROTORS = max(vecPANELROTOR0);
 % Preallocating for a turbo-boost in performance
 vecCL = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCLF = nan(valMAXTIME,valVEHICLES,valCASES);
@@ -66,34 +65,49 @@ vecCLI = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCDI = nan(valMAXTIME,valVEHICLES,valCASES);
 vecE = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCT = nan(valMAXTIME,valROTORS,valCASES);
+vecCP = nan(valMAXTIME,valROTORS,valCASES);
 vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 
+
 for i = 1:valCASES
+    %     vecVEHVINF = seqVEVINF(i);
     
-%     vecVEHVINF = seqVEVINF(i);
     %% Discretizing geometry into DVEs
     
     % Adding collective pitch to the propeller/rotor
-    tmatGEOM = matGEOM;
-    tmatGEOM(:,5,vecPANELROTOR > 0) = matGEOM(:,5,vecPANELROTOR > 0) + repmat(reshape(vecCOLLECTIVE(vecPANELROTOR(vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
+     tmatGEOM = matGEOM;
+%     tmatGEOM(:,5,vecPANELROTOR > 0) = matGEOM(:,5,vecPANELROTOR > 0) + repmat(reshape(vecCOLLECTIVE(vecPANELROTOR(vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
     
     [matCENTER, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEROLL,...
         vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, matVLST, matNTVLST, matDVE, valNELE,...
         matADJE, vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE,...
         valWINGS,vecDVEVEHICLE, vecDVEWING, vecDVEROTOR, vecDVEROTORBLADE, matSURFACETYPE, vecROTORVEH, ...
         matFUSEGEOM, matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW,...
-        matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI] = fcnGEOM2DVE(tmatGEOM, ...
-        matVEHORIG, vecWINGTRI, vecWAKETRI, vecN, vecM, vecPANELWING,...
-        vecSYM, vecSURFACEVEHICLE, vecPANELROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
+        matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI, vecPANELROTOR, vecQARM] = fcnGEOM2DVE(tmatGEOM, ...
+        matVEHORIG, vecWINGTRI, vecWAKETRI, vecN0, vecM0, vecPANELWING,...
+        vecSYM, vecSURFACEVEHICLE, vecPANELROTOR0, vecROTORBLADES0, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
         vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
-        vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM);
+        vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM, vecPANELROTOR0);
+
+    %% Viscous wrapper
+    valDENSITY = 1.225;
+    valKINV = 1.45e-5;
+
+    vecAIRFOIL = 10*ones(valNELE,1);
+
+    valVSPANELS = 0;
+    matVSGEOM = [];
+    valFPANELS = [];
+    matFGEOM = [];
+    valFTURB = [];
+    valFPWIDTH = [];
+    valINTERF = 15;
     
     vecROTORJ = [];
     
     for jj = 1:length(vecROTORRPM)
         vecROTORJ(i,jj) = (vecVEHVINF(vecROTORVEH(jj))*60)./(abs(vecROTORRPM(jj)).*vecROTDIAM(jj));
     end
-%     [hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, []);
     
     %% Add boundary conditions to D-Matrix
     [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
@@ -159,7 +173,7 @@ for i = 1:valCASES
         %% Moving the vehicles
         
         [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
-            matFUSEGEOM, matNEWWAKEPANEL, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, matNTVLST] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
+            matFUSEGEOM, matNEWWAKEPANEL, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, matNTVLST, matUINFROT] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
             valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matFUSEGEOM, vecFUSEVEHICLE, ...
             matVEHROT, vecROTORVEH, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE, matNTVLST);
         
@@ -211,11 +225,11 @@ for i = 1:valCASES
             %[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, [])
             
             %% Forces
-            [vecCL(valTIMESTEP,:,i), vecCLF(valTIMESTEP,:,i), vecCLI(valTIMESTEP,:,i), vecCDI(valTIMESTEP,:,i), vecCT(valTIMESTEP,:,i), vecE(valTIMESTEP,:,i), vecDVENFREE, vecDVENIND, ...
+            [vecCLv(i), vecCD(i), vecPREQ(i), vecLD(i), vecCL(valTIMESTEP,:,i), vecCLF(valTIMESTEP,:,i), vecCLI(valTIMESTEP,:,i), vecCDI(valTIMESTEP,:,i), vecCT(valTIMESTEP,:,i), vecCP(valTIMESTEP,:,i), vecE(valTIMESTEP,:,i), vecDVENFREE, vecDVENIND, ...
                 vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
                 vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
                 matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
-                vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM, valDELTIME);
+                vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM, valDELTIME, vecVEHVINF, valDENSITY, valKINV,  vecDVEAREA, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, valFPWIDTH, valINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
                  
             vecCTCONV = vecCT;
                    
@@ -230,30 +244,11 @@ for i = 1:valCASES
             fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, vecWPLOTSURF, i);
         end
     
-        if flagPREVIEW ~= 1
-            %% Viscous wrapper
-            valDENSITY = 1.225;
-            valKINV = 1.45e-5;
-
-            vecAIRFOIL = 9;
-
-            valVSPANELS = 0;
-            matVSGEOM = [];
-            valFPANELS = [];
-            matFGEOM = [];
-            valFTURB = [];
-            valFPWIDTH = [];
-            valINTERF = 15;
-
+        if flagPREVIEW ~= 1 && max(vecDVEROTOR) > 0
             temp_cdi = fcnTIMEAVERAGE(vecCDI(:,end,i), vecROTORRPM, valDELTIME);
-            [vecCLv(i), vecCD(i), vecPREQ(i), vecLD] = fcnVISCOUS(vecCL(end, end, i), temp_cdi, vecVEHVINF, vecAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
-                vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-                matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-                valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF, valTIMESTEP, valMAXTIME, valDELTIME, vecROTORRPM);
-
         end
     end
-    if flagPRINT == 1
+    if flagPRINT == 1 && flagPREVIEW == 0
         fprintf('VISCOUS CORRECTIONS => CLv = %0.4f \tCD = %0.4f \n', vecCLv(i), vecCD(i))
     end
     

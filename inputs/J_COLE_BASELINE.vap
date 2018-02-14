@@ -5,7 +5,7 @@
 		<flagRELAX>FALSE</flagRELAX>
 		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
-		<valMAXTIME>40</valMAXTIME>
+		<valMAXTIME>10</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
 		<valDELTIME>0.0008</valDELTIME>
 		<valDELTAE>0</valDELTAE>
