@@ -36,7 +36,7 @@ function [vecCLv, vecCD, vecPREQ, vecLD, valCL, valCLF, valCLI, valCDI, valCT, v
 
 %% Rotor Forces
 if max(vecDVEROTOR) > 0
-    [valCT, valCP] = fcnROTORFORCE(matROTORCDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM);
+    [valCT, valCP] = fcnROTORFORCE(matROTORCDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE);
 else
     valCT = nan;
     valCP = nan;

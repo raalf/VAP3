@@ -22,6 +22,7 @@ disp(' ');
 %% Reading in geometry
 filename = 'inputs/J_COLE_BASELINE.vap';
 
+
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
     vecVEHFPA, vecVEHTRK, ~, vecWINGTRI, vecWAKETRI, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
@@ -67,7 +68,6 @@ vecE = nan(valMAXTIME,valVEHICLES,valCASES);
 vecCT = nan(valMAXTIME,valROTORS,valCASES);
 vecCP = nan(valMAXTIME,valROTORS,valCASES);
 vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
-
 
 for i = 1:valCASES
     %     vecVEHVINF = seqVEVINF(i);
@@ -225,12 +225,12 @@ for i = 1:valCASES
             %[hFig2] = fcnPLOTBODY(0, valNELE, matDVE, matVLST, matCENTER, [])
             
             %% Forces
-            [vecCLv(i), vecCD(i), vecPREQ(i), vecLD(i), vecCL(valTIMESTEP,:,i), vecCLF(valTIMESTEP,:,i), vecCLI(valTIMESTEP,:,i), vecCDI(valTIMESTEP,:,i), vecCT(valTIMESTEP,:,i), vecCP(valTIMESTEP,:,i), vecE(valTIMESTEP,:,i), vecDVENFREE, vecDVENIND, ...
+            [vecCLv(:,i), vecCD(:,i), vecPREQ(:,i), vecLD(:,i), vecCL(valTIMESTEP,:,i), vecCLF(valTIMESTEP,:,i), vecCLI(valTIMESTEP,:,i), vecCDI(valTIMESTEP,:,i), vecCT(valTIMESTEP,:,i), vecCP(valTIMESTEP,:,i), vecE(valTIMESTEP,:,i), vecDVENFREE, vecDVENIND, ...
                 vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
                 vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
                 matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
                 vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM, valDELTIME, vecVEHVINF, valDENSITY, valKINV,  vecDVEAREA, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, valFPWIDTH, valINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
-                 
+                
             vecCTCONV = vecCT;
                    
         end

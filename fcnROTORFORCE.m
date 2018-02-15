@@ -1,9 +1,13 @@
-function [vecCT, vecCP] = fcnROTORFORCE(matROTORCDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM)
+function [vecCT, vecCP] = fcnROTORFORCE(matROTORCDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE)
 % Computes the thrust and power coefficients of each rotor
 
 % Thrust direction in global reference frame
-et = repmat(fcnSTARGLOB(matROTORAXIS, matVEHROT(:,1), matVEHROT(:,2), matVEHROT(:,3)),size(vecDVENFREE,1)/max(vecDVEROTOR),1);
-
+et = zeros(size(vecDVEROTOR,1),3);
+tempROTORAXISDVE = zeros(size(vecDVEROTOR,1),3);
+tempROTORAXISDVE(vecDVEROTOR>0,:) = matROTORAXIS(nonzeros(vecDVEROTOR),:);
+for i = 1:max(vecDVEVEHICLE)
+        et(vecDVEVEHICLE==i,:) = fcnSTARGLOB(tempROTORAXISDVE(vecDVEVEHICLE==i,:), matVEHROT(i,1), matVEHROT(i,2), matVEHROT(i,3));
+end
 % Torque direction
 eq = matUINFROT./(sqrt(matUINFROT(:,1).^2+matUINFROT(:,2).^2+matUINFROT(:,3).^2));
 
