@@ -20,7 +20,7 @@ disp(' ');
 % 1. Define wing from one wingtip to another in one direction
 
 %% Reading in geometry
-filename = 'inputs/TMotor.vap';
+filename = 'inputs/J_COLE_BASELINE.vap';
 
 
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
@@ -47,9 +47,9 @@ flagVERBOSE = 0;
 flagVISCOUS = 0;
 
 % Setup different run cases
-% valCASES = 1;
-seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
-valCASES = length(seqVEVINF);
+valCASES = 1;
+% seqVEVINF = vecROTDIAM*(vecROTORRPM/60)*[0.2 0.4 0.6 0.8 1];
+% valCASES = length(seqVEVINF);
 % 
 % vecVEHALPHA = [3:9];
 % valCASES = length(vecVEHALPHA);
@@ -71,7 +71,7 @@ vecCTCONV = nan(valMAXTIME, valROTORS,valCASES);
 matVEHORIG0 = matVEHORIG;
 
 for i = 1:valCASES
-        vecVEHVINF = seqVEVINF(i);
+%         vecVEHVINF = seqVEVINF(i);
     
     %% Discretizing geometry into DVEs
     
