@@ -181,7 +181,8 @@ valWSIZE = length(nonzeros(vecDVETE));
 % Compute torque arm length for rotor power calculations
 vecQARM = zeros(valNELE,3);
 if max(vecDVEROTOR)>0
-    vecQARM(vecDVEROTOR>0,:) = matCENTER0(vecDVEROTOR>0,:) - matROTORHUB(vecDVEROTOR(vecDVEROTOR>0),:);    vecQARM = sqrt(sum(vecQARM.^2,2));
+    vecQARM(vecDVEROTOR>0,:) = matCENTER0(vecDVEROTOR>0,:) - matROTORHUB(vecDVEROTOR(vecDVEROTOR>0),:);    
+    vecQARM = sqrt(sum(vecQARM.^2,2));
 end
 
 end
