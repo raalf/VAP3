@@ -1,7 +1,7 @@
 clc
 clear
 warning off
-tic
+
 % profile -memory on
 
 disp('============================================================================');
@@ -241,7 +241,7 @@ for valTIMESTEP = 1:valMAXTIME
     end
 end
 if flagPRINT == 1 && flagPREVIEW == 0
-    fprintf('VISCOUS CORRECTIONS => CLv = %0.4f \tCD = %0.4f \n', vecCLv(i), vecCD(i))
+    fprintf('VISCOUS CORRECTIONS => CLv = %0.4f \tCD = %0.4f \n', vecCLv, vecCD)
 end
 
 fprintf('\n');
@@ -257,3 +257,4 @@ elseif flagPLOT == 1 && (flagRELAX ~= 1 || valMAXTIME == 0)
     fcnPLOTPKG(flagVERBOSE, flagPLOTWAKEVEL, flagCIRCPLOT, flagPLOTUINF, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM, valWNELE, matWDVE, matWVLST, matWCENTER, ...
         [], [], matUINF, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matCOEFF, vecWPLOTSURF);
 end
+
