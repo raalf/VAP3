@@ -18,8 +18,9 @@ idx2 = matADJE(:,2) == 4; % Borders on 4th local edge (left side)
 len = length(idx1(idx1>0,1));
 
 % Mapping equations evaluated on edge 2 to equations evaluated on edge 4
-[~, LB] = ismembertol([matADJE(idx1,1) matADJE(idx1,3)],[matADJE(idx2,3) matADJE(idx2,1)],'ByRows',true,'OutputAllIndices',true);
-eqn_num = cell2mat(LB);
+%[~, LB] = ismembertol([matADJE(idx1,1) matADJE(idx1,3)],[matADJE(idx2,3) matADJE(idx2,1)],'ByRows',true,'OutputAllIndices',true);
+%eqn_num = cell2mat(LB);
+[~, eqn_num] = ismember([matADJE(idx1,1) matADJE(idx1,3)],[matADJE(idx2,3) matADJE(idx2,1)],'rows'); % this line is added to replace ismembertol to suppport UINT8 variable type
 
 idx3 = matADJE(idx1,1);
 idx4 = matADJE(idx2,1);
