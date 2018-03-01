@@ -52,8 +52,8 @@ dgamma2 = [ones(len,1) -2.*vecWDVEHVSPN(idx5)].*-1;
 
 % Getting appropriate row and column numbers to assign the above
 % dgamma1 and dgamma2 into the D-matrix
-col1 = reshape((repmat((idx3.*2)-1,1,2) + repmat((0:1), len,1))',[],1);
-col2 = reshape((repmat((idx5.*2)-1,1,2) + repmat((0:1), len,1))',[],1);
+col1 = reshape((repmat((idx3.*2)-1,1,2) + repmat(uint32((0:1)), len,1))',[],1);
+col2 = reshape((repmat((idx5.*2)-1,1,2) + repmat(uint32((0:1)), len,1))',[],1);
 rows = reshape(repmat((1:len)',1,2)',[],1);
 
 % vort = zeros(len,nelements*2);
@@ -137,7 +137,7 @@ gamma2 = [-vecWDVEHVSPN(d2204) (2/3).*vecWDVEHVSPN(d2204).^2].*-1;
 % Getting appropriate row and column numbers to assign the above
 % gamma1 and gamma2 into the D-matrix
 col1 = reshape((repmat((d2202.*2)-1,1,2) + repmat((0:1), len3,1))',[],1);
-col2 = reshape((repmat((d2204.*2)-1,1,2) + repmat((0:1), len3,1))',[],1);
+col2 = reshape((repmat((d2204.*2)-1,1,2) + repmat(uint32((0:1)), len3,1))',[],1);
 rows = reshape(repmat((1:len3)',1,2)',[],1) + count-1;
 
 circ(sub2ind(size(circ),rows,col1)) = reshape(gamma1',[],1);

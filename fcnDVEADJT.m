@@ -20,7 +20,7 @@ j = [repmat((1:valNELE)',4,1),reshape(repmat(1:4,valNELE,1),valNELE*4,1),reshape
 j = [j,j1(j(:,3))-1];
 %Currently the procedure was done in two for loops. May be modified in
 %later days if performance improvement is required.
-matADJE = nan(sum(j(:,4)),4);
+matADJE = uint32(nan(sum(j(:,4)),4));
 k = j(j(:,4)~=0,:);
 c = 0;
 
