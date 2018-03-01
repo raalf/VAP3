@@ -26,8 +26,9 @@ len = length(idx1(idx1>0,1));
 % matching edge 4 equation
 % This will work well for split vorticity but it will need modification for split circulation later on
 % [~, LB] = ismembertol([matWADJE(idx2,3) matWADJE(idx2,1)],[matWADJE(idx1,1) matWADJE(idx1,3)],'ByRows',true,'OutputAllIndices',true);
-[~, LB] = ismembertol([matWADJE(idx1,1) matWADJE(idx1,3)],[matWADJE(idx2,3) matWADJE(idx2,1)],'ByRows',true,'OutputAllIndices',true);
-eqn_num = cell2mat(LB);
+% [~, LB] = ismembertol([matWADJE(idx1,1) matWADJE(idx1,3)],[matWADJE(idx2,3) matWADJE(idx2,1)],'ByRows',true,'OutputAllIndices',true);
+% eqn_num = cell2mat(LB);
+[~, eqn_num] = ismember([matWADJE(idx1,1) matWADJE(idx1,3)],[matWADJE(idx2,3) matWADJE(idx2,1)],'rows'); % this line is added to replace ismembertol to suppport UINT8 variable type
 
 idx3 = matWADJE(idx1,1);
 idx4 = matWADJE(idx2,1);
