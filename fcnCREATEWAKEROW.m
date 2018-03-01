@@ -34,7 +34,7 @@ vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
 vecWDVEPANEL = cat(1, vecWDVEPANEL, vecDVEPANEL(vecDVETE>0));
 vecWK = cat(1, vecWK, vecK(vecDVETE>0));
 vecWDVESURFACE = cat(1, vecWDVESURFACE, vecDVESURFACE(vecDVETE > 0));
-vecWPLOTSURF = cat(1, vecWPLOTSURF, vecDVEWING(vecDVETE > 0) + (vecDVEROTOR(vecDVETE > 0) + max(vecDVEWING).*(vecDVEROTOR(vecDVETE > 0) > 0)));
+vecWPLOTSURF = cat(1, vecWPLOTSURF, vecDVEWING(vecDVETE > 0) + (vecDVEROTOR(vecDVETE > 0) + max(vecDVEWING).*uint8(vecDVEROTOR(vecDVETE > 0) > 0)));
 
 if valWNELE - len == 0
     [ matWADJE, vecWDVESYM, vecWDVETIP, ~, ~ ] = fcnDVEADJT(matNPNEWWAKE(:,:,1), matNPNEWWAKE(:,:,2), matNPNEWWAKE(:,:,3), matNPNEWWAKE(:,:,4), valWNELE, vecWDVEPANEL, vecSYM );
@@ -46,7 +46,7 @@ else
     old_adje_le = [new_adje_te(:,3) ones(len,1) new_adje_te(:,1) ones(len,1)];
     
     % [matWADJE]  DVE# | Local Edge | DVE# | # of Panels This DVE is Touching
-    matWADJE = [matWADJE(:,1:4); old_adje_le; new_adje_spanwise; new_adje_te];
+    matWADJE = uint32([matWADJE(:,1:4); old_adje_le; new_adje_spanwise; new_adje_te]);
     vecWDVESYM = [vecWDVESYM; vecWDVESYM(1:len)];
     vecWDVETIP = [vecWDVETIP; vecWDVETIP(1:len)];
 end

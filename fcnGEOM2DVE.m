@@ -13,7 +13,7 @@ function [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVE
 matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
 
 
-vecPANELSURFACE = sort([vecPANELWING vecROTOR + max(vecPANELWING).*(vecROTOR > 0)],2,'descend');
+vecPANELSURFACE = sort([vecPANELWING vecROTOR + max(vecPANELWING).*uint16((vecROTOR > 0))],2,'descend');
 vecPANELSURFACE = vecPANELSURFACE(:,1);
 
 valWINGS = max(vecPANELSURFACE);
@@ -31,17 +31,19 @@ vecDVEAREA = [];
 matDVENORM = [];
 matVLST0 = [];
 matNTVLST0 = [];
-matDVE = [];
+matDVE = uint16([]);
 valNELE = 0;
 matADJE = [];
-vecDVESYM = [];
-vecDVETIP = [];
-vecDVESURFACE = [];
-vecDVELE = [];
-vecDVETE = [];
-vecDVEPANEL = [];
-matPANELTE = [];
+vecDVESYM = uint8([]);
+vecDVETIP = uint8([]);
+vecDVESURFACE = uint8([]);
+vecDVELE = uint8([]);
+vecDVETE = uint8([]);
+vecDVEPANEL = uint16([]);
+matPANELTE = uint16([]);
 vecDVETRI = [];
+
+vecROTOR = uint8(vecROTOR);
 
 valWSIZETRI = 0;
 valWSIZE = 0;
@@ -102,8 +104,8 @@ for i = unique(vecPANELSURFACE,'stable')'
     else; surfaceoffset = max(vecDVESURFACE); paneloffset = max(vecDVEPANEL);
     end
     
-    vecDVESURFACE = [vecDVESURFACE; tvecDVESURFACE + surfaceoffset];
-    vecDVEPANEL = [vecDVEPANEL; tvecDVEPANEL + paneloffset];
+    vecDVESURFACE = [vecDVESURFACE; uint8(uint8(tvecDVESURFACE) + surfaceoffset)];
+    vecDVEPANEL = [vecDVEPANEL; uint16(uint16(tvecDVEPANEL) + paneloffset)];
     
     vlstoffset = size(matVLST0,1);
     dveoffset = size(matDVE,1);
@@ -130,7 +132,7 @@ vecDVEROTORBLADE = vecDVEROTOR; % Current rotor DVEs are for Blade 1 (they are d
 idx_rotor = vecDVEROTOR>0; % Alton-Y
 vecDVEWING(idx_rotor) = 0;
 
-matSURFACETYPE = zeros(size(unique(vecDVESURFACE),1),2);
+matSURFACETYPE = uint8(zeros(size(unique(vecDVESURFACE),1),2));
 matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
 matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(vecDVEROTOR));
 

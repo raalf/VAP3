@@ -57,7 +57,10 @@ vecCT = nan(valMAXTIME,valROTORS);
 vecCP = nan(valMAXTIME,valROTORS);
 vecCTCONV = nan(valMAXTIME, valROTORS);
 matVEHORIG0 = matVEHORIG;
-
+vecPANELROTOR0 = uint16(vecPANELROTOR0);
+vecPANELWING = uint16(vecPANELWING);
+vecN0 = uint8(vecN0);
+vecM0 = uint8(vecM0);
 
 %% Discretizing geometry into DVEs
 
@@ -99,6 +102,8 @@ end
 %% Add boundary conditions to D-Matrix
 [matD] = fcnDWING(valNELE, matADJE, vecDVEHVSPN, vecDVESYM, vecDVETIP, vecN);
 
+matADJE = uint16(matADJE);
+
 %% Add kinematic conditions to D-Matrix
 [vecK] = fcnSINGFCT(valNELE, vecDVESURFACE, vecDVETIP, vecDVEHVSPN);
 [matD] = fcnKINCON(matD, valNELE, matDVE, matCENTER, matVLST, matDVENORM, vecK, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVEHVSPN, vecDVEHVCRD, vecSYM, flagGPU);
@@ -119,20 +124,20 @@ vecWDVETESWP = [];
 vecWDVEAREA = [];
 matWDVENORM = [];
 matWVLST = [];
-matWDVE = [];
+matWDVE = uint32([]);
 valWNELE = 0;
 matWCENTER = [];
 matWCOEFF = [];
 vecWK = [];
-matWADJE = [];
-vecWDVEPANEL = [];
+matWADJE = uint32([]);
+vecWDVEPANEL = uint16([]);
 valLENWADJE = 0;
 vecWKGAM = [];
-vecWDVESYM = [];
-vecWDVETIP = [];
-vecWDVESURFACE = [];
+vecWDVESYM = uint8([]);
+vecWDVETIP = uint8([]);
+vecWDVESURFACE = uint8([]);
 vecWDVETRI = [];
-vecWPLOTSURF = [];
+vecWPLOTSURF = uint8([]);
 
 % Building wing resultant
 [vecR] = fcnRWING(valNELE, 0, matCENTER, matDVENORM, matUINF, valWNELE, matWDVE, ...
