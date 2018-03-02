@@ -33,7 +33,7 @@ m = vecM(idxpanel);
 tempm = repmat(vecN(idxpanel),1, m(1)).*repmat([0:m(1)-1],length(idxpanel),1);
 
 % Which row index to add
-rows = repmat(idxdve,1,m(1)) + tempm;
+rows = uint16(repmat(idxdve,1,m(1))) + uint16(tempm);
 
 % Average velocities across chord
 vecV = sum(vecV(rows),2)/(size(rows,2));

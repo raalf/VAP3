@@ -25,8 +25,8 @@ vecAREADIST = [];
 for i = 1:max(vecDVEWING)
     
     %% Getting the CL, CY, CN distribution
-    idxdve = ledves(vecDVEWING(ledves) == i);
-    idxpanel = lepanels(vecDVEWING(ledves) == i);
+    idxdve = uint16(ledves(vecDVEWING(ledves) == i));
+    idxpanel = (vecDVEWING(ledves) == i);
     
     m = vecM(idxpanel);
     if any(m - m(1))
@@ -41,9 +41,9 @@ for i = 1:max(vecDVEWING)
     % It is done this way because n can be different for each panel. Unlike in the wake,
     % we can't just add a constant value to get to the same spanwise location in the next
     % row of elements
-    tempm = repmat(vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel),1);
+    tempm = repmat(vecN(idxpanel), 1, m).*repmat([0:m-1],sum(idxpanel),1);
     
-    rows = repmat(idxdve,1,m) + tempm;
+    rows = repmat(idxdve,1,m) + uint16(tempm);
     
     % This will NOT work with rotors, it does not take into
     % account freestream! UINF^2*AREA should be the denominator
