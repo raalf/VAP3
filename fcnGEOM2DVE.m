@@ -3,7 +3,6 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnGEOM2DVE(INPU, COND, VI
 % tranlsate INPU.matGEOM to vehicle origin
 INPU.matGEOM(:,1:3,:) = INPU.matGEOM(:,1:3,:)+permute(reshape(INPU.matVEHORIG(INPU.matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
 
-
 vecPANELSURFACE = sort([INPU.vecPANELWING INPU.vecPANELROTOR + max(INPU.vecPANELWING).*uint16((INPU.vecPANELROTOR > 0))],2,'descend');
 vecPANELSURFACE = vecPANELSURFACE(:,1);
 
@@ -38,8 +37,6 @@ INPU.vecPANELROTOR = uint8(INPU.vecPANELROTOR);
 
 WAKE.valWSIZETRI = 0;
 WAKE.valWSIZE = 0;
-tempM = [];
-tempN = [];
 
 for i = unique(vecPANELSURFACE,'stable')'
     

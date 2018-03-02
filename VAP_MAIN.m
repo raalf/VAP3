@@ -2,8 +2,10 @@ clc
 clear
 warning off
 
+try
 profile -memory on
 profile on
+end
 
 disp('============================================================================');
 disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$');
@@ -21,14 +23,14 @@ disp(' ');
 % 1. Define wing from one wingtip to another in one direction
 
 %% Reading in geometry
-filename = 'inputs/J_COLE_BASELINE.vap';
+% filename = 'inputs/J_COLE_BASELINE.vap';
 % filename = 'inputs/J_COLE_X57_CRUISE_PROP.vap'
-% filename = 'inputs/QuadRotor.vap'
+filename = 'inputs/QuadRotor.vap'
 % filename = 'inputs/simple-wing.vap'
 
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
-
-COND.valMAXTIME = 2
+FLAG.RELAX = 1
+COND.valMAXTIME = 10
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
@@ -158,15 +160,8 @@ if FLAG.PRINT == 1 && FLAG.PREVIEW == 0
 end
 
 %% Plotting
-if FLAG.PREVIEW == 1; FLAG.RELAX = 0; end
 
-if FLAG.PLOT == 1 && FLAG.RELAX == 1 && COND.valMAXTIME > 0
-    fcnPLOTPKG(FLAG.VERBOSE, FLAG.PLOTWAKEVEL, FLAG.CIRCPLOT, FLAG.PLOTUINF, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, VISC.matFUSEGEOM, WAKE.valWNELE, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCENTER, ...
-        WAKE.matWDVEMP, WAKE.matWDVEMPIND, SURF.matUINF, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.matCOEFF, WAKE.vecWDVESURFACE);
-elseif FLAG.PLOT == 1 && (FLAG.RELAX ~= 1 || COND.valMAXTIME == 0)
-    fcnPLOTPKG(FLAG.VERBOSE, FLAG.PLOTWAKEVEL, FLAG.CIRCPLOT, FLAG.PLOTUINF, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, VISC.matFUSEGEOM, WAKE.valWNELE, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCENTER, ...
-        [], [], SURF.matUINF, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.matCOEFF, WAKE.vecWPLOTSURF);
-end
+fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND)
 
 profile report
 profile off
