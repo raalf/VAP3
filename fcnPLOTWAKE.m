@@ -2,7 +2,7 @@ function [hFig2] = fcnPLOTWAKE(verbose, hFig2, valWNELE, matWDVE, matWVLST, matW
 
 fig = hFig2;
 
-col = vecWDVESURFACE./max(vecWDVESURFACE);
+col = single(vecWDVESURFACE)./max(single(vecWDVESURFACE));
 % col = vecWDVESURFACE;
 hold on
 colormap parula
