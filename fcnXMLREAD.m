@@ -5,7 +5,7 @@ function [...
     vecPANELS, vecSYM, vecN, vecM, vecSECTIONS, matSECTIONS, vecSECTIONPANEL, vecWING, ...
     vecWINGVEHICLE, valPANELS, vecROTORS, vecROTORRPM, vecROTDIAM, matROTORHUB, vecROTORAXIS, vecROTORBLADES,...
     vecROTORM, vecROTOR, vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG,...
-    vecVEHRADIUS, vecCOLLECTIVE] = fcnXMLREAD(filename)
+    vecVEHRADIUS, vecCOLLECTIVE, cellAIRFOIL] = fcnXMLREAD(filename)
 
 % clc
 % clear
@@ -93,6 +93,7 @@ vecTRIMABLE = [];
 vecWINGM = [];
 matWINGORIG = [];
 vecPANELS = [];
+cellAIRFOILtemp = {};
 vecSYMtemp = [];
 vecNtemp = [];
 vecMtemp = [];
@@ -160,6 +161,7 @@ for i = 1:valVEHICLES
             try pan = win.panel{1,m}; catch; pan = win.panel; end
             
             vecSYMtemp(kk,1) = floor(str2double(pan.symmetry.Text));
+            cellAIRFOILtemp{kk} = pan.airfoil.Text;
             vecNtemp(kk,1) = floor(str2double(pan.N.Text));
             vecMtemp(kk,1) = floor(vecWINGM(k,1)); % Same for entire wing
             
@@ -213,6 +215,7 @@ for i = 1:valVEHICLES
             try pan = rot.panel{1,m}; catch; pan = rot.panel; end
             
             vecSYMtemp(kk,1) = 0;
+            cellAIRFOILtemp{kk} = pan.airfoil.Text;
             vecNtemp(kk,1) = floor(str2double(pan.N.Text));
             vecMtemp(kk,1) = floor(vecROTORM(p,1)); % Same for entire wing
             
@@ -273,6 +276,8 @@ valPANELS = sum(vecPANELS);
 
 k = 1;
 
+cellAIRFOIL = {};
+
 for i = 1:valPANELS
     
     sections = matSECTIONS(vecSECTIONPANEL == i,:);
@@ -286,6 +291,7 @@ for i = 1:valPANELS
         matGEOM(2,:,k) = sections(2,:);
         vecWING(k,1) = vecPANELWING(i);
         vecROTOR(k,1) = vecPANELROTOR(i);
+        cellAIRFOIL{k,1} = cellAIRFOILtemp{i};
         vecSYM(k,1) = vecSYMtemp(i);
         vecN(k,1) = vecNtemp(i);
         vecM(k,1) = vecMtemp(i);
@@ -299,6 +305,7 @@ for i = 1:valPANELS
             
             vecN(k,1) = vecNtemp(i);
             vecM(k,1) = vecMtemp(i);
+            cellAIRFOIL{k,1} = cellAIRFOILtemp{i};
             vecSYM(k,1) = 0;
             
             k = k + 1;
