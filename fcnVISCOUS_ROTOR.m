@@ -2,7 +2,7 @@ function [matCDPDIST] = fcnVISCOUS_ROTOR(flagVERBOSE, valKINV, ...
     vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, cellAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF)
 % This function applies a viscous correction to rotors using look up tables
 % and applies a high angle stall model.
-% 
+%
 % OUTPUT
 %   matCDPDIST - CDP with direction accounted for
 
@@ -11,7 +11,7 @@ avgle = (matVLST(matDVE(:,1),:)+matVLST(matDVE(:,2),:))./2;
 avgte = (matVLST(matDVE(:,3),:)+matVLST(matDVE(:,4),:))./2;
 tempDIF = avgte - avgle;
 matCRDLINE = (tempDIF)./(repmat(sqrt(sum(tempDIF.^2,2)),[1,3]));
-% Calculate velocity 
+% Calculate velocity
 vecV = dot(matUINF + matWUINF, matCRDLINE,2);
 
 % Calculate effective angle of attack
@@ -45,75 +45,101 @@ vecREDIST = vecV.*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
 
 % Different temp
 vecCNDIST0 = vecCNDIST;
-vecCDPDIST = zeros(size(rows,1),1);
-vecCLPDIST = zeros(size(rows,1),1);
+
 len = 0;
-for j = 1:length(idxpanel)
-    pan = idxpanel(j);
-    airfoil = dlmread(strcat('airfoils/',cellAIRFOIL{pan},'.dat'),'', 1, 0);
 
-    HiRe = airfoil(end,4);
-    LoRe = airfoil(1,4);
 
-    alpha = vecALPHAEFF(len + j);
 
-    if vecREDIST(len + j) > HiRe
-        if flagVERBOSE == 1
-            fprintf('\nRe higher than airfoil Re data')
-        end
-        Re2 = airfoil(end,4);
-        temp_var = airfoil(airfoil(:,4) == Re2, 1);
-        cl_max_alpha = temp_var(end);
-    elseif vecREDIST(len + j) < LoRe
-        if flagVERBOSE == 1
-            fprintf('\nRe lower than airfoil Re data');
-        end
-        Re2 = airfoil(1,4);
-        temp_var = airfoil(airfoil(:,4) == Re2, 1);
-        cl_max_alpha = temp_var(end);
-    else
-        re1 = airfoil(airfoil(:,4) < vecREDIST(len + j), 4);
-        re1 = re1(end);
-        cl_max_alpha1 = airfoil(airfoil(:,4) < vecREDIST(len + j), 1);
-        cl_max_alpha1 = cl_max_alpha1(end);
 
-        temp_var = airfoil(airfoil(:,4) > vecREDIST(len + j),4);
-        re2 = temp_var(1);
-        temp_var = airfoil(airfoil(:,4) == (temp_var(1)), 1);
-        cl_max_alpha2 = temp_var(end);
+vecCDPDIST = nan(size(vecCNDIST)); % pre-allocate the array to store viscous drag results
+vecCLMAXA   = nan(size(vecCNDIST));
 
-        cl_max_alpha = interp1([re1 re2],[cl_max_alpha1, cl_max_alpha2], vecREDIST(len + j));
-    end
-    % correcting the section cl if we are above cl_max
-    if radtodeg(alpha) > cl_max_alpha
-        if flagVERBOSE == 1
-            fprintf('\nBlade Stall on Section %d, alpha = %f Re = %0.0f', j, radtodeg(alpha), vecREDIST(len + j))
-        end
-        %vecCNDIST0(len+j) = 0.825*cl_max; % setting the stalled 2d cl     
+% collect all the unique airfoils and load them
+[uniqueAirfoil,~,idxAirfoil] = unique(cellAIRFOIL);
+for k = 1:length(uniqueAirfoil)
+    % Load airfoil .mat files
+    try
+        load(strcat('airfoils/',cellAIRFOIL{k},'.mat'));
         
+    catch
+        error('Error: Unable to locate airfoil file: %s.mat.', cellAIRFOIL{k});
+    end
+    
+    Alpha  = reshape(pol(:,1,:),[],1);
+    Cdp = reshape(pol(:,4,:),[],1);
+    Re  = reshape(pol(:,8,:),[],1);
+    
+    
+    %which rows of DVE belongs to the airfoil in this loop
+    isCurrentAirfoil = idxAirfoil(idxpanel) == k;
+    
+    
+    idxNans = isnan(Alpha) | isnan(Cdp) | isnan(Re);
+    Alpha = Alpha(~idxNans);
+    Cdp = Cdp(~idxNans);
+    Re = Re(~idxNans);
+    
+    
+    % Compare Re data range to panel Re
+    if max(vecREDIST(isCurrentAirfoil)) > max(Re) && flagVERBOSE == 1
+        disp('Re higher than airfoil Re data.')
+    end
+    
+    if min(vecREDIST(isCurrentAirfoil)) < min(Re) && flagVERBOSE == 1
+        disp('Re lower than airfoil Re data.')
+    end
+    
+    
+    % find CLmax for each row of dves
+    [polarClmax, idxClmax] = max(pol(:,2,:));
+    
+    polarClmaxA = nan(size(polarClmax));
+    for p = 1:length(polarClmax)
+        polarClmaxA(p) = pol(idxClmax(:,:,p),1,p);
+    end
+    polarClmaxA = polarClmaxA(:);
+    polarClmax = polarClmax(:);
+    polarClmaxRe = reshape(pol(1,8,:),[],1);
+    
+    vecCLMAXA(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(isCurrentAirfoil),'linear');
+    
+    
+    % Out of range Reynolds number index
+    idxReOFR = (vecREDIST > max(Re) | vecREDIST < min(Re)) & isCurrentAirfoil;
+    
+    % Nearest extrap for out of range Reynolds number
+    vecCLMAXA(idxReOFR) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(idxReOFR),'nearest','extrap');
+    
+    % Check for stall and change the CL
+    idxSTALL = (radtodeg(vecALPHAEFF) > vecCLMAXA) & isCurrentAirfoil;
+
+ 	F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
+
+    if sum(idxSTALL) > 1 && flagVERBOSE == 1
+        disp('Airfoil sections have stalled.')
         % Make apply stall model using empirical equations
         % cn = cd,90*(sin(alpha_eff))/(0.56+0.44sin(alpha_eff))
         % ct = cd,0*cos(alpha_eff)/2
         % cd = cn*sin(alpha_eff)+ct*cos(alpha_eff)
         % Note: cd,90 = 2
         % Find cd_0
-        temp = scatteredInterpolant(airfoil(:,4), airfoil(:,1), airfoil(:,3),'nearest');
-        cd_0 = temp(vecREDIST(len+j),0);
-        %alpha_eff = vecCNDIST/(2*pi);
-        %alpha_eff = asin((vecCNDIST(len+j)/2)*0.56/(1-0.44*((vecCNDIST(len+j)/2))));
         
-        cn = 2*sin(abs(vecALPHAEFF(len+j)))/(0.56+0.44*sin(abs(vecALPHAEFF(len+j))));
-        ct = cd_0*cos(abs(vecALPHAEFF(len+j)))/2;
-        vecCNDIST0(len+j)  = cn*cos(abs(vecALPHAEFF(len+j))) - ct*sin(abs(vecALPHAEFF(len+j)));
         
-        vecCDPDIST(len + j) = cn*sin(abs(vecALPHAEFF(len+j))) + ct*cos(abs(vecALPHAEFF(len+j)));
-        vecCLPDIST(len + j) = cn*cos(abs(vecALPHAEFF(len+j))) - ct*sin(abs(vecALPHAEFF(len+j)));
-    else
-        warning off
-        F = scatteredInterpolant(airfoil(:,4), airfoil(:,1), airfoil(:,3),'nearest');
-        vecCDPDIST(len + j, 1) = F(vecREDIST(len + j), radtodeg(alpha));
+        cd_0 = F(vecREDIST(idxSTALL),zeros(sum(idxSTALL),1));
+        
+        cn = 2.*sin(abs(vecALPHAEFF(idxSTALL)))./(0.56+0.44.*sin(abs(vecALPHAEFF(idxSTALL))));
+        ct = cd_0.*cos(abs(vecALPHAEFF(idxSTALL)))./2;
+        vecCNDIST0(idxSTALL)  = cn.*cos(abs(vecALPHAEFF(idxSTALL))) - ct.*sin(abs(vecALPHAEFF(idxSTALL)));
+        
+        vecCDPDIST(idxSTALL) = cn.*sin(abs(vecALPHAEFF(idxSTALL))) + ct.*cos(abs(vecALPHAEFF(idxSTALL)));
+    
     end
+    
+    vecCDPDIST(idxSTALL==0) = F(vecREDIST(idxSTALL==0), radtodeg(vecALPHAEFF(idxSTALL==0)));    
+    
+    clear pol foil
 end
+
 % Apply direction to CDP
 matCDPDIST = zeros(size(matUINF,1),3);
 matCDPDIST(vecDVELE>0,:) = matUDIR(ledves,:).*vecCDPDIST;
