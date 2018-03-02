@@ -1,54 +1,49 @@
-function [matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, ...
-    vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matWADJE, matNTVLST, vecWDVEPANEL, ...
-    valLENWADJE, vecWDVESYM, vecWDVETIP, vecWKGAM, vecWDVESURFACE, vecWPLOTSURF] = fcnCREATEWAKEROW(matNEWWAKE, matNPNEWWAKE, matWAKEGEOM, matNPWAKEGEOM, vecWDVEHVSPN, ...
-    vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVEMCSWP, vecWDVETESWP, vecWDVEAREA, matWDVENORM, matWVLST, ...
-    matWDVE, valWNELE, matWCENTER, matWCOEFF, vecWK, matCOEFF, vecDVETE, matWADJE, matNTVLST, vecDVEPANEL, ...
-    vecWDVEPANEL, vecSYM, valLENWADJE, vecWKGAM, vecWDVESYM, vecWDVETIP, vecK, vecDVESURFACE, vecWDVESURFACE, flagSTEADY, valWSIZE, vecWPLOTSURF, vecDVEWING, vecDVEROTOR)
+function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnCREATEWAKEROW(FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF)
 
-matWAKEGEOM = cat(1, matWAKEGEOM, matNEWWAKE);
-matNPWAKEGEOM = cat(1, matNPWAKEGEOM, matNPNEWWAKE);
-len = length(matNEWWAKE(:,1));
+WAKE.matWAKEGEOM = cat(1, WAKE.matWAKEGEOM, MISC.matNEWWAKE);
+WAKE.matNPWAKEGEOM = cat(1, WAKE.matNPWAKEGEOM, MISC.matNPNEWWAKE);
+len = length(MISC.matNEWWAKE(:,1));
 
-matWCENTER(end+1:end+len,:) = mean(matNEWWAKE,3);
+WAKE.matWCENTER(end+1:end+len,:) = mean(MISC.matNEWWAKE,3);
 
 % Getting wake parameter values from fcnDVECORNER2PARAM
-[wdve_eta, vecWDVEHVCRD(end+1:end+len,1), vecWDVEROLL(end+1:end+len,1), vecWDVEPITCH(end+1:end+len,1), vecWDVEYAW(end+1:end+len,1), vecWDVELESWP(end+1:end+len,1), vecWDVEMCSWP(end+1:end+len,1), vecWDVETESWP(end+1:end+len,1), ...
-    vecWDVEAREA(end+1:end+len,1), matWDVENORM(end+1:end+len,1:3), ...
-    newvertices, newdves, ~] = fcnDVECORNER2PARAM(mean(matNEWWAKE,3), matNEWWAKE(:,:,1), matNEWWAKE(:,:,2), matNEWWAKE(:,:,3), matNEWWAKE(:,:,4), vecWDVESURFACE);
+[wdve_eta, WAKE.vecWDVEHVCRD(end+1:end+len,1), WAKE.vecWDVEROLL(end+1:end+len,1), WAKE.vecWDVEPITCH(end+1:end+len,1), WAKE.vecWDVEYAW(end+1:end+len,1), WAKE.vecWDVELESWP(end+1:end+len,1), WAKE.vecWDVEMCSWP(end+1:end+len,1), WAKE.vecWDVETESWP(end+1:end+len,1), ...
+    WAKE.vecWDVEAREA(end+1:end+len,1), WAKE.matWDVENORM(end+1:end+len,1:3), ...
+    newvertices, newdves, ~] = fcnDVECORNER2PARAM(mean(MISC.matNEWWAKE,3), MISC.matNEWWAKE(:,:,1), MISC.matNEWWAKE(:,:,2), MISC.matNEWWAKE(:,:,3), MISC.matNEWWAKE(:,:,4), WAKE.vecWDVESURFACE);
 
-valWNELE = valWNELE + len;
+WAKE.valWNELE = WAKE.valWNELE + len;
 
 % Assigning circulation values to wake DVEs
 % K_g = A + ((eta.^2)/3) * C
-if flagSTEADY == 1
-    vecWKGAM = repmat([matCOEFF(vecDVETE>0,1) + ((wdve_eta.^2)./3).*matCOEFF(vecDVETE>0,3)], valWNELE/valWSIZE, 1);  
+if FLAG.STEADY == 1
+    WAKE.vecWKGAM = repmat([SURF.matCOEFF(SURF.vecDVETE>0,1) + ((wdve_eta.^2)./3).*SURF.matCOEFF(SURF.vecDVETE>0,3)], WAKE.valWNELE/WAKE.valWSIZE, 1);  
 else
-    vecWKGAM(end+1:end+len,1) = [matCOEFF(vecDVETE>0,1) + ((wdve_eta.^2)./3).*matCOEFF(vecDVETE>0,3)];
+    WAKE.vecWKGAM(end+1:end+len,1) = [SURF.matCOEFF(SURF.vecDVETE>0,1) + ((wdve_eta.^2)./3).*SURF.matCOEFF(SURF.vecDVETE>0,3)];
 end
 
 % Assinging remaining values to wake parameters
-matWDVE(end+1:end+len,1:4) = newdves + length(matWVLST);
-matWVLST = cat(1, matWVLST, newvertices);
-matWCOEFF = cat(1, matWCOEFF, matCOEFF(vecDVETE>0,:));
-vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
-vecWDVEPANEL = cat(1, vecWDVEPANEL, vecDVEPANEL(vecDVETE>0));
-vecWK = cat(1, vecWK, vecK(vecDVETE>0));
-vecWDVESURFACE = cat(1, vecWDVESURFACE, vecDVESURFACE(vecDVETE > 0));
-vecWPLOTSURF = cat(1, vecWPLOTSURF, vecDVEWING(vecDVETE > 0) + (vecDVEROTOR(vecDVETE > 0) + max(vecDVEWING).*uint8(vecDVEROTOR(vecDVETE > 0) > 0)));
+WAKE.matWDVE(end+1:end+len,1:4) = newdves + length(WAKE.matWVLST);
+WAKE.matWVLST = cat(1, WAKE.matWVLST, newvertices);
+WAKE.matWCOEFF = cat(1, WAKE.matWCOEFF, SURF.matCOEFF(SURF.vecDVETE>0,:));
+WAKE.vecWDVEHVSPN(end+1:end+len,1) = wdve_eta;
+WAKE.vecWDVEPANEL = cat(1, WAKE.vecWDVEPANEL, SURF.vecDVEPANEL(SURF.vecDVETE>0));
+WAKE.vecWK = cat(1, WAKE.vecWK, SURF.vecK(SURF.vecDVETE>0));
+WAKE.vecWDVESURFACE = cat(1, WAKE.vecWDVESURFACE, SURF.vecDVESURFACE(SURF.vecDVETE > 0));
+WAKE.vecWPLOTSURF = cat(1, WAKE.vecWPLOTSURF, SURF.vecDVEWING(SURF.vecDVETE > 0) + (SURF.vecDVEROTOR(SURF.vecDVETE > 0) + max(SURF.vecDVEWING).*uint8(SURF.vecDVEROTOR(SURF.vecDVETE > 0) > 0)));
 
-if valWNELE - len == 0
-    [ matWADJE, vecWDVESYM, vecWDVETIP, ~, ~ ] = fcnDVEADJT(matNPNEWWAKE(:,:,1), matNPNEWWAKE(:,:,2), matNPNEWWAKE(:,:,3), matNPNEWWAKE(:,:,4), valWNELE, vecWDVEPANEL, vecSYM );
-    valLENWADJE = length(matWADJE(:,1));
+if WAKE.valWNELE - len == 0
+    [ WAKE.matWADJE, WAKE.vecWDVESYM, WAKE.vecWDVETIP, ~, ~ ] = fcnDVEADJT(MISC.matNPNEWWAKE(:,:,1), MISC.matNPNEWWAKE(:,:,2), MISC.matNPNEWWAKE(:,:,3), MISC.matNPNEWWAKE(:,:,4), WAKE.valWNELE, WAKE.vecWDVEPANEL, INPU.vecSYM );
+    WAKE.valLENWADJE = length(WAKE.matWADJE(:,1));
 else
     
-    new_adje_spanwise = [matWADJE(1:valLENWADJE,1) + valWNELE - len matWADJE(1:valLENWADJE,2) matWADJE(1:valLENWADJE,3)+valWNELE-len matWADJE(1:valLENWADJE,4)];
-    new_adje_te = [[(valWNELE - len + 1):valWNELE]' repmat(3,len,1) [(valWNELE - 2*len + 1):(valWNELE - len)]' ones(len,1)];
+    new_adje_spanwise = [WAKE.matWADJE(1:WAKE.valLENWADJE,1) + WAKE.valWNELE - len WAKE.matWADJE(1:WAKE.valLENWADJE,2) WAKE.matWADJE(1:WAKE.valLENWADJE,3)+WAKE.valWNELE-len WAKE.matWADJE(1:WAKE.valLENWADJE,4)];
+    new_adje_te = [[(WAKE.valWNELE - len + 1):WAKE.valWNELE]' repmat(3,len,1) [(WAKE.valWNELE - 2*len + 1):(WAKE.valWNELE - len)]' ones(len,1)];
     old_adje_le = [new_adje_te(:,3) ones(len,1) new_adje_te(:,1) ones(len,1)];
     
-    % [matWADJE]  DVE# | Local Edge | DVE# | # of Panels This DVE is Touching
-    matWADJE = uint32([matWADJE(:,1:4); old_adje_le; new_adje_spanwise; new_adje_te]);
-    vecWDVESYM = [vecWDVESYM; vecWDVESYM(1:len)];
-    vecWDVETIP = [vecWDVETIP; vecWDVETIP(1:len)];
+    % [WAKE.matWADJE]  DVE# | Local Edge | DVE# | # of Panels This DVE is Touching
+    WAKE.matWADJE = uint32([WAKE.matWADJE(:,1:4); old_adje_le; new_adje_spanwise; new_adje_te]);
+    WAKE.vecWDVESYM = [WAKE.vecWDVESYM; WAKE.vecWDVESYM(1:len)];
+    WAKE.vecWDVETIP = [WAKE.vecWDVETIP; WAKE.vecWDVETIP(1:len)];
 end
 
 end

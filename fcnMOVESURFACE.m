@@ -1,5 +1,5 @@
 function [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
-    matFUSEGEOM, matNEWWAKEPANEL, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, ...
+    matFUSEGEOM, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, ...
     matNTVLST, matUINFROT] = fcnMOVESURFACE( matVEHORIG, matVEHUVW, ...
     matVEHROTRATE, matCIRORIG, vecVEHRADIUS, valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matFUSEGEOM, vecFUSEVEHICLE, ...
     matVEHROT, vecROTORVEH, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE, matNTVLST)
@@ -7,13 +7,6 @@ function [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPN
 
 % Do the following need updating?
 % matVEHROT
-
-
-% Saving panel corner points, this helps with triangular wake generation
-matNEWWAKEPANEL = zeros(size(matPANELTE,1),3,4);
-matNEWWAKEPANEL(:,:,3) = matVLST(matPANELTE(:,2),:);
-matNEWWAKEPANEL(:,:,4) = matVLST(matPANELTE(:,1),:);
-
 
 valVEHICLES = length(matVEHUVW(:,1));
 
@@ -179,6 +172,3 @@ matNEWWAKE(:,:,2) = matVLST(matDVE(vecDVETE>0,3),:);
 % New non-planar trailing edge vertices (used to calculate matWADJE)
 matNPNEWWAKE(:,:,1) = matNTVLST(matDVE(vecDVETE>0,4),:);
 matNPNEWWAKE(:,:,2) = matNTVLST(matDVE(vecDVETE>0,3),:);
-
-matNEWWAKEPANEL(:,:,1) = matVLST(matPANELTE(:,1),:);
-matNEWWAKEPANEL(:,:,2) = matVLST(matPANELTE(:,2),:);
