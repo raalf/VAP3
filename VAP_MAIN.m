@@ -57,6 +57,7 @@ vecE = nan(valMAXTIME,valVEHICLES);
 vecCT = nan(valMAXTIME,valROTORS);
 vecCP = nan(valMAXTIME,valROTORS);
 vecCTCONV = nan(valMAXTIME, valROTORS);
+
 matVEHORIG0 = matVEHORIG;
 vecPANELROTOR0 = uint16(vecPANELROTOR0);
 vecPANELWING = uint16(vecPANELWING);
@@ -73,8 +74,7 @@ tmatGEOM = matGEOM;
     vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, matVLST, matNTVLST, matDVE, valNELE,...
     matADJE, vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE,...
     valWINGS,vecDVEVEHICLE, vecDVEWING, vecDVEROTOR, vecDVEROTORBLADE, matSURFACETYPE, vecROTORVEH, ...
-    matFUSEGEOM, matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW,...
-    matROTORHUBGLOB, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI, vecPANELROTOR, vecQARM, cellAIRFOIL] = fcnGEOM2DVE(tmatGEOM, ...
+    matFUSEGEOM, matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI, vecPANELROTOR, vecQARM, cellAIRFOIL] = fcnGEOM2DVE(tmatGEOM, ...
     matVEHORIG0, vecWINGTRI, vecWAKETRI, vecN0, vecM0, vecPANELWING,...
     vecSYM, vecSURFACEVEHICLE, vecPANELROTOR0, vecROTORBLADES0, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
     vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
@@ -88,9 +88,9 @@ valVSPANELS = 0;
 matVSGEOM = [];
 valFPANELS = [];
 matFGEOM = [];
-valFTURB = [];
-valFPWIDTH = [];
-valINTERF = 15;
+
+vecFPWIDTH = [];
+vecINTERF = 15;
 
 vecROTORJ = [];
 
@@ -222,7 +222,7 @@ for valTIMESTEP = 1:valMAXTIME
             matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
             vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, ...
             flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM, valDELTIME, vecVEHVINF, valDENSITY, valKINV,  vecDVEAREA, cellAIRFOIL, flagVERBOSE, ...
-            vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, valFPWIDTH, valINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
+            vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, vecFPWIDTH, vecINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
         
         vecCTCONV = vecCT;
         
