@@ -44,15 +44,9 @@
 			<zorig>0</zorig>
 
 			<panel>
+				<airfoil>10 berries</airfoil>
 				<symmetry>0</symmetry>
 				<N>10</N>
-				<section>
-					<x>0.1</x>
-					<y>-4.8</y>
-					<z>0</z>
-					<chord>0.5</chord>
-					<twist>1.8</twist>
-				</section>
 				<section>
 					<x>0</x>
 					<y>0</y>
@@ -88,6 +82,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
+				<airfoil>strawberry</airfoil>
 				<N>1</N>
 				<section>
 					<x>-0.013721</x>
@@ -180,6 +175,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
+				<airfoil>raspberry</airfoil>
 				<N>1</N>
 				<section>
 					<x>-0.013721</x>
@@ -272,6 +268,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
+				<airfoil>blueberry</airfoil>
 				<N>1</N>
 				<section>
 					<x>-0.013721</x>
@@ -364,6 +361,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
+				<airfoil>huckleberry</airfoil>
 				<N>1</N>
 				<section>
 					<x>-0.013721</x>
@@ -456,6 +454,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
+				<airfoil>mullberry</airfoil>
 				<N>1</N>
 				<section>
 					<x>-0.013721</x>
@@ -548,6 +547,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
+				<airfoil>blackberry</airfoil>
 				<N>1</N>
 				<section>
 					<x>-0.013721</x>
@@ -640,6 +640,7 @@
 
 			<panel>
 				<symmetry>0</symmetry>
+				<airfoil>another strawberry</airfoil>
 				<N>1</N>
 				<section>
 					<x>-0.034304</x>
@@ -713,7 +714,6 @@
 				</section>
 			</panel>
 		</rotor>
-
 	</vehicle>				
 
 </VAP>

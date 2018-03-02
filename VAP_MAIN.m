@@ -22,14 +22,15 @@ disp(' ');
 %% Reading in geometry
 filename = 'inputs/J_COLE_BASELINE.vap';
 
-
 [flagRELAX, flagSTEADY, matGEOM, valMAXTIME, valMINTIME, valDELTIME, valDELTAE, ...
     valDENSITY, valKINV, valVEHICLES, matVEHORIG, vecVEHVINF, vecVEHALPHA, vecVEHBETA, vecVEHROLL, ...
     vecVEHFPA, vecVEHTRK, ~, vecWINGTRI, vecWAKETRI, ~, vecAREA, vecSPAN, vecCMAC, ~, ...
     ~, vecSYM, vecN0, vecM0, ~, ~, ~, vecPANELWING, ...
     vecSURFACEVEHICLE, valPANELS, ~, vecROTORRPM, vecROTDIAM, matROTORHUB, matROTORAXIS, vecROTORBLADES0, ~, vecPANELROTOR0,...
     vecFTURB, vecFUSESECTIONS, matFGEOM, matSECTIONFUSELAGE, vecFUSEVEHICLE, matFUSEAXIS, matFUSEORIG, vecVEHRADIUS,...
-    vecCOLLECTIVE] = fcnXMLREAD(filename);
+    vecCOLLECTIVE, cellAIRFOIL] = fcnXMLREAD(filename);
+
+valMAXTIME = 1
 
 vecWINGTRI(~isnan(vecWINGTRI)) = nan;
 vecWAKETRI(~isnan(vecWAKETRI)) = nan;
@@ -44,7 +45,7 @@ flagPREVIEW = 0;
 flagPLOTWAKEVEL = 0;
 flagPLOTUINF = 0;
 flagVERBOSE = 0;
-flagVISCOUS = 0;
+flagVISCOUS = 1;
 
 valROTORS = max(vecPANELROTOR0);
 % Preallocating for a turbo-boost in performance
@@ -82,8 +83,6 @@ tmatGEOM = matGEOM;
 %% Viscous wrapper
 valDENSITY = 1.225;
 valKINV = 1.45e-5;
-
-vecAIRFOIL = 10*ones(valNELE,1);
 
 valVSPANELS = 0;
 matVSGEOM = [];
@@ -221,7 +220,9 @@ for valTIMESTEP = 1:valMAXTIME
             vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND] = fcnFORCES(matCOEFF, vecK, matDVE, valNELE, matCENTER, matVLST, matUINF, vecDVELESWP, ...
             vecDVEMCSWP, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELE, vecDVETE, matADJE, valWNELE, matWDVE, matWVLST, ...
             matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
-            vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM, valDELTIME, vecVEHVINF, valDENSITY, valKINV,  vecDVEAREA, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, valFPWIDTH, valINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
+            vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, ...
+            flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM, valDELTIME, vecVEHVINF, valDENSITY, valKINV,  vecDVEAREA, cellAIRFOIL, flagVERBOSE, ...
+            vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, valFPWIDTH, valINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
         
         vecCTCONV = vecCT;
         
