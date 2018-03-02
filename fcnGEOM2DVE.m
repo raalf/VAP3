@@ -1,51 +1,43 @@
-function [matCENTER0, vecDVEHVSPN, vecDVEHVCRD, vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEROLL,...
-    vecDVEPITCH, vecDVEYAW, vecDVEAREA, matDVENORM, matVLST0, matNTVLST0, matDVE, valNELE,...
-    matADJE, vecDVESYM, vecDVETIP, vecDVESURFACE, vecDVELE, vecDVETE, vecDVEPANEL, matPANELTE,...
-    valWINGS,vecDVEVEHICLE, vecDVEWING, vecDVEROTOR, vecDVEROTORBLADE, matSURFACETYPE, vecROTORVEH, ...
-    matFUSEGEOM, matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, matUINF, vecDVETRI, vecN, vecM, valWSIZE, valWSIZETRI, vecPANELROTOR, vecQARM, cellAIRFOIL] = fcnGEOM2DVE(matGEOM, ...
-    matVEHORIG, vecWINGTRI, vecWAKETRI, vecN, vecM, vecPANELWING,...
-    vecSYM, vecSURFACEVEHICLE, vecROTOR, vecROTORBLADES, matROTORHUB, matROTORAXIS, matSECTIONFUSELAGE,...
-    vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE, vecVEHVINF, vecVEHALPHA, vecVEHBETA, ...
-    vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS, valVEHICLES, vecROTORRPM, vecPANELROTOR, cellAIRFOIL)
+function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE)
 
-% tranlsate matGEOM to vehicle origin
-matGEOM(:,1:3,:) = matGEOM(:,1:3,:)+permute(reshape(matVEHORIG(matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
+% tranlsate INPU.matGEOM to vehicle origin
+INPU.matGEOM(:,1:3,:) = INPU.matGEOM(:,1:3,:)+permute(reshape(INPU.matVEHORIG(INPU.matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);
 
 
-vecPANELSURFACE = sort([vecPANELWING vecROTOR + max(vecPANELWING).*uint16((vecROTOR > 0))],2,'descend');
+vecPANELSURFACE = sort([INPU.vecPANELWING INPU.vecPANELROTOR + max(INPU.vecPANELWING).*uint16((INPU.vecPANELROTOR > 0))],2,'descend');
 vecPANELSURFACE = vecPANELSURFACE(:,1);
 
-valWINGS = max(vecPANELSURFACE);
+SURF.valWINGS = max(vecPANELSURFACE);
 
-matCENTER0 = [];
-vecDVEHVSPN = [];
-vecDVEHVCRD = [];
-vecDVELESWP = [];
-vecDVEMCSWP = [];
-vecDVETESWP = [];
-vecDVEROLL = [];
-vecDVEPITCH = [];
-vecDVEYAW = [];
-vecDVEAREA = [];
-matDVENORM = [];
-matVLST0 = [];
-matNTVLST0 = [];
-matDVE = uint16([]);
-valNELE = 0;
-matADJE = [];
-vecDVESYM = uint8([]);
-vecDVETIP = uint8([]);
-vecDVESURFACE = uint8([]);
-vecDVELE = uint8([]);
-vecDVETE = uint8([]);
-vecDVEPANEL = uint16([]);
-matPANELTE = uint16([]);
-vecDVETRI = [];
+SURF.matCENTER = [];
+SURF.vecDVEHVSPN = [];
+SURF.vecDVEHVCRD = [];
+SURF.vecDVELESWP = [];
+SURF.vecDVEMCSWP = [];
+SURF.vecDVETESWP = [];
+SURF.vecDVEROLL = [];
+SURF.vecDVEPITCH = [];
+SURF.vecDVEYAW = [];
+SURF.vecDVEAREA = [];
+SURF.matDVENORM = [];
+SURF.matVLST = [];
+SURF.matNTVLST = [];
+SURF.matDVE = uint16([]);
+SURF.valNELE = 0;
+SURF.matADJE = [];
+SURF.vecDVESYM = uint8([]);
+SURF.vecDVETIP = uint8([]);
+SURF.vecDVESURFACE = uint8([]);
+SURF.vecDVELE = uint8([]);
+SURF.vecDVETE = uint8([]);
+SURF.vecDVEPANEL = uint16([]);
+SURF.matPANELTE = uint16([]);
+SURF.vecDVETRI = [];
 
-vecROTOR = uint8(vecROTOR);
+INPU.vecPANELROTOR = uint8(INPU.vecPANELROTOR);
 
-valWSIZETRI = 0;
-valWSIZE = 0;
+WAKE.valWSIZETRI = 0;
+WAKE.valWSIZE = 0;
 tempM = [];
 tempN = [];
 
@@ -53,155 +45,138 @@ for i = unique(vecPANELSURFACE,'stable')'
     
     panels = length(nonzeros(vecPANELSURFACE == i));
    
-%     if isnan(vecWINGTRI(i))
-        [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
-            tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
-            tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
-            tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, tvecDVEPANEL, tmatPANELTE] = ...
-            fcnGENERATEDVES(panels, matGEOM(:,:,(vecPANELSURFACE == i)), vecSYM(vecPANELSURFACE == i), vecN(vecPANELSURFACE == i), vecM(vecPANELSURFACE == i));
+%     if isnan(COND.vecWINGTRI(i))
+        [tSURF.matCENTER, tSURF.vecDVEHVSPN, tSURF.vecDVEHVCRD, tSURF.vecDVELESWP, tSURF.vecDVEMCSWP, tSURF.vecDVETESWP, ...
+            tSURF.vecDVEROLL, tSURF.vecDVEPITCH, tSURF.vecDVEYAW, tSURF.vecDVEAREA, tSURF.matDVENORM, ...
+            tSURF.matVLST, tSURF.matNTVLST, tSURF.matDVE, tSURF.valNELE, tSURF.matADJE, ...
+            tSURF.vecDVESYM, tSURF.vecDVETIP, tSURF.vecDVESURFACE, tSURF.vecDVELE, tSURF.vecDVETE, tSURF.vecDVEPANEL, tSURF.matPANELTE] = ...
+            fcnGENERATEDVES(panels, INPU.matGEOM(:,:,(vecPANELSURFACE == i)), INPU.vecSYM(vecPANELSURFACE == i), INPU.vecN(vecPANELSURFACE == i), INPU.vecM(vecPANELSURFACE == i));
         
-        vecDVETRI = [vecDVETRI; zeros(tvalNELE,1)];
+        SURF.vecDVETRI = [SURF.vecDVETRI; zeros(tSURF.valNELE,1)];
         
 %     else
 %         
-%         [tmatCENTER0, tvecDVEHVSPN, tvecDVEHVCRD, tvecDVELESWP, tvecDVEMCSWP, tvecDVETESWP, ...
-%             tvecDVEROLL, tvecDVEPITCH, tvecDVEYAW, tvecDVEAREA, tmatDVENORM, ...
-%             tmatVLST0, tmatNTVLST0, tmatDVE, tvalNELE, tmatADJE, ...
-%             tvecDVESYM, tvecDVETIP, tvecDVESURFACE, tvecDVELE, tvecDVETE, ...
-%             tvecDVEPANEL, tmatNPVLST0, vecM(vecPANELSURFACE == i,1), vecN(vecPANELSURFACE == i), tmatPANELTE] = ...
-%             fcnGENERATEDVESTRI(panels, matGEOM(:,:,(vecPANELSURFACE == i)), vecSYM(vecPANELSURFACE == i), vecN(vecPANELSURFACE == i), vecM(vecPANELSURFACE == i));
+%         [tSURF.matCENTER, tSURF.vecDVEHVSPN, tSURF.vecDVEHVCRD, tSURF.vecDVELESWP, tSURF.vecDVEMCSWP, tSURF.vecDVETESWP, ...
+%             tSURF.vecDVEROLL, tSURF.vecDVEPITCH, tSURF.vecDVEYAW, tSURF.vecDVEAREA, tSURF.matDVENORM, ...
+%             tSURF.matVLST, tSURF.matNTVLST, tSURF.matDVE, tSURF.valNELE, tSURF.matADJE, ...
+%             tSURF.vecDVESYM, tSURF.vecDVETIP, tSURF.vecDVESURFACE, tSURF.vecDVELE, tSURF.vecDVETE, ...
+%             tSURF.vecDVEPANEL, tmatNPVLST0, INPU.vecM(vecPANELSURFACE == i,1), INPU.vecN(vecPANELSURFACE == i), tSURF.matPANELTE] = ...
+%             fcnGENERATEDVESTRI(panels, INPU.matGEOM(:,:,(vecPANELSURFACE == i)), INPU.vecSYM(vecPANELSURFACE == i), INPU.vecN(vecPANELSURFACE == i), INPU.vecM(vecPANELSURFACE == i));
 %         
-%         vecDVETRI = [vecDVETRI; ones(tvalNELE,1)];
+%         SURF.vecDVETRI = [SURF.vecDVETRI; ones(tSURF.valNELE,1)];
         
         
 %     end
     
-%     if isnan(vecWAKETRI(i))
+%     if isnan(COND.vecWAKETRI(i))
 
 %     else
-%         valWSIZETRI = valWSIZETRI + sum(nonzeros(tvecDVETE > 0))*2;
+%         WAKE.valWSIZETRI = WAKE.valWSIZETRI + sum(nonzeros(tSURF.vecDVETE > 0))*2;
 %     end
-    valNELE = valNELE + tvalNELE;
-    matCENTER0 = [matCENTER0; tmatCENTER0];
-    vecDVEHVSPN = [vecDVEHVSPN; tvecDVEHVSPN];
-    vecDVEHVCRD = [vecDVEHVCRD; tvecDVEHVCRD];
-    vecDVELESWP = [vecDVELESWP; tvecDVELESWP];
-    vecDVEMCSWP = [vecDVEMCSWP; tvecDVEMCSWP];
-    vecDVETESWP = [vecDVETESWP; tvecDVETESWP];
-    vecDVEROLL = [vecDVEROLL; tvecDVEROLL];
-    vecDVEPITCH = [vecDVEPITCH; tvecDVEPITCH];
-    vecDVEYAW = [vecDVEYAW; tvecDVEYAW];
-    vecDVEAREA = [vecDVEAREA; tvecDVEAREA];
-    matDVENORM = [matDVENORM; tmatDVENORM];
-    vecDVESYM = [vecDVESYM; tvecDVESYM];
-    vecDVETIP = [vecDVETIP; tvecDVETIP];
-    vecDVELE = [vecDVELE; tvecDVELE];
-    vecDVETE = [vecDVETE; tvecDVETE];
-    matPANELTE = [matPANELTE; tmatPANELTE];
+    SURF.valNELE = SURF.valNELE + tSURF.valNELE;
+    SURF.matCENTER = [SURF.matCENTER; tSURF.matCENTER];
+    SURF.vecDVEHVSPN = [SURF.vecDVEHVSPN; tSURF.vecDVEHVSPN];
+    SURF.vecDVEHVCRD = [SURF.vecDVEHVCRD; tSURF.vecDVEHVCRD];
+    SURF.vecDVELESWP = [SURF.vecDVELESWP; tSURF.vecDVELESWP];
+    SURF.vecDVEMCSWP = [SURF.vecDVEMCSWP; tSURF.vecDVEMCSWP];
+    SURF.vecDVETESWP = [SURF.vecDVETESWP; tSURF.vecDVETESWP];
+    SURF.vecDVEROLL = [SURF.vecDVEROLL; tSURF.vecDVEROLL];
+    SURF.vecDVEPITCH = [SURF.vecDVEPITCH; tSURF.vecDVEPITCH];
+    SURF.vecDVEYAW = [SURF.vecDVEYAW; tSURF.vecDVEYAW];
+    SURF.vecDVEAREA = [SURF.vecDVEAREA; tSURF.vecDVEAREA];
+    SURF.matDVENORM = [SURF.matDVENORM; tSURF.matDVENORM];
+    SURF.vecDVESYM = [SURF.vecDVESYM; tSURF.vecDVESYM];
+    SURF.vecDVETIP = [SURF.vecDVETIP; tSURF.vecDVETIP];
+    SURF.vecDVELE = [SURF.vecDVELE; tSURF.vecDVELE];
+    SURF.vecDVETE = [SURF.vecDVETE; tSURF.vecDVETE];
+    SURF.matPANELTE = [SURF.matPANELTE; tSURF.matPANELTE];
     
     if i == 1; surfaceoffset = 0; paneloffset = 0;
-    else; surfaceoffset = max(vecDVESURFACE); paneloffset = max(vecDVEPANEL);
+    else; surfaceoffset = max(SURF.vecDVESURFACE); paneloffset = max(SURF.vecDVEPANEL);
     end
     
-    vecDVESURFACE = [vecDVESURFACE; uint8(uint8(tvecDVESURFACE) + surfaceoffset)];
-    vecDVEPANEL = [vecDVEPANEL; uint16(uint16(tvecDVEPANEL) + paneloffset)];
+    SURF.vecDVESURFACE = [SURF.vecDVESURFACE; uint8(uint8(tSURF.vecDVESURFACE) + surfaceoffset)];
+    SURF.vecDVEPANEL = [SURF.vecDVEPANEL; uint16(uint16(tSURF.vecDVEPANEL) + paneloffset)];
     
-    vlstoffset = size(matVLST0,1);
-    dveoffset = size(matDVE,1);
-    matDVE = [matDVE; tmatDVE + vlstoffset];
-    matVLST0 = [matVLST0; tmatVLST0];
-    matNTVLST0 = [matNTVLST0; tmatNTVLST0];
+    vlstoffset = size(SURF.matVLST,1);
+    dveoffset = size(SURF.matDVE,1);
+    SURF.matDVE = [SURF.matDVE; tSURF.matDVE + vlstoffset];
+    SURF.matVLST = [SURF.matVLST; tSURF.matVLST];
+    SURF.matNTVLST = [SURF.matNTVLST; tSURF.matNTVLST];
   
-    tmatADJE = [tmatADJE(:,1) + dveoffset tmatADJE(:,2) tmatADJE(:,3) + dveoffset tmatADJE(:,4)];
-    matADJE = [matADJE; tmatADJE];
-    temp = vecM(vecPANELSURFACE == i).*vecN(vecPANELSURFACE == i);
-% 	tempM = [tempM; repmat(vecM(vecPANELSURFACE == i),[temp(1),1])];
-%     tempN = [tempN; repmat(vecN(vecPANELSURFACE == i),[temp(1),1])];
+    tSURF.matADJE = [tSURF.matADJE(:,1) + dveoffset tSURF.matADJE(:,2) tSURF.matADJE(:,3) + dveoffset tSURF.matADJE(:,4)];
+    SURF.matADJE = [SURF.matADJE; tSURF.matADJE];
+    temp = INPU.vecM(vecPANELSURFACE == i).*INPU.vecN(vecPANELSURFACE == i);
+% 	tempM = [tempM; repmat(INPU.vecM(vecPANELSURFACE == i),[temp(1),1])];
+%     tempN = [tempN; repmat(INPU.vecN(vecPANELSURFACE == i),[temp(1),1])];
 end
 
-% vecM = tempM;
-% vecN = tempN;
+% INPU.vecM = tempM;
+% INPU.vecN = tempN;
 
 % % Identifying which DVEs belong to which vehicle, as well as which type of lifting surface they belong to (wing or rotor)
-vecDVEVEHICLE = vecSURFACEVEHICLE(vecDVESURFACE);
-vecDVEWING = vecDVESURFACE;
+SURF.vecDVEVEHICLE = VEHI.vecSURFACEVEHICLE(SURF.vecDVESURFACE);
+SURF.vecDVEWING = SURF.vecDVESURFACE;
 
-vecDVEROTOR = vecROTOR(vecDVEPANEL); % Alton-Y
-vecDVEROTORBLADE = vecDVEROTOR; % Current rotor DVEs are for Blade 1 (they are duplicated to Blade 2, 3, etc etc below)
-idx_rotor = vecDVEROTOR>0; % Alton-Y
-vecDVEWING(idx_rotor) = 0;
+SURF.vecDVEROTOR = INPU.vecPANELROTOR(SURF.vecDVEPANEL); % Alton-Y
+SURF.vecDVEROTORBLADE = SURF.vecDVEROTOR; % Current rotor DVEs are for Blade 1 (they are duplicated to Blade 2, 3, etc etc below)
+idx_rotor = SURF.vecDVEROTOR>0; % Alton-Y
+SURF.vecDVEWING(idx_rotor) = 0;
 
-matSURFACETYPE = uint8(zeros(size(unique(vecDVESURFACE),1),2));
-matSURFACETYPE(nonzeros(unique(vecDVEWING)),1) = nonzeros(unique(vecDVEWING));
-matSURFACETYPE(nonzeros(unique(vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(vecDVEROTOR));
+MISC.matSURFACETYPE = uint8(zeros(size(unique(SURF.vecDVESURFACE),1),2));
+MISC.matSURFACETYPE(nonzeros(unique(SURF.vecDVEWING)),1) = nonzeros(unique(SURF.vecDVEWING));
+MISC.matSURFACETYPE(nonzeros(unique(SURF.vecDVESURFACE(idx_rotor))),2) = nonzeros(unique(SURF.vecDVEROTOR));
 
 
 % Identifying which ROTOR belongs to which vehicle.
-vecROTORVEH = vecSURFACEVEHICLE(matSURFACETYPE(:,2)~=0);
+VEHI.vecROTORVEH = VEHI.vecSURFACEVEHICLE(MISC.matSURFACETYPE(:,2)~=0);
 
 % Duplicate Blades in a Rotor
-[vecPANELROTOR, vecN, vecM, matVLST0, matCENTER0, matDVE, matADJE, vecDVEVEHICLE, ...
-    vecDVEWING, vecDVEROTOR, matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, ...
-    vecDVETIP, vecDVELE, vecDVETE, vecDVEROTORBLADE, vecDVESYM, ...
-    valNELE, matNTVLST0, cellAIRFOIL] = fcnDUPBLADE( vecROTORVEH, vecDVEROTOR, ...
-    matVLST0, matCENTER0, matDVE, matADJE, vecROTORBLADES, ...
-    valNELE, matROTORHUB, matVEHORIG, vecDVEVEHICLE, vecDVEWING, ...
-    matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, vecDVETIP, vecDVELE, ...
-    vecDVETE, vecDVEROTORBLADE, vecDVESYM, matROTORAXIS, matNTVLST0, ...
-    vecM, vecN, vecPANELROTOR, cellAIRFOIL);
+[INPU.vecPANELROTOR, INPU.vecN, INPU.vecM, SURF.matVLST, SURF.matCENTER, SURF.matDVE, SURF.matADJE, SURF.vecDVEVEHICLE, ...
+    SURF.vecDVEWING, SURF.vecDVEROTOR, MISC.matSURFACETYPE, SURF.vecDVESURFACE, SURF.vecDVEPANEL, ...
+    SURF.vecDVETIP, SURF.vecDVELE, SURF.vecDVETE, SURF.vecDVEROTORBLADE, SURF.vecDVESYM, ...
+    SURF.valNELE, SURF.matNTVLST, VISC.cellAIRFOIL] = fcnDUPBLADE( VEHI.vecROTORVEH, SURF.vecDVEROTOR, ...
+    SURF.matVLST, SURF.matCENTER, SURF.matDVE, SURF.matADJE, INPU.vecROTORBLADES, ...
+    SURF.valNELE, INPU.matROTORHUB, INPU.matVEHORIG, SURF.vecDVEVEHICLE, SURF.vecDVEWING, ...
+    MISC.matSURFACETYPE, SURF.vecDVESURFACE, SURF.vecDVEPANEL, SURF.vecDVETIP, SURF.vecDVELE, ...
+    SURF.vecDVETE, SURF.vecDVEROTORBLADE, SURF.vecDVESYM, INPU.matROTORAXIS, SURF.matNTVLST, ...
+    INPU.vecM, INPU.vecN, INPU.vecPANELROTOR, VISC.cellAIRFOIL);
 
-matFUSEGEOM = fcnCREATEFUSE(matSECTIONFUSELAGE, vecFUSESECTIONS, matFGEOM, matFUSEAXIS, matFUSEORIG, vecFUSEVEHICLE);
+VISC.matFUSEGEOM = fcnCREATEFUSE(VISC.matSECTIONFUSELAGE, VISC.vecFUSESECTIONS, VISC.matFGEOM, VISC.matFUSEAXIS, VISC.matFUSEORIG, VISC.vecFUSEVEHICLE);
 
 
 % flap = 40;
-% idx = find(vecDVETE > 0 & vecDVEWING > 0);
+% idx = find(SURF.vecDVETE > 0 & SURF.vecDVEWING > 0);
 % for i = idx'
-% u = matVLST0(matDVE(i,2),:) - matVLST0(matDVE(i,1),:);
-% uo = (matVLST0(matDVE(i,2),:) + matVLST0(matDVE(i,1),:))./2;
+% u = SURF.matVLST(SURF.matDVE(i,2),:) - SURF.matVLST(SURF.matDVE(i,1),:);
+% uo = (SURF.matVLST(SURF.matDVE(i,2),:) + SURF.matVLST(SURF.matDVE(i,1),:))./2;
 % 
 % R = columbia_rotation(u, -flap);
-% matVLST0(matDVE(i,3),:) = (matVLST0(matDVE(i,3),:) - uo)*R + uo;
-% matVLST0(matDVE(i,4),:) = (matVLST0(matDVE(i,4),:) - uo)*R + uo;
+% SURF.matVLST(SURF.matDVE(i,3),:) = (SURF.matVLST(SURF.matDVE(i,3),:) - uo)*R + uo;
+% SURF.matVLST(SURF.matDVE(i,4),:) = (SURF.matVLST(SURF.matDVE(i,4),:) - uo)*R + uo;
 % end
 
 
 
-[ matVEHUVW, matVEHROT, matVEHROTRATE, matCIRORIG, vecVEHPITCH, vecVEHYAW ] = fcnINITVEHICLE( vecVEHVINF, matVEHORIG, vecVEHALPHA, vecVEHBETA, vecVEHFPA, vecVEHROLL, vecVEHTRK, vecVEHRADIUS );
-[matVLST0, matCENTER0, matFUSEGEOM, matROTORHUBGLOB, matROTORAXIS, matNTVLST0] = fcnROTVEHICLE( matDVE, matVLST0, matCENTER0, valVEHICLES, vecDVEVEHICLE, matVEHORIG, matVEHROT, matFUSEGEOM, vecFUSEVEHICLE, matFUSEAXIS, matROTORHUB, matROTORAXIS, vecROTORVEH, matNTVLST0);
+[ VEHI.matVEHUVW, VEHI.matVEHROT, VEHI.matVEHROTRATE, MISC.matCIRORIG] = fcnINITVEHICLE( COND.vecVEHVINF, INPU.matVEHORIG, COND.vecVEHALPHA, COND.vecVEHBETA, COND.vecVEHFPA, COND.vecVEHROLL, COND.vecVEHTRK, VEHI.vecVEHRADIUS );
+[SURF.matVLST, SURF.matCENTER, VISC.matFUSEGEOM, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNTVLST] = fcnROTVEHICLE( SURF.matDVE, SURF.matVLST, SURF.matCENTER, INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, VEHI.matVEHROT, VISC.matFUSEGEOM, VISC.vecFUSEVEHICLE, VISC.matFUSEAXIS, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH, SURF.matNTVLST);
 
-[ matUINF ] = fcnINITUINF( matCENTER0, matVEHUVW, matVEHROT, vecDVEVEHICLE, ...
-    vecDVEROTOR, vecROTORVEH, matVEHORIG, matROTORHUBGLOB, matROTORAXIS, vecROTORRPM );
+[ SURF.matUINF ] = fcnINITUINF( SURF.matCENTER, VEHI.matVEHUVW, VEHI.matVEHROT, SURF.vecDVEVEHICLE, ...
+    SURF.vecDVEROTOR, VEHI.vecROTORVEH, INPU.matVEHORIG, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, COND.vecROTORRPM );
 
 
 % update DVE params after vehicle rotation
-[ vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
-    vecDVELESWP, vecDVEMCSWP, vecDVETESWP, vecDVEAREA, matDVENORM, ~, ~, matCENTER0 ] ...
-    = fcnVLST2DVEPARAM(matDVE, matVLST0);
+[ SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
+    SURF.vecDVELESWP, SURF.vecDVEMCSWP, SURF.vecDVETESWP, SURF.vecDVEAREA, SURF.matDVENORM, ~, ~, SURF.matCENTER ] ...
+    = fcnVLST2DVEPARAM(SURF.matDVE, SURF.matVLST);
 
-valWSIZE = length(nonzeros(vecDVETE));
+WAKE.valWSIZE = length(nonzeros(SURF.vecDVETE));
 
 % Compute torque arm length for rotor power calculations
-vecQARM = zeros(valNELE,3);
-if max(vecDVEROTOR)>0
-    vecQARM(vecDVEROTOR>0,:) = matCENTER0(vecDVEROTOR>0,:) - matROTORHUB(vecDVEROTOR(vecDVEROTOR>0),:);    
-    vecQARM = sqrt(sum(vecQARM.^2,2));
+SURF.vecQARM = zeros(SURF.valNELE,3);
+if max(SURF.vecDVEROTOR)>0
+    SURF.vecQARM(SURF.vecDVEROTOR>0,:) = SURF.matCENTER(SURF.vecDVEROTOR>0,:) - INPU.matROTORHUB(SURF.vecDVEROTOR(SURF.vecDVEROTOR>0),:);    
+    SURF.vecQARM = sqrt(sum(SURF.vecQARM.^2,2));
 end
-
-end
-
-function [R] = columbia_rotation(u,theta)
-%ROTATION Summary of this function goes here
-%   Detailed explanation goes here
-ux = u(1);
-uy = u(2);
-uz = u(3);
-
-cost = cosd(theta);
-sint = sind(theta);
-
-R = [cost + ux.^2*(1 - cost) ux*uy*(1 - cost) - uz*sint ux*uz*(1 - cost) + uy*sint; ...
-    uy*ux*(1 - cost) + uz*sint cost + uy.^2*(1 - cost) uy*uz*(1 - cost) - ux*sint; ...
-    uz*ux*(1 - cost) - uy*sint uz*uy*(1 - cost) + ux*sint cost + uz.^2*(1 - cost); ...
-    ];
 
 end

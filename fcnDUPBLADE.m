@@ -15,7 +15,7 @@ function [vecPANELROTOR, vecN, vecM, matVLST0, matCENTER0, matDVE, matADJE, vecD
 tempPANELROTOR = vecPANELROTOR;
 valROTORS = length(vecROTORVEH);
 for n = 1:valROTORS
-    idxDVEBLADE = find(vecDVEROTOR==n);
+    idxDVEBLADE = uint32(find(vecDVEROTOR==n));
     matDVEBLADE = matDVE(idxDVEBLADE,:);
     [idxVLSTBLADE,~,c] = unique(matDVEBLADE);
     offsetDVEBLADE = reshape(c,[],4);
@@ -35,7 +35,7 @@ for n = 1:valROTORS
         
         %matADJE
         offsetADJEBLADE = offsetADJE;
-        offsetADJEBLADE(:,[1,3]) = offsetADJE(:,[1,3]) - min(idxDVEBLADE) + 1 + valNELE;
+        offsetADJEBLADE(:,[1,3]) = offsetADJE(:,[1,3]) - min(idxDVEBLADE) + uint32(1) + valNELE;
         matADJE = [matADJE;offsetADJEBLADE];
         
         %matVLST0
@@ -70,7 +70,7 @@ for n = 1:valROTORS
         vecDVESYM = [vecDVESYM; vecDVESYM(idxDVEBLADE)];
         vecM = [vecM; vecM(vecPANELROTOR==n)];
         vecN = [vecN; vecN(vecPANELROTOR==n)];   
-        cellAIRFOIL = [cellAIRFOIL; cellAIRFOIL(vecPANELROTOR==n)]; 
+        if ~isempty(cellAIRFOIL); cellAIRFOIL = [cellAIRFOIL; cellAIRFOIL(vecPANELROTOR==n)]; end
         tempPANELROTOR = [tempPANELROTOR; tempPANELROTOR(vecPANELROTOR==n)];
     end
     
