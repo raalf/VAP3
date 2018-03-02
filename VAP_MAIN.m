@@ -88,6 +88,7 @@ valVSPANELS = 0;
 matVSGEOM = [];
 valFPANELS = [];
 matFGEOM = [];
+vecFTURB = [];
 
 vecFPWIDTH = [];
 vecINTERF = 15;
@@ -164,7 +165,7 @@ for valTIMESTEP = 1:valMAXTIME
     %% Moving the vehicles
     
     [matUINF, matUINFTE, matVEHORIG, matVLST, matCENTER, matNEWWAKE, matNPNEWWAKE, ...
-        matFUSEGEOM, matNEWWAKEPANEL, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, matNTVLST, matUINFROT] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
+        matFUSEGEOM, vecDVEROLL, vecDVEPITCH, vecDVEYAW, matDVENORM, matNTVLST, matUINFROT] = fcnMOVESURFACE(matVEHORIG, matVEHUVW, matVEHROTRATE, matCIRORIG, vecVEHRADIUS, ...
         valDELTIME, matVLST, matCENTER, matDVE, vecDVEVEHICLE, vecDVETE, matFUSEGEOM, vecFUSEVEHICLE, ...
         matVEHROT, vecROTORVEH, matROTORHUB, matROTORAXIS, vecDVEROTOR, vecROTORRPM, matPANELTE, matNTVLST);
     
@@ -222,7 +223,7 @@ for valTIMESTEP = 1:valMAXTIME
             matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, ...
             vecDVESYM, vecDVETESWP, vecAREA, vecSPAN, [], vecDVEWING, vecWDVESURFACE, vecN, vecM, vecDVEPANEL, vecDVEVEHICLE, valVEHICLES, matVEHROT, flagTRI, ...
             flagSTEADY, flagGPU, vecDVEROTOR, matROTORAXIS, vecROTORRPM, vecROTDIAM, valDELTIME, vecVEHVINF, valDENSITY, valKINV,  vecDVEAREA, cellAIRFOIL, flagVERBOSE, ...
-            vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, vecFPWIDTH, vecINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
+            vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, vecFTURB, vecFPWIDTH, vecINTERF, valMAXTIME, vecPANELROTOR, matUINFROT, vecQARM, flagVISCOUS);
         
         vecCTCONV = vecCT;
         
