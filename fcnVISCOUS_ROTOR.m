@@ -1,5 +1,5 @@
 function [matCDPDIST] = fcnVISCOUS_ROTOR(flagVERBOSE, valKINV, ...
-    vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, vecAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF)
+    vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, cellAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF)
 % This function applies a viscous correction to rotors using look up tables
 % and applies a high angle stall model.
 % 
@@ -50,7 +50,7 @@ vecCLPDIST = zeros(size(rows,1),1);
 len = 0;
 for j = 1:length(idxpanel)
     pan = idxpanel(j);
-    airfoil = dlmread(strcat('airfoils/airfoil',num2str(vecAIRFOIL(pan)),'.dat'),'', 1, 0);
+    airfoil = dlmread(strcat('airfoils/',cellAIRFOIL{pan},'.dat'),'', 1, 0);
 
     HiRe = airfoil(end,4);
     LoRe = airfoil(1,4);

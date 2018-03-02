@@ -1,6 +1,6 @@
 function [valCL, valCD, valPREQ, valLD] = fcnVISCOUS_WING(valCL, valCDI, valVINF, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-    matCENTER, vecDVEHVCRD, vecAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
+    matCENTER, vecDVEHVCRD, cellAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL, matUINF)
 
 q_inf = ((valVINF^2)*valDENSITY)/2;
@@ -64,7 +64,7 @@ for i = 1:max(vecDVEWING)
     
     for j = 1:length(idxpanel)
         pan = idxpanel(j);
-        airfoil = dlmread(strcat('airfoils/airfoil',num2str(vecAIRFOIL(pan)),'.dat'),'', 1, 0);
+        airfoil = dlmread(strcat('airfoils/airfoil',num2str(cellAIRFOIL(pan)),'.dat'),'', 1, 0);
         
         HiRe = airfoil(end,4);
         LoRe = airfoil(1,4);
