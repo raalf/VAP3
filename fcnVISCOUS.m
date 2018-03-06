@@ -17,13 +17,11 @@ if flagVISCOUS == 1
         idxvehwing = vecDVEWING > 0 & vecDVEVEHICLE == i; %(vecDVEWING.*vecDVEVEHICLE == i) > 0;
 
         if any(idxvehwing) && valTIMESTEP == valMAXTIME
-
             [vecCLv(i), vecCD(i), vecPREQ(i), vecLD(i)] = fcnVISCOUS_WING(vecCL(end), vecCDI(end), ...
                 vecVEHVINF(i), valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
                 vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING.*uint8(idxvehwing), vecN, vecM, vecDVEAREA, ...
                 matCENTER, vecDVEHVCRD, cellAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
                 valFPWIDTH, valINTERF, vecDVEROLL, matUINF);
-
         end
 
 

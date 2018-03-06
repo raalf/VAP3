@@ -290,7 +290,7 @@ for i = 1:INPU.valPANELS
         INPU.vecPANELWING(k,1) = INPU.vecPANELWING(i);
         INPU.vecPANELROTOR(k,1) = panel_rotors(i);
         
-        if ~isempty(VISC.cellAIRFOIL)
+        if ~isempty(VISC.cellAIRFOILtemp)
             VISC.cellAIRFOIL{k,1} = VISC.cellAIRFOILtemp{i};
         end
         

@@ -55,7 +55,7 @@ if any(vecDVESYM)
     dgamma_sym(locedge == 4,:) = [zeros(length(idx10(locedge == 4)),1) ones(length(idx10(locedge == 4)),1) -2.*vecDVEHVSPN(idx10(locedge == 4))];
     
     vort_sym = sparse(len,valNELE*3);
-    vort_sym = fcnCREATEDSECT(vort_sym, len, 3, idx10, [], dgamma_sym, []);
+    vort_sym = fcnCREATEDSECT(vort_sym, len, 3, uint32(idx10), [], dgamma_sym, []);
 end
 
 %% Circulation equations at wingtip
