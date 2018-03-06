@@ -46,11 +46,6 @@ vecREDIST = vecV.*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
 % Different temp
 vecCNDIST0 = vecCNDIST;
 
-len = 0;
-
-
-
-
 vecCDPDIST = nan(size(vecCNDIST)); % pre-allocate the array to store viscous drag results
 vecCLMAXA   = nan(size(vecCNDIST));
 
@@ -112,18 +107,20 @@ for k = 1:length(uniqueAirfoil)
     
     % Check for stall and change the CL
     idxSTALL = (radtodeg(vecALPHAEFF) > vecCLMAXA) & isCurrentAirfoil;
-
- 	F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
-
-    if sum(idxSTALL) > 1 && flagVERBOSE == 1
-        disp('Airfoil sections have stalled.')
+    
+    F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
+    
+    if sum(idxSTALL) > 1
+        
+        if flagVERBOSE == 1
+            disp('Airfoil sections have stalled.')
+        end
         % Make apply stall model using empirical equations
         % cn = cd,90*(sin(alpha_eff))/(0.56+0.44sin(alpha_eff))
         % ct = cd,0*cos(alpha_eff)/2
         % cd = cn*sin(alpha_eff)+ct*cos(alpha_eff)
         % Note: cd,90 = 2
         % Find cd_0
-        
         
         cd_0 = F(vecREDIST(idxSTALL),zeros(sum(idxSTALL),1));
         
@@ -132,10 +129,10 @@ for k = 1:length(uniqueAirfoil)
         vecCNDIST0(idxSTALL)  = cn.*cos(abs(vecALPHAEFF(idxSTALL))) - ct.*sin(abs(vecALPHAEFF(idxSTALL)));
         
         vecCDPDIST(idxSTALL) = cn.*sin(abs(vecALPHAEFF(idxSTALL))) + ct.*cos(abs(vecALPHAEFF(idxSTALL)));
-    
+        
     end
     
-    vecCDPDIST(idxSTALL==0) = F(vecREDIST(idxSTALL==0), radtodeg(vecALPHAEFF(idxSTALL==0)));    
+    vecCDPDIST(idxSTALL==0) = F(vecREDIST(idxSTALL==0), radtodeg(vecALPHAEFF(idxSTALL==0)));
     
     clear pol foil
 end

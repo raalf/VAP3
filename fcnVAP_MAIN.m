@@ -8,6 +8,8 @@ COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
+COND.valMAXTIME = 20
+
 FLAG.PRINT = 1;
 FLAG.PLOT = 0;
 FLAG.VISCOUS = 1;

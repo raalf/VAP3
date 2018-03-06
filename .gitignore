@@ -5,6 +5,8 @@
 GIF/
 timesteps/
 
+xfoil.exe
+
 #LaTeX 
 *.aux
 *.log

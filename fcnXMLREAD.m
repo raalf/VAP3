@@ -84,14 +84,15 @@ VISC.vecVSPANELS = [];
 VISC.matVSGEOM = [];
 VISC.vecFPANELS = [];
 VISC.vecFPWIDTH = [];
-VISC.vecINTERF = [];
+VISC.vecINTERF = 0;
 
 vecWINGINCID = [];
 vecTRIMABLE = [];
 vecWINGM = [];
 matWINGORIG = [];
 vecPANELS = [];
-VISC.cellAIRFOILtemp = {};
+cellAIRFOILtemp = {};
+VISC.cellAIRFOIL = {};
 INPU.vecSYMtemp = [];
 INPU.vecNtemp = [];
 INPU.vecMtemp = [];
@@ -159,7 +160,7 @@ for i = 1:INPU.valVEHICLES
             try pan = win.panel{1,m}; catch; pan = win.panel; end
             
             INPU.vecSYMtemp(kk,1) = floor(str2double(pan.symmetry.Text));
-            try VISC.cellAIRFOILtemp{kk} = pan.airfoil.Text; end
+            try cellAIRFOILtemp{kk} = pan.airfoil.Text; end
             INPU.vecNtemp(kk,1) = floor(str2double(pan.N.Text));
             INPU.vecMtemp(kk,1) = floor(vecWINGM(k,1)); % Same for entire wing
             
@@ -213,7 +214,7 @@ for i = 1:INPU.valVEHICLES
             try pan = rot.panel{1,m}; catch; pan = rot.panel; end
             
             INPU.vecSYMtemp(kk,1) = 0;
-            try VISC.cellAIRFOILtemp{kk} = pan.airfoil.Text; end
+            try cellAIRFOILtemp{kk} = pan.airfoil.Text; end
             INPU.vecNtemp(kk,1) = floor(str2double(pan.N.Text));
             INPU.vecMtemp(kk,1) = floor(vecROTORM(p,1)); % Same for entire wing
             
@@ -274,8 +275,6 @@ INPU.valPANELS = sum(vecPANELS);
 
 k = 1;
 
-VISC.cellAIRFOIL = {};
-
 for i = 1:INPU.valPANELS
     
     sections = matSECTIONS(vecSECTIONPANEL == i,:);
@@ -290,8 +289,8 @@ for i = 1:INPU.valPANELS
         INPU.vecPANELWING(k,1) = INPU.vecPANELWING(i);
         INPU.vecPANELROTOR(k,1) = panel_rotors(i);
         
-        if ~isempty(VISC.cellAIRFOILtemp)
-            VISC.cellAIRFOIL{k,1} = VISC.cellAIRFOILtemp{i};
+        if ~isempty(cellAIRFOILtemp)
+            VISC.cellAIRFOIL{k,1} = cellAIRFOILtemp{i};
         end
         
         INPU.vecSYM(k,1) = INPU.vecSYMtemp(i);
@@ -308,8 +307,8 @@ for i = 1:INPU.valPANELS
             INPU.vecN(k,1) = INPU.vecNtemp(i);
             INPU.vecM(k,1) = INPU.vecMtemp(i);
             
-            if ~isempty(VISC.cellAIRFOIL)
-                VISC.cellAIRFOIL{k,1} = VISC.cellAIRFOILtemp{i};
+            if ~isempty(cellAIRFOILtemp)
+                VISC.cellAIRFOIL{k,1} = cellAIRFOILtemp{i};
             end
             
             INPU.vecSYM(k,1) = 0;
