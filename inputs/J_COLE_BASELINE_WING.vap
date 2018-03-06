@@ -7,7 +7,7 @@
 		<flagTRI>FALSE</flagTRI>
 		<valMAXTIME>40</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.0008</valDELTIME>
+		<valDELTIME>0.002</valDELTIME>
 		<valDELTAE>0</valDELTAE>
 	</settings>
 

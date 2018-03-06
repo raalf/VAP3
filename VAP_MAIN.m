@@ -7,7 +7,7 @@ filename = 'inputs/J_COLE_BASELINE_WING.vap';
 
 seqALPHA = [2:1:15];
 
-for i = 1:length(seqALPHA)
+parfor i = 1:length(seqALPHA)
     OUTP(i) = fcnVAP_MAIN(filename, seqALPHA(i));
 end
 
