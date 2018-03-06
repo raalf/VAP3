@@ -1,4 +1,4 @@
-function OUTP = fcnVAP_MAIN(filename, alpha)
+function OUTP = fcnVAP_MAIN(filename, collective)
 
 if nargin == 0
     VAP_MAIN;
@@ -8,7 +8,8 @@ end
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
 
-COND.vecVEHALPHA = alpha
+COND.vecCOLLECTIVE = collective
+% COND.valMAXTIME = 8
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
@@ -17,7 +18,7 @@ FLAG.GPU = 0;
 
 FLAG.PRINT = 1;
 FLAG.PLOT = 0;
-FLAG.VISCOUS = 1;
+FLAG.VISCOUS = 0;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
 FLAG.PREVIEW = 0;
@@ -44,7 +45,7 @@ end
 
 %% Discretizing geometry into DVEs
 % Adding collective pitch to the propeller/rotor
-%     tINPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
+INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
 [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE);
 
 %% Advance Ratio

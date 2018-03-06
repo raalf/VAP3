@@ -36,7 +36,7 @@
 
 		<rotor>
 			<rpm>1719</rpm>
-			<collective>-30</collective>
+			<collective>0</collective>
 			
 			<dia>1.524</dia>
 
