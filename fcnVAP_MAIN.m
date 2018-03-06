@@ -2,6 +2,7 @@ function OUTP = fcnVAP_MAIN(filename, alpha)
 
 if nargin == 0
     VAP_MAIN;
+    return
 end
 
 %% Reading in geometry
@@ -13,8 +14,6 @@ COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
-
-COND.valMAXTIME = 20
 
 FLAG.PRINT = 1;
 FLAG.PLOT = 0;
