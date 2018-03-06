@@ -2,21 +2,21 @@ function OUTP = fcnVAP_MAIN(filename)
 
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
-COND.valMAXTIME = 10
+
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
-FLAG.PRINT   = 1;
-FLAG.PLOT    = 1;
+FLAG.PRINT = 1;
+FLAG.PLOT = 0;
+FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
 FLAG.PREVIEW = 0;
 FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
-FLAG.VISCOUS = 1;
 
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU] = fcnINITIALIZE(COND, INPU);

@@ -53,6 +53,7 @@
 			<M>1</M>
 
 			<panel>
+				<airfoil>MH-117</airfoil>
 				<symmetry>0</symmetry>
 				<N>1</N>
 				<section>
