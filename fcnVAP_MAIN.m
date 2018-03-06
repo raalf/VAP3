@@ -1,7 +1,13 @@
-function OUTP = fcnVAP_MAIN(filename)
+function OUTP = fcnVAP_MAIN(filename, alpha)
+
+if nargin == 0
+    VAP_MAIN;
+end
 
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
+
+COND.vecVEHALPHA = alpha
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
@@ -118,7 +124,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         end
         
         %% Forces
-        [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF);
+        [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
   
     end
     
