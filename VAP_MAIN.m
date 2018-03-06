@@ -30,7 +30,7 @@ filename = 'inputs/QuadRotor.vap'
 
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
 FLAG.RELAX = 1
-COND.valMAXTIME = 2
+COND.valMAXTIME = 20
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;

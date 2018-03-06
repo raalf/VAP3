@@ -2,7 +2,8 @@
 [Tt]humbs.db
 *.DS_Store
 
-VAP/
+GIF/
+timesteps/
 
 #LaTeX 
 *.aux
