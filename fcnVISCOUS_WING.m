@@ -76,7 +76,7 @@ for i = 1:max(vecDVEWING)
         end
 
         Cl  = reshape(pol(:,2,:),[],1);
-        Cdp = reshape(pol(:,4,:),[],1);
+        Cdp = reshape(pol(:,3,:),[],1);
         Re  = reshape(pol(:,8,:),[],1);
 
         %which rows of DVE belongs to the airfoil in this loop
@@ -88,11 +88,11 @@ for i = 1:max(vecDVEWING)
         Re = Re(~idxNans);
 
         % Compare Re data range to panel Re
-        if max(vecREDIST(isCurrentAirfoil)) > max(Re) && flagVERBOSE == 1
+        if max(vecREDIST(isCurrentAirfoil)) > max(Re)
             disp('Re higher than airfoil Re data.')
         end
         
-        if min(vecREDIST(isCurrentAirfoil)) < min(Re) && flagVERBOSE == 1
+        if min(vecREDIST(isCurrentAirfoil)) < min(Re)
             disp('Re lower than airfoil Re data.')
         end
 
@@ -111,7 +111,7 @@ for i = 1:max(vecDVEWING)
         % Check for stall and change the CL
         idxSTALL = (vecCNDIST > vecCLMAX) & isCurrentAirfoil;
         vecCNDIST(idxSTALL) = vecCLMAX(idxSTALL).*0.825;
-        if sum(idxSTALL) > 1 && flagVERBOSE == 1
+        if sum(idxSTALL) > 1
             disp('Airfoil sections have stalled.')
         end
 

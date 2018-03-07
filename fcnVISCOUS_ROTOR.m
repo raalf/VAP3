@@ -61,7 +61,7 @@ for k = 1:length(uniqueAirfoil)
     end
     
     Alpha  = reshape(pol(:,1,:),[],1);
-    Cdp = reshape(pol(:,4,:),[],1);
+    Cdp = reshape(pol(:,3,:),[],1);
     Re  = reshape(pol(:,8,:),[],1);
     
     
@@ -76,11 +76,11 @@ for k = 1:length(uniqueAirfoil)
     
     
     % Compare Re data range to panel Re
-    if max(vecREDIST(isCurrentAirfoil)) > max(Re) && flagVERBOSE == 1
+    if max(vecREDIST(isCurrentAirfoil)) > max(Re)
         disp('Re higher than airfoil Re data.')
     end
     
-    if min(vecREDIST(isCurrentAirfoil)) < min(Re) && flagVERBOSE == 1
+    if min(vecREDIST(isCurrentAirfoil)) < min(Re)
         disp('Re lower than airfoil Re data.')
     end
     
@@ -112,9 +112,9 @@ for k = 1:length(uniqueAirfoil)
     
     if sum(idxSTALL) > 1
         
-        if flagVERBOSE == 1
+        
             disp('Airfoil sections have stalled.')
-        end
+        
         % Make apply stall model using empirical equations
         % cn = cd,90*(sin(alpha_eff))/(0.56+0.44sin(alpha_eff))
         % ct = cd,0*cos(alpha_eff)/2
