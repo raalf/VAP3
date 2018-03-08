@@ -1,10 +1,11 @@
-function [matCDPDIST] = fcnVISCOUS_ROTOR(flagVERBOSE, valKINV, ...
+function [matDPDIST, vecDELNDIST] = fcnVISCOUS_ROTOR( valKINV, ...
     vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, cellAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF)
 % This function applies a viscous correction to rotors using look up tables
 % and applies a high angle stall model.
 %
 % OUTPUT
 %   matCDPDIST - CDP with direction accounted for
+%   vecDELNDIST - The change in lift distribution due to stall
 
 % Calculate chordline direction at midspan of each dve
 avgle = (matVLST(matDVE(:,1),:)+matVLST(matDVE(:,2),:))./2;
@@ -111,10 +112,7 @@ for k = 1:length(uniqueAirfoil)
     F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
     
     if sum(idxSTALL) > 1
-        
-        
-            disp('Airfoil sections have stalled.')
-        
+        disp('Airfoil sections have stalled.')      
         % Make apply stall model using empirical equations
         % cn = cd,90*(sin(alpha_eff))/(0.56+0.44sin(alpha_eff))
         % ct = cd,0*cos(alpha_eff)/2
@@ -141,4 +139,7 @@ end
 matCDPDIST = zeros(size(matUINF,1),3);
 matCDPDIST(vecDVELE>0,:) = matUDIR(ledves,:).*vecCDPDIST;
 
+matDPDIST = 0.5*(sum(vecDVEAREA(rows),2).*(vecV.^2)).*matCDPDIST;
+matDELCNDIST = (vecCNDIST0- vecCNDIST);
+vecDELNDIST = 0.5*(sum(vecDVEAREA(rows),2).*(vecV.^2)).*matDELCNDIST;
 end

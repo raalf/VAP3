@@ -1,4 +1,4 @@
-function [vecCT, vecCP] = fcnROTORFORCE(matROTORCDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE)
+function [vecCT, vecCP] = fcnROTORFORCE(matROTORDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE, vecDELNDIST)
 % Computes the thrust and power coefficients of each rotor
 
 % Thrust direction in global reference frame
@@ -19,8 +19,8 @@ eq = matUINFROT./(sqrt(matUINFROT(:,1).^2+matUINFROT(:,2).^2+matUINFROT(:,3).^2)
 matVELDIR = matUINF./(sqrt(matUINF(:,1).^2+matUINF(:,2).^2+matUINF(:,3).^2));
 
 % Force distributions
-vecTHRUSTDIST = dot(vecDVENFREE.*en,et,2) + dot(vecDVENIND.*en,et,2) + dot(inddrag.*matVELDIR,et,2) + dot(matROTORCDP,et,2);
-vecTORQUEDIST = vecQARM.*(dot(vecDVENFREE.*en,eq,2)) + vecQARM.*(dot(vecDVENIND.*en,eq,2)) + vecQARM.*(dot(inddrag.*matVELDIR,eq,2)) + vecQARM.*(dot(matROTORCDP,eq,2));
+vecTHRUSTDIST = dot(vecDVENFREE.*en,et,2) + dot(vecDVENIND.*en,et,2) + dot(inddrag.*matVELDIR,et,2) + dot(matROTORDP,et,2) + dot(vecDELNDIST.*en,et,2);
+vecTORQUEDIST = vecQARM.*(dot(vecDVENFREE.*en,eq,2)) + vecQARM.*(dot(vecDVENIND.*en,eq,2)) + vecQARM.*(dot(inddrag.*matVELDIR,eq,2)) + vecQARM.*(dot(matROTORDP,eq,2));
 
 for i = 1:max(vecDVEROTOR)
     idx = vecDVEROTOR == i;

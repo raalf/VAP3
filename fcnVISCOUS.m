@@ -1,4 +1,4 @@
-function [vecCLv, vecCD, vecPREQ, vecLD, matROTORCDP] = fcnVISCOUS(vecCL, vecCDI, vecVEHVINF, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+function [vecCLv, vecCD, vecPREQ, vecLD, matROTORDP, vecDELNDIST] = fcnVISCOUS(vecCL, vecCDI, vecVEHVINF, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL, valVEHICLES, vecDVEVEHICLE, vecDVEROTOR, matUINF, valTIMESTEP, valMAXTIME, valDELTIME, vecROTORRPM, matDVE, matVLST,...
@@ -9,7 +9,8 @@ vecCLv = nan(valVEHICLES,1);
 vecCD = nan(valVEHICLES,1);
 vecPREQ = nan(valVEHICLES,1);
 vecLD = nan(valVEHICLES,1);
-matROTORCDP = zeros(valNELE,3);
+matROTORDP = zeros(valNELE,3);
+vecDELNDIST = zeros(valNELE,1);
 
 if flagVISCOUS == 1
     for i = 1:valVEHICLES
@@ -32,8 +33,8 @@ if flagVISCOUS == 1
                 [matWUINF] = fcnINDVEL(matCENTER(idxvehrotor==1,:), valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecSYM,...
                     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI, flagSTEADY, flagGPU);
 
-                [matROTORCDP(idxvehrotor,:)] = fcnVISCOUS_ROTOR(flagVERBOSE, ...
-                    valKINV, vecDVEHVCRD(idxvehrotor==1), vecN(vecPANELROTOR>0), vecM(vecPANELROTOR>0), vecDVELE(idxvehrotor==1), vecDVEPANEL(idxvehrotor==1), cellAIRFOIL(vecPANELROTOR>0), vecDVENFREE(idxvehrotor==1)+vecDVENIND(idxvehrotor==1), vecDVEAREA(idxvehrotor==1),matUINF(idxvehrotor==1,:), matVLST, matDVE(idxvehrotor==1,:), matWUINF);
+                [matROTORDP(idxvehrotor,:), vecDELNDIST(idxvehrotor)] = fcnVISCOUS_ROTOR(valKINV,...
+                    vecDVEHVCRD(idxvehrotor==1), vecN(vecPANELROTOR>0), vecM(vecPANELROTOR>0), vecDVELE(idxvehrotor==1), vecDVEPANEL(idxvehrotor==1), cellAIRFOIL(vecPANELROTOR>0), vecDVENFREE(idxvehrotor==1)+vecDVENIND(idxvehrotor==1), vecDVEAREA(idxvehrotor==1),matUINF(idxvehrotor==1,:), matVLST, matDVE(idxvehrotor==1,:), matWUINF);
             end 
         end
     end 
