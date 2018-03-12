@@ -43,6 +43,9 @@ if FLAG.PRINT == 1
     disp(' ');
 end
 
+% Check if the files required by the viscous calculations exist
+[FLAG] = fcnVISCOUSFILECHECK(FLAG, VISC);
+
 %% Discretizing geometry into DVEs
 % Adding collective pitch to the propeller/rotor
 INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
