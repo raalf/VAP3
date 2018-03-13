@@ -1,4 +1,4 @@
-function OUTP = fcnVAP_MAIN(filename, collective)
+function OUTP = fcnVAP_MAIN(filename)
 
 if nargin == 0
     VAP_MAIN;
@@ -8,7 +8,7 @@ end
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
 
-COND.vecCOLLECTIVE = collective
+% COND.vecCOLLECTIVE = collective
 % COND.valMAXTIME = 8
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
@@ -48,7 +48,9 @@ end
 
 %% Discretizing geometry into DVEs
 % Adding collective pitch to the propeller/rotor
-INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
+if ~isempty(COND.vecCOLLECTIVE)
+    INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
+end
 [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE);
 
 %% Advance Ratio
@@ -62,7 +64,7 @@ end
 
 %% Add kinematic conditions to D-Matrix
 [SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
-[matD] = fcnKINCON(matD, SURF.valNELE, SURF.matDVE, SURF.matCENTER, SURF.matVLST, SURF.matDVENORM, SURF.vecK, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.vecDVELESWP, SURF.vecDVETESWP, SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, INPU.vecSYM, FLAG.GPU);
+[matD] = fcnKINCON(matD, SURF, INPU, FLAG);
 
 %% Preparing to timestep
 % Building wing resultant
@@ -120,7 +122,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         %% Relaxing wake
         if valTIMESTEP > 2 && FLAG.RELAX == 1
             WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG);
-
+            
             % Creating and solving WD-Matrix
             [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
             [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
@@ -128,7 +130,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         %% Forces
         [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
-  
+        
     end
     
     %% Post-timestep outputs
