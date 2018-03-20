@@ -19,7 +19,7 @@ dvetype = zeros(length(dvenum),1);
 
 %set singfct to zero temporarily. Why? Not gonna do this, we have NaN CL because of this. T.D.K 2017-04-26
 % [a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, zeros(size(SURF.vecK,1),1), SURF.matDVE, SURF.matVLST, SURF.vecDVEHVSPN, SURF.vecDVEHVCRD,SURF.vecDVEROLL, SURF.vecDVEPITCH, vecDVEYAW, SURF.vecDVELESWP, SURF.vecDVETESWP, vecSYM);
-[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, SURF.vecK, SURF.matDVE, SURF.matVLST, SURF.vecDVEHVSPN, SURF.vecDVEHVCRD,SURF.vecDVEROLL, SURF.vecDVEPITCH, vecDVEYAW, SURF.vecDVELESWP, SURF.vecDVETESWP, INPU.vecSYM, FLAG.GPU);
+[a, b, c] = fcnDVEINF(dvenum, dvetype, fpg, SURF.vecK, SURF.matDVE, SURF.matVLST, SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.vecDVELESWP, SURF.vecDVETESWP, INPU.vecSYM, FLAG.GPU);
 
 % List of normals we are to dot the above with
 normals = repmat(SURF.matDVENORM,SURF.valNELE,1); % Repeated so we can dot all at once

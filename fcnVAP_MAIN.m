@@ -1,4 +1,4 @@
-function OUTP = fcnVAP_MAIN(filename)
+function OUTP = fcnVAP_MAIN(filename, alpha, collective)
 
 if nargin == 0
     VAP_MAIN;
@@ -8,8 +8,9 @@ end
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
 
-% COND.vecCOLLECTIVE = collective
-% COND.valMAXTIME = 8
+COND.vecCOLLECTIVE = collective;
+COND.vecVEHALPHA = alpha;
+COND.valMAXTIME = 3;
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;

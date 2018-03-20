@@ -34,7 +34,7 @@ if flagVISCOUS == 1
                     valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN, vecWDVEHVCRD, vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI, flagSTEADY, flagGPU);
 
                 [matROTORDP(idxvehrotor,:), vecDELNDIST(idxvehrotor)] = fcnVISCOUS_ROTOR(valKINV,...
-                    vecDVEHVCRD(idxvehrotor==1), vecN(vecPANELROTOR>0), vecM(vecPANELROTOR>0), vecDVELE(idxvehrotor==1), vecDVEPANEL(idxvehrotor==1), cellAIRFOIL(vecPANELROTOR>0), vecDVENFREE(idxvehrotor==1)+vecDVENIND(idxvehrotor==1), vecDVEAREA(idxvehrotor==1),matUINF(idxvehrotor==1,:), matVLST, matDVE(idxvehrotor==1,:), matWUINF);
+                    vecDVEHVCRD(idxvehrotor==1), vecN, vecM, vecDVELE(idxvehrotor==1), vecDVEPANEL(idxvehrotor==1), cellAIRFOIL, vecDVENFREE(idxvehrotor==1)+vecDVENIND(idxvehrotor==1), vecDVEAREA(idxvehrotor==1),matUINF(idxvehrotor==1,:), matVLST, matDVE(idxvehrotor==1,:), matWUINF);
             end 
         end
     end 
