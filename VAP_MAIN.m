@@ -3,12 +3,6 @@ clear
 warning off
 
 filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-% filename = 'inputs/J_COLE_X57_CRUISE_PROP.vap'
-% filename = 'inputs/J_COLE_X57_CRUISE_PROP_20_SECTIONS.vap'
- 
-% seqALPHA = [2:1:15];
-% vecCOLLECTIVE = [-50:2:10];
-vecCOLLECTIVE = 0;
 
 OUTP = fcnVAP_MAIN(filename, 5, 0);
 
