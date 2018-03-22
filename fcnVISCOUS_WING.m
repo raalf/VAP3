@@ -1,22 +1,30 @@
-function [valCL, valCD, valPREQ, valLD] = fcnVISCOUS_WING(valCL, valCDI, valVINF, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+function [valCL, valCD, valPREQ, valLD] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-    valFPWIDTH, valINTERF, vecDVEROLL, matUINF)
+    valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF)
 
-q_inf = ((valVINF^2)*valDENSITY)/2;
+% Calculate chordline direction at midspan of each dve
+avgle = (matVLST(matDVE(:,1),:)+matVLST(matDVE(:,2),:))./2;
+avgte = (matVLST(matDVE(:,3),:)+matVLST(matDVE(:,4),:))./2;
+tempDIF = avgte - avgle;
+matCRDLINE = (tempDIF)./(repmat(sqrt(sum(tempDIF.^2,2)),[1,3]));
+% Calculate velocity with induced effects
+vecV = dot(matUINF(vecDVEWING>0) + matWUINF(vecDVEWING>0), matCRDLINE(vecDVEWING>0),2);
+
+% Compute dynamic pressure
+q_infandind = ((vecV.^2)*valDENSITY)/2; % With both freestream and induced velocities
+q_inf = ((valVEHVINF^2)*valDENSITY)/2; % With only freestream velocities
+
+% Calculate induced drag as a force
 di = valCDI*valAREA*q_inf;
 
 % Summing freestream and induced forces of each DVE
 vecDVECN = (vecDVENFREE + vecDVENIND);
-vecDVECL = (vecDVELFREE + vecDVELIND);
-vecDVECY = (vecDVESFREE + vecDVESIND);
 
 [ledves, ~, ~] = find(vecDVELE > 0);
 lepanels = vecDVEPANEL(ledves);
 
 vecCNDIST = [];
-vecCLDIST = [];
-vecCYDIST = [];
 matXYZDIST = [];
 vecLEDVEDIST = [];
 vecREDIST = [];
@@ -35,7 +43,6 @@ for i = 1:max(vecDVEWING)
     end
     
     m = m(1);
-    len = length(vecCLDIST); % start point for this panel in the vectors
     
     % Matrix of how much we need to add to an index to get the next chordwise element
     % It is done this way because n can be different for each panel. Unlike in the wake,
@@ -45,11 +52,8 @@ for i = 1:max(vecDVEWING)
 
     rows = repmat(idxdve,1,m) + uint16(tempm);
     
-    % This will NOT work with rotors, it does not take into
-    % account freestream! UINF^2*AREA should be the denominator
-    vecCNDIST = [vecCNDIST; (sum(vecDVECN(rows),2).*2)./((valVINF^2)*sum(vecDVEAREA(rows),2))];
-    %vecCLDIST = [vecCLDIST; (sum(vecDVECL(rows),2).*2)./((valVINF^2)*sum(vecDVEAREA(rows),2))];
-    %vecCYDIST = [vecCYDIST; (sum(vecDVECY(rows),2).*2)./((valVINF^2)*sum(vecDVEAREA(rows),2))];
+    % Note this CN is non-dimensionalized with Vinf + Vind
+    vecCNDIST = [vecCNDIST; (sum(vecDVECN(rows),2).*2)./((mean(vecV(rows),2).^2).*sum(vecDVEAREA(rows),2))];
     
     % The average coordinates for this row of elements
     matXYZDIST = [matXYZDIST; mean(permute(reshape(matCENTER(rows,:)',3,[],m),[2 1 3]),3)];
@@ -58,7 +62,8 @@ for i = 1:max(vecDVEWING)
     vecLEDVEDIST = [vecLEDVEDIST; idxdve];
     
     %% Wing/horizontal stabilizer lift and drag
-    vecREDIST = [vecREDIST; valVINF.*2.*sum(vecDVEHVCRD(rows),2)./valKINV];
+    % Note that Re is compute with Vinf + Vind
+    vecREDIST = [vecREDIST; mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV];
     vecAREADIST = [vecAREADIST; sum(vecDVEAREA(rows),2)];
     
     vecCDPDIST = nan(size(vecCNDIST)); % pre-allocate the array to store viscous drag results
@@ -117,13 +122,14 @@ for i = 1:max(vecDVEWING)
 
         F = scatteredInterpolant(Re,Cl,Cdp,'linear');
         vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
-
         clear pol foil
     end
-    
+	% CN in terms of Vinf instead of Vinf + Vind
+    vecCNDIST = vecCNDIST.*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
 end
 
-dprof = sum(vecCDPDIST.*q_inf.*vecAREADIST);
+% dimensionalize in terms of both Vinf and Vind
+dprof = sum(vecCDPDIST.*mean(q_infandind(rows),2).*vecAREADIST);
 
 % This function does not account for symmetry well, it is all or nothing with symmetry,
 % but it really should be wing-by-wing
@@ -158,7 +164,7 @@ dvt = dvt*q_inf;
 
 dfuselage = 0;
 
-tempSS = valVINF*valFPWIDTH/valKINV;
+tempSS = valVEHVINF*valFPWIDTH/valKINV;
 
 for ii = 1:valFPANELS
     Re_fus = (ii-0.5)*tempSS;
@@ -183,13 +189,12 @@ dtot = dtot + dint;
 
 valCD = dtot/(q_inf*valAREA);
 
-
 %% Adjusting CL for stall
 valCL = sum(vecCNDIST.*vecAREADIST.*cos(vecDVEROLL(vecLEDVEDIST)))/valAREA*2;
 
 %% Final calculations
 valLD = valCL./valCD;
-valPREQ = dtot.*valVINF;
+valPREQ = dtot.*valVEHVINF;
 
 end
 
