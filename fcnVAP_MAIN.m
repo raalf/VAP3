@@ -10,14 +10,13 @@ end
 
 COND.vecCOLLECTIVE = collective;
 COND.vecVEHALPHA = alpha;
-COND.valMAXTIME = 3;
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
-FLAG.PRINT = 0;
+FLAG.PRINT = 1;
 FLAG.PLOT = 0;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
