@@ -10,7 +10,7 @@ function [w_total] = fcnINDVEL(fpg, valTIMESTEP, SURF, WAKE, INPU, FLAG)
 %   w_total - numpoints x 3  induced velocities
 
 % velocities from surface elements
-[w_surf] = fcnSDVEVEL(fpg, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCOEFF, SURF.vecK, SURF.vecDVEHVSPN, SURF.vecDVEHVCRD,SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.vecDVELESWP, SURF.vecDVETESWP, INPU.vecSYM, FLAG.GPU);
+[w_surf] = fcnSDVEVEL(fpg, SURF, INPU, FLAG);
 
 % velocities from wake elements
 w_wake = fcnWDVEVEL(fpg, valTIMESTEP, WAKE, SURF, FLAG);
