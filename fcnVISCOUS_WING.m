@@ -24,17 +24,23 @@ vecDVECN = (vecDVENFREE + vecDVENIND);
 [ledves, ~, ~] = find(vecDVELE > 0);
 lepanels = vecDVEPANEL(ledves);
 
-vecCNDIST = [];
-matXYZDIST = [];
-vecLEDVEDIST = [];
-vecREDIST = [];
-vecAREADIST = [];
+vecCNDIST    = nan(size(ledves,1),1);
+matXYZDIST   = nan(size(ledves,1),3);
+vecLEDVEDIST = nan(size(ledves,1),1);
+vecREDIST    = nan(size(ledves,1),1);
+vecAREADIST  = nan(size(ledves,1),1);
+vecCDPDIST   = nan(size(ledves,1),1); % pre-allocate the array to store viscous drag results
+vecCLMAX     = nan(size(ledves,1),1);
+dprofPerWing = nan(max(vecDVEWING),1);
 
 for i = 1:max(vecDVEWING)
     
     %% Getting the CL, CY, CN distribution
-    idxdve = uint16(ledves(vecDVEWING(ledves) == i));
-    idxpanel = lepanels(vecDVEWING(ledves) == i);
+    isCurWing = vecDVEWING(ledves) == i;
+    
+    idxdve = uint16(ledves(isCurWing));
+    idxpanel = lepanels(isCurWing);
+    
     
     m = vecM(idxpanel);
     if any(m - m(1))
@@ -53,21 +59,20 @@ for i = 1:max(vecDVEWING)
     rows = repmat(idxdve,1,m) + uint16(tempm);
     
     % Note this CN is non-dimensionalized with Vinf + Vind
-    vecCNDIST = [vecCNDIST; (sum(vecDVECN(rows),2).*2)./((mean(vecV(rows),2).^2).*sum(vecDVEAREA(rows),2))];
+    vecCNDIST(isCurWing) = (sum(vecDVECN(rows),2).*2)./((mean(vecV(rows),2).^2).*sum(vecDVEAREA(rows),2));
     
     % The average coordinates for this row of elements
-    matXYZDIST = [matXYZDIST; mean(permute(reshape(matCENTER(rows,:)',3,[],m),[2 1 3]),3)];
+    matXYZDIST(isCurWing,:) = mean(permute(reshape(matCENTER(rows,:)',3,[],m),[2 1 3]),3);
     
     % The leading edge DVE for the distribution
-    vecLEDVEDIST = [vecLEDVEDIST; idxdve];
+    vecLEDVEDIST(isCurWing) = idxdve;
     
     %% Wing/horizontal stabilizer lift and drag
     % Note that Re is compute with Vinf + Vind
-    vecREDIST = [vecREDIST; mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV];
-    vecAREADIST = [vecAREADIST; sum(vecDVEAREA(rows),2)];
+    vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
+    vecAREADIST(isCurWing) = sum(vecDVEAREA(rows),2);
     
-    vecCDPDIST = nan(size(vecCNDIST)); % pre-allocate the array to store viscous drag results
-    vecCLMAX   = nan(size(vecCNDIST));
+
     
     % collect all the unique airfoils and load them
     [uniqueAirfoil,~,idxAirfoil] = unique(cellAIRFOIL);
@@ -85,7 +90,7 @@ for i = 1:max(vecDVEWING)
         Re  = reshape(pol(:,8,:),[],1);
 
         %which rows of DVE belongs to the airfoil in this loop
-        isCurrentAirfoil = idxAirfoil(idxpanel) == k;
+        isCurrentAirfoil = isCurWing & idxAirfoil(lepanels) == k;
 
         idxNans = isnan(Cl) | isnan(Cdp) | isnan(Re);
         Cl = Cl(~idxNans);
@@ -128,17 +133,28 @@ for i = 1:max(vecDVEWING)
         clear pol foil
     end
 	% CN in terms of Vinf instead of Vinf + Vind
-    vecCNDIST = vecCNDIST.*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
+    vecCNDIST(isCurWing) = vecCNDIST(isCurWing).*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
+
+    % dimensionalize in terms of both Vinf and Vind
+    dprofPerWing(i) = sum(vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing));
 end
 
-% dimensionalize in terms of both Vinf and Vind
-dprof = sum(vecCDPDIST.*mean(q_infandind(rows),2).*vecAREADIST);
 
-% This function does not account for symmetry well, it is all or nothing with symmetry,
-% but it really should be wing-by-wing
-if any(vecSYM) == 1
-    dprof = 2.*dprof;
+% create temporary variables to determine which panel belongs to which wing
+% in order to work out the symmetry per wing
+
+temp1 = unique([vecDVEPANEL,vecDVEWING],'rows');
+vecPanelWingNumber(temp1(:,1),1) = temp1(:,2);
+vecSYMWING = false(max(vecPanelWingNumber),1);
+for j = 1:max(vecPanelWingNumber)
+    vecSYMWING(j,1) = any(vecSYM(vecPanelWingNumber == j));
 end
+
+% Multiply vecSYMIWING profile drag by 2
+dprofPerWing(vecSYMWING) = dprofPerWing(vecSYMWING)*2;
+
+% sum profile drag per wing
+dprof = sum(dprofPerWing);
 
 %% Vertical tail drag
 
