@@ -1,7 +1,4 @@
-function [en, nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCOEFF...
-    ,vecK,matDVE,valNELE,matCENTER,matVLST,matUINF,vecDVELESWP,vecDVEMCSWP,vecDVEHVSPN,vecDVEHVCRD,vecDVEROLL,...
-    vecDVEPITCH,vecDVEYAW,vecDVELE,matADJE,valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,...
-    vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, vecDVESYM, vecDVETESWP, matVEHROT, vecDVEVEHICLE, flagTRI, flagSTEADY, flagGPU)
+function [en, nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(valTIMESTEP, SURF, WAKE, VEHI, FLAG, INPU)
 %DVE element normal forces
 
 % //computes lift and side force/density acting on surface DVE's. The local
@@ -38,43 +35,43 @@ function [en, nfree,nind,liftfree,liftind,sidefree,sideind] = fcnDVENFORCE(matCO
 %for triangle elements:
 %we find all velocities directly at the LE
 
-if flagTRI ==1  %tri elements
-    idx1 = ones(valNELE,1) == 1 ;
+if FLAG.TRI ==1  %tri elements
+    idx1 = ones(SURF.valNELE,1) == 1 ;
     
 else %quad elements,
-    idx1 = vecDVELE == 1; %index of LE vectors (will be the same)
+    idx1 = SURF.vecDVELE == 1; %index of LE vectors (will be the same)
 end
 % find vector across element (should already have this somewhere...)
 % for first spanwise row, vector is LE vect, for all other spanwise rows,
 % vector is halfchord vect.
 
 % vector of bound vortex along leading edge for LE row
-% tempa(idx1,1) = tan(vecDVELESWP(idx1));
-s = zeros(valNELE,3);
-s(idx1,:) =( matVLST(matDVE(idx1,2),:) -matVLST(matDVE(idx1,1),:) )  ./ repmat((vecDVEHVSPN(idx1).*2),1,3); %?? why is the S vector non-dim. to the span?
+% tempa(idx1,1) = tan(SURF.vecDVELESWP(idx1));
+s = zeros(SURF.valNELE,3);
+s(idx1,:) =( SURF.matVLST(SURF.matDVE(idx1,2),:) -SURF.matVLST(SURF.matDVE(idx1,1),:) )  ./ repmat((SURF.vecDVEHVSPN(idx1).*2),1,3); %?? why is the S vector non-dim. to the span?
 
 % vector along midchord for remaining elements
 if any(idx1 == 0)
-    tempa = zeros(valNELE,1);
-    tempa(idx1==0,1) = tan(vecDVEMCSWP(idx1==0));
-    tempa= [tempa ones(valNELE,1)  zeros(valNELE,1)];
+    tempa = zeros(SURF.valNELE,1);
+    tempa(idx1==0,1) = tan(SURF.vecDVEMCSWP(idx1==0));
+    tempa= [tempa ones(SURF.valNELE,1)  zeros(SURF.valNELE,1)];
     
     % global vectors to find ind. velocitiess
-    s(idx1 ==0,:)= fcnSTARGLOB(tempa(idx1==0,:), vecDVEROLL(idx1==0), vecDVEPITCH(idx1==0), vecDVEYAW(idx1==0));
+    s(idx1 ==0,:)= fcnSTARGLOB(tempa(idx1==0,:), SURF.vecDVEROLL(idx1==0), SURF.vecDVEPITCH(idx1==0), SURF.vecDVEYAW(idx1==0));
     
     %using the verticies to do this doesn't match the results from above for idx1 ==0
-    % s(idx1==0,:) =(( (matVLST(matDVE(idx1,2),:) + matVLST(matDVE(idx1,3),:))./2 ) -...
-    %     ( (matVLST(matDVE(idx1,1),:) + matVLST(matDVE(idx1,4),:))./2 ) )./ (vecDVEHVSPN.*2);
+    % s(idx1==0,:) =(( (SURF.matVLST(SURF.matDVE(idx1,2),:) + SURF.matVLST(SURF.matDVE(idx1,3),:))./2 ) -...
+    %     ( (SURF.matVLST(SURF.matDVE(idx1,1),:) + SURF.matVLST(SURF.matDVE(idx1,4),:))./2 ) )./ (SURF.vecDVEHVSPN.*2);
     
 end
 
 % 80% of halfspan
-eta8 = vecDVEHVSPN*0.8;
+eta8 = SURF.vecDVEHVSPN*0.8;
 
 % UxS
-% tempb = cross(repmat(matUINF,[valNELE,1]),s,2);
-nUINF = matUINF ./ sqrt(sum(matUINF.^2,2));
-tempb = cross(matUINF, s, 2);
+% tempb = cross(repmat(SURF.matUINF,[SURF.valNELE,1]),s,2);
+nUINF = SURF.matUINF ./ sqrt(sum(SURF.matUINF.^2,2));
+tempb = cross(SURF.matUINF, s, 2);
 
 
 uxs = sqrt(sum(abs(tempb).^2,2));
@@ -86,10 +83,10 @@ len = size(nUINF,1);
 % I didn't want to do this, Alton made me because he is cruel and gross
 % T.D.K 2017-07-10
 spandir = zeros(len,3);
-for i = 1:max(vecDVEVEHICLE)
-%     l = sum(nonzeros(vecDVEVEHICLE == i));
-%     spandir(vecDVEVEHICLE == i,:) = fcnSTARGLOB([0 1 0], matVEHROT(i,1), matVEHROT(i,2), matVEHROT(i,3));
-    spandir(vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(matVEHROT(i,3), matVEHROT(i,1), matVEHROT(i,2),'ZXY'),length(nonzeros(vecDVEVEHICLE == i)),1);
+for i = 1:max(SURF.vecDVEVEHICLE)
+%     l = sum(nonzeros(SURF.vecDVEVEHICLE == i));
+%     spandir(SURF.vecDVEVEHICLE == i,:) = fcnSTARGLOB([0 1 0], VEHI.matVEHROT(i,1), VEHI.matVEHROT(i,2), VEHI.matVEHROT(i,3));
+    spandir(SURF.vecDVEVEHICLE == i,:) = repmat([0 1 0] * angle2dcm(VEHI.matVEHROT(i,3), VEHI.matVEHROT(i,1), VEHI.matVEHROT(i,2),'ZXY'),length(nonzeros(SURF.vecDVEVEHICLE == i)),1);
 end
 
 % Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
@@ -97,7 +94,7 @@ el = cross(nUINF,spandir,2);
 
 % the side force direction eS=UxeL/|UxeL|
 % clear tempa tempb
-tempc = cross(el,matUINF,2);
+tempc = cross(el,SURF.matUINF,2);
 es = tempc.*1./ repmat((sqrt(sum(abs(tempc).^2,2)) ),1,3);
 
 % clear tempa
@@ -105,24 +102,24 @@ es = tempc.*1./ repmat((sqrt(sum(abs(tempc).^2,2)) ),1,3);
 
 % N_free = (A*2*eta + C/3*2*eta*eta*eta)*UxS;
 % if first row, A=A, B=B, C=C
-A = zeros(1,valNELE);
-B = zeros(1,valNELE);
-C = zeros(1,valNELE);
+A = zeros(1,SURF.valNELE);
+B = zeros(1,SURF.valNELE);
+C = zeros(1,SURF.valNELE);
 
-A(idx1) = matCOEFF(idx1,1);
-B(idx1) = matCOEFF(idx1,2);
-C(idx1) = matCOEFF(idx1,3);
+A(idx1) = SURF.matCOEFF(idx1,1);
+B(idx1) = SURF.matCOEFF(idx1,2);
+C(idx1) = SURF.matCOEFF(idx1,3);
 % if any other row, A= A-Aupstream, B= B-Bupstream, C= C-Cupstream
 
-idx2 = vecDVELE == 1; %idx2 since we need to do this even for triangles
+idx2 = SURF.vecDVELE == 1; %idx2 since we need to do this even for triangles
 dvenum = find(idx2==0); %dvenum in question
-idxf = matADJE((ismember(matADJE(:,1), dvenum) & matADJE(:,2) == 1),3); %upstream dve num
-A(idx2 ==0) = (matCOEFF(idx2==0,1)-matCOEFF(idxf,1));
-B(idx2 ==0) = (matCOEFF(idx2==0,2)-matCOEFF(idxf,2));
-C(idx2 ==0) = (matCOEFF(idx2==0,3)-matCOEFF(idxf,3));
+idxf = SURF.matADJE((ismember(SURF.matADJE(:,1), dvenum) & SURF.matADJE(:,2) == 1),3); %upstream dve num
+A(idx2 ==0) = (SURF.matCOEFF(idx2==0,1)-SURF.matCOEFF(idxf,1));
+B(idx2 ==0) = (SURF.matCOEFF(idx2==0,2)-SURF.matCOEFF(idxf,2));
+C(idx2 ==0) = (SURF.matCOEFF(idx2==0,3)-SURF.matCOEFF(idxf,3));
 
 
-nfree = ((A .*2 .* vecDVEHVSPN'+  C./3.*2.*vecDVEHVSPN'.*vecDVEHVSPN'.*vecDVEHVSPN') .*uxs')';
+nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 
 %% induced force
 % for triangluar elements we compute velocities directly at LE. idx1 = 1
@@ -135,11 +132,11 @@ nfree = ((A .*2 .* vecDVEHVSPN'+  C./3.*2.*vecDVEHVSPN'.*vecDVEHVSPN'.*vecDVEHVS
 %	3 velocities are average of element center and upstream DVE center
 
 % element leading edge midpoint of LE elements only:
-xle = (matVLST(matDVE(idx1,1),:) + matVLST(matDVE(idx1,2),:))/2;
+xle = (SURF.matVLST(SURF.matDVE(idx1,1),:) + SURF.matVLST(SURF.matDVE(idx1,2),:))/2;
 
 % fpg will be all points that we grab velocity at. It will be
-% valNELE x XYZ x 3 for now, then we will reshape after
-fpg = zeros(valNELE,3,3);
+% SURF.valNELE x XYZ x 3 for now, then we will reshape after
+fpg = zeros(SURF.valNELE,3,3);
 
 % leading edge row:
 fpg(idx1,:,1) = (xle + s(idx1==1,:).*repmat(-eta8(idx1==1),1,3)); %left side
@@ -148,18 +145,18 @@ fpg(idx1,:,3) = (xle + s(idx1==1,:).*repmat(eta8(idx1==1),1,3)); %right ride
 
 % Remaining rows:
 if any(idx1 == 0)
-    fpg(idx1==0,:,1) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(-eta8(idx1==0),1,3)); %left side
-    fpg(idx1==0,:,2) = matCENTER(idx1==0,:) ; %middle
-    fpg(idx1==0,:,3) = (matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(eta8(idx1==0),1,3)); %right ride
+    fpg(idx1==0,:,1) = (SURF.matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(-eta8(idx1==0),1,3)); %left side
+    fpg(idx1==0,:,2) = SURF.matCENTER(idx1==0,:) ; %middle
+    fpg(idx1==0,:,3) = (SURF.matCENTER(idx1==0,:) + s(idx1==0,:).*repmat(eta8(idx1==0),1,3)); %right ride
 end
 
 % if there are any elements in not the first row, we will append all the LE center
 % points to the bottom, necessary for averaging. the if statement will be ignored if all m=1.
 % need to remove tan, we should already have the vector
 if any(idx1 == 0)
-    fpg(1:(valNELE+sum(idx1)),:,1) = [fpg(1:valNELE,:,1) ; (matCENTER(idx1==1,:) + repmat(tan(vecDVEMCSWP(idx1==1)).*-eta8(idx1==1),1,3))]; %left side
-    fpg(1:(valNELE+sum(idx1)),:,2) = [fpg(1:valNELE,:,2) ; matCENTER(idx1==1,:)] ; %middle
-    fpg(1:(valNELE+sum(idx1)),:,3) = [fpg(1:valNELE,:,3) ; (matCENTER(idx1==1,:) + repmat(tan(vecDVEMCSWP(idx1==1)).*eta8(idx1==1),1,3))]; %right ride
+    fpg(1:(SURF.valNELE+sum(idx1)),:,1) = [fpg(1:SURF.valNELE,:,1) ; (SURF.matCENTER(idx1==1,:) + repmat(tan(SURF.vecDVEMCSWP(idx1==1)).*-eta8(idx1==1),1,3))]; %left side
+    fpg(1:(SURF.valNELE+sum(idx1)),:,2) = [fpg(1:SURF.valNELE,:,2) ; SURF.matCENTER(idx1==1,:)] ; %middle
+    fpg(1:(SURF.valNELE+sum(idx1)),:,3) = [fpg(1:SURF.valNELE,:,3) ; (SURF.matCENTER(idx1==1,:) + repmat(tan(SURF.vecDVEMCSWP(idx1==1)).*eta8(idx1==1),1,3))]; %right ride
 end
 
 len = size(fpg,1);
@@ -169,8 +166,7 @@ len = size(fpg,1);
 fpg = reshape(permute(fpg,[1 3 2]),[],3);
 
 % get velocities
-[w_total] = fcnINDVEL(fpg,valNELE, matDVE, matVLST, matCOEFF, vecK, vecDVEHVSPN, vecDVEHVCRD, vecDVEROLL, vecDVEPITCH, vecDVEYAW, vecDVELESWP, vecDVETESWP, vecDVESYM,...
-    valWNELE, matWDVE, matWVLST, matWCOEFF, vecWK, vecWDVEHVSPN,vecWDVEHVCRD,vecWDVEROLL, vecWDVEPITCH, vecWDVEYAW, vecWDVELESWP, vecWDVETESWP, valWSIZE, valTIMESTEP, flagTRI, flagSTEADY, flagGPU);
+w_total = fcnINDVEL(fpg, valTIMESTEP, SURF, WAKE, INPU, FLAG);
 
 % undo reshape and permute
 % matrix is now LE vels for all LE elements, center vels for remaining DVES,
@@ -178,14 +174,14 @@ fpg = reshape(permute(fpg,[1 3 2]),[],3);
 w_total = permute(reshape(w_total,[],3,3),[1 3 2]);
 
 %grab LE DVE values into final w matrix
-w = zeros(valNELE,3,3);
+w = zeros(SURF.valNELE,3,3);
 w(idx1,:,:) = w_total(idx1,:,:);
 
 %make a matrix with all DVE center velocities
 if any(idx1 ==0)
-    w_center = zeros(valNELE,3,3);
+    w_center = zeros(SURF.valNELE,3,3);
     w_center(idx1 ==0,:,:) = w_total(idx1 ==0,:,:);
-    w_center(idx1,:,:) = w_total(valNELE+1:end,:,:); %add center vels from LE DVES
+    w_center(idx1,:,:) = w_total(SURF.valNELE+1:end,:,:); %add center vels from LE DVES
     
     %//case of multiple lifting lines along the span
     %//the induced velocity at the lifting line is averaged with the
@@ -209,7 +205,7 @@ tempr = tempd .* repmat(permute(gamma,[1 3 2]),1,3,1);
 %  R = (R1 + 4*Ro+R2).*eta8/3;
 r = (tempr(:,:,1) + 4.*tempr(:,:,2) + tempr(:,:,3)) .* repmat(eta8,1,3) ./3;
 %  R = R + ((7.*R1 - 8.*Ro + 7.*R2).*(eta-eta8)./3);
-r = r + ((7.*tempr(:,:,1) - 8.*tempr(:,:,2) + 7.*tempr(:,:,3)).*repmat((vecDVEHVSPN-eta8),1,3)./3);
+r = r + ((7.*tempr(:,:,1) - 8.*tempr(:,:,2) + 7.*tempr(:,:,3)).*repmat((SURF.vecDVEHVSPN-eta8),1,3)./3);
 
 % induced normal force
 nind = dot(r,en,2);  %induced normal force

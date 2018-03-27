@@ -1,4 +1,4 @@
-function [valCL, valCLF, valCLI, valCY, valCYF, valCYI, valCDI, valE]= fcnWINGNFORCE(liftfree, liftind, sidefree, sideind, inddrag, matUINF, vecAREA, vecSPAN, vecDVESYM, valBETA, vecDVEVEHICLE, vecDVEWING, valVEHICLES)
+function [OUTP] = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP)
 %% Wing Normal Force
 % this routine adds up the DVE's normal forces in order to compute the
 % total wing normal forces/density and coefficients based on free stream
@@ -13,39 +13,39 @@ function [valCL, valCLF, valCLI, valCY, valCYF, valCYI, valCDI, valE]= fcnWINGNF
 % valCYF - side force coefficient due to freestream
 % valCYI - Induced side force coefficient
 
-valCLI = nan(1,valVEHICLES,1);
-valCL = nan(1,valVEHICLES,1);
-valCLF = nan(1,valVEHICLES,1);
-valCY = nan(1,valVEHICLES,1);
-valCYF = nan(1,valVEHICLES,1);
-valCYI = nan(1,valVEHICLES,1);
-valCDI = nan(1,valVEHICLES,1);
-valE = nan(1,valVEHICLES,1);
+valCLI = nan(1,INPU.valVEHICLES,1);
+valCL = nan(1,INPU.valVEHICLES,1);
+valCLF = nan(1,INPU.valVEHICLES,1);
+valCY = nan(1,INPU.valVEHICLES,1);
+valCYF = nan(1,INPU.valVEHICLES,1);
+valCYI = nan(1,INPU.valVEHICLES,1);
+valCDI = nan(1,INPU.valVEHICLES,1);
+valE = nan(1,INPU.valVEHICLES,1);
 
-for i = 1:valVEHICLES
+for i = 1:INPU.valVEHICLES
     
-    idxvehwing = vecDVEWING > 0 & vecDVEVEHICLE == i; %(vecDVEWING.*vecDVEVEHICLE == i) > 0;
+    idxvehwing = SURF.vecDVEWING > 0 & SURF.vecDVEVEHICLE == i; %(SURF.vecDVEWING.*SURF.vecDVEVEHICLE == i) > 0;
     
     if any(idxvehwing)
 
         %     q = 0.5.*sum(abs(vecUINF).^2,2).*valAREA;
-        q(i) = 0.5.*mean((sqrt(sum(matUINF(idxvehwing,:).^2,2)).^2)).*vecAREA(i);
+        q(i) = 0.5.*mean((sqrt(sum(SURF.matUINF(idxvehwing,:).^2,2)).^2)).*INPU.vecAREA(i);
         
         ntfree = zeros(2,1);
         ntind = zeros(2,1);
         inddragsum = 0;
         
         %sum values from all elements
-        ntfree(1) = sum(liftfree(idxvehwing));
-        ntfree(2) = sum(sidefree(idxvehwing));
+        ntfree(1) = sum(SURF.vecDVELFREE(idxvehwing));
+        ntfree(2) = sum(SURF.vecDVESFREE(idxvehwing));
         
-        ntind(1) = sum(liftind(idxvehwing));
-        ntind(2) = sum(sideind(idxvehwing));
+        ntind(1) = sum(SURF.vecDVELIND(idxvehwing));
+        ntind(2) = sum(SURF.vecDVESIND(idxvehwing));
         
         inddragsum = sum(inddrag(idxvehwing));
         %double the force if we are using symmetry. This only works with sym for
         %the whole system
-        if any(vecDVESYM) == 1 && ~any(valBETA) %not sure why beta has to be zero
+        if any(SURF.vecDVESYM) == 1 && ~any(COND.vecVEHBETA(i)) %not sure why beta has to be zero
 %             disp('Symmetry is not currently working here! fcnWINGNFORCE');
             ntfree(1) = ntfree(1)*2; %why dont we double the side force?
             ntind(1) = ntind(1)*2;
@@ -65,11 +65,20 @@ for i = 1:valVEHICLES
         
         valCDI(i) = inddragsum/q(i);
         
-        AR(i) = (vecSPAN(i)*vecSPAN(i))/vecAREA(i);
+        AR(i) = (INPU.vecSPAN(i)*INPU.vecSPAN(i))/INPU.vecAREA(i);
         valE(i) = (valCL(i)*valCL(i))/ (pi*AR(i)*valCDI(i));
         
     end
     
 end
+
+OUTP.vecCL(valTIMESTEP,:) = valCL;
+OUTP.vecCLF(valTIMESTEP,:) = valCLF;
+OUTP.vecCLI(valTIMESTEP,:) = valCLI;
+OUTP.vecCY(valTIMESTEP,:) = valCY;
+OUTP.vecCYF(valTIMESTEP,:) = valCYF;
+OUTP.vecCYI(valTIMESTEP,:) = valCYI;
+OUTP.vecCDI(valTIMESTEP,:) = valCDI;
+OUTP.vecE(valTIMESTEP,:) = valE;
 
 end

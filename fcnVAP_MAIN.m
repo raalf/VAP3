@@ -11,6 +11,8 @@ end
 COND.vecCOLLECTIVE = collective;
 COND.vecVEHALPHA = alpha;
 
+COND.valMAXTIME = 4
+
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
@@ -60,7 +62,7 @@ for jj = 1:length(COND.vecROTORRPM)
 end
 
 %% Add boundary conditions to D-Matrix
-[matD] = fcnDWING(SURF.valNELE, SURF.matADJE, SURF.vecDVEHVSPN, SURF.vecDVESYM, SURF.vecDVETIP, INPU.vecN);
+[matD] = fcnDWING(SURF, INPU);
 
 %% Add kinematic conditions to D-Matrix
 [SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
@@ -68,9 +70,7 @@ end
 
 %% Preparing to timestep
 % Building wing resultant
-[vecR] = fcnRWING(SURF.valNELE, 0, SURF.matCENTER, SURF.matDVENORM, SURF.matUINF, WAKE.valWNELE, WAKE.matWDVE, ...
-    WAKE.matWVLST, WAKE.matWCOEFF, WAKE.vecWK, WAKE.vecWDVEHVSPN, WAKE.vecWDVEHVCRD,WAKE.vecWDVEROLL, WAKE.vecWDVEPITCH, WAKE.vecWDVEYAW, WAKE.vecWDVELESWP, ...
-    WAKE.vecWDVETESWP, SURF.vecDVESYM, WAKE.valWSIZE, FLAG.TRI, FLAG.STEADY);
+[vecR] = fcnRWING(0, SURF, WAKE, FLAG);
 
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
@@ -91,10 +91,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     %   Calculate viscous effects
     
     %% Moving the vehicles
-    [SURF.matUINF, SURF.matUINFTE, INPU.matVEHORIG, SURF.matVLST, SURF.matCENTER, MISC.matNEWWAKE, MISC.matNPNEWWAKE, ...
-        VISC.matFUSEGEOM, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.matDVENORM, SURF.matNTVLST, SURF.matUINFROT] = fcnMOVESURFACE(INPU.matVEHORIG, VEHI.matVEHUVW, VEHI.matVEHROTRATE, MISC.matCIRORIG, VEHI.vecVEHRADIUS, ...
-        COND.valDELTIME, SURF.matVLST, SURF.matCENTER, SURF.matDVE, SURF.vecDVEVEHICLE, SURF.vecDVETE, VISC.matFUSEGEOM, VISC.vecFUSEVEHICLE, ...
-        VEHI.matVEHROT, VEHI.vecROTORVEH, INPU.matROTORHUB, INPU.matROTORAXIS, SURF.vecDVEROTOR, COND.vecROTORRPM, SURF.matPANELTE, SURF.matNTVLST);
+    [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
     
     %% Generating new wake elements
     [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnCREATEWAKEROW(FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF);
@@ -109,9 +106,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [WAKE.matWCOEFF(end-WAKE.valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWSIZE, WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end));
         
         %% Rebuilding and solving wing resultant
-        [vecR] = fcnRWING(SURF.valNELE, valTIMESTEP, SURF.matCENTER, SURF.matDVENORM, SURF.matUINF, WAKE.valWNELE, WAKE.matWDVE, ...
-            WAKE.matWVLST, WAKE.matWCOEFF, WAKE.vecWK, WAKE.vecWDVEHVSPN, WAKE.vecWDVEHVCRD,WAKE.vecWDVEROLL, WAKE.vecWDVEPITCH, WAKE.vecWDVEYAW, WAKE.vecWDVELESWP, ...
-            WAKE.vecWDVETESWP, SURF.vecDVESYM, WAKE.valWSIZE, FLAG.TRI, FLAG.STEADY, FLAG.GPU);
+        [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
         
         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
         
