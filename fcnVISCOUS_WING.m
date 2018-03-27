@@ -104,7 +104,10 @@ for i = 1:max(vecDVEWING)
         % find CLmax for each row of dves
         polarClmax = max(pol(:,2,:));
         polarClmax = polarClmax(:);
-        polarClmaxRe = reshape(pol(1,8,:),[],1);
+        
+        polarClmaxRe = unique(pol(:,8,:));
+        polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
+        %polarClmaxRe = reshape(pol(1,8,:),[],1);
         
         vecCLMAX(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmax,vecREDIST(isCurrentAirfoil),'linear');
         
