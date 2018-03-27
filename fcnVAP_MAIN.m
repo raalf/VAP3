@@ -11,7 +11,6 @@ end
 COND.vecCOLLECTIVE = collective;
 COND.vecVEHALPHA = alpha;
 
-COND.valMAXTIME = 4
 
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
