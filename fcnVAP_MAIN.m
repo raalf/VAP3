@@ -11,8 +11,6 @@ end
 COND.vecCOLLECTIVE = collective;
 COND.vecVEHALPHA = alpha;
 
-COND.valMAXTIME = 4
-
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
@@ -149,3 +147,7 @@ end
 
 %% Plotting
 fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND)
+
+OUTP.vecDVEAREA = SURF.vecDVEAREA;
+OUTP.valAREA = INPU.vecAREA;
+OUTP.matGEOM = INPU.matGEOM;
