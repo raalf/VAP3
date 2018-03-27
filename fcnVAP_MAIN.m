@@ -60,7 +60,7 @@ for jj = 1:length(COND.vecROTORRPM)
 end
 
 %% Add boundary conditions to D-Matrix
-[matD] = fcnDWING(SURF.valNELE, SURF.matADJE, SURF.vecDVEHVSPN, SURF.vecDVESYM, SURF.vecDVETIP, INPU.vecN);
+[matD] = fcnDWING(SURF, INPU);
 
 %% Add kinematic conditions to D-Matrix
 [SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
