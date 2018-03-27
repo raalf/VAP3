@@ -115,7 +115,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         %% Relaxing wake
         if valTIMESTEP > 2 && FLAG.RELAX == 1
-            WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG);
+            WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG, INPU);
             
             % Creating and solving WD-Matrix
             [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
