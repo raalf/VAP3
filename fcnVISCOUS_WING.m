@@ -36,6 +36,7 @@ vecAREADIST  = nan(size(ledves,1),1);
 vecCDPDIST   = nan(size(ledves,1),1); % pre-allocate the array to store viscous drag results
 vecCLMAX     = nan(size(ledves,1),1);
 dprofPerWing = nan(max(vecDVEWING),1);
+LPerWing = nan(max(vecDVEWING),1);
 
 for i = 1:max(vecDVEWING)
     
@@ -76,7 +77,7 @@ for i = 1:max(vecDVEWING)
     vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
     vecAREADIST(isCurWing) = sum(vecDVEAREA(rows),2);
     
-
+    vecCNDIST0 = vecCNDIST;
     
     % collect all the unique airfoils and load them
     [uniqueAirfoil,~,idxAirfoil] = unique(cellAIRFOIL);
@@ -127,7 +128,7 @@ for i = 1:max(vecDVEWING)
 
         % Check for stall and change the CL
         idxSTALL = (vecCNDIST > vecCLMAX) & isCurrentAirfoil;
-        vecCNDIST(idxSTALL) = vecCLMAX(idxSTALL).*0.825;
+        vecCNDIST0(idxSTALL) = vecCLMAX(idxSTALL)*0.825;
         if sum(idxSTALL) > 1
             disp('Airfoil sections have stalled.')
         end
@@ -136,8 +137,11 @@ for i = 1:max(vecDVEWING)
         vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         clear pol foil
     end
-	% CN in terms of Vinf instead of Vinf + Vind
-    vecCNDIST(isCurWing) = vecCNDIST(isCurWing).*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
+ 	% CN in terms of Vinf instead of Vinf + Vind
+    vecCNDIST(isCurWing) = vecCNDIST0(isCurWing).*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
+    
+    % Lift force per wing
+    LPerWing(i) = sum(vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing));
 
     % dimensionalize in terms of both Vinf and Vind
     dprofPerWing(i) = sum(vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing));
@@ -156,6 +160,9 @@ end
 
 % Multiply vecSYMIWING profile drag by 2
 dprofPerWing(vecSYMWING) = dprofPerWing(vecSYMWING)*2;
+LPerWing(vecSYMWING) = LPerWing(vecSYMWING)*2;
+
+valCL = sum(LPerWing)/(q_inf*valAREA);
 
 % sum profile drag per wing
 dprof = sum(dprofPerWing);
@@ -212,8 +219,8 @@ dtot = dtot + dint;
 
 valCD = dtot/(q_inf*valAREA);
 
-%% Adjusting CL for stall
-valCL = sum(vecCNDIST.*vecAREADIST.*cos(vecDVEROLL(vecLEDVEDIST)))/valAREA*2;
+% %% Adjusting CL for stall
+% valCL = sum(vecCNDIST.*vecAREADIST.*cos(vecDVEROLL(vecLEDVEDIST)))/valAREA*2;
 
 %% Final calculations
 valLD = valCL./valCD;
