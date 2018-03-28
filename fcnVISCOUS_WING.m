@@ -3,13 +3,17 @@ function [valCL, valCD, valPREQ, valLD] = fcnVISCOUS_WING(valCL, valCDI, valAREA
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF)
 
-% Calculate chordline direction at midspan of each dve
-avgle = (matVLST(matDVE(:,1),:)+matVLST(matDVE(:,2),:))./2;
-avgte = (matVLST(matDVE(:,3),:)+matVLST(matDVE(:,4),:))./2;
-tempDIF = avgte - avgle;
-matCRDLINE = (tempDIF)./(repmat(sqrt(sum(tempDIF.^2,2)),[1,3]));
+% % % Calculate chordline direction at midspan of each dve
+% % avgle = (matVLST(matDVE(:,1),:)+matVLST(matDVE(:,2),:))./2;
+% % avgte = (matVLST(matDVE(:,3),:)+matVLST(matDVE(:,4),:))./2;
+% % tempDIF = avgte - avgle;
+% % matCRDLINE = (tempDIF)./(repmat(sqrt(sum(tempDIF.^2,2)),[1,3]));
 % Calculate velocity with induced effects
-vecV = dot(matUINF(vecDVEWING>0) + matWUINF(vecDVEWING>0), matCRDLINE(vecDVEWING>0),2);
+%vecV = dot(matUINF(vecDVEWING>0) + matWUINF(vecDVEWING>0), matCRDLINE(vecDVEWING>0),2);
+
+temp  = sqrt(matUINF(:,1).^2 + matUINF(:,2).^2 + matUINF(:,3).^2);
+temp1 = dot(matWUINF, matUINF./temp, 2);
+vecV = temp1 + temp;
 
 % Compute dynamic pressure
 q_infandind = ((vecV.^2)*valDENSITY)/2; % With both freestream and induced velocities
