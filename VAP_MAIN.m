@@ -2,9 +2,9 @@ clc
 clear
 warning off
 
-filename = 'inputs/TMotor-Propeller.vap';
+filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 
-OUTP = fcnVAP_MAIN(filename, 0, 0);
+OUTP = fcnVAP_MAIN(filename, 5, 1);
 % seqALPHA = 0:1:13;
 
 
