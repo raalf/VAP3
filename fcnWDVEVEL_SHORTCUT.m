@@ -1,5 +1,15 @@
-function [w_wake] = fcnWDVEVEL(fpg, valTIMESTEP, WAKE, SURF, FLAG)
+function [w_wake, WAKE] = fcnWDVEVEL_SHORTCUT(influencee, valTIMESTEP, WAKE, SURF, FLAG)
+% INPUT:
+%   influencee - DVE number of the influencee (influence is on this DVE's control point
 
+if isempty(WAKE.matWINDUC_REF)
+    WAKE.matWINDUC_REF = nan(WAKE.valWSIZE, SURF.valNELE, 1);
+else
+    % Upper 2 rows (oldest wake elements) are nan, because these are semi-infinite sheets and have to be recalculated
+    WAKE.matWINDUC_REF = [nan(WAKE.valWSIZE.*2, SURF.valNELE, 1); WAKE.matWINDUC_REF(2:end, :)];
+end
+
+fpg = SURF.matCENTER;
 % List of wDVEs we are influencing from (each one for each of the fieldpoints)
 len = length(fpg(:,1));
 dvenum = reshape(repmat(1:WAKE.valWNELE,len,1),[],1);

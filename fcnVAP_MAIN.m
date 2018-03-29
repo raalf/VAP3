@@ -69,7 +69,7 @@ end
 
 %% Preparing to timestep
 % Building wing resultant
-[vecR] = fcnRWING(0, SURF, WAKE, FLAG);
+[vecR, WAKE] = fcnRWING(0, SURF, WAKE, FLAG);
 
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
@@ -105,7 +105,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [WAKE.matWCOEFF(end-WAKE.valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWSIZE, WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end));
         
         %% Rebuilding and solving wing resultant
-        [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
+        [vecR, WAKE] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
         
         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
         

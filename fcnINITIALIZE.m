@@ -45,5 +45,8 @@ WAKE.vecWDVESURFACE = uint8([]);
 WAKE.vecWDVETRI = [];
 WAKE.vecWPLOTSURF = uint8([]);
 
+WAKE.matWINDUC_REF = [];
+WAKE.matWINDUC = [];
+
 end
 
