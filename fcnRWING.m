@@ -9,14 +9,17 @@ len = length(SURF.matCENTER(:,1));
 
 if valTIMESTEP < 1;
     % Flow tangency at control points goes at the bottom of the resultant
-    vecR(end-(len-1):end) = (4*pi).*dot(SURF.matUINF, SURF.matDVENORM,2);    
+    vecR(end-(len-1):end) = (4*pi).*dot(SURF.matUINF, SURF.matDVENORM,2);
 else
-%     w_wake = fcnWDVEVEL(SURF.matCENTER, valTIMESTEP, WAKE, SURF, FLAG);
-    [w_wake, WAKE] = fcnWDVEVEL_SHORTCUT([1:SURF.valNELE]', valTIMESTEP, WAKE, SURF, FLAG);
-
+    if FLAG.RELAX == 0
+        [w_wake, WAKE] = fcnWDVEVEL_SHORTCUT([1:SURF.valNELE]', valTIMESTEP, WAKE, SURF, FLAG);  
+    else
+        [w_wake] = fcnWDVEVEL(SURF.matCENTER, valTIMESTEP, WAKE, SURF, FLAG);
+    end
+    
     % Including the wake-induced velocities,
-    vecR(end-(len-1):end) = (4*pi).*dot(SURF.matUINF+w_wake, SURF.matDVENORM,2);  
-
+    vecR(end-(len-1):end) = (4*pi).*dot(SURF.matUINF+w_wake, SURF.matDVENORM,2);
+    
 end
 
 end
