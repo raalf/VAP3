@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VAP>
+	<settings>
+		<flagRELAX>FALSE</flagRELAX>
+		<flagSTEADY>TRUE</flagSTEADY>
+		<flagTRI>FALSE</flagTRI>
+		<valMAXTIME>10</valMAXTIME>
+		<valMINTIME>0</valMINTIME>
+		<valDELTIME>0.001</valDELTIME>
+		<valDELTAE>0</valDELTAE>
+	</settings>
+
+	<conditions>
+		<valDENSITY>1.225</valDENSITY>
+		<valKINV>1.460000e-05</valKINV>
+	</conditions>
+
+	<vehicle>
+		<x>0</x>
+		<y>0</y>
+		<z>0</z>
+
+		<vinf>5</vinf>
+
+		<alpha>-90</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<trk>0</trk>
+
+		<area>12.6</area>
+		<span>15</span>
+		<cmac>0.707</cmac>
+
+		<rotor>
+			<rpm>3000</rpm>
+			<dia>0.4572</dia>
+
+			<xhub>0</xhub>
+			<yhub>0</yhub>
+			<zhub>0</zhub>
+
+			<axisx>-1</axisx>
+			<axisy>0</axisy>
+			<axisz>0</axisz>
+
+			<blades>2</blades>
+
+			<M>1</M>
+
+			<panel>
+				<N>1</N>
+
+				<section>
+					<x>-0.011244</x>				
+					<y>0.034290</y>
+					<z>0</z>
+					<chord>0.025314</chord>
+					<twist>16.570000</twist>
+				</section>
+
+				<section>				
+					<x>-0.013329</x>				
+					<y>0.045720</y>
+					<z>0</z>
+					<chord>0.033232</chord>
+					<twist>24.199900</twist>
+				</section>
+
+				<section>							
+					<x>-0.014232</x>				
+					<y>0.057150</y>
+					<z>0</z>
+					<chord>0.038645</chord>
+					<twist>23.737200</twist>
+				</section>
+
+				<section>								
+					<x>-0.014811</x>				
+					<y>0.068580</y>
+					<z>0</z>
+					<chord>0.042025</chord>
+					<twist>22.837500</twist>
+				</section>
+
+				<section>								
+					<x>-0.015550</x>				
+					<y>0.080010</y>
+					<z>0</z>
+					<chord>0.044301</chord>
+					<twist>20.047600</twist>
+				</section>
+
+				<section>									
+					<x>-0.015335</x>				
+					<y>0.091440</y>
+					<z>0</z>
+					<chord>0.043820</chord>
+					<twist>18.414700</twist>
+				</section>
+
+				<section>											
+					<x>-0.015650</x>				
+					<y>0.102870</y>
+					<z>0</z>
+					<chord>0.043009</chord>
+					<twist>16.673400</twist>
+				</section>
+
+				<section>												
+					<x>-0.015396</x>				
+					<y>0.114300</y>
+					<z>0</z>
+					<chord>0.041574</chord>
+					<twist>14.934100</twist>
+				</section>
+
+				<section>												
+					<x>-0.014999</x>				
+					<y>0.125730</y>
+					<z>0</z>
+					<chord>0.040027</chord>
+					<twist>13.911800</twist>
+				</section>	
+
+				<section>													
+					<x>-0.014279</x>				
+					<y>0.137160</y>
+					<z>0</z>
+					<chord>0.038589</chord>
+					<twist>12.498400</twist>
+				</section>	
+
+				<section>														
+					<x>-0.013695</x>				
+					<y>0.148590</y>
+					<z>0</z>
+					<chord>0.036457</chord>
+					<twist>12.326000</twist>
+				</section>	
+
+				<section>															
+					<x>-0.013271</x>				
+					<y>0.160020</y>
+					<z>0</z>
+					<chord>0.034285</chord>
+					<twist>11.701500</twist>
+				</section>	
+
+				<section>															
+					<x>-0.012640</x>				
+					<y>0.171450</y>
+					<z>0</z>
+					<chord>0.032684</chord>
+					<twist>12.100000</twist>
+				</section>	
+
+				<section>																
+					<x>-0.011986</x>				
+					<y>0.182880</y>
+					<z>0</z>
+					<chord>0.030497</chord>
+					<twist>11.433000</twist>
+				</section>	
+
+				<section>																
+					<x>-0.011068</x>				
+					<y>0.194310</y>
+					<z>0</z>
+					<chord>0.027804</chord>
+					<twist>10.004000</twist>
+				</section>	
+
+				<section>																
+					<x>-0.009946</x>				
+					<y>0.205740</y>
+					<z>0</z>
+					<chord>0.024821</chord>
+					<twist>8.140000</twist>
+				</section>
+
+				<section>																
+					<x>-0.007915</x>				
+					<y>0.217170</y>
+					<z>0</z>
+					<chord>0.021075</chord>
+					<twist>7.517000</twist>
+				</section>
+
+				<section>															
+					<x>0.002194</x>				
+					<y>0.228600</y>
+					<z>0</z>
+					<chord>0.009098</chord>
+					<twist>7.526000</twist>
+				</section>
+			</panel>
+		</rotor>
+
+	</vehicle>				
+
+</VAP>
+
+
+
+

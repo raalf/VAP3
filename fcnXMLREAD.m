@@ -46,7 +46,8 @@ catch
 end
 % if strcmpi(VAP.settings.FLAG.TRI.Text, 'true') FLAG.TRI = 1; else FLAG.TRI = 0; end
 
-try COND.GUSTMODE = str2double(VAP.settings.flagGUSTMODE.Text); catch; COND.GUSTMODE = 0; end
+try if strcmpi(VAP.settings.flagFIXEDLIFT.Text, 'true') FLAG.FIXEDLIFT = 1; end; catch FLAG.FIXEDLIFT = 0; end
+
 COND.valMAXTIME = floor(str2double(VAP.settings.valMAXTIME.Text));
 COND.valMINTIME = floor(str2double(VAP.settings.valMINTIME.Text));
 COND.valDELTIME = str2double(VAP.settings.valDELTIME.Text);
@@ -69,6 +70,7 @@ COND.vecVEHBETA = nan(INPU.valVEHICLES,1);
 COND.vecVEHROLL = nan(INPU.valVEHICLES,1);
 COND.vecVEHFPA = nan(INPU.valVEHICLES,1);
 COND.vecVEHTRK = nan(INPU.valVEHICLES,1);
+COND.vecVEHWEIGHT = nan(INPU.valVEHICLES,1);
 
 VEHI.vecVEHRADIUS = nan(INPU.valVEHICLES,1);
 
@@ -131,6 +133,7 @@ for i = 1:INPU.valVEHICLES
     
     INPU.matVEHORIG(i,:) = [str2double(veh.x.Text) str2double(veh.y.Text) str2double(veh.z.Text)];
     COND.vecVEHVINF(i,1) = str2double(veh.vinf.Text);
+    try COND.vecVEHWEIGHT(i,1) = str2double(veh.weight.Text); catch; COND.vecVEHWEIGHT(i,1) = nan; end
     COND.vecVEHALPHA(i,1) = str2double(veh.alpha.Text);
     COND.vecVEHBETA(i,1) = str2double(veh.beta.Text);
     COND.vecVEHROLL(i,1) = str2double(veh.roll.Text);
@@ -375,19 +378,13 @@ for i = 1:INPU.valPANELS
     
 end
 
-
-
-%% Duplicating rotor blades
-% THIS SHIT DON'T WORK
-% [matNEWGEOM, ~, INPU.vecNnew, INPU.vecMnew, INPU.vecSYMnew] = fcnMULTIBLADE(sum(vecROTOR > 0), INPU.vecROTORBLADES, INPU.vecN(vecROTOR > 0), INPU.vecM(vecROTOR > 0), INPU.vecSYM(vecROTOR > 0), INPU.matGEOM(:,:,vecROTOR > 0));
-%
-% INPU.matGEOM = cat(3, INPU.matGEOM, matNEWGEOM);
-%
-% INPU.vecN = cat(1, INPU.vecN, INPU.vecNnew);
-% INPU.vecM = cat(1, INPU.vecM, INPU.vecMnew);
-% INPU.vecSYM = cat(1, INPU.vecSYM, INPU.vecSYMnew);
-
 INPU.valPANELS = size(INPU.matGEOM,3);
+
+if any(isnan(COND.vecVEHVINF))
+    disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
+    COND.vecVEHVINF(isnan(COND.vecVEHVINF)) = ones(sum(isnan(COND.vecVEHVINF)),1);
+    FLAG.FIXEDLIFT = 1;
+end
 
 
 

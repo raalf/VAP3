@@ -11,15 +11,13 @@ end
 COND.vecCOLLECTIVE = collective;
 % COND.vecVEHALPHA = alpha;
 
-COND.valMAXTIME = 4
-
 COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
 COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
 FLAG.PRINT = 1;
-FLAG.PLOT = 0;
+FLAG.PLOT = 1;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
@@ -120,7 +118,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         %% Relaxing wake
         if valTIMESTEP > 2 && FLAG.RELAX == 1
-            WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG);
+            WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG, INPU);
             
             % Creating and solving WD-Matrix
             [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
@@ -153,3 +151,7 @@ end
 
 %% Plotting
 fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND)
+
+OUTP.vecDVEAREA = SURF.vecDVEAREA;
+OUTP.valAREA = INPU.vecAREA;
+OUTP.matGEOM = INPU.matGEOM;

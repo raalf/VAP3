@@ -95,7 +95,10 @@ for k = 1:length(uniqueAirfoil)
     end
     polarClmaxA = polarClmaxA(:);
     polarClmax = polarClmax(:);
-    polarClmaxRe = reshape(pol(1,8,:),[],1);
+    
+    polarClmaxRe = unique(pol(:,8,:));
+    polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
+    %polarClmaxRe = reshape(pol(1,8,:),[],1);
     
     vecCLMAXA(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(isCurrentAirfoil),'linear');
     
