@@ -47,6 +47,7 @@ end
 % if strcmpi(VAP.settings.FLAG.TRI.Text, 'true') FLAG.TRI = 1; else FLAG.TRI = 0; end
 
 try if strcmpi(VAP.settings.flagFIXEDLIFT.Text, 'true') FLAG.FIXEDLIFT = 1; end; catch FLAG.FIXEDLIFT = 0; end
+try FLAG.GUSTMODE = str2double(VAP.conditions.flagGUSTMODE.Text); catch; FLAG.GUSTMODE = 0; end
 
 COND.valMAXTIME = floor(str2double(VAP.settings.valMAXTIME.Text));
 COND.valMINTIME = floor(str2double(VAP.settings.valMINTIME.Text));
