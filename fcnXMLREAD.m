@@ -37,8 +37,16 @@ VAP = inp.VAP;
 %% Settings
 if strcmpi(VAP.settings.flagRELAX.Text, 'true') FLAG.RELAX = 1; else FLAG.RELAX = 0; end
 if strcmpi(VAP.settings.flagSTEADY.Text, 'true') FLAG.STEADY = 1; else FLAG.STEADY = 0; end
+try 
+    if strcmpi(VAP.settings.flagSTIFFWING.Text, 'true') FLAG.STIFFWING = 1; 
+    else FLAG.STIFFWING = 2; 
+    end
+catch
+    FLAG.STIFFWING = 1; 
+end
 % if strcmpi(VAP.settings.FLAG.TRI.Text, 'true') FLAG.TRI = 1; else FLAG.TRI = 0; end
 
+try COND.GUSTMODE = str2double(VAP.settings.flagGUSTMODE.Text); catch; COND.GUSTMODE = 0; end
 COND.valMAXTIME = floor(str2double(VAP.settings.valMAXTIME.Text));
 COND.valMINTIME = floor(str2double(VAP.settings.valMINTIME.Text));
 COND.valDELTIME = str2double(VAP.settings.valDELTIME.Text);
@@ -47,6 +55,9 @@ COND.valDELTAE = str2double(VAP.settings.valDELTAE.Text);
 %% Conditions
 COND.valDENSITY = str2double(VAP.conditions.valDENSITY.Text);
 VISC.valKINV = str2double(VAP.conditions.valKINV.Text);
+try COND.valGUSTAMP = str2double(VAP.conditions.valGUSTAMP.Text); catch; COND.valGUSTAMP = 0; end
+try COND.valGUSTL = str2double(VAP.conditions.valGUSTL.Text); catch; COND.valGUSTL = 0; end
+try COND.valGUSTSTART = str2double(VAP.conditions.valGUSTSTART.Text); catch; COND.valGUSTSTART = 0; end
 
 %% Vehicles
 INPU.valVEHICLES = max(size(VAP.vehicle));
@@ -62,6 +73,7 @@ COND.vecVEHTRK = nan(INPU.valVEHICLES,1);
 VEHI.vecVEHRADIUS = nan(INPU.valVEHICLES,1);
 
 vecWINGS = nan(INPU.valVEHICLES,1);
+vecSTRUCTURE = nan(INPU.valVEHICLES,1);
 vecROTORS = nan(INPU.valVEHICLES,1);
 vecFUSELAGES = nan(INPU.valVEHICLES,1);
 
@@ -128,6 +140,7 @@ for i = 1:INPU.valVEHICLES
     try VEHI.vecVEHRADIUS(i,1) = str2double(veh.radius.Text); end
     
     try vecWINGS(i,1) = max(size(veh.wing)); catch; vecWINGS(i,1) = 0; end
+    try vecSTRUCTURE(i,1) = max(size(veh.structure)); catch; vecSTRUCTURE(i,1) = 0; end
     try vecROTORS(i,1) = max(size(veh.rotor)); catch; vecROTORS(i,1) = 0; end
     try vecFUSELAGES(i,1) = max(size(veh.fuselage)); catch; vecFUSELAGES(i,1) = 0; end
     
@@ -185,6 +198,42 @@ for i = 1:INPU.valVEHICLES
         
         VEHI.vecSURFACEVEHICLE(k,1) = i;
         k = k + 1;
+    end
+    
+    %% Loading Wing Structure
+    
+    for j = 1:vecSTRUCTURE(i)
+    
+        try struct = VAP.vehicle.structure{1,i}; catch; struct = VAP.vehicle.structure; end
+
+        COND.valSDELTIME = str2double(struct.conditions.valSDELTIME.Text);
+        INPU.valNSELE = str2double(struct.conditions.valNSELE.Text);
+        COND.valSTIFFSTEPS = str2double(struct.conditions.valSTIFFSTEPS.Text);
+        
+        INPU.vecEIxCOEFF(1) = str2double(struct.properties.stiffness.A_vecEIx.Text);
+        INPU.vecEIxCOEFF(2) = str2double(struct.properties.stiffness.B_vecEIx.Text);
+        INPU.vecEIxCOEFF(3) = str2double(struct.properties.stiffness.C_vecEIx.Text);
+        
+        INPU.vecGJtCOEFF(1) = str2double(struct.properties.stiffness.A_vecGJt.Text);
+        INPU.vecGJtCOEFF(2) = str2double(struct.properties.stiffness.B_vecGJt.Text);
+        INPU.vecGJtCOEFF(3) = str2double(struct.properties.stiffness.C_vecGJt.Text);
+        
+        INPU.vecEACOEFF(1) = str2double(struct.properties.geometry.A_vecEA.Text);
+        INPU.vecEACOEFF(2) = str2double(struct.properties.geometry.B_vecEA.Text);
+        INPU.vecEACOEFF(3) = str2double(struct.properties.geometry.C_vecEA.Text);
+        
+        INPU.vecCGCOEFF(1) = str2double(struct.properties.geometry.A_vecCG.Text);
+        INPU.vecCGCOEFF(2) = str2double(struct.properties.geometry.B_vecCG.Text);
+        INPU.vecCGCOEFF(3) = str2double(struct.properties.geometry.C_vecCG.Text);
+        
+        INPU.vecJTCOEFF(1) = str2double(struct.properties.mass.A_vecJt.Text);
+        INPU.vecJTCOEFF(2) = str2double(struct.properties.mass.B_vecJt.Text);
+        INPU.vecJTCOEFF(3) = str2double(struct.properties.mass.C_vecJt.Text);
+        
+        INPU.vecLMCOEFF(1) = str2double(struct.properties.mass.A_vecLM.Text);
+        INPU.vecLMCOEFF(2) = str2double(struct.properties.mass.B_vecLM.Text);
+        INPU.vecLMCOEFF(3) = str2double(struct.properties.mass.C_vecLM.Text);
+        
     end
     
     %% Loading Rotors

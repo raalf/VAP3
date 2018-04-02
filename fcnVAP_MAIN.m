@@ -9,7 +9,7 @@ end
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename);
 
 COND.vecCOLLECTIVE = collective;
-COND.vecVEHALPHA = alpha;
+% COND.vecVEHALPHA = alpha;
 
 COND.valMAXTIME = 4
 
@@ -74,6 +74,10 @@ end
 
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+
+SURF.matNTDVE = SURF.matDVE;
+% Computing structure distributions if data exists
+try [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); catch; end
 
 %% Timestepping
 for valTIMESTEP = 1:COND.valMAXTIME
