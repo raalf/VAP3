@@ -106,13 +106,13 @@ SURF.matSCLST = tempSCLST;
 
 SURF.matSCLST = SURF.matSCLST - SURF.matVLST; % Matrix of vectors between shear center and vertex
 
-figure(4)
-clf
-patch('Faces',SURF.matDVE,'Vertices',SURF.matVLST,'FaceColor','r')
-hold on
-plot3(SURF.matAEROCNTR(:,1), SURF.matAEROCNTR(:,2), SURF.matAEROCNTR(:,3),'-ok')
-plot3(SURF.matSC(:,1), SURF.matSC(:,2), SURF.matSC(:,3),'-ob')
-plot3(matCG(:,1), matCG(:,2), matCG(:,3),'-^g')
-axis equal
+% figure(4)
+% clf
+% patch('Faces',SURF.matDVE,'Vertices',SURF.matVLST,'FaceColor','r')
+% hold on
+% plot3(SURF.matAEROCNTR(:,1), SURF.matAEROCNTR(:,2), SURF.matAEROCNTR(:,3),'-ok')
+% plot3(SURF.matSC(:,1), SURF.matSC(:,2), SURF.matSC(:,3),'-ob')
+% plot3(matCG(:,1), matCG(:,2), matCG(:,3),'-^g')
+% axis equal
 
 end
