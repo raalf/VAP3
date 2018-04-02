@@ -387,18 +387,21 @@ if any(isnan(COND.vecVEHVINF))
 end
 
 %% Overwriting default values with user-specified
-in_names = fieldnames(VAP_IN);
-for i = 1:length(in_names)
-    if isfield(INPU, in_names{i})
-        INPU.(in_names{i}) = VAP_IN.(in_names{i});
-    elseif isfield(COND, in_names{i})
-        COND.(in_names{i}) = VAP_IN.(in_names{i});
-    elseif isfield(VEHI, in_names{i})
-        VEHI.(in_names{i}) = VAP_IN.(in_names{i});
-    elseif isfield(VISC, in_names{i})
-        VISC.(in_names{i}) = VAP_IN.(in_names{i});
-    elseif isfield(FLAG, in_names{i})
-        FLAG.(in_names{i}) = VAP_IN.(in_names{i});
+
+if ~isempty(VAP_IN)
+    in_names = fieldnames(VAP_IN);
+    for i = 1:length(in_names)
+        if isfield(INPU, in_names{i})
+            INPU.(in_names{i}) = VAP_IN.(in_names{i});
+        elseif isfield(COND, in_names{i})
+            COND.(in_names{i}) = VAP_IN.(in_names{i});
+        elseif isfield(VEHI, in_names{i})
+            VEHI.(in_names{i}) = VAP_IN.(in_names{i});
+        elseif isfield(VISC, in_names{i})
+            VISC.(in_names{i}) = VAP_IN.(in_names{i});
+        elseif isfield(FLAG, in_names{i})
+            FLAG.(in_names{i}) = VAP_IN.(in_names{i});
+        end
     end
 end
 
