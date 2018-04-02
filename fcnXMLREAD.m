@@ -1,4 +1,4 @@
-function [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename)
+function [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN)
 
 % clc
 % clear
@@ -37,12 +37,12 @@ VAP = inp.VAP;
 %% Settings
 if strcmpi(VAP.settings.flagRELAX.Text, 'true') FLAG.RELAX = 1; else FLAG.RELAX = 0; end
 if strcmpi(VAP.settings.flagSTEADY.Text, 'true') FLAG.STEADY = 1; else FLAG.STEADY = 0; end
-try 
-    if strcmpi(VAP.settings.flagSTIFFWING.Text, 'true') FLAG.STIFFWING = 1; 
-    else FLAG.STIFFWING = 2; 
+try
+    if strcmpi(VAP.settings.flagSTIFFWING.Text, 'true') FLAG.STIFFWING = 1;
+    else FLAG.STIFFWING = 2;
     end
 catch
-    FLAG.STIFFWING = 1; 
+    FLAG.STIFFWING = 1;
 end
 % if strcmpi(VAP.settings.FLAG.TRI.Text, 'true') FLAG.TRI = 1; else FLAG.TRI = 0; end
 
@@ -207,9 +207,9 @@ for i = 1:INPU.valVEHICLES
     %% Loading Wing Structure
     
     for j = 1:vecSTRUCTURE(i)
-    
+        
         try struct = VAP.vehicle.structure{1,i}; catch; struct = VAP.vehicle.structure; end
-
+        
         COND.valSDELTIME = str2double(struct.conditions.valSDELTIME.Text);
         INPU.valNSELE = str2double(struct.conditions.valNSELE.Text);
         COND.valSTIFFSTEPS = str2double(struct.conditions.valSTIFFSTEPS.Text);
@@ -387,7 +387,21 @@ if any(isnan(COND.vecVEHVINF))
     FLAG.FIXEDLIFT = 1;
 end
 
-
+%% Overwriting default values with user-specified
+in_names = fieldnames(VAP_IN);
+for i = 1:length(in_names)
+    if isfield(INPU, in_names{i})
+        INPU.(in_names{i}) = VAP_IN.(in_names{i});
+    elseif isfield(COND, in_names{i})
+        COND.(in_names{i}) = VAP_IN.(in_names{i});
+    elseif isfield(VEHI, in_names{i})
+        VEHI.(in_names{i}) = VAP_IN.(in_names{i});
+    elseif isfield(VISC, in_names{i})
+        VISC.(in_names{i}) = VAP_IN.(in_names{i});
+    elseif isfield(FLAG, in_names{i})
+        FLAG.(in_names{i}) = VAP_IN.(in_names{i});
+    end
+end
 
 end
 

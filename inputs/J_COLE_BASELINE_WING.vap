@@ -7,7 +7,7 @@
 		<flagTRI>FALSE</flagTRI>
 		<valMAXTIME>10</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.2</valDELTIME>
+		<valDELTIME>0.002</valDELTIME>
 		<valDELTAE>0</valDELTAE>
 	</settings>
 
@@ -21,7 +21,7 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>FALSE</vinf>
+		<vinf>70</vinf>
 		<weight>13344.6648</weight>
 
 		<alpha>6</alpha>
