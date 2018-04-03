@@ -22,6 +22,7 @@ FLAG.PREVIEW = 0;
 FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
+FLAG.SAVETIMESTEP = 1;
 
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU] = fcnINITIALIZE(COND, INPU);
@@ -38,6 +39,13 @@ if FLAG.PRINT == 1
     disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/|______/');
     disp('============================================================================');
     disp(' ');
+end
+
+% Setting up timestep saving feature
+if FLAG.SAVETIMESTEP == 1
+    if exist('timesteps/') ~= 7; mkdir(timesteps); end
+    timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
+    mkdir(timestep_folder);
 end
 
 % Check if the files required by the viscous calculations exist
@@ -75,6 +83,7 @@ SURF.matNTDVE = SURF.matDVE;
 try [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); catch; end
 
 %% Timestepping
+
 for valTIMESTEP = 1:COND.valMAXTIME
     %% Timestep to solution
     %   Move wing
@@ -125,6 +134,9 @@ for valTIMESTEP = 1:COND.valMAXTIME
         %% Forces
         [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
         
+        if FLAG.SAVETIMESTEP == 1
+            save([timestep_folder, 'timestep_', num2str(valTIMESTEP), '.mat'], 'filename','valTIMESTEP','INPU','COND','MISC','WAKE','VEHI','SURF','OUTP');
+        end
     end
     
     %% Post-timestep outputs
