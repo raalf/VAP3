@@ -132,7 +132,9 @@ for valTIMESTEP = 1:COND.valMAXTIME
         end
         
         %% Forces
-        [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
+        if valTIMESTEP >= COND.valSTARTFORCES
+            [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
+        end
         
         if FLAG.SAVETIMESTEP == 1
             save([timestep_folder, 'timestep_', num2str(valTIMESTEP), '.mat'], 'filename','valTIMESTEP','INPU','COND','MISC','WAKE','VEHI','SURF','OUTP');
@@ -149,7 +151,9 @@ for valTIMESTEP = 1:COND.valMAXTIME
     end
     
     if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0
-        temp_cdi = fcnTIMEAVERAGE(OUTP.vecCDI(:,end), COND.vecROTORRPM, COND.valDELTIME);
+        OUTP.vecCDI_AVG = fcnTIMEAVERAGE(OUTP.vecCDI(:,end), COND.vecROTORRPM, COND.valDELTIME);
+        OUTP.vecCT_AVG = fcnTIMEAVERAGE(OUTP.vecCT(:,end), COND.vecROTORRPM, COND.valDELTIME);
+        OUTP.vecCL_AVG = fcnTIMEAVERAGE(OUTP.vecCLv(:,end), COND.vecROTORRPM, COND.valDELTIME);
     end
 end
 
@@ -161,6 +165,12 @@ end
 %% Plotting
 fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND)
 
+OUTP.vecVEHALPHA = COND.vecVEHALPHA;
+OUTP.vecCOLLECTIVE = COND.vecCOLLECTIVE;
+OUTP.vecVINF = COND.vecVEHVINF;
+OUTP.vecROTDIAM = INPU.vecROTDIAM;
+OUTP.vecVEHWEIGHT = COND.vecVEHWEIGHT;
+OUTP.vecROTORRPM = COND.vecROTORRPM;
 OUTP.vecDVEAREA = SURF.vecDVEAREA;
 OUTP.valAREA = INPU.vecAREA;
 OUTP.matGEOM = INPU.matGEOM;
