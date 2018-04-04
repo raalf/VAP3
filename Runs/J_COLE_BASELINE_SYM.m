@@ -20,7 +20,7 @@ vecROTORRPM = OUTP(1).vecROTORRPM;
 vecROTDIAM = OUTP(1).vecROTDIAM;
 thrust = vecCT.*(((vecROTORRPM/60).^2).*((vecROTDIAM).^4))*1.225;
 F = scatteredInterpolant([OUTP.vecVINF]', thrust, [OUTP.vecCOLLECTIVE]', 'linear','none');
-vecCOLLECTIVE = F(vecVEHVINF, drag);
+vecCOLLECTIVE = F(vecVEHVINF, drag./2);
 
 
 % Not running all the points
@@ -33,12 +33,13 @@ vecCOLLECTIVE = vecCOLLECTIVE(idx);
 
 clearvars -except seqALPHA vecCOLLECTIVE vecVEHVINF
 filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-for i = 1:length(vecCOLLECTIVE)
+parfor i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
     VAP_IN.vecVEHVINF = vecVEHVINF(i);
-    VAP_IN.valSTARTFORCES = 1;
+    VAP_IN.valSTARTFORCES = 115;
+    VAP_IN.valMAXTIME = 120
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end
 
