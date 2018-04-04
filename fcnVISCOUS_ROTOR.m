@@ -1,5 +1,5 @@
 function [matDPDIST, vecDELNDIST] = fcnVISCOUS_ROTOR( valKINV, ...
-    vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, cellAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF)
+    vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, cellAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF, flagPRINT)
 % This function applies a viscous correction to rotors using look up tables
 % and applies a high angle stall model.
 %
@@ -77,11 +77,11 @@ for k = 1:length(uniqueAirfoil)
     
     
     % Compare Re data range to panel Re
-    if max(vecREDIST(isCurrentAirfoil)) > max(Re)
+    if max(vecREDIST(isCurrentAirfoil)) > max(Re) && flagPRINT == 1
         disp('Re higher than airfoil Re data.')
     end
     
-    if min(vecREDIST(isCurrentAirfoil)) < min(Re)
+    if min(vecREDIST(isCurrentAirfoil)) < min(Re) && flagPRINT == 1
         disp('Re lower than airfoil Re data.')
     end
     
@@ -115,7 +115,9 @@ for k = 1:length(uniqueAirfoil)
     F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
     
     if sum(idxSTALL) > 1
-        disp('Airfoil sections have stalled.')      
+        if flagPRINT == 1
+            disp('Airfoil sections have stalled.')
+        end
         % Make apply stall model using empirical equations
         % cn = cd,90*(sin(alpha_eff))/(0.56+0.44sin(alpha_eff))
         % ct = cd,0*cos(alpha_eff)/2

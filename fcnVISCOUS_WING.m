@@ -1,6 +1,6 @@
 function [valCL, valCD, valPREQ, valLD, valVINF] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-    matCENTER, vecDVEHVCRD, cellAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
+    matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT)
 
 % % % Calculate chordline direction at midspan of each dve
@@ -22,7 +22,9 @@ if fixed_lift ~= 1
 else
     q_inf = valVEHWEIGHT./(valCL.*valAREA);
     valVINF = sqrt(2.*q_inf./valDENSITY);
+    if flagPRINT == 1
     disp(['Using janky fixed-lift analysis - VINF = ', num2str(valVINF)]);
+    end
     vecV = repmat(valVINF, size(matUINF,1), 1);
     q_infandind = repmat(q_inf, size(matUINF,1), 1);
 end
@@ -111,11 +113,11 @@ for i = 1:max(vecDVEWING)
         Re = Re(~idxNans);
 
         % Compare Re data range to panel Re
-        if max(vecREDIST(isCurrentAirfoil)) > max(Re)
+        if max(vecREDIST(isCurrentAirfoil)) > max(Re) && flagPRINT == 1
             disp('Re higher than airfoil Re data.')
         end
         
-        if min(vecREDIST(isCurrentAirfoil)) < min(Re)
+        if min(vecREDIST(isCurrentAirfoil)) < min(Re) && flagPRINT == 1
             disp('Re lower than airfoil Re data.')
         end
 
@@ -137,7 +139,7 @@ for i = 1:max(vecDVEWING)
         % Check for stall and change the CL
         idxSTALL = (vecCNDIST > vecCLMAX) & isCurrentAirfoil;
         vecCNDIST0(idxSTALL) = vecCLMAX(idxSTALL)*0.825;
-        if sum(idxSTALL) > 1
+        if sum(idxSTALL) > 1 && flagPRINT == 1
             disp('Airfoil sections have stalled.')
         end
 
