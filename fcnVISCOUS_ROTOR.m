@@ -1,5 +1,5 @@
 function [matDPDIST, vecDELNDIST] = fcnVISCOUS_ROTOR( valKINV, ...
-    vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, cellAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF)
+    vecDVEHVCRD, vecN, vecM, vecDVELE, vecDVEPANEL, cellAIRFOIL, vecDISNORM, vecDVEAREA, matUINF, matVLST, matDVE, matWUINF, flagPRINT)
 % This function applies a viscous correction to rotors using look up tables
 % and applies a high angle stall model.
 %
@@ -69,73 +69,76 @@ for k = 1:length(uniqueAirfoil)
     %which rows of DVE belongs to the airfoil in this loop
     isCurrentAirfoil = idxAirfoil(idxpanel) == k;
     
-    
-    idxNans = isnan(Alpha) | isnan(Cdp) | isnan(Re);
-    Alpha = Alpha(~idxNans);
-    Cdp = Cdp(~idxNans);
-    Re = Re(~idxNans);
-    
-    
-    % Compare Re data range to panel Re
-    if max(vecREDIST(isCurrentAirfoil)) > max(Re)
-        disp('Re higher than airfoil Re data.')
-    end
-    
-    if min(vecREDIST(isCurrentAirfoil)) < min(Re)
-        disp('Re lower than airfoil Re data.')
-    end
-    
-    
-    % find CLmax for each row of dves
-    [polarClmax, idxClmax] = max(pol(:,2,:));
-    
-    polarClmaxA = nan(size(polarClmax));
-    for p = 1:length(polarClmax)
-        polarClmaxA(p) = pol(idxClmax(:,:,p),1,p);
-    end
-    polarClmaxA = polarClmaxA(:);
-    polarClmax = polarClmax(:);
-    
-    polarClmaxRe = unique(pol(:,8,:));
-    polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
-    %polarClmaxRe = reshape(pol(1,8,:),[],1);
-    
-    vecCLMAXA(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(isCurrentAirfoil),'linear');
-    
-    
-    % Out of range Reynolds number index
-    idxReOFR = (vecREDIST > max(Re) | vecREDIST < min(Re)) & isCurrentAirfoil;
-    
-    % Nearest extrap for out of range Reynolds number
-    vecCLMAXA(idxReOFR) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(idxReOFR),'nearest','extrap');
-    
-    % Check for stall and change the CL
-    idxSTALL = (radtodeg(vecALPHAEFF) > vecCLMAXA) & isCurrentAirfoil;
-    
-    F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
-    
-    if sum(idxSTALL) > 1
-        disp('Airfoil sections have stalled.')      
-        % Make apply stall model using empirical equations
-        % cn = cd,90*(sin(alpha_eff))/(0.56+0.44sin(alpha_eff))
-        % ct = cd,0*cos(alpha_eff)/2
-        % cd = cn*sin(alpha_eff)+ct*cos(alpha_eff)
-        % Note: cd,90 = 2
-        % Find cd_0
+    if any(isCurrentAirfoil)
+        idxNans = isnan(Alpha) | isnan(Cdp) | isnan(Re);
+        Alpha = Alpha(~idxNans);
+        Cdp = Cdp(~idxNans);
+        Re = Re(~idxNans);
         
-        cd_0 = F(vecREDIST(idxSTALL),zeros(sum(idxSTALL),1));
         
-        cn = 2.*sin(abs(vecALPHAEFF(idxSTALL)))./(0.56+0.44.*sin(abs(vecALPHAEFF(idxSTALL))));
-        ct = cd_0.*cos(abs(vecALPHAEFF(idxSTALL)))./2;
-        vecCNDIST0(idxSTALL)  = cn.*cos(abs(vecALPHAEFF(idxSTALL))) - ct.*sin(abs(vecALPHAEFF(idxSTALL)));
+        % Compare Re data range to panel Re
+        if (max(vecREDIST(isCurrentAirfoil)) > max(Re)) && flagPRINT == 1
+            disp('Re higher than airfoil Re data.')
+        end
         
-        vecCDPDIST(idxSTALL) = cn.*sin(abs(vecALPHAEFF(idxSTALL))) + ct.*cos(abs(vecALPHAEFF(idxSTALL)));
+        if (min(vecREDIST(isCurrentAirfoil)) < min(Re)) && flagPRINT == 1
+            disp('Re lower than airfoil Re data.')
+        end
         
+        
+        % find CLmax for each row of dves
+        [polarClmax, idxClmax] = max(pol(:,2,:));
+        
+        polarClmaxA = nan(size(polarClmax));
+        for p = 1:length(polarClmax)
+            polarClmaxA(p) = pol(idxClmax(:,:,p),1,p);
+        end
+        polarClmaxA = polarClmaxA(:);
+        polarClmax = polarClmax(:);
+        
+        polarClmaxRe = unique(pol(:,8,:));
+        polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
+        %polarClmaxRe = reshape(pol(1,8,:),[],1);
+        
+        vecCLMAXA(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(isCurrentAirfoil),'linear');
+        
+        
+        % Out of range Reynolds number index
+        idxReOFR = (vecREDIST > max(Re) | vecREDIST < min(Re)) & isCurrentAirfoil;
+        
+        % Nearest extrap for out of range Reynolds number
+        vecCLMAXA(idxReOFR) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(idxReOFR),'nearest','extrap');
+        
+        % Check for stall and change the CL
+        idxSTALL = (radtodeg(vecALPHAEFF) > vecCLMAXA) & isCurrentAirfoil;
+        
+        F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
+        
+        if sum(idxSTALL) > 1
+            if flagPRINT == 1
+                disp('Airfoil sections have stalled.')
+            end
+            % Make apply stall model using empirical equations
+            % cn = cd,90*(sin(alpha_eff))/(0.56+0.44sin(alpha_eff))
+            % ct = cd,0*cos(alpha_eff)/2
+            % cd = cn*sin(alpha_eff)+ct*cos(alpha_eff)
+            % Note: cd,90 = 2
+            % Find cd_0
+            
+            cd_0 = F(vecREDIST(idxSTALL),zeros(sum(idxSTALL),1));
+            
+            cn = 2.*sin(abs(vecALPHAEFF(idxSTALL)))./(0.56+0.44.*sin(abs(vecALPHAEFF(idxSTALL))));
+            ct = cd_0.*cos(abs(vecALPHAEFF(idxSTALL)))./2;
+            vecCNDIST0(idxSTALL)  = cn.*cos(abs(vecALPHAEFF(idxSTALL))) - ct.*sin(abs(vecALPHAEFF(idxSTALL)));
+            
+            vecCDPDIST(idxSTALL) = cn.*sin(abs(vecALPHAEFF(idxSTALL))) + ct.*cos(abs(vecALPHAEFF(idxSTALL)));
+            
+        end
+        
+        vecCDPDIST(idxSTALL==0) = F(vecREDIST(idxSTALL==0), radtodeg(vecALPHAEFF(idxSTALL==0)));
+        
+        clear pol foil
     end
-    
-    vecCDPDIST(idxSTALL==0) = F(vecREDIST(idxSTALL==0), radtodeg(vecALPHAEFF(idxSTALL==0)));
-    
-    clear pol foil
 end
 
 % Apply direction to CDP

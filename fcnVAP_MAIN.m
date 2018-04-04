@@ -14,7 +14,7 @@ FLAG.TRI = 0;
 FLAG.GPU = 0;
 
 FLAG.PRINT = 1;
-FLAG.PLOT = 1;
+FLAG.PLOT = 0;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
@@ -22,6 +22,7 @@ FLAG.PREVIEW = 0;
 FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
+FLAG.SAVETIMESTEP = 0;
 
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
@@ -38,6 +39,13 @@ if FLAG.PRINT == 1
     disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/|______/');
     disp('============================================================================');
     disp(' ');
+end
+
+% Setting up timestep saving feature
+if FLAG.SAVETIMESTEP == 1
+    if exist('timesteps/') ~= 7; mkdir(timesteps); end
+    timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
+    mkdir(timestep_folder);
 end
 
 % Check if the files required by the viscous calculations exist
@@ -78,6 +86,7 @@ n = 1;
 valGUSTTIME = 1;
 
 %% Timestepping
+
 for valTIMESTEP = 1:COND.valMAXTIME
     %% Timestep to solution
     %   Move wing
@@ -148,22 +157,30 @@ for valTIMESTEP = 1:COND.valMAXTIME
         end
         
         %% Forces
-        [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
+        if valTIMESTEP >= COND.valSTARTFORCES
+            [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
+        end
         
+        if FLAG.SAVETIMESTEP == 1
+            save([timestep_folder, 'timestep_', num2str(valTIMESTEP), '.mat'], 'filename','valTIMESTEP','INPU','COND','MISC','WAKE','VEHI','SURF','OUTP');
+        end
     end
     
     %% Post-timestep outputs
     if FLAG.PRINT == 1
-        fcnPRINTOUT(FLAG.PRINT, valTIMESTEP, INPU.valVEHICLES, OUTP.vecCL, OUTP.vecCDI, OUTP.vecCTCONV, MISC.vecROTORJ, VEHI.vecROTORVEH, 1)
+        fcnPRINTOUT(FLAG.PRINT, valTIMESTEP, INPU.valVEHICLES, OUTP.vecCL, OUTP.vecCDI, OUTP.vecCT, MISC.vecROTORJ, VEHI.vecROTORVEH, 1)
     end
     
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)
         fcnGIF(FLAG.VERBOSE, valTIMESTEP, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, VISC.matFUSEGEOM, WAKE.valWNELE, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCENTER, WAKE.vecWPLOTSURF, 1);
     end
     
-    if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0
-        temp_cdi = fcnTIMEAVERAGE(OUTP.vecCDI(:,end), COND.vecROTORRPM, COND.valDELTIME);
-    end
+end
+
+if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0
+    OUTP.vecCD_AVG = fcnTIMEAVERAGE(OUTP.vecCD, COND.vecROTORRPM, COND.valDELTIME);
+    OUTP.vecCT_AVG = fcnTIMEAVERAGE(OUTP.vecCT, COND.vecROTORRPM, COND.valDELTIME);
+    OUTP.vecCL_AVG = fcnTIMEAVERAGE(OUTP.vecCLv, COND.vecROTORRPM, COND.valDELTIME);
 end
 
 if FLAG.PRINT == 1 && FLAG.PREVIEW == 0
@@ -174,6 +191,12 @@ end
 %% Plotting
 fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND)
 
+OUTP.vecVEHALPHA = COND.vecVEHALPHA;
+OUTP.vecCOLLECTIVE = COND.vecCOLLECTIVE;
+OUTP.vecVINF = COND.vecVEHVINF;
+OUTP.vecROTDIAM = INPU.vecROTDIAM;
+OUTP.vecVEHWEIGHT = COND.vecVEHWEIGHT;
+OUTP.vecROTORRPM = COND.vecROTORRPM;
 OUTP.vecDVEAREA = SURF.vecDVEAREA;
 OUTP.valAREA = INPU.vecAREA;
 OUTP.matGEOM = INPU.matGEOM;

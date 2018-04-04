@@ -29,7 +29,5 @@ else
     OUTP.vecCP = nan;
 end
 
-OUTP.vecCTCONV = OUTP.vecCT;
-
 end
 

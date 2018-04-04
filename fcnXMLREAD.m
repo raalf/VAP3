@@ -53,6 +53,7 @@ COND.valMAXTIME = floor(str2double(VAP.settings.valMAXTIME.Text));
 COND.valMINTIME = floor(str2double(VAP.settings.valMINTIME.Text));
 COND.valDELTIME = str2double(VAP.settings.valDELTIME.Text);
 COND.valDELTAE = str2double(VAP.settings.valDELTAE.Text);
+try COND.valSTARTFORCES = floor(str2double(VAP.settings.valSTARTFORCES.Text)); catch; COND.valSTARTFORCES = 0; end
 
 %% Conditions
 COND.valDENSITY = str2double(VAP.conditions.valDENSITY.Text);
@@ -381,12 +382,6 @@ end
 
 INPU.valPANELS = size(INPU.matGEOM,3);
 
-if any(isnan(COND.vecVEHVINF))
-    disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
-    COND.vecVEHVINF(isnan(COND.vecVEHVINF)) = ones(sum(isnan(COND.vecVEHVINF)),1);
-    FLAG.FIXEDLIFT = 1;
-end
-
 %% Overwriting default values with user-specified
 
 if ~isempty(VAP_IN)
@@ -404,6 +399,12 @@ if ~isempty(VAP_IN)
             FLAG.(in_names{i}) = VAP_IN.(in_names{i});
         end
     end
+end
+
+if any(isnan(COND.vecVEHVINF))
+    disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
+    COND.vecVEHVINF(isnan(COND.vecVEHVINF)) = ones(sum(isnan(COND.vecVEHVINF)),1);
+    FLAG.FIXEDLIFT = 1;
 end
 
 end

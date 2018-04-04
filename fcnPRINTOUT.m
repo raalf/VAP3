@@ -1,4 +1,4 @@
-function [] = fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCTCONV, vecROTORJ, vecROTORVEH,i)
+function [] = fcnPRINTOUT(flagPRINT, valTIMESTEP, valVEHICLES, vecCL, vecCDI, vecCT, vecROTORJ, vecROTORVEH,i)
 if flagPRINT == 1 && valTIMESTEP == 1
     rotor_count = 1;
     
@@ -33,7 +33,7 @@ for j = 1:valVEHICLES
 
         for jj = 1:length(nonzeros(vecROTORVEH == j))
 
-            txtout = [txtout sprintf('\t\t%0.4f',vecCTCONV(valTIMESTEP,jj,i))];
+            txtout = [txtout sprintf('\t\t%0.4f',vecCT(valTIMESTEP,jj,i))];
             
         end
 
