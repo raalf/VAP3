@@ -33,12 +33,12 @@ vecCOLLECTIVE = vecCOLLECTIVE(idx);
 
 clearvars -except seqALPHA vecCOLLECTIVE vecVEHVINF
 filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-parfor i = 1:length(vecCOLLECTIVE)
+for i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
     VAP_IN.vecVEHVINF = vecVEHVINF(i);
-    VAP_IN.valSTARFORCES = 154;
+    VAP_IN.valSTARTFORCES = 1;
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end
 

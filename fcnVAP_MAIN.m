@@ -143,7 +143,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     
     %% Post-timestep outputs
     if FLAG.PRINT == 1
-        fcnPRINTOUT(FLAG.PRINT, valTIMESTEP, INPU.valVEHICLES, OUTP.vecCL, OUTP.vecCDI, OUTP.vecCTCONV, MISC.vecROTORJ, VEHI.vecROTORVEH, 1)
+        fcnPRINTOUT(FLAG.PRINT, valTIMESTEP, INPU.valVEHICLES, OUTP.vecCL, OUTP.vecCDI, OUTP.vecCT, MISC.vecROTORJ, VEHI.vecROTORVEH, 1)
     end
     
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)
