@@ -23,7 +23,7 @@ else
     q_inf = valVEHWEIGHT./(valCL.*valAREA);
     valVINF = sqrt(2.*q_inf./valDENSITY);
     if flagPRINT == 1
-    disp(['Using janky fixed-lift analysis - VINF = ', num2str(valVINF)]);
+        disp(['Using janky fixed-lift analysis - VINF = ', num2str(valVINF)]);
     end
     vecV = repmat(valVINF, size(matUINF,1), 1);
     q_infandind = repmat(q_inf, size(matUINF,1), 1);
@@ -70,7 +70,7 @@ for i = 1:max(vecDVEWING)
     % we can't just add a constant value to get to the same spanwise location in the next
     % row of elements
     tempm = repmat(vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel~=0),1);
-
+    
     rows = repmat(idxdve,1,m) + uint16(tempm);
     
     % Note this CN is non-dimensionalized with Vinf + Vind
@@ -99,60 +99,62 @@ for i = 1:max(vecDVEWING)
         catch
             error('Error: Unable to locate airfoil file: %s.mat.', cellAIRFOIL{k});
         end
-
+        
         Cl  = reshape(pol(:,2,:),[],1);
         Cdp = reshape(pol(:,3,:),[],1);
         Re  = reshape(pol(:,8,:),[],1);
-
+        
         %which rows of DVE belongs to the airfoil in this loop
         isCurrentAirfoil = isCurWing & idxAirfoil(lepanels) == k;
-
-        idxNans = isnan(Cl) | isnan(Cdp) | isnan(Re);
-        Cl = Cl(~idxNans);
-        Cdp = Cdp(~idxNans);
-        Re = Re(~idxNans);
-
-        % Compare Re data range to panel Re
-        if max(vecREDIST(isCurrentAirfoil)) > max(Re) && flagPRINT == 1
-            disp('Re higher than airfoil Re data.')
+        
+        if any(isCurrentAirfoil)
+            idxNans = isnan(Cl) | isnan(Cdp) | isnan(Re);
+            Cl = Cl(~idxNans);
+            Cdp = Cdp(~idxNans);
+            Re = Re(~idxNans);
+            
+            % Compare Re data range to panel Re
+            if (max(vecREDIST(isCurrentAirfoil)) > max(Re)) && flagPRINT == 1
+                disp('Re higher than airfoil Re data.')
+            end
+            
+            if (min(vecREDIST(isCurrentAirfoil)) < min(Re)) && flagPRINT == 1
+                disp('Re lower than airfoil Re data.')
+            end
+            
+            % find CLmax for each row of dves
+            polarClmax = max(pol(:,2,:));
+            polarClmax = polarClmax(:);
+            
+            polarClmaxRe = unique(pol(:,8,:));
+            polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
+            %polarClmaxRe = reshape(pol(1,8,:),[],1);
+            
+            vecCLMAX(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmax,vecREDIST(isCurrentAirfoil),'linear');
+            
+            % Out of range Reynolds number index
+            idxReOFR = (vecREDIST > max(Re) | vecREDIST < min(Re)) & isCurrentAirfoil;
+            % Nearest extrap for out of range Reynolds number
+            vecCLMAX(idxReOFR) = interp1(polarClmaxRe,polarClmax,vecREDIST(idxReOFR),'nearest','extrap');
+            
+            % Check for stall and change the CL
+            idxSTALL = (vecCNDIST > vecCLMAX) & isCurrentAirfoil;
+            vecCNDIST0(idxSTALL) = vecCLMAX(idxSTALL)*0.825;
+            if sum(idxSTALL) > 1 && flagPRINT == 1
+                disp('Airfoil sections have stalled.')
+            end
+            
+            F = scatteredInterpolant(Re,Cl,Cdp,'linear');
+            vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
+            clear pol foil
         end
-        
-        if min(vecREDIST(isCurrentAirfoil)) < min(Re) && flagPRINT == 1
-            disp('Re lower than airfoil Re data.')
-        end
-
-        % find CLmax for each row of dves
-        polarClmax = max(pol(:,2,:));
-        polarClmax = polarClmax(:);
-        
-        polarClmaxRe = unique(pol(:,8,:));
-        polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
-        %polarClmaxRe = reshape(pol(1,8,:),[],1);
-        
-        vecCLMAX(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmax,vecREDIST(isCurrentAirfoil),'linear');
-        
-        % Out of range Reynolds number index
-        idxReOFR = (vecREDIST > max(Re) | vecREDIST < min(Re)) & isCurrentAirfoil;
-        % Nearest extrap for out of range Reynolds number
-        vecCLMAX(idxReOFR) = interp1(polarClmaxRe,polarClmax,vecREDIST(idxReOFR),'nearest','extrap');
-
-        % Check for stall and change the CL
-        idxSTALL = (vecCNDIST > vecCLMAX) & isCurrentAirfoil;
-        vecCNDIST0(idxSTALL) = vecCLMAX(idxSTALL)*0.825;
-        if sum(idxSTALL) > 1 && flagPRINT == 1
-            disp('Airfoil sections have stalled.')
-        end
-
-        F = scatteredInterpolant(Re,Cl,Cdp,'linear');
-        vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
-        clear pol foil
     end
- 	% CN in terms of Vinf instead of Vinf + Vind
+    % CN in terms of Vinf instead of Vinf + Vind
     vecCNDIST(isCurWing) = vecCNDIST0(isCurWing).*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
     
     % Lift force per wing
     LPerWing(i) = sum(vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing));
-
+    
     % dimensionalize in terms of both Vinf and Vind
     dprofPerWing(i) = sum(vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing));
 end
@@ -182,19 +184,19 @@ dprof = sum(dprofPerWing);
 dvt = 0;
 % for ii = 1:valVSPANELS
 %     Re = valVINF*matVSGEOM(ii,2)/valKINV;
-%     
+%
 %     % Load airfoil data
 %     airfoil = dlmread(strcat('airfoils/airfoil',num2str(matVSGEOM(ii,4)),'.dat'),'', 1, 0);
-%     
+%
 %     % determining the drag coefficient corresponding to lift
 %     % coefficient of 0
-%     
+%
 %     % MATLAB:
 %     F = scatteredInterpolant(airfoil(:,4), airfoil(:,2), airfoil(:,3),'nearest');
 %     cdvt = F(Re, 0);
 %     % Octave:
 %     % cdvt = griddata(Temp.Airfoil(:,4), Temp.Airfoil(:,2), Temp.Airfoil(:,3), Re, 0, 'nearest');
-%     
+%
 %     dvt = dvt + cdvt*matVSGEOM(ii,3);
 % end
 
