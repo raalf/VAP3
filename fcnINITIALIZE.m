@@ -1,4 +1,4 @@
-function [WAKE, OUTP, INPU] = fcnINITIALIZE(COND, INPU)
+function [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU)
 
 % Preallocating for a turbo-boost in performance
 OUTP.vecCL = nan(COND.valMAXTIME,INPU.valVEHICLES);
@@ -46,6 +46,17 @@ WAKE.vecWDVETIP = uint8([]);
 WAKE.vecWDVESURFACE = uint8([]);
 WAKE.vecWDVETRI = [];
 WAKE.vecWPLOTSURF = uint8([]);
+
+% Initializing structure parameters
+OUTP.matDEFGLOB = [];
+OUTP.matTWISTGLOB = [];
+OUTP.vecWRBM = [];
+try OUTP.matDEF = zeros(COND.valSTIFFSTEPS,INPU.valNSELE+4); catch; end
+try OUTP.matTWIST = zeros(COND.valSTIFFSTEPS,INPU.valNSELE+4); catch; end
+
+% Initiliazing unsteady aero terms
+SURF.dGammadt = [];
+SURF.gamma_old = [];
 
 end
 

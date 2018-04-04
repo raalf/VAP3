@@ -1,7 +1,7 @@
 function [ vecDVEHVSPN, vecDVEHVCRD, ...
     vecDVEROLL, vecDVEPITCH, vecDVEYAW,...
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
-    vecDVEAREA, matDVENORM, matVLST, matDVE, matCENTER] = fcnVLST2DVEPARAM( matDVE, matNPVLST )
+    vecDVEAREA, matDVENORM, matVLST, matDVE, matCENTER, matNEWWAKE ] = fcnVLST2DVEPARAM_NEW( matDVE, matNPVLST, matNEWWAKE, vecDVETE  )
 
 %FCNVLST2DVEPARAMS Summary of this function goes here
 %   Detailed explanation goes here
@@ -19,6 +19,10 @@ matCENTER = (P1+P2+P3+P4)/4;
     vecDVELESWP, vecDVEMCSWP, vecDVETESWP, ...
     vecDVEAREA, matDVENORM, ...
     matVLST, matDVE, ~, ~] = fcnDVECORNER2PARAM( matCENTER, P1, P2, P3, P4 );
+
+% New trailing edge vertices
+matNEWWAKE(:,:,1) = matVLST(matDVE(vecDVETE>0,4),:);
+matNEWWAKE(:,:,2) = matVLST(matDVE(vecDVETE>0,3),:);
 
 end
 

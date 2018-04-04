@@ -24,7 +24,7 @@ FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
 
 % Initializing parameters to null/zero/nan
-[WAKE, OUTP, INPU] = fcnINITIALIZE(COND, INPU);
+[WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
 
 if FLAG.PRINT == 1
     disp('============================================================================');
@@ -74,6 +74,9 @@ SURF.matNTDVE = SURF.matDVE;
 % Computing structure distributions if data exists
 try [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); catch; end
 
+n = 1;
+valGUSTTIME = 1;
+
 %% Timestepping
 for valTIMESTEP = 1:COND.valMAXTIME
     %% Timestep to solution
@@ -90,7 +93,29 @@ for valTIMESTEP = 1:COND.valMAXTIME
     %   Calculate viscous effects
     
     %% Moving the vehicles
-    [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
+    
+    % Bend wing if applicable, else move wing normally
+    try
+        if valTIMESTEP <= COND.valSTIFFSTEPS || FLAG.STIFFWING == 1
+            
+            [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, valTIMESTEP);
+            
+            if FLAG.STIFFWING == 2
+%                 [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
+            end
+            
+        elseif valTIMESTEP == n*COND.valSTIFFSTEPS + 1 || valGUSTTIME > 1
+            [COND, INPU, OUTP, MISC, SURF, valGUSTTIME] = fcnFLEXWING(INPU, COND, SURF, OUTP, FLAG, MISC, valGUSTTIME, valTIMESTEP);
+            n = n + 1;
+        else
+            [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING_STATIC(INPU, VEHI, MISC, COND, SURF, VISC, OUTP, valTIMESTEP);
+        end
+    catch
+        [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
+    end
+    
+    % Update structure location after moving wing
+    try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU); catch; end
     
     %% Generating new wake elements
     [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnCREATEWAKEROW(FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF);

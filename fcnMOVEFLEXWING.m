@@ -1,30 +1,35 @@
-function [SURF, MISC, COND] = fcnMOVEFLEXWING(COND, SURF, OUTP, INPU, valTIMESTEP)
+function [SURF, MISC, COND] = fcnMOVEFLEXWING(COND, SURF, OUTP, INPU, MISC, valTIMESTEP)
 % MISC.matNEWWAKE, MISC.matNPNEWWAKE,
 % This function determines the velocities with which the DVEs are moved
 % based on the deflection and twist of the wing. The corresponding
 % translations are then computed of the DVE vertices and control points.
-
-% q_inf = valWEIGHT/(vecCL(valTIMESTEP-1)*valAREA);
-% COND.vecVEHVINF = sqrt(2*q_inf/valDENSITY);
 
 [ledves, ~, ~] = find(SURF.vecDVELE > 0);
 
 % Span of each spanwise set of DVEs
 vecDVESPAN = 2*SURF.vecDVEHVSPN(ledves)';
 
-% Deflection velocity after first timestep (referenced to zero initial
-% deflection and twist)
-
 % Calculate cartesian velocity of DVE edges
+
+temp = [linterp(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,1),SURF.vecSPANDIST(2:end-1))',...
+    linterp(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,2),SURF.vecSPANDIST(2:end-1))',...
+    linterp(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,3),SURF.vecSPANDIST(2:end-1))'];
+
+% Extrapolate velocity at wing tips
+uinf_root = ((temp(1,:) - SURF.matUINF(ledves(1),:))./(SURF.vecSPANDIST(2)-SURF.matCENTER(ledves(1),2))).*(SURF.vecSPANDIST(1)-SURF.matCENTER(ledves(1),2))+SURF.matUINF(ledves(1),:);
+uinf_tip = ((temp(end,:) - SURF.matUINF(ledves(end),:))./(SURF.vecSPANDIST(end-1)-SURF.matCENTER(ledves(end),2))).*(SURF.vecSPANDIST(end)-SURF.matCENTER(ledves(end),2))+SURF.matUINF(ledves(end),:);
+
+matUINF_edge = [uinf_root; temp; uinf_tip];
+
 del_twist = ((OUTP.matTWISTGLOB(valTIMESTEP,:) - OUTP.matTWISTGLOB(valTIMESTEP-1,:)));
 omega = ((OUTP.matTWISTGLOB(valTIMESTEP,:) - OUTP.matTWISTGLOB(valTIMESTEP-1,:)))./COND.valDELTIME;
-vecXVEL = repmat(COND.vecVEHVINF*cos(COND.vecVEHALPHA)*cos(COND.vecVEHBETA),1,sum(INPU.vecN,1)+1);
-vecYVEL = repmat(COND.vecVEHVINF*sin(COND.vecVEHBETA),1,size(OUTP.matSLOPE,2)+1) + [0, (OUTP.matDEFGLOB(valTIMESTEP,2:end)-OUTP.matDEFGLOB(valTIMESTEP-1,2:end))./...
-    (COND.valDELTIME.*tan(repmat(pi/2,1,size(OUTP.matSLOPE,2))-(OUTP.matSLOPE(valTIMESTEP,:)-OUTP.matSLOPE(valTIMESTEP-1,:))./2))];
-vecZVEL = repmat(COND.vecVEHVINF*sin(COND.vecVEHALPHA)*cos(COND.vecVEHBETA),1,sum(INPU.vecN,1)+1) + ((OUTP.matDEFGLOB(valTIMESTEP,:) - OUTP.matDEFGLOB(valTIMESTEP-1,:))./COND.valDELTIME);
+vecXVEL = matUINF_edge(:,1);
+vecYVEL = matUINF_edge(:,2) + [0, (OUTP.matDEFGLOB(valTIMESTEP,2:end)-OUTP.matDEFGLOB(valTIMESTEP-1,2:end))./...
+    (COND.valDELTIME.*tan(repmat(pi/2,1,size(OUTP.matSLOPE,2))-(OUTP.matSLOPE(valTIMESTEP,:)-OUTP.matSLOPE(valTIMESTEP-1,:))./2))]';
+vecZVEL = matUINF_edge(:,3) + ((OUTP.matDEFGLOB(valTIMESTEP,:) - OUTP.matDEFGLOB(valTIMESTEP-1,:))./COND.valDELTIME)';
 
 % Determine DVEs in each spanwise station
-[matROWS] = fcnDVEROW(ledves, SURF.vecDVEPANEL, SURF.vecDVEWING, INPU.vecM, INPU.vecN);
+[matROWS] = fcnDVEROW(ledves, SURF, INPU);
 
 %% Determining displacement distances
 
@@ -37,7 +42,7 @@ temp_leftV = reshape(temp_leftV,sum(INPU.vecN,1),[]);
 [move_row,~] = find(temp_leftV); % Vector correspond to which index of deflection velocity matrix should be used for each element
 
 % Allocate space for translation matrices
-translateNPVLST = zeros(size(SURF.matNTVLST,1),3);
+translateNTVLST = zeros(size(SURF.matNTVLST,1),3);
 temp_translate = zeros(size(SURF.matNTVLST,1),3);
 
 temp_r = [sqrt(sum(SURF.matSCLST.^2,2)), zeros(length(SURF.matSCLST(:,1)),2)]; % Distance between vertex and shear center
@@ -90,9 +95,9 @@ test(temp_leftV,1) = v_rot.*sin(OUTP.matTWISTGLOB(valTIMESTEP,move_row)+vecEDGEP
 test(temp_leftV,3) = v_rot.*cos(OUTP.matTWISTGLOB(valTIMESTEP,move_row)+vecEDGEPITCH(move_row))'.*COND.valDELTIME;
 
 % Translate left edge vertices due to freestream and bending
-translateNPVLST(temp_leftV,1) = COND.valDELTIME.*vecXVEL(move_row);
-translateNPVLST(temp_leftV,2) = COND.valDELTIME.*vecYVEL(move_row);
-translateNPVLST(temp_leftV,3) = -1*COND.valDELTIME.*vecZVEL(move_row);
+translateNTVLST(temp_leftV,1) = COND.valDELTIME.*vecXVEL(move_row);
+translateNTVLST(temp_leftV,2) = COND.valDELTIME.*vecYVEL(move_row);
+translateNTVLST(temp_leftV,3) = -1*COND.valDELTIME.*vecZVEL(move_row);
 
 % ======================== Right Edge Displacements =======================
 % All right LE and TE points to move
@@ -127,9 +132,9 @@ temp_translate(:,3) = xz_sign.*temp_translate(:,3);
 % ======================================================================= %
 
 % Translate right edge vertices due to freestream and bending
-translateNPVLST(temp_rightV,1) = COND.valDELTIME.*vecXVEL(move_row+1);
-translateNPVLST(temp_rightV,2) = COND.valDELTIME.*vecYVEL(move_row+1);
-translateNPVLST(temp_rightV,3) = -1*COND.valDELTIME.*vecZVEL(move_row+1);
+translateNTVLST(temp_rightV,1) = COND.valDELTIME.*vecXVEL(move_row+1);
+translateNTVLST(temp_rightV,2) = COND.valDELTIME.*vecYVEL(move_row+1);
+translateNTVLST(temp_rightV,3) = -1*COND.valDELTIME.*vecZVEL(move_row+1);
 
 %% Move wing and generate new wake elements
 
@@ -142,7 +147,7 @@ MISC.matNPNEWWAKE(:,:,4) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,4),:);
 MISC.matNPNEWWAKE(:,:,3) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,3),:);
 
 % Update SURF.matVLST and SURF.matNTVLST
-SURF.matNTVLST = SURF.matNTVLST - (translateNPVLST - temp_translate);
+SURF.matNTVLST = SURF.matNTVLST - (translateNTVLST - temp_translate);
 
 % New non-planar trailing edge vertices (used to calculate matWADJE)
 MISC.matNPNEWWAKE(:,:,1) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,4),:);

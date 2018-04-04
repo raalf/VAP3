@@ -1,4 +1,4 @@
-function [valCL, valCD, valPREQ, valLD] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+function [valCL, valCD, valPREQ, valLD, vecCMDIST] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagVERBOSE, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT)
@@ -33,7 +33,8 @@ matXYZDIST   = nan(size(ledves,1),3);
 vecLEDVEDIST = nan(size(ledves,1),1);
 vecREDIST    = nan(size(ledves,1),1);
 vecAREADIST  = nan(size(ledves,1),1);
-vecCDPDIST   = nan(size(ledves,1),1); % pre-allocate the array to store viscous drag results
+vecCDPDIST   = nan(size(ledves,1),1); % pre-allocate the array to store viscous drag 
+vecCMDIST   = nan(size(ledves,1),1);
 vecCLMAX     = nan(size(ledves,1),1);
 dprofPerWing = nan(max(vecDVEWING),1);
 LPerWing = nan(max(vecDVEWING),1);
@@ -92,6 +93,7 @@ for i = 1:max(vecDVEWING)
 
         Cl  = reshape(pol(:,2,:),[],1);
         Cdp = reshape(pol(:,3,:),[],1);
+        Cm = reshape(pol(:,5,:),[],1);
         Re  = reshape(pol(:,8,:),[],1);
 
         %which rows of DVE belongs to the airfoil in this loop
@@ -100,6 +102,7 @@ for i = 1:max(vecDVEWING)
         idxNans = isnan(Cl) | isnan(Cdp) | isnan(Re);
         Cl = Cl(~idxNans);
         Cdp = Cdp(~idxNans);
+        Cm = Cm(~idxNans);
         Re = Re(~idxNans);
 
         % Compare Re data range to panel Re
@@ -135,6 +138,9 @@ for i = 1:max(vecDVEWING)
 
         F = scatteredInterpolant(Re,Cl,Cdp,'linear');
         vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
+        
+        F = scatteredInterpolant(Re,Cl,Cm,'linear');
+        vecCMDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         clear pol foil
     end
  	% CN in terms of Vinf instead of Vinf + Vind

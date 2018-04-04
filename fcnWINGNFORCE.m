@@ -1,4 +1,4 @@
-function [OUTP] = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP)
+function [OUTP] = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP, FLAG, WAKE, VISC)
 %% Wing Normal Force
 % this routine adds up the DVE's normal forces in order to compute the
 % total wing normal forces/density and coefficients based on free stream
@@ -67,6 +67,24 @@ for i = 1:INPU.valVEHICLES
         
         AR(i) = (INPU.vecSPAN(i)*INPU.vecSPAN(i))/INPU.vecAREA(i);
         valE(i) = (valCL(i)*valCL(i))/ (pi*AR(i)*valCDI(i));
+        
+        try
+            if FLAG.STIFFWING ~= 1
+
+                [SURF.vecLEDVES,~,~] = find(SURF.vecDVELE > 0);
+                
+                [OUTP, ~, ~] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, 1);
+
+                [OUTP] = fcnFORCEDIST(SURF, COND, INPU, OUTP, valTIMESTEP);
+
+            else
+
+                OUTP.vecLIFTDIST = [];
+                OUTP.vecMOMDIST = [];
+
+            end
+        catch
+        end
         
     end
     

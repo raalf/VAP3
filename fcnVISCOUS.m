@@ -1,4 +1,7 @@
-function [OUTP, matROTORDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE)
+function [OUTP, matROTORDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, temp_visc)
+% temp_visc is a flag to determine whether to use the viscous function
+% within the timestepping procedure or at the end of the timestepping. 0
+% will only apply it at the end and 1 will apply it within the timestepping
 
 OUTP.vecCLv = nan(INPU.valVEHICLES,1);
 OUTP.vecCD = nan(INPU.valVEHICLES,1);
@@ -12,7 +15,7 @@ if FLAG.VISCOUS == 1
 
         idxvehwing = SURF.vecDVEWING > 0 & SURF.vecDVEVEHICLE == i; %(SURF.vecDVEWING.*SURF.vecDVEVEHICLE == i) > 0;
 
-        if any(idxvehwing) && valTIMESTEP == COND.valMAXTIME
+        if (any(idxvehwing) && valTIMESTEP == COND.valMAXTIME) || (any(idxvehwing)&& temp_visc == 1)
                 % Compute induced velocity
             [matWUINF] = fcnINDVEL(SURF.matCENTER, valTIMESTEP, SURF, WAKE, INPU, FLAG);
             
@@ -22,7 +25,7 @@ if FLAG.VISCOUS == 1
                 fixed_lift = 0;
             end
             
-            [OUTP.vecCLv(i), OUTP.vecCD(i), OUTP.vecPREQ(i), OUTP.vecLD(i)] = fcnVISCOUS_WING(OUTP.vecCL(end), OUTP.vecCDI(end), ...
+            [OUTP.vecCLv(i), OUTP.vecCD(i), OUTP.vecPREQ(i), OUTP.vecLD(i), OUTP.vecCMDIST] = fcnVISCOUS_WING(OUTP.vecCL(end), OUTP.vecCDI(end), ...
                 INPU.vecAREA, COND.valDENSITY, VISC.valKINV, SURF.vecDVENFREE, SURF.vecDVENIND, ...
                 SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE, SURF.vecDVESIND, SURF.vecDVEPANEL, SURF.vecDVELE, SURF.vecDVEWING.*uint8(idxvehwing), INPU.vecN, INPU.vecM, SURF.vecDVEAREA, ...
                 SURF.matCENTER, SURF.vecDVEHVCRD, VISC.cellAIRFOIL, FLAG.VERBOSE, INPU.vecSYM, VISC.vecVSPANELS, VISC.matVSGEOM, VISC.vecFPANELS, VISC.matFGEOM, VISC.vecFTURB, ...

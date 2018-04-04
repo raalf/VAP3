@@ -4,4 +4,6 @@ warning off
 
 filename = 'inputs/WinDySIM.vap';
 
-OUTP = fcnVAP_MAIN(filename, 0, 0);
+VAP_IN = [];
+
+OUTP = fcnVAP_MAIN(filename, VAP_IN);

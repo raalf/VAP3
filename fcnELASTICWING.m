@@ -61,7 +61,7 @@ valSTRUCTDELTIME = COND.valSDELTIME;
 [matGJt_interp(:,2)] = linterp(SURF.vecSPANDIST,INPU.matGJt(:,2)',temp_y);
 [INPU.vecLM] = linterp(SURF.vecSPANDIST,INPU.vecLM',temp_y);
 [INPU.vecJT] = linterp(SURF.vecSPANDIST,INPU.vecJT',temp_y);
-[INPU.vecLSM] = linterp(SURF.vecSPANDIST,INPU.vecLSM',temp_y);
+[SURF.vecLSM] = linterp(SURF.vecSPANDIST,SURF.vecLSM',temp_y);
 [OUTP.vecLIFTDIST] = linterp(SURF.vecSPANDIST,OUTP.vecLIFTDIST,temp_y);
 [OUTP.vecMOMDIST] = linterp(SURF.vecSPANDIST,OUTP.vecMOMDIST',temp_y);
 
@@ -78,8 +78,8 @@ valSTRUCTTIME = valTIMESTEP;
 %% Beam boundary conditions
 
 % Grab solution from last two time steps 
-OUTP.matDEF(valSTRUCTTIME-2:valTIMESTEP-1,:) = matDEF_old(end-1:end,:);
-OUTP.matTWIST(valSTRUCTTIME-2:valTIMESTEP-1,:) = matTWIST_old(end-1:end,:);
+OUTP.matDEF(valSTRUCTTIME-2:valTIMESTEP-1,:) = OUTP.matDEF_old(end-1:end,:);
+OUTP.matTWIST(valSTRUCTTIME-2:valTIMESTEP-1,:) = OUTP.matTWIST_old(end-1:end,:);
 
 % for i=1:(valTIMESTEP-1)
 %     OUTP.matDEF(i,3:end-1) = linterp(SURF.vecSPANDIST,OUTP.matDEFGLOB(i,:),temp_y);
@@ -95,7 +95,7 @@ OUTP.vecDEF(3) = 0; % Zero deflection at root BC
 OUTP.vecTWIST(3) = 0; % Zero twist at root BC
 
 % Assemble load matrix
-matLOAD = [OUTP.vecLIFTDIST' - INPU.vecLM'.*9.81, OUTP.vecMOMDIST' + INPU.vecLSM'.*INPU.vecLM'.*9.81];
+matLOAD = [OUTP.vecLIFTDIST' - INPU.vecLM'.*9.81, OUTP.vecMOMDIST' + SURF.vecLSM'.*INPU.vecLM'.*9.81];
 % matLOAD = [OUTP.vecLIFTDIST', OUTP.vecMOMDIST'];
 % matLOAD(end,:) = [0,0]; 
 
@@ -104,7 +104,7 @@ for yy = 4:(INPU.valNSELE+2)
     %% Geometric property assembly
 
     % Assemble mass matrix
-    matMASS = [INPU.vecLM(yy-2), -INPU.vecLM(yy-2).*INPU.vecLSM(yy-2); -INPU.vecLM(yy-2).*INPU.vecLSM(yy-2), INPU.vecJT(yy-2)];
+    matMASS = [INPU.vecLM(yy-2), -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2); -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2), INPU.vecJT(yy-2)];
 
     % Assemble stiffness matrices
     matK_1 = [INPU.matEIx(yy-2,3), 0; 0, 0];
