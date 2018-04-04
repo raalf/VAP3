@@ -18,7 +18,7 @@ vecVINF = reshape(repmat(vecVINF, 1, len)', [], 1);
 % Timesteps per RPM
 timestep_rpm = ceil(1/((2250/60)*0.0005));
 
-for i = 1:length(vecCOLLECTIVE);
+for i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
     VAP_IN.vecVEHVINF = vecVINF(i);
