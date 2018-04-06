@@ -32,11 +32,10 @@ SURF.matDVETRANS  = COND.valDELTIME.*VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);
 
 
 % Fuselage
-matFUSETRANS = COND.valDELTIME.*VEHI.matVEHUVW(VISC.vecFUSEVEHICLE,:);
-sz = size(VISC.matFVLST);
-matFUSETRANS = repmat(reshape(matFUSETRANS',1,1,3,length(VISC.vecFUSEVEHICLE)),sz(1),sz(2),1,1);
-VISC.matFUSEGEOM = VISC.matFVLST + matFUSETRANS;
-
+if ~isempty(VISC.vecFUSEVEHICLE)
+    matFUSETRANS = COND.valDELTIME.*VEHI.matVEHUVW(VISC.vecFUSEVEHICLE,:);
+    VISC.matFVLST = VISC.matFVLST + matFUSETRANS;
+end
 
 
 % SURF.matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
@@ -62,7 +61,7 @@ SURF.matNTVLST = SURF.matNTVLST + SURF.matVLSTTRANS;
 % Circling Flight
 % "backtrack" the UVW translation from previous lines of code, and apply the circling instead
 for n = 1:INPU.valVEHICLES
-   if ~isnan(VEHI.vecVEHRADIUS(n)) == 1
+    if ~isnan(VEHI.vecVEHRADIUS(n)) == 1
         idxDVEVEH = SURF.vecDVEVEHICLE == n;
         idxVLSTVEH = unique(SURF.matDVE(idxDVEVEH,:));
         idxFUSEVEH = VISC.vecFUSEVEHICLE == n;
@@ -71,12 +70,12 @@ for n = 1:INPU.valVEHICLES
         SURF.matNTVLST(idxVLSTVEH,1:2) = SURF.matNTVLST(idxVLSTVEH,1:2) - SURF.matVLSTTRANS(idxVLSTVEH,1:2);
         SURF.matCENTER(idxDVEVEH,1:2)  = SURF.matCENTER(idxDVEVEH,1:2)  - SURF.matDVETRANS(idxDVEVEH,1:2);
         VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) = VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) + matFUSETRANS(:,:,1:2,idxFUSEVEH);
-
+        
         % reposition to vecCIRORIG to rotate the vehicle
         SURF.matVLST(idxVLSTVEH,1:2)   = SURF.matVLST(idxVLSTVEH,1:2)   - MISC.matCIRORIG(n,1:2);
         SURF.matNTVLST(idxVLSTVEH,1:2) = SURF.matNTVLST(idxVLSTVEH,1:2) - MISC.matCIRORIG(n,1:2);
         SURF.matCENTER(idxDVEVEH,1:2)  = SURF.matCENTER(idxDVEVEH,1:2)  - MISC.matCIRORIG(n,1:2);
-%         VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) = VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) + MISC.matCIRORIG(n,1:2);
+        %         VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) = VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) + MISC.matCIRORIG(n,1:2);
         
         % rotate(YAW) vehicle by VEHI.matVEHROTRATE(n,3)*COND.valDELTIME
         dcmVEHSTEP = angle2dcm(-VEHI.matVEHROTRATE(n,3)*COND.valDELTIME,0,0,'ZXY');
@@ -84,14 +83,14 @@ for n = 1:INPU.valVEHICLES
         SURF.matVLST(idxVLSTVEH,:)   = SURF.matVLST(idxVLSTVEH,:)   * dcmVEHSTEP;
         SURF.matNTVLST(idxVLSTVEH,:) = SURF.matNTVLST(idxVLSTVEH,:) * dcmVEHSTEP;
         SURF.matCENTER(idxDVEVEH,:)  = SURF.matCENTER(idxDVEVEH,:)  * dcmVEHSTEP;
-      
-        % 
+        
+        %
         SURF.matVLST(idxVLSTVEH,1:2)   = SURF.matVLST(idxVLSTVEH,1:2)   + MISC.matCIRORIG(n,1:2);
         SURF.matNTVLST(idxVLSTVEH,1:2) = SURF.matNTVLST(idxVLSTVEH,1:2) + MISC.matCIRORIG(n,1:2);
         SURF.matCENTER(idxDVEVEH,1:2)  = SURF.matCENTER(idxDVEVEH,1:2)  + MISC.matCIRORIG(n,1:2);
-%       VEHI.matVEHROTRATE(n,:)
-%       MISC.matCIRORIG(n,:)
-   end
+        %       VEHI.matVEHROTRATE(n,:)
+        %       MISC.matCIRORIG(n,:)
+    end
 end
 
 % Rotate Rotors
@@ -99,10 +98,10 @@ valROTORS = length(VEHI.vecROTORVEH);
 for n = 1:valROTORS
     
     dcmHUB2GLOB = angle2dcm(VEHI.matVEHROT(VEHI.vecROTORVEH(n),3),VEHI.matVEHROT(VEHI.vecROTORVEH(n),1),VEHI.matVEHROT(VEHI.vecROTORVEH(n),2),'ZXY');
-%     dcmXY2HUB = quat2dcm(axang2quat(vrrotvec(INPU.VISC.matROTORAXIS(n,:),[0 0 1])));
+    %     dcmXY2HUB = quat2dcm(axang2quat(vrrotvec(INPU.VISC.matROTORAXIS(n,:),[0 0 1])));
     dcmXY2HUB = quat2dcm(axang2quat(vrrotvec([0 0 1], INPU.matROTORAXIS(n,:))));
     dcmROTORSTEP = angle2dcm(vecROTORDEL(n),0,0,'ZXY');
-
+    
     % pre-calculate trans and rot matrices
     transGLOB2VEH = INPU.matROTORHUB(n,:) * dcmHUB2GLOB + INPU.matVEHORIG(VEHI.vecROTORVEH(n),:);
     
@@ -115,27 +114,27 @@ for n = 1:valROTORS
     
     tempROTORNTVLST = SURF.matNTVLST(idxVLSTROTOR,:);
     tempROTORNTVLST = tempROTORNTVLST - transGLOB2VEH;
-           
+    
     tempROTORCENTER = SURF.matCENTER(idxDVEROTOR,:);
     tempROTORCENTER = tempROTORCENTER - transGLOB2VEH;
-           
-        
+    
+    
     % transform rotor from global to hub plane
     tempROTORVLST = tempROTORVLST / dcmHUB2GLOB;
     tempROTORNTVLST = tempROTORNTVLST / dcmHUB2GLOB;
-    tempROTORCENTER = tempROTORCENTER / dcmHUB2GLOB;    
+    tempROTORCENTER = tempROTORCENTER / dcmHUB2GLOB;
     
     % transform rotor from hub plane to xy plane
     tempROTORVLST = tempROTORVLST / dcmXY2HUB;
     tempROTORNTVLST = tempROTORNTVLST / dcmXY2HUB;
     tempROTORCENTER = tempROTORCENTER / dcmXY2HUB;
-
+    
     % timestep rotor in local XY hub plane
     tempROTORVLST = tempROTORVLST * dcmROTORSTEP;
     tempROTORNTVLST = tempROTORNTVLST * dcmROTORSTEP;
     tempROTORCENTER = tempROTORCENTER * dcmROTORSTEP;
-    tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);    
-
+    tempROTORUINF = cross(repmat([0,0,-vecROTORRADPS(n)],length(tempROTORCENTER(:,1)),1),tempROTORCENTER);
+    
     % transform rotor from xy plane to hub plane
     tempROTORVLST = tempROTORVLST * dcmXY2HUB;
     tempROTORNTVLST = tempROTORNTVLST * dcmXY2HUB;

@@ -19,6 +19,7 @@ if fixed_lift ~= 1
     % Compute dynamic pressure
     q_infandind = ((vecV.^2)*valDENSITY)/2; % With both freestream and induced velocities
     q_inf = ((valVEHVINF^2)*valDENSITY)/2; % With only freestream velocities
+    valVINF = mean(vecV,1);
 else
     q_inf = valVEHWEIGHT./(valCL.*valAREA);
     q_infandind = repmat(q_inf, size(matUINF,1), 1);
@@ -248,27 +249,29 @@ dvt = dvt*q_inf;
 
 dfuselage = 0;
 
-center = (matFVLST(matFDVE(:,1),:) + matFVLST(matFDVE(:,2),:) + matFVLST(matFDVE(:,3),:))./3;
-[ ~, ~, ~, ~, ~, ~, ~, ~, re_area, ~, ~, ~, ~, ~] = fcnDVECORNER2PARAM( center, matFVLST(matFDVE(:,1),:), matFVLST(matFDVE(:,2),:), matFVLST(matFDVE(:,3),:), matFVLST(matFDVE(:,1),:), []);
-re_len = (center(:,1) - min(center(:,1)));
-
-if fixed_lift == 1
-    re = (re_len.*valVINF)./valKINV;
-else
-    re = (re_len.*valVEHVINF)./valKINV;
+if ~isempty(matFVLST)
+    center = (matFVLST(matFDVE(:,1),:) + matFVLST(matFDVE(:,2),:) + matFVLST(matFDVE(:,3),:))./3;
+    [ ~, ~, ~, ~, ~, ~, ~, ~, re_area, ~, ~, ~, ~, ~] = fcnDVECORNER2PARAM( center, matFVLST(matFDVE(:,1),:), matFVLST(matFDVE(:,2),:), matFVLST(matFDVE(:,3),:), matFVLST(matFDVE(:,1),:), []);
+    re_len = (center(:,1) - min(center(:,1)));
     
+    if fixed_lift == 1
+        re = (re_len.*valVINF)./valKINV;
+    else
+        re = (re_len.*valVEHVINF)./valKINV;
+        
+    end
+    
+    re(re < 1e5) = 1e4;
+    
+    transition = 0.2;
+    % Turbulent
+    cdf_turb = 0.0576./(re.^0.2);
+    % Laminar
+    cdf_lam = 0.664./sqrt(re);
+    cdf = (transition.*cdf_lam).*re_area + ((1 - transition).*cdf_turb).*re_area;
+    
+    dfuselage = sum((cdf.*re_area)).*q_inf;
 end
-
-re(re < 1e5) = 1e4;
-
-transition = 0.2;
-% Turbulent
-cdf_turb = 0.0576./(re.^0.2);
-% Laminar
-cdf_lam = 0.664./sqrt(re);
-cdf = (transition.*cdf_lam).*re_area + ((1 - transition).*cdf_turb).*re_area;
-
-dfuselage = sum((cdf.*re_area)).*q_inf;
 % for ii = 1:valFPANELS
 %     Re_fus = (ii-0.5)*tempSS;
 %     if ii < valFTURB
