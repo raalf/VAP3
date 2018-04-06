@@ -2,7 +2,7 @@ clc
 clear
 warning off
 
-seqALPHA = 1:1:12;
+seqALPHA = 12;
 
 load('X57_FUSE.mat');
 matFUSEORIG = [-3.7 0 -2.25];

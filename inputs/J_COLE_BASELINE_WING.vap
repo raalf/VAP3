@@ -47,7 +47,7 @@
 			<zorig>0</zorig>
 
 			<panel>
-				<airfoil>NASA GA(W)-2 Modified</airfoil>
+				<airfoil>NASA GA(W)-2</airfoil>
 				<symmetry>1</symmetry>
 				<N>12</N>
 				<section>

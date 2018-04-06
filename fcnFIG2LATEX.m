@@ -24,7 +24,7 @@ function [ ] = fcnFIG2LATEX( varargin )
 
 
 %
-PATH = 'C:\Users\travis\Desktop\GIT AIAA SciTech 2018\figures'; % default PATH
+PATH = ''; % default PATH
 WH = [6,4]; % default WIDTH and HEIGHT
 
 % Determine if HFIG exist
@@ -64,7 +64,7 @@ if min(size(WH) == [1,2]) ~= 1
     warning('SIZE input error. Using default size.');
 end
 % check if PATH has '/' at the end
-if strcmp(PATH(end),'/') ~= 1 % if not
+if ~isempty(PATH) && strcmp(PATH(end),'/') ~= 1 % if not
     disp('no')
     PATH = strcat(PATH,'/'); %add '/' at the end of PATH
 end
