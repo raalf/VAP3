@@ -35,7 +35,7 @@ matFUSEORIG = [-3.7 0 -2.25];
 % Running
 clearvars -except seqALPHA vecCOLLECTIVE vecVEHVINF matFVLST matFDVE matFUSEORIG
 filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-for i = 1:length(vecCOLLECTIVE)
+parfor i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
@@ -51,4 +51,4 @@ for i = 1:length(vecCOLLECTIVE)
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end
 
-% save('VAP31_STEADY_VISCOUS_FIXED_SYM.mat')
+save('VAP31_STEADY_VISCOUS_FIXED_SYM.mat')

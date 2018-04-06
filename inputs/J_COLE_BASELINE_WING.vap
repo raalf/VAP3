@@ -34,11 +34,13 @@
 		<span>9.63168</span>
 		<cmac>0.6096</cmac>
 
+		<interference>10</interference>
+
 		<wing>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
 
-			<M>3</M>
+			<M>2</M>
 
 			<xorig>0</xorig>
 			<yorig>0</yorig>
@@ -47,7 +49,7 @@
 			<panel>
 				<airfoil>NASA GA(W)-2 Modified</airfoil>
 				<symmetry>1</symmetry>
-				<N>10</N>
+				<N>12</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
@@ -65,6 +67,37 @@
 			</panel>
 		</wing>
 
+
+		<wing>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+
+			<M>1</M>
+
+			<xorig>4.2</xorig>
+			<yorig>0</yorig>
+			<zorig>-0.6</zorig>
+
+			<panel>
+				<airfoil>NACA0012</airfoil>
+				<symmetry>1</symmetry>
+				<N>3</N>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>0.8</chord>
+					<twist>0</twist>
+				</section>	
+				<section>
+					<x>0</x>
+					<y>1.524</y>
+					<z>0</z>
+					<chord>0.8</chord>
+					<twist>0</twist>
+				</section>	
+			</panel>
+		</wing>
 	</vehicle>				
 
 </VAP>

@@ -21,12 +21,16 @@ if fixed_lift ~= 1
     q_inf = ((valVEHVINF^2)*valDENSITY)/2; % With only freestream velocities
 else
     q_inf = valVEHWEIGHT./(valCL.*valAREA);
+    q_infandind = repmat(q_inf, size(matUINF,1), 1);
     valVINF = sqrt(2.*q_inf./valDENSITY);
+    
     if flagPRINT == 1
         disp(['Using janky fixed-lift analysis - VINF = ', num2str(valVINF)]);
     end
-    vecV = repmat(valVINF, size(matUINF,1), 1);
-    q_infandind = repmat(q_inf, size(matUINF,1), 1);
+    
+    temp  = sqrt(matUINF(:,1).^2 + matUINF(:,2).^2 + matUINF(:,3).^2);
+    temp1 = dot(matWUINF, matUINF./temp, 2);
+    vecV = temp1 + temp;
 end
 
 % Calculate induced drag as a force
@@ -43,7 +47,7 @@ matXYZDIST   = nan(size(ledves,1),3);
 vecLEDVEDIST = nan(size(ledves,1),1);
 vecREDIST    = nan(size(ledves,1),1);
 vecAREADIST  = nan(size(ledves,1),1);
-vecCDPDIST   = nan(size(ledves,1),1); % pre-allocate the array to store viscous drag 
+vecCDPDIST   = nan(size(ledves,1),1); % pre-allocate the array to store viscous drag
 vecCMDIST   = nan(size(ledves,1),1);
 vecCLMAX     = nan(size(ledves,1),1);
 dprofPerWing = nan(max(vecDVEWING),1);
@@ -85,7 +89,11 @@ for i = 1:max(vecDVEWING)
     
     %% Wing/horizontal stabilizer lift and drag
     % Note that Re is compute with Vinf + Vind
-    vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
+    if fixed_lift == 1
+        vecREDIST(isCurWing)   = valVINF.*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
+    else
+        vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
+    end
     vecAREADIST(isCurWing) = sum(vecDVEAREA(rows),2);
     
     vecCNDIST0 = vecCNDIST;
@@ -108,13 +116,13 @@ for i = 1:max(vecDVEWING)
         
         %which rows of DVE belongs to the airfoil in this loop
         isCurrentAirfoil = isCurWing & idxAirfoil(lepanels) == k;
-
+        
         idxNans = isnan(Cl) | isnan(Cdp) | isnan(Re);
         Cl = Cl(~idxNans);
         Cdp = Cdp(~idxNans);
         Cm = Cm(~idxNans);
         Re = Re(~idxNans);
-
+        
         % Compare Re data range to panel Re
         if max(vecREDIST(isCurrentAirfoil)) > max(Re)
             disp('Re higher than airfoil Re data.')
@@ -123,7 +131,7 @@ for i = 1:max(vecDVEWING)
         if min(vecREDIST(isCurrentAirfoil)) < min(Re)
             disp('Re lower than airfoil Re data.')
         end
-
+        
         % find CLmax for each row of dves
         polarClmax = max(pol(:,2,:));
         polarClmax = polarClmax(:);
@@ -171,15 +179,15 @@ for i = 1:max(vecDVEWING)
                 disp('Airfoil sections have stalled.')
             end
             
-            F = scatteredInterpolant(Re,Cl,Cdp,'linear');
+            F = scatteredInterpolant(Re,Cl,Cdp,'linear','nearest');
             vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
             clear pol foil
         end
-
-        F = scatteredInterpolant(Re,Cl,Cdp,'linear');
+        
+        F = scatteredInterpolant(Re,Cl,Cdp,'linear','nearest');
         vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         
-        F = scatteredInterpolant(Re,Cl,Cm,'linear');
+        F = scatteredInterpolant(Re,Cl,Cm,'linear','nearest');
         vecCMDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         clear pol foil
     end
@@ -240,21 +248,27 @@ dvt = dvt*q_inf;
 
 dfuselage = 0;
 
-tempSS = valVEHVINF*valFPWIDTH/valKINV;
-
 center = (matFVLST(matFDVE(:,1),:) + matFVLST(matFDVE(:,2),:) + matFVLST(matFDVE(:,3),:))./3;
 [ ~, ~, ~, ~, ~, ~, ~, ~, re_area, ~, ~, ~, ~, ~] = fcnDVECORNER2PARAM( center, matFVLST(matFDVE(:,1),:), matFVLST(matFDVE(:,2),:), matFVLST(matFDVE(:,3),:), matFVLST(matFDVE(:,1),:), []);
 re_len = (center(:,1) - min(center(:,1)));
 
+if fixed_lift == 1
+    re = (re_len.*valVINF)./valKINV;
+else
+    re = (re_len.*valVEHVINF)./valKINV;
+    
+end
+
+re(re < 1e5) = 1e4;
+
 transition = 0.2;
 % Turbulent
-cdf_turb = 0.0576./(re_len.^0.2);
+cdf_turb = 0.0576./(re.^0.2);
 % Laminar
-cdf_lam = 0.664./sqrt(re_len);
-cdf = (transition.*cdf_lam) + ((1 - transition).*cdf_turb);
+cdf_lam = 0.664./sqrt(re);
+cdf = (transition.*cdf_lam).*re_area + ((1 - transition).*cdf_turb).*re_area;
 
-dfuselage = (cdf.*re_area).*q_inf;
-dfuselage = sum(dfuselage(~isnan(dfuselage) & ~isinf(dfuselage)));
+dfuselage = sum((cdf.*re_area)).*q_inf;
 % for ii = 1:valFPANELS
 %     Re_fus = (ii-0.5)*tempSS;
 %     if ii < valFTURB
@@ -262,10 +276,10 @@ dfuselage = sum(dfuselage(~isnan(dfuselage) & ~isinf(dfuselage)));
 %     else
 %         cdf = 0.0576/(Re_fus^0.2); % Turbulent
 %     end
-%     
+%
 %     dfuselage = dfuselage + cdf*matFGEOM(ii,2)*pi*valFPWIDTH;
 % end
-% 
+%
 % dfuselage = dfuselage*q_inf;
 
 %% Total Drag

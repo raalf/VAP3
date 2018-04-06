@@ -43,18 +43,18 @@ for n = 1:valVEHICLES
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) + repmat(matVEHORIG(n,:),valDVEVEH,1);
     
     for i = 1:length(vecFUSEVEHICLE)
-        
-        X = matFVLST(vecFDVEVEHICLE == i,1,i);
-        Y = matFVLST(vecFDVEVEHICLE == i,2,i);
-        Z = matFVLST(vecFDVEVEHICLE == i,3,i);
+        % This doesn't work
+        X = matFVLST(:,1,i);
+        Y = matFVLST(:,2,i);
+        Z = matFVLST(:,3,i);
         temp=[X(:),Y(:),Z(:)]*dcm;
         sz=size(X);
         Xrot=reshape(temp(:,1),sz);
         Yrot=reshape(temp(:,2),sz);
         Zrot=reshape(temp(:,3),sz);
-        matFVLST(vecFDVEVEHICLE == i,1,i) = Xrot + matVEHORIG(i,1);
-        matFVLST(vecFDVEVEHICLE == i,2,i) = Yrot + matVEHORIG(i,2);
-        matFVLST(vecFDVEVEHICLE == i,3,i) = Zrot + matVEHORIG(i,3);
+        matFVLST(:,1,i) = Xrot + matVEHORIG(i,1);
+        matFVLST(:,2,i) = Yrot + matVEHORIG(i,2);
+        matFVLST(:,3,i) = Zrot + matVEHORIG(i,3);
         
     end
 end
