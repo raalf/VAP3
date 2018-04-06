@@ -13,5 +13,7 @@ filename = 'inputs/J_COLE_BASELINE_WING.vap';
 for i = 1:length(seqALPHA)
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA(i);
+    VAP_IN.RELAX = 0;
+    VAP_IN.valMAXTIME = 20
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end

@@ -90,11 +90,7 @@ for i = 1:max(vecDVEWING)
     
     %% Wing/horizontal stabilizer lift and drag
     % Note that Re is compute with Vinf + Vind
-    if fixed_lift == 1
-        vecREDIST(isCurWing)   = valVINF.*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
-    else
-        vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
-    end
+    vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
     vecAREADIST(isCurWing) = sum(vecDVEAREA(rows),2);
     
     vecCNDIST0 = vecCNDIST;
@@ -117,13 +113,13 @@ for i = 1:max(vecDVEWING)
         
         %which rows of DVE belongs to the airfoil in this loop
         isCurrentAirfoil = isCurWing & idxAirfoil(lepanels) == k;
-        
+
         idxNans = isnan(Cl) | isnan(Cdp) | isnan(Re);
         Cl = Cl(~idxNans);
         Cdp = Cdp(~idxNans);
         Cm = Cm(~idxNans);
         Re = Re(~idxNans);
-        
+
         % Compare Re data range to panel Re
         if max(vecREDIST(isCurrentAirfoil)) > max(Re)
             disp('Re higher than airfoil Re data.')
@@ -132,7 +128,7 @@ for i = 1:max(vecDVEWING)
         if min(vecREDIST(isCurrentAirfoil)) < min(Re)
             disp('Re lower than airfoil Re data.')
         end
-        
+
         % find CLmax for each row of dves
         polarClmax = max(pol(:,2,:));
         polarClmax = polarClmax(:);
@@ -180,15 +176,15 @@ for i = 1:max(vecDVEWING)
                 disp('Airfoil sections have stalled.')
             end
             
-            F = scatteredInterpolant(Re,Cl,Cdp,'linear','nearest');
+            F = scatteredInterpolant(Re,Cl,Cdp,'linear');
             vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
             clear pol foil
         end
-        
-        F = scatteredInterpolant(Re,Cl,Cdp,'linear','nearest');
+
+        F = scatteredInterpolant(Re,Cl,Cdp,'linear');
         vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         
-        F = scatteredInterpolant(Re,Cl,Cm,'linear','nearest');
+        F = scatteredInterpolant(Re,Cl,Cm,'linear');
         vecCMDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         clear pol foil
     end
@@ -201,6 +197,7 @@ for i = 1:max(vecDVEWING)
     % dimensionalize in terms of both Vinf and Vind
     dprofPerWing(i) = sum(vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing));
 end
+
 
 
 % create temporary variables to determine which panel belongs to which wing
