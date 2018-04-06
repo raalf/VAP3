@@ -257,33 +257,20 @@ if ~isempty(matFVLST)
     if fixed_lift == 1
         re = (re_len.*valVINF)./valKINV;
     else
-        re = (re_len.*valVEHVINF)./valKINV;
-        
+        re = (re_len.*valVEHVINF)./valKINV;     
     end
     
     re(re < 1e5) = 1e4;
     
-    transition = 0.2;
+    transition = 0;
     % Turbulent
     cdf_turb = 0.0576./(re.^0.2);
     % Laminar
     cdf_lam = 0.664./sqrt(re);
     cdf = (transition.*cdf_lam).*re_area + ((1 - transition).*cdf_turb).*re_area;
     
-    dfuselage = sum((cdf.*re_area)).*q_inf;
+    dfuselage = sum((cdf(~isnan(cdf)).*re_area(~isnan(cdf)))).*q_inf;
 end
-% for ii = 1:valFPANELS
-%     Re_fus = (ii-0.5)*tempSS;
-%     if ii < valFTURB
-%         cdf = 0.664/sqrt(Re_fus); % Laminar
-%     else
-%         cdf = 0.0576/(Re_fus^0.2); % Turbulent
-%     end
-%
-%     dfuselage = dfuselage + cdf*matFGEOM(ii,2)*pi*valFPWIDTH;
-% end
-%
-% dfuselage = dfuselage*q_inf;
 
 %% Total Drag
 
