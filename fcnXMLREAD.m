@@ -96,6 +96,10 @@ VISC.matFUSEORIG = [];
 VISC.matFGEOM = [];
 VISC.matSECTIONFUSELAGE = [];
 VISC.vecFUSEVEHICLE = [];
+VISC.matFDVE = [];
+VISC.matFVLST = [];
+VISC.vecFDVEVEHICLE = [];
+
 VISC.vecVSPANELS = [];
 VISC.matVSGEOM = [];
 VISC.vecFPANELS = [];
@@ -152,6 +156,8 @@ for i = 1:INPU.valVEHICLES
     INPU.vecAREA(i) = str2double(veh.area.Text);
     INPU.vecSPAN(i) = str2double(veh.span.Text);
     INPU.vecCMAC(i) = str2double(veh.cmac.Text);
+    
+    try VISC.vecINTERF = str2double(veh.interference.Text); end
     
     %% Loading Wings
     for j = 1:vecWINGS(i)

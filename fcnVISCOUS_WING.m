@@ -1,7 +1,7 @@
 function [valCL, valCD, valPREQ, valLD, valVINF, vecCMDIST] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-    valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT)
+    valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, matFDVE, matFVLST)
 
 % % % Calculate chordline direction at midspan of each dve
 % % avgle = (matVLST(matDVE(:,1),:)+matVLST(matDVE(:,2),:))./2;
@@ -242,18 +242,31 @@ dfuselage = 0;
 
 tempSS = valVEHVINF*valFPWIDTH/valKINV;
 
-for ii = 1:valFPANELS
-    Re_fus = (ii-0.5)*tempSS;
-    if ii < valFTURB
-        cdf = 0.664/sqrt(Re_fus); % Laminar
-    else
-        cdf = 0.0576/(Re_fus^0.2); % Turbulent
-    end
-    
-    dfuselage = dfuselage + cdf*matFGEOM(ii,2)*pi*valFPWIDTH;
-end
+center = (matFVLST(matFDVE(:,1),:) + matFVLST(matFDVE(:,2),:) + matFVLST(matFDVE(:,3),:))./3;
+[ ~, ~, ~, ~, ~, ~, ~, ~, re_area, ~, ~, ~, ~, ~] = fcnDVECORNER2PARAM( center, matFVLST(matFDVE(:,1),:), matFVLST(matFDVE(:,2),:), matFVLST(matFDVE(:,3),:), matFVLST(matFDVE(:,1),:), []);
+re_len = (center(:,1) - min(center(:,1)));
 
-dfuselage = dfuselage*q_inf;
+transition = 0.2;
+% Turbulent
+cdf_turb = 0.0576./(re_len.^0.2);
+% Laminar
+cdf_lam = 0.664./sqrt(re_len);
+cdf = (transition.*cdf_lam) + ((1 - transition).*cdf_turb);
+
+dfuselage = (cdf.*re_area).*q_inf;
+dfuselage = sum(dfuselage(~isnan(dfuselage) & ~isinf(dfuselage)));
+% for ii = 1:valFPANELS
+%     Re_fus = (ii-0.5)*tempSS;
+%     if ii < valFTURB
+%         cdf = 0.664/sqrt(Re_fus); % Laminar
+%     else
+%         cdf = 0.0576/(Re_fus^0.2); % Turbulent
+%     end
+%     
+%     dfuselage = dfuselage + cdf*matFGEOM(ii,2)*pi*valFPWIDTH;
+% end
+% 
+% dfuselage = dfuselage*q_inf;
 
 %% Total Drag
 
