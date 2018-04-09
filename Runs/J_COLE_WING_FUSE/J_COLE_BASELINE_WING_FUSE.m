@@ -9,13 +9,12 @@ matFUSEORIG = [-3.7 0 -2.25];
 
 % Running
 clearvars -except seqALPHA vecCOLLECTIVE vecVEHVINF matFVLST matFDVE matFUSEORIG
-filename = 'inputs/J_COLE_BASELINE_WING.vap';
+filename = 'inputs/J_COLE_BASELINE_WING_TAIL.vap';
 for i = 1:length(seqALPHA)
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.valSTARTFORCES = 1;
-    VAP_IN.valMAXTIME = 20;
-    VAP_IN.RELAX = 0
+    VAP_IN.valMAXTIME = 30;
     
     VAP_IN.matFDVE = matFDVE;
     VAP_IN.matFVLST = matFVLST;
