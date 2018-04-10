@@ -1,6 +1,6 @@
 clear
 clc
-
+warning off
 
 
 % Import Borer L/D Data
@@ -63,31 +63,26 @@ vecCOLLECTIVE = F(vecVEHVINF, CT);
 % hold off
 
 
-
-load('X57_FUSE.mat');
-matFUSEORIG = [-3.7 0 -2.25];
+%%
 % Running
-clearvars -except seqALPHA vecCOLLECTIVE vecVEHVINF matFVLST matFDVE matFUSEORIG
+warning off
 filename = 'inputs/J_COLE_BASELINE_SYM.vap';
 parfor i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
     VAP_IN.vecVEHVINF = vecVEHVINF(i);
-    VAP_IN.valSTARTFORCES = 1;
-    VAP_IN.valMAXTIME = 10;
+    VAP_IN.valSTARTFORCES = 105;
+    VAP_IN.valMAXTIME = 120;
     
-    VAP_IN.matFDVE = matFDVE;
-    VAP_IN.matFVLST = matFVLST;
-    VAP_IN.matFUSEORIG = matFUSEORIG;
-    VAP_IN.vecFDVEVEHICLE = ones(size(matFDVE,1),1);
     
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end
 
-
-
-
+%%
+CD
+[OUTP.vecCD]
+CD-[OUTP.vecCD]
 
 
 

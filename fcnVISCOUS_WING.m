@@ -144,6 +144,10 @@ for i = 1:max(vecDVEWING)
         polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
         %polarClmaxRe = reshape(pol(1,8,:),[],1);
         
+        % Remove NANs in polarClmax and index polarClmaxRe
+        polarClmax   = polarClmax(~isnan(polarClmax));
+        polarClmaxRe = polarClmaxRe(~isnan(polarClmax));
+        
         vecCLMAX(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmax,vecREDIST(isCurrentAirfoil),'linear');
         
         if any(isCurrentAirfoil)
@@ -168,6 +172,10 @@ for i = 1:max(vecDVEWING)
             polarClmaxRe = unique(pol(:,8,:));
             polarClmaxRe = sort(polarClmaxRe(~isnan(polarClmaxRe)));
             %polarClmaxRe = reshape(pol(1,8,:),[],1);
+            
+            % Remove NANs in polarClmax and index polarClmaxRe
+            polarClmax   = polarClmax(~isnan(polarClmax));
+            polarClmaxRe = polarClmaxRe(~isnan(polarClmax));
             
             vecCLMAX(isCurrentAirfoil) = interp1(polarClmaxRe,polarClmax,vecREDIST(isCurrentAirfoil),'linear');
             
