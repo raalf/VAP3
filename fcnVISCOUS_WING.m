@@ -106,7 +106,8 @@ for i = 1:max(vecDVEWING)
     for k = 1:length(uniqueAirfoil)
         % Load airfoil .mat files
         try
-            load(strcat('airfoils/',cellAIRFOIL{k},'.mat'));
+            % only load variable 'pol' to avoid variable conflict. 
+            load(strcat('airfoils/',cellAIRFOIL{k},'.mat'),'pol');
             
         catch
             error('Error: Unable to locate airfoil file: %s.mat.', cellAIRFOIL{k});
@@ -127,13 +128,13 @@ for i = 1:max(vecDVEWING)
         Re = Re(~idxNans);
 
         % Compare Re data range to panel Re
-        if max(vecREDIST(isCurrentAirfoil)) > max(Re)
-            disp('Re higher than airfoil Re data.')
-        end
-        
-        if min(vecREDIST(isCurrentAirfoil)) < min(Re)
-            disp('Re lower than airfoil Re data.')
-        end
+%         if max(vecREDIST(isCurrentAirfoil)) > max(Re)
+%             disp('fcnVISCOUS_WING: Re higher than airfoil Re data.')
+%         end
+%         
+%         if min(vecREDIST(isCurrentAirfoil)) < min(Re)
+%             disp('fcnVISCOUS_WING: Re lower than airfoil Re data.')
+%         end
 
         % find CLmax for each row of dves
         polarClmax = max(pol(:,2,:));
@@ -153,11 +154,11 @@ for i = 1:max(vecDVEWING)
             
             % Compare Re data range to panel Re
             if (max(vecREDIST(isCurrentAirfoil)) > max(Re)) && flagPRINT == 1
-                disp('Re higher than airfoil Re data.')
+                fprintf('fcnVISCOUS_WING: Re higher than airfoil Re data. Re = %i, (%s)\n', max(vecREDIST(isCurrentAirfoil)), uniqueAirfoil{k})
             end
             
             if (min(vecREDIST(isCurrentAirfoil)) < min(Re)) && flagPRINT == 1
-                disp('Re lower than airfoil Re data.')
+                fprintf('fcnVISCOUS_WING: Re lower than airfoil Re data. Re = %i, (%s)\n',  min(vecREDIST(isCurrentAirfoil)), uniqueAirfoil{k})
             end
             
             % find CLmax for each row of dves
@@ -179,7 +180,7 @@ for i = 1:max(vecDVEWING)
             idxSTALL = (vecCNDIST > vecCLMAX) & isCurrentAirfoil;
             vecCNDIST0(idxSTALL) = vecCLMAX(idxSTALL)*0.825;
             if sum(idxSTALL) > 1 && flagPRINT == 1
-                disp('Airfoil sections have stalled.')
+                fprintf('fcnVISCOUS_WING: Airfoil sections have stalled. (%s)\n', uniqueAirfoil{k})
             end
             
             F = scatteredInterpolant(Re,Cl,Cdp,'linear');
