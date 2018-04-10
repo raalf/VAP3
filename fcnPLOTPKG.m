@@ -4,6 +4,8 @@ if FLAG.PREVIEW == 1; FLAG.RELAX = 0; end
 
 if ~isempty(INPU.vecSYM) && any(INPU.vecSYM)
     sym = true;
+else 
+    sym = false;
 end
 
 [hFig2] = fcnPLOTBODY(FLAG.VERBOSE, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, VISC.matFDVE, VISC.matFVLST, sym);
