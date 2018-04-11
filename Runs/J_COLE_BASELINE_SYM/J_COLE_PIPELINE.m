@@ -4,11 +4,10 @@ warning off
 
 
 % Import Borer L/D Data
-borer(:,1) = [90 120 140 157 180]';
-borer(:,2) = [14.5 14.5 13 11 9]';
+load('borer.mat')
 
 % Define flight speed and conditions
-KTAS = [120 140 157];
+KTAS = [90:10:180]
 vecVEHVINF = KTAS*0.514444;
 rho = 1.225;
 altitude = 0;
@@ -72,17 +71,17 @@ parfor i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
     VAP_IN.vecVEHVINF = vecVEHVINF(i);
-    VAP_IN.valSTARTFORCES = 105;
-    VAP_IN.valMAXTIME = 120;
-    
+    VAP_IN.valSTARTFORCES = 0;
+    VAP_IN.valMAXTIME = 200;
     
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end
 
+save('VAP32_WING+PROP_forCDo_TS200.mat')
 %%
-CD
-[OUTP.vecCD]
-CD-[OUTP.vecCD]
+% CD
+% [OUTP.vecCD]
+% CD-[OUTP.vecCD]
 
 
 
