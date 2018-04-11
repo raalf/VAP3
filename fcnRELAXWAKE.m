@@ -71,7 +71,7 @@ WAKE.matWCENTER(oldestwake,:) = (WP1(oldestwake,:)+WP2(oldestwake,:)+WP3(oldestw
 % For singularity factor updating, each row of wake elements needs to be seen as its own "wing"
 % so we are adding on to the vecWDVEWING by timestep number to create the right form to pass into
 % the surface singularity factor function
-tswing = WAKE.vecWDVESURFACE + reshape(repmat([0:max(WAKE.vecWDVESURFACE):((WAKE.valWNELE/WAKE.valWSIZE)-1)*max(WAKE.vecWDVESURFACE)], WAKE.valWSIZE,1),[],1);
+tswing = double(WAKE.vecWDVESURFACE) + reshape(repmat([0:double(max(WAKE.vecWDVESURFACE)):((WAKE.valWNELE/WAKE.valWSIZE)-1)*double(max(WAKE.vecWDVESURFACE))], WAKE.valWSIZE,1),[],1);
 
 % Updating wake singularity factor
 [WAKE.vecWK] = fcnSINGFCT(WAKE.valWNELE, tswing, WAKE.vecWDVETIP, WAKE.vecWDVEHVSPN);
