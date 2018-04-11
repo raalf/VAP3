@@ -1,13 +1,13 @@
 clear
 clc
 warning off
-
+PLOTON = 0;
 
 % Import Borer L/D Data
 load('borer.mat')
 
 % Define flight speed and conditions
-KTAS = [90:10:180]
+KTAS = [90:10:180];
 vecVEHVINF = KTAS*0.514444;
 rho = 1.225;
 altitude = 0;
@@ -20,12 +20,23 @@ WING = load('VAP32_WING_VISCOUS.mat');
 S    = WING.OUTP(1).valAREA; % ref. platform area
 CL   = weightN./(0.5*rho*vecVEHVINF.^2*S);
 
+
 % interpolate alpha to maintain steady level flight at VINF 
 % using wing only data
 seqALPHA = interp1([WING.OUTP.vecCLv],[WING.OUTP.vecVEHALPHA],CL);
 
 % get L/D from Borer Data
 LD = interp1(borer(:,1),borer(:,2),KTAS);
+
+if PLOTON == 1
+    figure(1)
+    plot(borer(:,1),borer(:,2),'-')
+    hold on
+    plot(KTAS,LD,'o')
+    hold off
+    grid minor
+end
+
 % Calculate CD with Borer L/D Data
 CD = CL./(LD);
 % Calulate drag force in Newton
@@ -53,14 +64,22 @@ F = scatteredInterpolant(propVINF(idx), propCT(idx), propColl(idx));
 
 vecCOLLECTIVE = F(vecVEHVINF, CT);
 
-% scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
-% xlabel('VINF')
-% ylabel('CT')
-% zlabel('Pitch')
-% hold on
-% scatter3(vecVEHVINF, CT, vecCOLLECTIVE,[100],'xr')
-% hold off
-
+if PLOTON == 1
+    [Xq,Yq] = meshgrid(unique(propVINF),min(propCT):0.02:max(propCT));
+    Vq = F(Xq,Yq);
+    
+    
+    figure(2)
+    %     scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
+    surf(Xq,Yq,Vq);
+    xlabel('VINF')
+    ylabel('CT')
+    zlabel('Pitch')
+    hold on
+    scatter3(vecVEHVINF, CT, vecCOLLECTIVE,[100],'xr')
+    hold off
+    grid minor
+end
 
 %%
 % Running
