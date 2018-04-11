@@ -1,13 +1,13 @@
 clear
 clc
 warning off
-PLOTON = 0;
+PLOTON = 1;
 
 % Import Borer L/D Data
 load('borer.mat')
 
 % Define flight speed and conditions
-KTAS = [90:10:180];
+KTAS = [100:10:190];
 vecVEHVINF = KTAS*0.514444;
 rho = 1.225;
 altitude = 0;
