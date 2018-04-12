@@ -1,5 +1,5 @@
-clear
-clc
+% clear
+% clc
 warning off
 PLOTON = 0;
 
@@ -30,11 +30,14 @@ LD = interp1(borer(:,1),borer(:,2),KTAS);
 
 if PLOTON == 1
     figure(1)
-    plot(borer(:,1),borer(:,2),'-')
+    plot(borer(:,1)*0.514444,borer(:,2),'-')
     hold on
-    plot(KTAS,LD,'o')
+    plot(vecVEHVINF,LD,'o')
     hold off
     grid minor
+    xlabel('VINF, m/s')
+    ylabel('L/D')
+    legend('Borer L/D Data', 'VINF Interpolation')
 end
 
 % Calculate CD with Borer L/D Data
@@ -59,10 +62,30 @@ propCT   = [PROP.OUTP.vecCT_AVG]';
 propColl = [PROP.OUTP.vecCOLLECTIVE]';
 
 
-idx = propColl<=0; % quick way to hack off the partially stalled propeller
-F = scatteredInterpolant(propVINF(idx), propCT(idx), propColl(idx));
+% meshgrids of 3d vinf,ct,collective data
+propVINF = reshape(propVINF,[],length(unique(propVINF)));
+propCT   = reshape(propCT,[],length(unique(propVINF)));
+propColl = reshape(propColl,[],length(unique(propVINF)));
+
+for n = 1:size(propVINF,1)
+    [~,maxCTidx] = max(propCT(:,n));
+    propCT(maxCTidx+1:end,n) = nan;
+end
+
+
+
+
+% idx = propColl<=0; % quick way to hack off the partially stalled propeller
+idx = ~isnan(propCT);
+
+F = scatteredInterpolant(propVINF(idx), propCT(idx), propColl(idx),'linear','none');
 
 vecCOLLECTIVE = F(vecVEHVINF, CT);
+
+
+vecCOLLECTIVE = vecCOLLECTIVE(~isnan(vecCOLLECTIVE));
+CT = CT(~isnan(vecCOLLECTIVE));
+vecVEHVINF = vecVEHVINF(~isnan(vecCOLLECTIVE));
 
 if PLOTON == 1
     [Xq,Yq] = meshgrid(unique(propVINF),min(propCT):0.02:max(propCT));
@@ -70,13 +93,13 @@ if PLOTON == 1
     
     
     figure(2)
-    %     scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
-    surf(Xq,Yq,Vq);
-    xlabel('VINF')
+%         scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
+    surf(propVINF,propCT,propColl,'FaceAlpha',.8);
+    xlabel('VINF, m/s')
     ylabel('CT')
-    zlabel('Pitch')
+    zlabel('Collective Pitch, deg')
     hold on
-    scatter3(vecVEHVINF, CT, vecCOLLECTIVE,[100],'xr')
+    scatter3(vecVEHVINF, CT, vecCOLLECTIVE,100,'.r')
     hold off
     grid minor
 end
