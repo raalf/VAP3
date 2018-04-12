@@ -1,7 +1,7 @@
 clear
 clc
 warning off
-PLOTON = 1;
+PLOTON = 0;
 
 % Import Borer L/D Data
 load('borer.mat')
@@ -90,7 +90,7 @@ parfor i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
     VAP_IN.vecVEHVINF = vecVEHVINF(i);
-    VAP_IN.valSTARTFORCES = 0;
+%     VAP_IN.valSTARTFORCES = 1;
     VAP_IN.valMAXTIME = 200;
     
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
