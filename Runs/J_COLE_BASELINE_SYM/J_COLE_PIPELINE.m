@@ -1,14 +1,13 @@
 clear
 clc
 warning off
-
+PLOTON = 1;
 
 % Import Borer L/D Data
-borer(:,1) = [90 120 140 157 180]';
-borer(:,2) = [14.5 14.5 13 11 9]';
+load('borer.mat')
 
 % Define flight speed and conditions
-KTAS = [120 140 157];
+KTAS = [100:10:190];
 vecVEHVINF = KTAS*0.514444;
 rho = 1.225;
 altitude = 0;
@@ -21,12 +20,23 @@ WING = load('VAP32_WING_VISCOUS.mat');
 S    = WING.OUTP(1).valAREA; % ref. platform area
 CL   = weightN./(0.5*rho*vecVEHVINF.^2*S);
 
+
 % interpolate alpha to maintain steady level flight at VINF 
 % using wing only data
 seqALPHA = interp1([WING.OUTP.vecCLv],[WING.OUTP.vecVEHALPHA],CL);
 
 % get L/D from Borer Data
 LD = interp1(borer(:,1),borer(:,2),KTAS);
+
+if PLOTON == 1
+    figure(1)
+    plot(borer(:,1),borer(:,2),'-')
+    hold on
+    plot(KTAS,LD,'o')
+    hold off
+    grid minor
+end
+
 % Calculate CD with Borer L/D Data
 CD = CL./(LD);
 % Calulate drag force in Newton
@@ -54,14 +64,22 @@ F = scatteredInterpolant(propVINF(idx), propCT(idx), propColl(idx));
 
 vecCOLLECTIVE = F(vecVEHVINF, CT);
 
-% scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
-% xlabel('VINF')
-% ylabel('CT')
-% zlabel('Pitch')
-% hold on
-% scatter3(vecVEHVINF, CT, vecCOLLECTIVE,[100],'xr')
-% hold off
-
+if PLOTON == 1
+    [Xq,Yq] = meshgrid(unique(propVINF),min(propCT):0.02:max(propCT));
+    Vq = F(Xq,Yq);
+    
+    
+    figure(2)
+    %     scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
+    surf(Xq,Yq,Vq);
+    xlabel('VINF')
+    ylabel('CT')
+    zlabel('Pitch')
+    hold on
+    scatter3(vecVEHVINF, CT, vecCOLLECTIVE,[100],'xr')
+    hold off
+    grid minor
+end
 
 %%
 % Running
@@ -72,17 +90,17 @@ parfor i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = seqALPHA(i);
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
     VAP_IN.vecVEHVINF = vecVEHVINF(i);
-    VAP_IN.valSTARTFORCES = 105;
-    VAP_IN.valMAXTIME = 120;
-    
+    VAP_IN.valSTARTFORCES = 0;
+    VAP_IN.valMAXTIME = 200;
     
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end
 
+save('VAP32_WING+PROP_forCDo_TS200.mat')
 %%
-CD
-[OUTP.vecCD]
-CD-[OUTP.vecCD]
+% CD
+% [OUTP.vecCD]
+% CD-[OUTP.vecCD]
 
 
 
