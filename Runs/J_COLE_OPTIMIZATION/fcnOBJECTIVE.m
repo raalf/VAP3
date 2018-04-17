@@ -2,8 +2,8 @@ clc
 clear
 
 % PUT QMIL IN THIS FOLDER
-
 addpath('../../')
+addpath('../../airfoils')
 
 %% DESIGN VARIABLES (INPUT TO fcnOBJECTIVE)
 rotor.rpm = 2250;
@@ -14,13 +14,15 @@ rotor.m = 1;
 rotor.rpm = 2000;
 rotor.diam = 1.524;
 rotor.blades = 3;
+rotor.airfoil = 'MH-117';
 
+airfoil_data = load('airfoils/MH-117.mat')
 %% CALCULATED VALUES
-thrust = 500
-vinf = 90
+thrust = 600
+vinf = 80
 
 %% CREATE PROP IN QMIL
-qmil_path = fcnQMILCREATE(rotor.blades, thrust, vinf, rotor.rpm, rotor.diam);
+qmil_path = fcnQMILCREATE(airfoil_data, rotor.blades, thrust, vinf, rotor.rpm, rotor.diam);
 qmil_filename = regexprep(qmil_path, 'aux_files\', '');
 
 %% RUN QMIL
@@ -37,7 +39,7 @@ delete(exeName);
 delete(qmil_path);
 
 %% GENERATE INPUT FILE FOR VAP RUN
-vap_filename = vap3_inputmod(rotor, qmil_output_filename);
+vap_filename = vap3_inputmod(rotor, qmil_output_path);
 
 %% RUN VAP
 seqALPHA = 12;
