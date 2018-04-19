@@ -7,7 +7,7 @@ PLOTON = 0;
 load('borer.mat')
 
 % Define flight speed and conditions
-KTAS = [100:10:190];
+KTAS = [120:10:160];
 vecVEHVINF = KTAS*0.514444;
 rho = 1.225;
 altitude = 0;
@@ -21,7 +21,7 @@ S    = WING.OUTP(1).valAREA; % ref. platform area
 CL   = weightN./(0.5*rho*vecVEHVINF.^2*S);
 
 
-% interpolate alpha to maintain steady level flight at VINF 
+% interpolate alpha to maintain steady level flight at VINF
 % using wing only data
 seqALPHA = interp1([WING.OUTP.vecCLv],[WING.OUTP.vecVEHALPHA],CL);
 
@@ -93,7 +93,7 @@ if PLOTON == 1
     
     
     figure(2)
-%         scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
+    %         scatter3(propVINF(idx),propCT(idx),propColl(idx),50,propVINF(idx),'filled')
     surf(propVINF,propCT,propColl,'FaceAlpha',.8);
     xlabel('VINF, m/s')
     ylabel('CT')
@@ -104,26 +104,97 @@ if PLOTON == 1
     grid minor
 end
 
-%%
-% Running
-warning off
-filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-parfor i = 1:length(vecCOLLECTIVE)
-    VAP_IN = [];
-    VAP_IN.vecVEHALPHA = seqALPHA(i);
-    VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
-    VAP_IN.vecVEHVINF = vecVEHVINF(i);
-%     VAP_IN.valSTARTFORCES = 1;
-    VAP_IN.valMAXTIME = 200;
+%
+clc
+clear ITER
+% define maximum number of trimming iterations
+ITER.maxIter = 8;
+ITER.numCase = 5;
+
+
+ITER.Iteration = repmat((1:ITER.maxIter+1)',1,ITER.numCase);
+ITER.CL  = nan(ITER.maxIter+1, ITER.numCase);
+ITER.CT  = nan(ITER.maxIter+1, ITER.numCase);
+ITER.CD  = nan(ITER.maxIter+1, ITER.numCase);
+ITER.AOA  = nan(ITER.maxIter+1, ITER.numCase);
+ITER.CLTV = nan(ITER.maxIter+1, ITER.numCase);
+
+
+for n = 1:ITER.maxIter
     
-    OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
+    try
+        load(sprintf('VAP32_WPforCDo_TS160_22_fixed_iter%i.mat',n),'OUTP');
+        caseRan = 1;
+        
+        ITER.AOA(n,:)  = [OUTP.vecVEHALPHA];
+        ITER.CLTV(n,:) = [OUTP.vecCOLLECTIVE];
+        
+        CDtemp = reshape([OUTP.vecCD],[],ITER.numCase);
+        CDtemp(isnan([OUTP.vecCL])) = nan;
+        ITER.CD(n,:) = nanmean(CDtemp,1);
+        
+        
+        ITER.CL(n,:) = nanmean([OUTP.vecCL],1);
+        ITER.CT(n,:) = nanmean([OUTP.vecCT],1);
+    catch
+        caseRan = 0;
+        % Running
+        clear OUTP
+        warning off
+        filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+        
+        parfor i = 1:ITER.numCase
+            VAP_IN = [];
+            VAP_IN.vecVEHALPHA = ITER.AOA(n,i);
+            VAP_IN.vecCOLLECTIVE = ITER.CLTV(n,i);
+            VAP_IN.vecVEHVINF = vecVEHVINF(i);
+            VAP_IN.valSTARTFORCES = 138;
+            VAP_IN.valMAXTIME = 160;
+            OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
+            fprintf('finished Iter=%i, AOA=%.1f\n',n, seqALPHA(i))
+        end
+        save(sprintf('VAP32_WPforCDo_TS160_22_fixed_iter%i.mat',n),'OUTP');
+        
+    end
+    
+    
+    if n ~= 1
+        for nn = 1:ITER.numCase
+            % New sets of AOA input for the next iteration in order to hit the targeted CL
+            ITER.AOA(n+1,nn) = interp1(ITER.CL(1:n,nn),ITER.AOA(1:n,nn),...
+                CL(nn),'linear','extrap');
+            
+            % New sets of collective pitch input input for the next iteration in order to hit the targeted CT
+            ITER.CLTV(n+1,nn) = interp1(ITER.CT(1:n,nn),ITER.CLTV(1:n,nn),...
+                CT(nn),'linear','extrap');
+        end
+    end
+    
+
 end
 
-save('VAP32_WING+PROP_forCDo_TS200.mat')
-%%
-% CD
-% [OUTP.vecCD]
-% CD-[OUTP.vecCD]
+
+if PLOTON == 1
+    figure(1)
+    plot(ITER.AOA, ITER.CL)
+    hold on
+    scatter(ITER.AOA(:), ITER.CL(:), 20, ITER.Iteration(:), 'filled')
+    hold off
+    grid minor
+    xlabel('Alpha, deg')
+    ylabel('C_L')
+    
+    figure(2)
+    plot(ITER.CLTV, ITER.CT)
+    hold on
+    scatter(ITER.CLTV(:), ITER.CT(:), 20, ITER.Iteration(:), 'filled')
+    hold off
+    grid minor
+    xlabel('Collective Pitch, deg')
+    ylabel('C_T')
+end
+
+
 
 
 
