@@ -121,7 +121,7 @@ parfor i = 1:length(vecCOLLECTIVE)
     fprintf('finished AOA=%.1f\n',seqALPHA(i));
 end
 
-save('VAP32_WING+PROP_forCDo_TS160_fixed_last22Timesteps.mat')
+save('VAP32_WPforCDo_TS160_22_fixed_iter1.mat')
 %%
 % CD
 % [OUTP.vecCD]

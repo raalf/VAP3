@@ -2,7 +2,7 @@ clear
 clc
 PLOTON = 0;
 % Import 1st Iteration Data
-load('VAP32_WING+PROP_forCDo_TS160_fixed_last22Timesteps_2ndTrimIter.mat')
+load('VAP32_WPforCDo_TS160_22_fixed_iter2.mat')
 OUTP2 = OUTP;
 clear OUTP;
 
@@ -120,7 +120,7 @@ parfor i = 1:length(vecCOLLECTIVE3)
     fprintf('finished AOA=%.1f\n',seqALPHA(i));
 end
 
-save('VAP32_WING+PROP_forCDo_TS160_fixed_last22Timesteps_3rdTrimIter.mat')
+save('VAP32_WPforCDo_TS160_22_fixed_iter3.mat')
 
 
 
