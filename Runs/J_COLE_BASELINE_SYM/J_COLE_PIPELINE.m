@@ -1,7 +1,7 @@
 % clear
 % clc
 warning off
-PLOTON = 0;
+PLOTON = 1;
 
 % Import Borer L/D Data
 load('borer.mat')
@@ -108,7 +108,7 @@ end
 clc
 clear ITER
 % define maximum number of trimming iterations
-ITER.maxIter = 8;
+ITER.maxIter = 4;
 ITER.numCase = 5;
 
 
@@ -121,8 +121,9 @@ ITER.CLTV = nan(ITER.maxIter+1, ITER.numCase);
 
 
 for n = 1:ITER.maxIter
-    
+
     try
+        disp(sprintf('VAP32_WPforCDo_TS160_22_fixed_iter%i.mat',n))
         load(sprintf('VAP32_WPforCDo_TS160_22_fixed_iter%i.mat',n),'OUTP');
         caseRan = 1;
         
@@ -138,34 +139,47 @@ for n = 1:ITER.maxIter
         ITER.CT(n,:) = nanmean([OUTP.vecCT],1);
     catch
         caseRan = 0;
+
         % Running
-        clear OUTP
         warning off
         filename = 'inputs/J_COLE_BASELINE_SYM.vap';
-        
+        seqALPHA = ITER.AOA(n,:);
+        vecCOLLECTIVE = ITER.CLTV(n,:);
         parfor i = 1:ITER.numCase
             VAP_IN = [];
-            VAP_IN.vecVEHALPHA = ITER.AOA(n,i);
-            VAP_IN.vecCOLLECTIVE = ITER.CLTV(n,i);
-            VAP_IN.vecVEHVINF = vecVEHVINF(i);
+            VAP_IN.vecVEHALPHA = seqALPHA(i);
+            VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i)
+            VAP_IN.vecVEHVINF = vecVEHVINF(i)
             VAP_IN.valSTARTFORCES = 138;
             VAP_IN.valMAXTIME = 160;
+            
             OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
-            fprintf('finished Iter=%i, AOA=%.1f\n',n, seqALPHA(i))
+            
+            fprintf('finished Iter=%i, AOA=%.3f, Collevtive=%.3f\n',n,seqALPHA(i),vecCOLLECTIVE(i));
         end
+        
+        ITER.AOA(n,:)  = [OUTP.vecVEHALPHA];
+        ITER.CLTV(n,:) = [OUTP.vecCOLLECTIVE];
+        
+        CDtemp = reshape([OUTP.vecCD],[],ITER.numCase);
+        CDtemp(isnan([OUTP.vecCL])) = nan;
+        ITER.CD(n,:) = nanmean(CDtemp,1);
+        ITER.CL(n,:) = nanmean([OUTP.vecCL],1);
+        ITER.CT(n,:) = nanmean([OUTP.vecCT],1);
+        
         save(sprintf('VAP32_WPforCDo_TS160_22_fixed_iter%i.mat',n),'OUTP');
         
     end
     
     
-    if n ~= 1
+    if n > 2
         for nn = 1:ITER.numCase
             % New sets of AOA input for the next iteration in order to hit the targeted CL
-            ITER.AOA(n+1,nn) = interp1(ITER.CL(1:n,nn),ITER.AOA(1:n,nn),...
+            ITER.AOA(n+1,nn) = interp1(ITER.CL(2:n,nn),ITER.AOA(2:n,nn),...
                 CL(nn),'linear','extrap');
             
             % New sets of collective pitch input input for the next iteration in order to hit the targeted CT
-            ITER.CLTV(n+1,nn) = interp1(ITER.CT(1:n,nn),ITER.CLTV(1:n,nn),...
+            ITER.CLTV(n+1,nn) = interp1(ITER.CT(2:n,nn),ITER.CLTV(2:n,nn),...
                 CT(nn),'linear','extrap');
         end
     end
@@ -175,7 +189,7 @@ end
 
 
 if PLOTON == 1
-    figure(1)
+    figure(4)
     plot(ITER.AOA, ITER.CL)
     hold on
     scatter(ITER.AOA(:), ITER.CL(:), 20, ITER.Iteration(:), 'filled')
@@ -184,10 +198,14 @@ if PLOTON == 1
     xlabel('Alpha, deg')
     ylabel('C_L')
     
-    figure(2)
+    figure(5)
     plot(ITER.CLTV, ITER.CT)
     hold on
     scatter(ITER.CLTV(:), ITER.CT(:), 20, ITER.Iteration(:), 'filled')
+
+    scatter(ITER.CLTV(ITER.maxIter+1,:),CT)
+
+    
     hold off
     grid minor
     xlabel('Collective Pitch, deg')
@@ -196,6 +214,56 @@ end
 
 
 
+
+
+
+
+
+
+PLOTON=1
+
+if PLOTON == 1
+    figure(1)
+    clf
+    plot(KTAS, CL, '-o')
+    hold on
+    plot(KTAS, ITER.CL, '-x')
+    hold off
+    grid minor
+    xlabel('Airspeed (kts)');
+    ylabel('C_L')
+    legend('Wing Only','Wing + Prop Iter.1','Wing + Prop Iter.2',...
+        'Wing + Prop Iter.3','Wing + Prop Iter.4','Wing + Prop Iter.5')
+    %     saveFig2Latex('JCole_Trim_Rev1_Iter3_CL.pdf', [10, 8])
+    
+    figure(2)
+    clf
+    plot(KTAS, CD, '-o')
+    hold on
+    plot(KTAS, ITER.CD, '-x')
+    hold off
+    grid minor
+    xlabel('Airspeed (kts)');
+    ylabel('C_D')
+    legend('Wing Only','Wing + Prop Iter.1','Wing + Prop Iter.2',...
+        'Wing + Prop Iter.3','Wing + Prop Iter.4','Wing + Prop Iter.5')
+    %     saveFig2Latex('JCole_Trim_Rev1_Iter3_CD.pdf', [10, 8])
+    
+    figure(3)
+    clf
+    plot(KTAS, CT, '-o')
+    hold on
+    plot(KTAS, ITER.CT, '-x')
+    hold off
+    grid minor
+    xlabel('Airspeed (kts)');
+    ylabel('C_T')
+    legend('Wing Only','Wing + Prop Iter.1','Wing + Prop Iter.2',...
+        'Wing + Prop Iter.3','Wing + Prop Iter.4','Wing + Prop Iter.5')
+    %     saveFig2Latex('JCole_Trim_Rev1_Iter3_CT.pdf', [10, 8])
+
+
+end
 
 
 
