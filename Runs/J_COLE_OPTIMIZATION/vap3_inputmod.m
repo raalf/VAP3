@@ -1,8 +1,7 @@
-function vap_file = vap3_inputmod(rotor, qmil_output_filename)
+function vap_file = vap3_inputmod(vap_filename, rotor, qmil_output_filename)
 
-filename = 'X57_WITHOUT_ROTORS.vap';
 str = [];
-fp = fopen(filename);
+fp = fopen(vap_filename);
 while ~feof(fp)
     str = [str, fgets(fp)];
 end
@@ -15,9 +14,7 @@ str_rotor = [str_rotor, str_rotor_geom, sprintf('</rotor>\n')];
 k = strfind(str, '</wing>') + 7;
 str_out = [str(1:k), str_rotor, str(k:end)];
 
-vap_file = [tempname('aux_files'), '.vap'];
-
-fp = fopen(vap_file, 'w');
+fp = fopen(vap_filename, 'w');
 fprintf(fp, str_out);
 fclose(fp);
 

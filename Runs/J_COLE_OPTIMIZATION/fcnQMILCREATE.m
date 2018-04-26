@@ -1,4 +1,4 @@
-function qmil_filename = fcnQMILCREATE(airfoil_data, blades, thrust, vinf, rpm, diam)
+function qmil_filename = fcnQMILCREATE(temp_name, airfoil_data, blades, thrust, vinf, rpm, diam)
 hub_radius = 0.15;
 
 vref = (2*pi*((diam/2)*0.75))*(rpm/60);
@@ -48,7 +48,7 @@ str_3 = sprintf('%.4f ! Thrust(N)\n%.4f ! Power(W)\n\n%.4f %.4f ! Ldes KQdes\n\n
 
 str = [str_1, str_2, str_3];
 
-qmil_filename = [tempname('aux_files'), '.prop'];
+qmil_filename = ['aux_files\', temp_name, '.prop'];
 
 fp = fopen(qmil_filename, 'w');
 fprintf(fp, str);
