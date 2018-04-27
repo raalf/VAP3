@@ -3,6 +3,8 @@ function [valCL, valCD, valPREQ, valLD, valVINF, vecCMDIST] = fcnVISCOUS_WING(va
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
     valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, matFDVE, matFVLST)
 
+warning off
+
 % % % Calculate chordline direction at midspan of each dve
 % % avgle = (matVLST(matDVE(:,1),:)+matVLST(matDVE(:,2),:))./2;
 % % avgte = (matVLST(matDVE(:,3),:)+matVLST(matDVE(:,4),:))./2;

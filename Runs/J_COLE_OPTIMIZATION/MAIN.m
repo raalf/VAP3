@@ -1,8 +1,14 @@
 clc
 clear
 
+delete optihistory.txt
+
 addpath('../../')
 addpath('../../airfoils')
+addpath('./../../Runs/J_COLE_OPTIMIZATION/aux_files')
+addpath('./../../Runs/J_COLE_OPTIMIZATION/')
+
+warning off
 
 constraints;
 nvars = length(lb);
@@ -11,13 +17,5 @@ IntCon = 1:nvars;
 TolCon_Data = 1e-6; 
 TolFun_Data = 1e-08;
 
-options = gaoptimset;
-options = gaoptimset(options,'TolFun', TolFun_Data);
-options = gaoptimset(options,'Display', 'iter');
-options = gaoptimset(options,'InitialPopulation', Seed);
-options = gaoptimset(options,'PlotFcns', {  @gaplotscorediversity @gaplotstopping @gaplotgenealogy @gaplotscores @gaplotdistance @gaplotselection});
-options = gaoptimset(options,'Vectorized', 'off');
-options = gaoptimset(options,'populationsize', 100); 
-options = gaoptimset(options,'UseParallel', 0);
-options = gaoptimset(options,'Generations',1000,'StallGenLimit', 50);
-[x,fval,exitflag,output,population,score] = gamultiobj({@fcnOBJECTIVE, N_chord, N_prop, Vars_prop},nvars,A,b,Aeq,beq,lb,ub,[],options);
+options = optimoptions('ga','InitialPopulationMatrix', Seed, 'Display', 'iter', 'UseVectorized', false, 'UseParallel', true, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'PopulationSize', 120);
+[x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_chord, N_prop, Vars_prop},nvars,A,b,[],[],lb,ub,[],IntCon,options);
