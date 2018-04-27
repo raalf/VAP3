@@ -1,4 +1,4 @@
-function vap3_inputmod(vap_filename, rotor, qmil_output_filename)
+function vap3_inputmod_prop(vap_filename, rotor, qmil_output_filename)
 
 str = [];
 fp = fopen(vap_filename);
