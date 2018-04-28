@@ -17,7 +17,7 @@ str_rotor = sprintf('\n<rotor>\n\t<rpm>%.6f</rpm>\n\t<flipy>%s</flipy>\n\t<colle
 str_rotor_geom = fcnQMIL2VAP(qmil_output_filename, 10, 'MH-117');
 str_rotor = [str_rotor, str_rotor_geom, sprintf('</rotor>\n')];
 
-k = strfind(str, '</wing>') + 7;
+k = strfind(str, '</vehicle>') - 6;
 str_out = [str(1:k), str_rotor, str(k:end)];
 
 fp = fopen(vap_filename, 'w');
