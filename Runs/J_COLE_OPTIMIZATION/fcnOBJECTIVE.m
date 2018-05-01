@@ -24,15 +24,58 @@ rotor.diam = z(N_chord + 1)./100;
 rotor.rpm = z(N_chord + 2);
 airfoil_data = load('airfoils/MH-117.mat');
 
-% Preliminary steps
+%% Preliminary steps
+% Formating wing geometry
+wing_geom(:,2) = [0; cumsum(repmat(482/(N_chord-1),N_chord-1, 1))]; % Chord stations
+wing_geom(:,1) = (22.6/482).*wing_geom(:,2);
+wing_geom(:,5) = (-4/482).*wing_geom(:,2) + 5;
+wing_geom(:,3) = wing_geom(:,1).*0;
+wing_geom(:,4) = z(1:N_chord)';
+wing_geom(:,1:4) = wing_geom(:,1:4)./100; % cm to m
+
+% Number of props ON THE HALF SPAN
 for i = 1:N_prop_max
     prop_y(i) = z(N_chord + 2 + (i-1)*Vars_prop + 2);
 end
-
 N_prop = sum(prop_y <= 484);
 
-thrust = (13344.66/14)/(2*N_prop); % L/D based on Borer of 14 @ 150 kts, 8000 ft
+% Define flight speed and conditions
 vinf = 77.2;
+rho = 1.007;
+weightN = 13344.6648; % 3000 lb in N
+
+wing_sweep_filename = ['aux_files\wing_sweep_',temp_name,'.vap'];
+copyfile('X57_BLANK.vap', wing_sweep_filename);
+
+vap3_inputmod_wing(wing_sweep_filename, wing_geom);
+
+cd '../../'
+seqALPHA = [2:10];
+for i = 1:length(seqALPHA)
+    VAP_IN = [];
+    VAP_IN.vecVEHALPHA = seqALPHA(i);
+    VAP_IN.valDELTIME = .25/vinf;
+    VAP_IN.valSTARTFORCES = 30;
+    VAP_IN.valMAXTIME = 30;
+    WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
+    view([90 90]);
+end
+cd 'Runs/J_COLE_OPTIMIZATION/'
+delete(wing_sweep_filename)
+
+% Calculate CL at VINF and S&L flight
+S    = WING_SWEEP(1).valAREA; % ref. platform area
+CL   = weightN./(0.5*rho*vinf.^2*S);
+
+% interpolate alpha to maintain steady level flight at VINF
+% using wing only data
+ALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL);
+
+% LD = interp1(borer(:,1),borer(:,2),vinf*1.94384); % get L/D from Borer Data
+LD = 14;
+CD = CL./(LD); % Calculate CD with Borer L/D Data
+D  = 0.5*rho*vinf.^2.*CD*S; % Calulate drag force in Newton
+thrust  = D/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
 %% Creating propeller in QMIL
 qmil_path = fcnQMILCREATE(temp_name, airfoil_data, rotor.blades, thrust, vinf, rotor.rpm, rotor.diam);
@@ -65,26 +108,18 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
+    VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(prop_sweep_filename)
 
-%% Trim
-
-%% Running VAP
+%% Building Propeller & Wing VAP File
 vap_filename = ['aux_files\vap_',temp_name,'.vap'];
 copyfile('X57_BLANK.vap', vap_filename);
 
-geom(:,2) = [0; cumsum(repmat(482/(N_chord-1),N_chord-1, 1))]; % Chord stations
-geom(:,1) = (22.6/482).*geom(:,2);
-geom(:,5) = (-4/482).*geom(:,2) + 5;
-geom(:,3) = geom(:,1).*0;
-geom(:,4) = z(1:N_chord)';
-geom(:,1:4) = geom(:,1:4)./100; % cm to m
-
-vap3_inputmod_wing(vap_filename, geom)
+vap3_inputmod_wing(vap_filename, wing_geom)
 for i = 1:N_prop
     rotor.hub = z((N_chord + 2 + (i-1)*Vars_prop) + [1:3])./100;
     rotor.dir = z((N_chord + 2 + (i-1)*Vars_prop) + 4);
@@ -92,28 +127,115 @@ for i = 1:N_prop
 end
 delete(qmil_output_path);
 
-cd '../../'
-seqALPHA = 6;
-OUTP = struct([]);
-for i = 1:length(seqALPHA)
+%% Trim
+ROTDIAM  = PROP_SWEEP(1).vecROTDIAM(1); % should be 1.524
+ROTORRPM = PROP_SWEEP(1).vecROTORRPM(1); %should be 2250
+rps      = ROTORRPM/60;
+
+% Calculate CT required to maintain S&L flight
+CT = thrust/(rho*rps^2*ROTDIAM^4);
+
+% use scatteredInterpolant to avoid meshgrid
+propCT   = [PROP_SWEEP.vecCT_AVG]';
+propColl = [PROP_SWEEP.vecCOLLECTIVE]';
+propVINF = repmat(vinf,size(propCT));
+
+% meshgrids of 3d vinf,ct,collective data
+propVINF = reshape(propVINF,[],length(unique(propVINF)));
+propCT   = reshape(propCT,[],length(unique(propVINF)));
+propColl = reshape(propColl,[],length(unique(propVINF)));
+
+[~,maxCTidx] = max(propCT);
+propCT(maxCTidx+1:end) = nan;
+
+% idx = propColl<=0; % quick way to hack off the partially stalled propeller
+% idx = ~isnan(propCT);
+% F = scatteredInterpolant(propVINF(idx), propCT(idx), propColl(idx),'linear','nearest');
+
+vecCOLLECTIVE = interp1(propCT, propColl, CT, 'linear', 'extrap');
+
+vecCOLLECTIVE = vecCOLLECTIVE(~isnan(vecCOLLECTIVE));
+CT = CT(~isnan(vecCOLLECTIVE));
+vinf = vinf(~isnan(vecCOLLECTIVE));
+
+ITER.maxIter = 5;
+ITER.numCase = length(vinf);
+
+ITER.Iteration = repmat((1:ITER.maxIter)',1,ITER.numCase);
+ITER.CL        = nan(ITER.maxIter, ITER.numCase);
+ITER.CT        = nan(ITER.maxIter, ITER.numCase);
+ITER.CD        = nan(ITER.maxIter, ITER.numCase);
+ITER.AOA       = nan(ITER.maxIter, ITER.numCase);
+ITER.CLTV      = nan(ITER.maxIter, ITER.numCase);
+
+seqALPHA = ALPHA;
+for n = 1:ITER.maxIter
+    
+    if n == 2
+        dCL1 = CL - ITER.CL(1,:);
+        dCT1 = CT - ITER.CT(1,:);
+        % New sets of AOA input for 2nd iteration in order to hit the targeted CL
+        seqALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL + dCL1, 'linear', 'extrap');
+        % New sets of collective pitch input for 2nd iteration in order to hit the targeted CT
+        vecCOLLECTIVE = interp1(propCT, propColl, CT + dCT1, 'linear', 'extrap');
+    elseif n > 2
+            % New sets of AOA input for the next iteration in order to hit the targeted CL
+            seqALPHA = interp1(ITER.CL(1:n-1),ITER.AOA(1:n-1),CL,'linear','extrap');
+            
+            % New sets of collective pitch input input for the next iteration in order to hit the targeted CT
+            vecCOLLECTIVE = interp1(ITER.CT(1:n-1),ITER.CLTV(1:n-1),CT,'linear','extrap');
+
+    end
+    
+    ITER.AOA(n)  = seqALPHA;
+    ITER.CLTV(n) = vecCOLLECTIVE;
+
+    cd '../../'
     VAP_IN = [];
-    VAP_IN.vecVEHALPHA = seqALPHA(i);
-    VAP_IN.valSTARTFORCES = 10;
-    VAP_IN.valMAXTIME = 10;
-    OUTP(i) = fcnVAP_MAIN(vap_filename, VAP_IN);
-    view([90 90]);
+    VAP_IN.vecVEHALPHA = seqALPHA;
+    VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE;
+    VAP_IN.vecVEHVINF = vinf;
+    VAP_IN.valMAXTIME = 160;
+    VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
+    VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
+    OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
+    cd 'Runs/J_COLE_OPTIMIZATION/' 
+    
+    % Write results
+    ITER.CL(n,:) = nanmean([OUTP.vecCL],1);
+    ITER.CT(n,:) = nanmean([OUTP.vecCT],1);
+    
+    CDtemp = [OUTP.vecCD];
+    CDtemp(isnan([OUTP.vecCLv])) = nan;
+    ITER.CD(n,:) = nanmean(CDtemp,1);
+    
+    ITEROUTP(n).OUTP = OUTP;
+
 end
-cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(vap_filename)
 
-%% ANALYZE RESULTS
-out = sum(2.*OUTP.vecCP_AVG).*((rotor.rpm/60).^3).*(rotor.diam.^5).*OUTP.valDENSITY;
+TRIMMED = false;
 
-if nargin ~= 0
-    fp2 = fopen('opthistory.txt','at');
-    fprintf(fp2,'%g ', [out, z]);
-    fprintf(fp2,'\n');
-    fclose(fp2);
+dCT = abs((ITER.CT(end) - CT)./CT);
+dCL = abs((ITER.CL(end) - CL)./CL);
+
+if dCT <= 0.01 && dCL <= 0.01
+   TRIMMED = true; 
+end
+
+%% ANALYZE RESULTS
+if TRIMMED == true
+    out = sum(2.*OUTP.vecCP_AVG).*((rotor.rpm/60).^3).*(rotor.diam.^5).*OUTP.valDENSITY;
+
+    if nargin ~= 0
+        fp2 = fopen('opthistory.txt','at');
+        fprintf(fp2,'%g ', [out, z]);
+        fprintf(fp2,'\n');
+        fclose(fp2);
+    end
+    
+else
+    out = 1e+20;
 end
 
 end
