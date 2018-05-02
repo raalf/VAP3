@@ -13,8 +13,8 @@ COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
-FLAG.PRINT = 1;
-FLAG.PLOT = 1;
+FLAG.PRINT = 0;
+FLAG.PLOT = 0;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
@@ -110,7 +110,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
             [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, valTIMESTEP);
             
             if FLAG.STIFFWING == 2
-%                 [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
+                %                 [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
             end
             
         elseif valTIMESTEP == n*COND.valSTIFFSTEPS + 1 || valGUSTTIME > 1
@@ -190,7 +190,9 @@ if FLAG.PRINT == 1 && FLAG.PREVIEW == 0
 end
 
 %% Plotting
-fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND, INPU)
+if FLAG.PLOT == 1
+    fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND, INPU)
+end
 
 OUTP.vecVEHALPHA = COND.vecVEHALPHA;
 OUTP.vecCOLLECTIVE = COND.vecCOLLECTIVE;

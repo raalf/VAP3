@@ -1,12 +1,11 @@
 function out = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
 
-if nargin == 0
+if nargin > 0
+    save('z.mat','z', 'N_chord', 'N_prop_max', 'Vars_prop')
+else
     clc
     clear
-    N_chord = 11;
-    N_prop_max = 6;
-    Vars_prop = 4;
-    z = [76,73,72,68,67,65,63,60,57,56,53,155,2250,-3,482,0,1,7,700,0,1,17,900,0,1,26,1100,0,1,35,1300,0,1,50,1600,0,1];
+    load('z.mat');
 end
 
 % Temporary filenames
@@ -58,7 +57,7 @@ for i = 1:length(seqALPHA)
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
-    view([90 90]);
+%     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(wing_sweep_filename)
@@ -110,7 +109,7 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.valMAXTIME = 100;
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
-    view([90 90]);
+%     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(prop_sweep_filename)
@@ -169,6 +168,7 @@ ITER.AOA       = nan(ITER.maxIter, ITER.numCase);
 ITER.CLTV      = nan(ITER.maxIter, ITER.numCase);
 
 seqALPHA = ALPHA;
+
 for n = 1:ITER.maxIter
     
     if n == 2
@@ -193,7 +193,7 @@ for n = 1:ITER.maxIter
     cd '../../'
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA;
-    VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE;
+    VAP_IN.vecCOLLECTIVE = repmat(vecCOLLECTIVE, N_prop, 1);
     VAP_IN.vecVEHVINF = vinf;
     VAP_IN.valMAXTIME = 160;
     VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
@@ -202,8 +202,8 @@ for n = 1:ITER.maxIter
     cd 'Runs/J_COLE_OPTIMIZATION/' 
     
     % Write results
-    ITER.CL(n,:) = nanmean([OUTP.vecCL],1);
-    ITER.CT(n,:) = nanmean([OUTP.vecCT],1);
+    ITER.CL(n,:) = OUTP.vecCL_AVG;
+    ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
     
     CDtemp = [OUTP.vecCD];
     CDtemp(isnan([OUTP.vecCLv])) = nan;
@@ -212,7 +212,7 @@ for n = 1:ITER.maxIter
     ITEROUTP(n).OUTP = OUTP;
 
 end
-delete(vap_filename)
+% delete(vap_filename)
 
 TRIMMED = false;
 
