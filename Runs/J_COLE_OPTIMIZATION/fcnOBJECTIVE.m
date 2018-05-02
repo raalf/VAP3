@@ -1,15 +1,17 @@
 function out = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
 
+% Temporary filenames
+temp_name = regexprep(tempname('\'), '\', '');
+matname = ['aux_files/z_', temp_name, '.mat'];
 if nargin > 0
-    save('z.mat','z', 'N_chord', 'N_prop_max', 'Vars_prop')
+    save(matname, 'z', 'N_chord', 'N_prop_max', 'Vars_prop')
 else
     clc
     clear
-    load('z.mat');
+    try
+        load('z.mat');
+    end
 end
-
-% Temporary filenames
-temp_name = regexprep(tempname('\'), '\', '');
 
 % Constant propeller values
 rotor.hub = [0 0 0];
@@ -212,7 +214,7 @@ for n = 1:ITER.maxIter
     ITEROUTP(n).OUTP = OUTP;
 
 end
-% delete(vap_filename)
+delete(vap_filename)
 
 TRIMMED = false;
 
@@ -237,6 +239,8 @@ if TRIMMED == true
 else
     out = 1e+20;
 end
+
+delete(matname)
 
 end
 
