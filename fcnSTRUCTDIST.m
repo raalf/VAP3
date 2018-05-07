@@ -24,7 +24,7 @@ SURF.matAEROCNTR = tempLE + matQTRCRD; % X, Y, Z location of aerodynamic center
 
 % Determine spanwise location (y coordinate) of DVEs
 tempSPANDIST = 2*SURF.vecDVEHVSPN(ledves);
-matSPANDIST = repmat(tempSPANDIST,1,size(tempSPANDIST));
+matSPANDIST = repmat(tempSPANDIST,[1,size(tempSPANDIST)]);
 
 tempSPAN = triu(matSPANDIST);  % Upper triangular matrix of DVE spans
 

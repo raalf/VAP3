@@ -1,5 +1,5 @@
 function OUTP = fcnVAP_MAIN(filename, VAP_IN)
-
+warning off
 if nargin == 0
     VAP_MAIN;
     return

@@ -12,8 +12,8 @@
 	</settings>
 
 	<conditions>
-		<valDENSITY>1.007</valDENSITY>
-		<valKINV>1.343000e-05</valKINV>
+		<valDENSITY>0.957</valDENSITY>
+		<valKINV>1.787e-05</valKINV>
 	</conditions>
 
 	<vehicle>
