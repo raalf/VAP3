@@ -30,7 +30,8 @@ if FLAG.VISCOUS == 1
                 INPU.vecAREA, COND.valDENSITY, VISC.valKINV, SURF.vecDVENFREE, SURF.vecDVENIND, ...
                 SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE, SURF.vecDVESIND, SURF.vecDVEPANEL, SURF.vecDVELE, SURF.vecDVEWING.*uint8(idxvehwing), INPU.vecN, INPU.vecM, SURF.vecDVEAREA, ...
                 SURF.matCENTER, SURF.vecDVEHVCRD, VISC.cellAIRFOIL, FLAG.PRINT, INPU.vecSYM, VISC.vecVSPANELS, VISC.matVSGEOM, VISC.vecFPANELS, VISC.matFGEOM, VISC.vecFTURB, ...
-                VISC.vecFPWIDTH, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i), VISC.matFDVE(VISC.vecFDVEVEHICLE == i,:), VISC.matFVLST);
+                VISC.vecFPWIDTH, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i), VISC.matFDVE(VISC.vecFDVEVEHICLE == i,:), VISC.matFVLST);        
+        
         end
 
 

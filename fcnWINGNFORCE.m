@@ -74,7 +74,6 @@ for i = 1:INPU.valVEHICLES
                 [SURF.vecLEDVES,~,~] = find(SURF.vecDVELE > 0);
                 
                 [OUTP, ~, ~] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, 1);
-
                 [OUTP] = fcnFORCEDIST(SURF, COND, INPU, OUTP, valTIMESTEP);
 
             else

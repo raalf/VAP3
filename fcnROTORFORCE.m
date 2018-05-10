@@ -1,4 +1,4 @@
-function [vecCT, vecCP] = fcnROTORFORCE(matROTORDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE, vecDELNDIST)
+function [vecCT, vecCP, vecCPI] = fcnROTORFORCE(matROTORDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE, vecDELNDIST)
 % Computes the thrust and power coefficients of each rotor
 
 % Thrust direction in global reference frame
@@ -21,17 +21,21 @@ matVELDIR = matUINF./(sqrt(matUINF(:,1).^2+matUINF(:,2).^2+matUINF(:,3).^2));
 % Force distributions
 vecTHRUSTDIST = dot(vecDVENFREE.*en,et,2) + dot(vecDVENIND.*en,et,2) + dot(inddrag.*matVELDIR,et,2) + dot(matROTORDP,et,2) + dot(vecDELNDIST.*en,et,2);
 vecTORQUEDIST = vecQARM.*(dot(vecDVENFREE.*en,eq,2)) + vecQARM.*(dot(vecDVENIND.*en,eq,2)) + vecQARM.*(dot(inddrag.*matVELDIR,eq,2)) + vecQARM.*(dot(matROTORDP,eq,2));
+vecINVISCID_TORQUEDIST = vecQARM.*(dot(vecDVENFREE.*en,eq,2)) + vecQARM.*(dot(vecDVENIND.*en,eq,2)) + vecQARM.*(dot(inddrag.*matVELDIR,eq,2));
 
 for i = 1:max(vecDVEROTOR)
     idx = vecDVEROTOR == i;
     thrust(i) = sum(vecTHRUSTDIST(idx));
     torque(i) = sum(vecTORQUEDIST(idx));
+    inviscid_torque(i) = sum(vecINVISCID_TORQUEDIST(idx));
 end
 power = torque.*2.*pi.*(vecROTORRPM'./60);
+inviscid_power = inviscid_torque.*2.*pi.*(vecROTORRPM'./60);
 
 % Compute coefficients in propeller convention (not rotor convention)
 vecCT = thrust'./(((vecROTORRPM/60).^2).*((vecROTDIAM).^4));
 vecCQ = torque'./(((vecROTORRPM/60).^2).*((vecROTDIAM).^5));
 vecCP = power'./(((vecROTORRPM/60).^3).*((vecROTDIAM).^5));
+vecCPI = inviscid_power'./(((vecROTORRPM/60).^3).*((vecROTDIAM).^5));
 
 end
