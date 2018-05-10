@@ -6,11 +6,16 @@ matname = ['aux_files/z_', temp_name, '.mat'];
 if nargin > 0
     save(matname, 'z', 'N_chord', 'N_prop_max', 'Vars_prop')
 else
+    clearvars -except temp_name matname
     clc
-    clear
-    try
-        load('z.mat');
-    end
+    
+    N_chord = 11;
+    N_prop_max = 6;
+    Vars_prop = 4;
+    z = [76 74 72 70 66 64 62 62 57 55 52 142 2209 -13 249 0 1 -3 476 1 0 18 888 1 1 35 1309 -2 1 52 1607 1 1 61 1801 1 1];
+%     try
+%         load('z.mat');
+%     end
 end
 
 % Constant propeller values
@@ -59,7 +64,7 @@ for i = 1:length(seqALPHA)
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
-%     view([90 90]);
+    %     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(wing_sweep_filename)
@@ -111,7 +116,7 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.valMAXTIME = 100;
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
-%     view([90 90]);
+    %     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(prop_sweep_filename)
@@ -171,64 +176,68 @@ ITER.CLTV      = nan(ITER.maxIter, ITER.numCase);
 
 seqALPHA = ALPHA;
 
-for n = 1:ITER.maxIter
-    
-    if n == 2
-        dCL1 = CL - ITER.CL(1,:);
-        dCT1 = CT - ITER.CT(1,:);
-        % New sets of AOA input for 2nd iteration in order to hit the targeted CL
-        seqALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL + dCL1, 'linear', 'extrap');
-        % New sets of collective pitch input for 2nd iteration in order to hit the targeted CT
-        vecCOLLECTIVE = interp1(propCT, propColl, CT + dCT1, 'linear', 'extrap');
-    elseif n > 2
+try
+    for n = 1:ITER.maxIter
+        
+        if n == 2
+            dCL1 = CL - ITER.CL(1,:);
+            dCT1 = CT - ITER.CT(1,:);
+            % New sets of AOA input for 2nd iteration in order to hit the targeted CL
+            seqALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL + dCL1, 'linear', 'extrap');
+            % New sets of collective pitch input for 2nd iteration in order to hit the targeted CT
+            vecCOLLECTIVE = interp1(propCT, propColl, CT + dCT1, 'linear', 'extrap');
+        elseif n > 2
             % New sets of AOA input for the next iteration in order to hit the targeted CL
             seqALPHA = interp1(ITER.CL(1:n-1),ITER.AOA(1:n-1),CL,'linear','extrap');
             
             % New sets of collective pitch input input for the next iteration in order to hit the targeted CT
             vecCOLLECTIVE = interp1(ITER.CT(1:n-1),ITER.CLTV(1:n-1),CT,'linear','extrap');
-
+            
+        end
+        
+        ITER.AOA(n)  = seqALPHA;
+        ITER.CLTV(n) = vecCOLLECTIVE;
+        
+        cd '../../'
+        VAP_IN = [];
+        VAP_IN.vecVEHALPHA = seqALPHA;
+        VAP_IN.vecCOLLECTIVE = repmat(vecCOLLECTIVE, N_prop, 1);
+        VAP_IN.vecVEHVINF = vinf;
+        VAP_IN.valMAXTIME = 160;
+        VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
+        VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
+        OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
+        cd 'Runs/J_COLE_OPTIMIZATION/'
+        
+        % Write results
+        ITER.CL(n,:) = OUTP.vecCL_AVG;
+        ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
+        
+        CDtemp = [OUTP.vecCD];
+        CDtemp(isnan([OUTP.vecCLv])) = nan;
+        ITER.CD(n,:) = nanmean(CDtemp,1);
+        
+        ITEROUTP(n).OUTP = OUTP;
+        
     end
     
-    ITER.AOA(n)  = seqALPHA;
-    ITER.CLTV(n) = vecCOLLECTIVE;
-
-    cd '../../'
-    VAP_IN = [];
-    VAP_IN.vecVEHALPHA = seqALPHA;
-    VAP_IN.vecCOLLECTIVE = repmat(vecCOLLECTIVE, N_prop, 1);
-    VAP_IN.vecVEHVINF = vinf;
-    VAP_IN.valMAXTIME = 160;
-    VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-    VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
-    OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
-    cd 'Runs/J_COLE_OPTIMIZATION/' 
+    TRIMMED = false;
     
-    % Write results
-    ITER.CL(n,:) = OUTP.vecCL_AVG;
-    ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
+    dCT = abs((ITER.CT(end) - CT)./CT);
+    dCL = abs((ITER.CL(end) - CL)./CL);
     
-    CDtemp = [OUTP.vecCD];
-    CDtemp(isnan([OUTP.vecCLv])) = nan;
-    ITER.CD(n,:) = nanmean(CDtemp,1);
-    
-    ITEROUTP(n).OUTP = OUTP;
-
+    if dCT <= 0.01 && dCL <= 0.01
+        TRIMMED = true;
+    end
+catch
+    TRIMMED = false;
 end
 delete(vap_filename)
-
-TRIMMED = false;
-
-dCT = abs((ITER.CT(end) - CT)./CT);
-dCL = abs((ITER.CL(end) - CL)./CL);
-
-if dCT <= 0.01 && dCL <= 0.01
-   TRIMMED = true; 
-end
 
 %% ANALYZE RESULTS
 if TRIMMED == true
     out = sum(2.*OUTP.vecCP_AVG).*((rotor.rpm/60).^3).*(rotor.diam.^5).*OUTP.valDENSITY;
-
+    
     if nargin ~= 0
         fp2 = fopen('opthistory.txt','at');
         fprintf(fp2,'%g ', [out, z]);

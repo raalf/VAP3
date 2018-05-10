@@ -178,10 +178,17 @@ for valTIMESTEP = 1:COND.valMAXTIME
 end
 
 if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0
+    % Time averaged lift
+    OUTP.vecCL_AVG = fcnTIMEAVERAGE(OUTP.vecCLv, COND.vecROTORRPM, COND.valDELTIME);
+    
+    % Time averaged drags (total, induced, profile)
     OUTP.vecCD_AVG = fcnTIMEAVERAGE(OUTP.vecCD, COND.vecROTORRPM, COND.valDELTIME);
+    OUTP.vecCDI_AVG = fcnTIMEAVERAGE(OUTP.vecCDI, COND.vecROTORRPM, COND.valDELTIME);
+    OUTP.vecCDP_AVG = fcnTIMEAVERAGE(OUTP.vecCD - OUTP.vecCDI, COND.vecROTORRPM, COND.valDELTIME);
+    
     OUTP.vecCT_AVG = fcnTIMEAVERAGE(OUTP.vecCT, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCP_AVG = fcnTIMEAVERAGE(OUTP.vecCP, COND.vecROTORRPM, COND.valDELTIME);
-    OUTP.vecCL_AVG = fcnTIMEAVERAGE(OUTP.vecCLv, COND.vecROTORRPM, COND.valDELTIME);
+    
 end
 
 if FLAG.PRINT == 1 && FLAG.PREVIEW == 0
