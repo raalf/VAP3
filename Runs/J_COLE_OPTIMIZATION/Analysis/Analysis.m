@@ -108,7 +108,7 @@ p.LineStyle = linestyles{i,:};
 p.Marker = markers{i,:};
 p.Color = colors{i,:};
 end
-lgnd = legend(legend_entry,'Location','NorthWest')
+lgnd = legend(legend_entry,'Location','NorthWest');
 hold off
 
 
