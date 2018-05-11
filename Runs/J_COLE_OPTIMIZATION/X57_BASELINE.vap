@@ -48,7 +48,7 @@
 			<panel>
 				<airfoil>NASA GA(W)-2 Modified</airfoil>
 				<symmetry>1</symmetry>
-				<N>12</N>
+				<N>10</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
