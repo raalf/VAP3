@@ -14,8 +14,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
-%     VAP_IN.valSTARTFORCES = 3
-%     VAP_IN.valMAXTIME = 3
+    VAP_IN.valSTARTFORCES = 3
+    VAP_IN.valMAXTIME = 3
     WING_SWEEP(i) = fcnVAP_MAIN('X57_BASELINE_WING.vap', VAP_IN);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -43,8 +43,8 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
-%     VAP_IN.valSTARTFORCES = 3
-%     VAP_IN.valMAXTIME = 3
+    VAP_IN.valSTARTFORCES = 3
+    VAP_IN.valMAXTIME = 3
     VAP_IN.valDELTIME = (1/60)/(2250/60);
     PROP_SWEEP(i) = fcnVAP_MAIN('X57_BASELINE_PROP.vap', VAP_IN);
     %     view([90 90]);
@@ -122,8 +122,8 @@ for n = 1:ITER.maxIter
     VAP_IN.vecVEHVINF = vinf;
     VAP_IN.valMAXTIME = 160;
     VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-%     VAP_IN.valMAXTIME = 4
-%     VAP_IN.valSTARTFORCES = 2
+    VAP_IN.valMAXTIME = 4
+    VAP_IN.valSTARTFORCES = 2
     VAP_IN.valDELTIME = (1/60)/(2250/60);
     OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
     cd 'Runs/J_COLE_OPTIMIZATION/'
