@@ -159,7 +159,11 @@ VEHI.vecROTORVEH = VEHI.vecSURFACEVEHICLE(MISC.matSURFACETYPE(:,2)~=0);
 % SURF.matVLST(SURF.matDVE(i,4),:) = (SURF.matVLST(SURF.matDVE(i,4),:) - uo)*R + uo;
 % end
 
-
+for i = 1:max(SURF.vecDVEWING)
+   m = mean(INPU.vecM(vecPANELSURFACE == i));
+   centers = mean(permute(reshape(SURF.matCENTER(SURF.vecDVEWING == i,:)', 3, m, []), [3 1 2]),3);
+   OUTP.WING(i).vecSPANLOC = cumsum([sqrt(sum(centers(1,:).^2,2)); sqrt(sum((centers(2:end,:) - centers(1:end-1,:)).^2,2))]); 
+end
 
 [ VEHI.matVEHUVW, VEHI.matVEHROT, VEHI.matVEHROTRATE, MISC.matCIRORIG] = fcnINITVEHICLE( COND.vecVEHVINF, INPU.matVEHORIG, COND.vecVEHALPHA, COND.vecVEHBETA, COND.vecVEHFPA, COND.vecVEHROLL, COND.vecVEHTRK, VEHI.vecVEHRADIUS );
 [SURF.matVLST, SURF.matCENTER, VISC.matFVLST, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNTVLST] = fcnROTVEHICLE( SURF.matDVE, SURF.matVLST, SURF.matCENTER, INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, VEHI.matVEHROT, VISC.matFVLST, VISC.vecFUSEVEHICLE, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH, SURF.matNTVLST, VISC.vecFDVEVEHICLE);

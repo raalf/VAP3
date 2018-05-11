@@ -85,7 +85,6 @@ load('matlab.mat');
 % legend('Design 1', 'Design 2', 'Design 3')
 
 %% Prop Thrust Distribution
-
 hFig202 = figure(202);
 clf(202);
 plot(baseline_ITEROUTP(end).OUTP.ROTOR.vecSPANLOC, mean(baseline_ITEROUTP(end).OUTP.ROTOR.vecTHRUSTDIST_AVG,3), df)

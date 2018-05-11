@@ -12,11 +12,11 @@ vecDELNDIST = zeros(SURF.valNELE,1);
 
 if FLAG.VISCOUS == 1
     for i = 1:INPU.valVEHICLES
-
+        
         idxvehwing = SURF.vecDVEWING > 0 & SURF.vecDVEVEHICLE == i; %(SURF.vecDVEWING.*SURF.vecDVEVEHICLE == i) > 0;
-
+        
         if (any(idxvehwing) && valTIMESTEP == COND.valMAXTIME) || (any(idxvehwing)&& temp_visc == 1)
-                % Compute induced velocity
+            % Compute induced velocity
             [matWUINF] = fcnINDVEL(SURF.matCENTER, valTIMESTEP, SURF, WAKE, INPU, FLAG);
             
             if COND.vecVEHVINF == 1 && FLAG.FIXEDLIFT == 1
@@ -24,17 +24,20 @@ if FLAG.VISCOUS == 1
             else
                 fixed_lift = 0;
             end
-                       
-                
-            [OUTP.vecCLv(i), OUTP.vecCD(i), OUTP.vecPREQ(i), OUTP.vecLD(i), OUTP.vecVINF(i), OUTP.vecCMDIST] = fcnVISCOUS_WING(OUTP.vecCL(end), OUTP.vecCDI(end), ...
+            
+            [OUTP.vecCLv(i), OUTP.vecCD(i), OUTP.vecPREQ(i), OUTP.vecLD(i), OUTP.vecVINF(i), OUTP.vecCMDIST, temp_dist] = fcnVISCOUS_WING(OUTP.vecCL(end), OUTP.vecCDI(end), ...
                 INPU.vecAREA, COND.valDENSITY, VISC.valKINV, SURF.vecDVENFREE, SURF.vecDVENIND, ...
                 SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE, SURF.vecDVESIND, SURF.vecDVEPANEL, SURF.vecDVELE, SURF.vecDVEWING.*uint8(idxvehwing), INPU.vecN, INPU.vecM, SURF.vecDVEAREA, ...
                 SURF.matCENTER, SURF.vecDVEHVCRD, VISC.cellAIRFOIL, FLAG.PRINT, INPU.vecSYM, VISC.vecVSPANELS, VISC.matVSGEOM, VISC.vecFPANELS, VISC.matFGEOM, VISC.vecFTURB, ...
-                VISC.vecFPWIDTH, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i), VISC.matFDVE(VISC.vecFDVEVEHICLE == i,:), VISC.matFVLST);        
-        
+                VISC.vecFPWIDTH, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i), VISC.matFDVE(VISC.vecFDVEVEHICLE == i,:), VISC.matFVLST);
+            
+            OUTP.WING(i).vecCLDIST(valTIMESTEP,:) = temp_dist.CLDIST(~isnan(temp_dist.CLDIST))';
+            OUTP.WING(i).vecCDPDIST(valTIMESTEP,:) = temp_dist.CDPDIST(~isnan(temp_dist.CDPDIST))';
+            
+            
         end
-
-
+        
+        
         idxvehrotor = SURF.vecDVEROTOR > 0 & SURF.vecDVEVEHICLE == i;
         if any(idxvehrotor)
             if valTIMESTEP > COND.valMAXTIME - 1/(min(COND.vecROTORRPM)*COND.valDELTIME/60) % Only compute for last full rotor rotation
@@ -43,9 +46,9 @@ if FLAG.VISCOUS == 1
                 
                 [matROTORDP(idxvehrotor,:), vecDELNDIST(idxvehrotor)] = fcnVISCOUS_ROTOR(VISC.valKINV,...
                     SURF.vecDVEHVCRD(idxvehrotor==1), INPU.vecN, INPU.vecM, SURF.vecDVELE(idxvehrotor==1), SURF.vecDVEPANEL(idxvehrotor==1), VISC.cellAIRFOIL, SURF.vecDVENFREE(idxvehrotor==1)+SURF.vecDVENIND(idxvehrotor==1), SURF.vecDVEAREA(idxvehrotor==1),SURF.matUINF(idxvehrotor==1,:), SURF.matVLST, SURF.matDVE(idxvehrotor==1,:), matWUINF, FLAG.PRINT);
-            end 
+            end
         end
-    end 
+    end
 end
 
 end
