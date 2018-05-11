@@ -85,13 +85,10 @@ load('matlab.mat');
 % legend('Design 1', 'Design 2', 'Design 3')
 
 %% Prop Thrust Distribution
-centers = baseline_ITEROUTP(end).OUTP.DISTRIBUTIONS.matBLADEXYPLANE(1).Rotor;
-loc = cumsum([sqrt(sum(centers(1,:).^2,2)); sqrt(sum((centers(2:end,:) - centers(1:end-1,:)).^2,2))]);
-thrust =  mean(reshape(mean(baseline_ITEROUTP(end).OUTP.DISTRIBUTIONS.vecTHRUSTDIST_AVG(baseline_ITEROUTP(end).OUTP.DISTRIBUTIONS.vecDVEROTOR > 0),1), [], 3), 2);
 
 hFig202 = figure(202);
 clf(202);
-plot(loc, thrust, df)
+plot(baseline_ITEROUTP(end).OUTP.ROTOR.vecSPANLOC, mean(baseline_ITEROUTP(end).OUTP.ROTOR.vecTHRUSTDIST_AVG,3), df)
 grid minor 
 box on
 axis tight
@@ -100,10 +97,8 @@ ylabel('Average Thrust (N)', 'FontSize', 15);
 
 hold on
 for i = 1:size(z,1)
-centers = Design(i).ITEROUTP(end).OUTP.DISTRIBUTIONS.matBLADEXYPLANE(1).Rotor;
-loc = cumsum([sqrt(sum(centers(1,:).^2,2)); sqrt(sum((centers(2:end,:) - centers(1:end-1,:)).^2,2))]);
-thrust =  mean(reshape(mean(Design(i).ITEROUTP(end).OUTP.DISTRIBUTIONS.vecTHRUSTDIST_AVG(Design(i).ITEROUTP(end).OUTP.DISTRIBUTIONS.vecDVEROTOR > 0),1), [], 3*rotors(i)), 2);
-p = plot(loc, thrust);
+thrust = mean(mean(cat(1, Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTHRUSTDIST_AVG),3),1);
+p = plot(Design(i).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC, thrust);
 p.LineStyle = linestyles{i,:};
 p.Marker = markers{i,:};
 p.Color = colors{i,:};
