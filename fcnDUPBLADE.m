@@ -1,7 +1,7 @@
 function [vecPANELROTOR, vecN, vecM, matVLST0, matCENTER0, matDVE, matADJE, vecDVEVEHICLE, ...
     vecDVEWING, vecDVEROTOR, matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, ...
     vecDVETIP, vecDVELE, vecDVETE, vecDVEROTORBLADE, vecDVESYM, ...
-    valNELE, matNTVLST0, cellAIRFOIL] = fcnDUPBLADE( vecROTORVEH, vecDVEROTOR, ...
+    valNELE, matNTVLST0, cellAIRFOIL, matBLADEXYPLANE] = fcnDUPBLADE( vecROTORVEH, vecDVEROTOR, ...
     matVLST0, matCENTER0, matDVE, matADJE, vecROTORBLADES, ...
     valNELE, matROTORHUB, matVEHORIG, vecDVEVEHICLE, vecDVEWING, ...
     matSURFACETYPE, vecDVESURFACE, vecDVEPANEL, vecDVETIP, vecDVELE, ...
@@ -11,6 +11,7 @@ function [vecPANELROTOR, vecN, vecM, matVLST0, matCENTER0, matDVE, matADJE, vecD
 %   Duplicate blades within a rotor
 % Add Duplicate Rotor Blades
 
+matBLADEXYPLANE = struct([]);
 
 tempPANELROTOR = vecPANELROTOR;
 valROTORS = length(vecROTORVEH);
@@ -66,13 +67,15 @@ for n = 1:valROTORS
         vecDVETIP = [vecDVETIP; vecDVETIP(idxDVEBLADE)];
         vecDVELE = [vecDVELE; vecDVELE(idxDVEBLADE)];
         vecDVETE = [vecDVETE; vecDVETE(idxDVEBLADE)];
-        vecDVEROTORBLADE = [vecDVEROTORBLADE; vecDVEROTORBLADE(idxDVEBLADE)];
+        vecDVEROTORBLADE = [vecDVEROTORBLADE; vecDVEROTORBLADE(idxDVEBLADE) + j];
         vecDVESYM = [vecDVESYM; vecDVESYM(idxDVEBLADE)];
         vecM = [vecM; vecM(vecPANELROTOR==n)];
         vecN = [vecN; vecN(vecPANELROTOR==n)];   
         if ~isempty(cellAIRFOIL); cellAIRFOIL = [cellAIRFOIL; cellAIRFOIL(vecPANELROTOR==n)]; end
         tempPANELROTOR = [tempPANELROTOR; tempPANELROTOR(vecPANELROTOR==n)];
     end
+    
+    matBLADEXYPLANE(n).Rotor = (matCENTER0(idxDVEBLADE,:) - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:));
     
     vecPANELROTOR = tempPANELROTOR;
     % rotate rotor to axis

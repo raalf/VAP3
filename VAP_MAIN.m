@@ -2,9 +2,12 @@ clc
 clear
 warning off
 
-filename = 'inputs/CREATeV.vap';
+filename = 'inputs/vap_test.vap';
+VAP_IN.valSTARTFORCES = 3;
 
-OUTP = fcnVAP_MAIN(filename, []);
+OUTP = fcnVAP_MAIN(filename, VAP_IN);
+
+OUTP.DISTRIBUTIONS.vecDVEROTORBLADE
 
 
 % parfor i = 1:length(seqALPHA)

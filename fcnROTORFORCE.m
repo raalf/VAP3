@@ -1,4 +1,4 @@
-function [vecCT, vecCP, vecCPI] = fcnROTORFORCE(matROTORDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE, vecDELNDIST)
+function [vecCT, vecCP, vecCPI, vecTHRUSTDIST, vecTORQUEDIST] = fcnROTORFORCE(matROTORDP, en, vecDVENFREE, vecDVENIND, inddrag, matUINF, vecDVEROTOR, matVEHROT, matROTORAXIS, vecROTORRPM, vecROTDIAM, matUINFROT, vecQARM, vecDVEVEHICLE, vecDELNDIST)
 % Computes the thrust and power coefficients of each rotor
 
 % Thrust direction in global reference frame

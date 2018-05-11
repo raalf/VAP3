@@ -1,10 +1,10 @@
-function out = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
+function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
 
 % Temporary filenames
 temp_name = regexprep(tempname('\'), '\', '');
 matname = ['aux_files/z_', temp_name, '.mat'];
 if nargin > 0
-    save(matname, 'z', 'N_chord', 'N_prop_max', 'Vars_prop')
+    save(matname, 'z', 'N_chord', 'N_prop_max', 'Vars_prop');
 else
     clearvars -except temp_name matname
     clc
@@ -13,9 +13,9 @@ else
     N_prop_max = 6;
     Vars_prop = 4;
     z = [76 74 72 70 66 64 62 62 57 55 52 142 2209 -13 249 0 1 -3 476 1 0 18 888 1 1 35 1309 -2 1 52 1607 1 1 61 1801 1 1];
-%     try
-%         load('z.mat');
-%     end
+    %     try
+    %         load('z.mat');
+    %     end
 end
 
 % Constant propeller values
@@ -63,6 +63,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
+    VAP_IN.valSTARTFORCES = 3
+    VAP_IN.valMAXTIME = 3
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
     %     view([90 90]);
 end
@@ -114,6 +116,8 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
+    VAP_IN.valSTARTFORCES = 3
+    VAP_IN.valMAXTIME = 3
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
     %     view([90 90]);
@@ -205,6 +209,8 @@ try
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
+        VAP_IN.valMAXTIME = 4
+        VAP_IN.valSTARTFORCES = 2
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'

@@ -207,7 +207,7 @@ for i = 1:max(vecDVEWING)
     end
     % CN in terms of Vinf instead of Vinf + Vind
     vecCNDIST(isCurWing) = vecCNDIST0(isCurWing).*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
-    
+
     % Lift force per wing
     LPerWing(i) = sum(vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing));
     
