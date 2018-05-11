@@ -15,15 +15,15 @@ linestyles = {'--';'-.';'-';':'};
 markers = {'o';'x';'s';'^';'*';'d';'v';'>';'<';'p';'h'};
 colors = {'k';'b';'r';'m';'c';'g'};
 
-% cd ./../
-% parfor i = 1:size(z,1) + 1
-%     if i == size(z,1) + 1
-%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
-%     else
-%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, 6, 4);
-%     end
-% end
-% cd Analysis/
+cd ./../
+for i = 1:size(z,1) + 1
+    if i == size(z,1) + 1
+        [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
+    else
+        [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, 6, 4);
+    end
+end
+cd Analysis/
 % save('matlab.mat');
 
 load('matlab.mat');
