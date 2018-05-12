@@ -1,15 +1,17 @@
-function [] = fcnPLOTPKG(FLAG, SURF, VISC, WAKE, COND, INPU)
+function [] = fcnPLOTPKG(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU)
 
 if FLAG.PREVIEW == 1; FLAG.RELAX = 0; end
 
 if ~isempty(INPU.vecSYM) && any(INPU.vecSYM)
     sym = true;
-else 
+else
     sym = false;
 end
 
 [hFig2] = fcnPLOTBODY(FLAG.VERBOSE, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, VISC.matFDVE, VISC.matFVLST, sym);
-[hFig2] = fcnPLOTWAKE(FLAG.VERBOSE, hFig2, WAKE.valWNELE, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCENTER, WAKE.vecWDVESURFACE, sym);
+if ~isempty(valTIMESTEP)
+    [hFig2] = fcnPLOTWAKE(FLAG.VERBOSE, hFig2, WAKE.valWNELE, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCENTER, WAKE.vecWDVESURFACE, sym);
+end
 % [hLogo] = fcnPLOTLOGO(0.97,0.03,14,'k','none');
 
 if FLAG.PLOTWAKEVEL == 1 && COND.valMAXTIME > 0 && FLAG.RELAX == 1

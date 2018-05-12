@@ -63,8 +63,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
-    VAP_IN.valSTARTFORCES = 3
-    VAP_IN.valMAXTIME = 3
+    %         VAP_IN.valSTARTFORCES = 3
+    %         VAP_IN.valMAXTIME = 3
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
     %     view([90 90]);
 end
@@ -116,8 +116,8 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
-    VAP_IN.valSTARTFORCES = 3
-    VAP_IN.valMAXTIME = 3
+    %         VAP_IN.valSTARTFORCES = 3
+    %         VAP_IN.valMAXTIME = 3
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
     %     view([90 90]);
@@ -172,13 +172,15 @@ ITER.maxIter = 5;
 ITER.numCase = length(vinf);
 
 ITER.Iteration = repmat((1:ITER.maxIter)',1,ITER.numCase);
-ITER.CL        = nan(ITER.maxIter, ITER.numCase);
-ITER.CT        = nan(ITER.maxIter, ITER.numCase);
-ITER.CD        = nan(ITER.maxIter, ITER.numCase);
-ITER.AOA       = nan(ITER.maxIter, ITER.numCase);
-ITER.CLTV      = nan(ITER.maxIter, ITER.numCase);
+ITER.CL        = nan(1, ITER.numCase);
+ITER.CT        = nan(1, ITER.numCase);
+ITER.CD        = nan(1, ITER.numCase);
+ITER.AOA       = nan(1, ITER.numCase);
+ITER.CLTV      = nan(1, ITER.numCase);
 
 seqALPHA = ALPHA;
+
+TRIMMED = false;
 
 try
     for n = 1:ITER.maxIter
@@ -209,8 +211,8 @@ try
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-        VAP_IN.valMAXTIME = 4
-        VAP_IN.valSTARTFORCES = 2
+        VAP_IN.valMAXTIME = 80
+        VAP_IN.valSTARTFORCES = 70
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -225,9 +227,14 @@ try
         
         ITEROUTP(n).OUTP = OUTP;
         
+        dCT = abs((ITER.CT(end) - CT)./CT);
+        dCL = abs((ITER.CL(end) - CL)./CL);
+        if dCT <= 0.01 && dCL <= 0.01
+            break;
+        end
+        
     end
     
-    TRIMMED = false;
     
     dCT = abs((ITER.CT(end) - CT)./CT);
     dCL = abs((ITER.CL(end) - CL)./CL);

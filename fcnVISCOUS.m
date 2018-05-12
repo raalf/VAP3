@@ -40,7 +40,7 @@ if FLAG.VISCOUS == 1
         
         idxvehrotor = SURF.vecDVEROTOR > 0 & SURF.vecDVEVEHICLE == i;
         if any(idxvehrotor)
-            if valTIMESTEP > COND.valMAXTIME - 1/(min(COND.vecROTORRPM)*COND.valDELTIME/60) % Only compute for last full rotor rotation
+            if valTIMESTEP > COND.valMAXTIME - abs(1/(min(COND.vecROTORRPM)*COND.valDELTIME/60)) % Only compute for last full rotor rotation
                 % Compute induced velocity
                 [matWUINF] = fcnINDVEL(SURF.matCENTER(idxvehrotor==1,:), valTIMESTEP, SURF, WAKE, INPU, FLAG);
                 

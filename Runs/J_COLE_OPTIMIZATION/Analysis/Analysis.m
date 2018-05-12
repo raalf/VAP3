@@ -6,8 +6,10 @@ cd C:\Users\travi\OneDrive\Desktop\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
 z(1,:) = [76 74 72 68 66 65 63 59 57 56 53 155 2250 -2 482 0 1 8 700 0 1 18 900 0 1 27 1100 0 1 35 1300 0 1 51 1600 0 1]; % 76907.3
 z(2,:) = [76 74 72 70 66 64 62 62 57 55 52 142 2209 -13 249 0 1 -3 476 1 0 18 888 1 1 35 1309 -2 1 52 1607 1 1 61 1801 1 1]; % 72133.5
 z(3,:) = [75 74 72 68 66 64 61 59 57 53 53 110 2100 -15 200 -1 1 -8 351 0 0 -2 483 0 1 16 900 -0 1 33 1300 1 1 52 1601 -0 1]; % 73381.7
+% z(2,:) = [76 74 72 70 66 64 62 62 57 55 52 142 2209 -13 249 0 1 -3 476 1 1 18 888 1 1 35 1309 -2 1 52 1607 1 1 61 1801 1 1]; % 72133.5
 
-rotors = [1, 2, 3];
+
+rotors = [1, 2, 3, 1];
 
 legend_entry = {'Baseline Design', 'Design 1', 'Design 2', 'Design 3'};
 
@@ -16,7 +18,7 @@ markers = {'o';'x';'s';'^';'*';'d';'v';'>';'<';'p';'h'};
 colors = {'k';'b';'r';'m';'c';'g'};
 
 cd ./../
-for i = 1:size(z,1) + 1
+for i = 2:size(z,1) + 1
     if i == size(z,1) + 1
         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
     else
@@ -24,20 +26,22 @@ for i = 1:size(z,1) + 1
     end
 end
 cd Analysis/
-% save('matlab.mat');
+save('matlab.mat');
 
 load('matlab.mat');
 
 %% Drag Bar Graph
 x = categorical({'Total Drag', 'Induced Drag', 'Profile Drag'});
-
+vinf = 77.2;
 baseline = [Design(end).ITEROUTP(end).OUTP.vecCD_AVG; ...
     Design(end).ITEROUTP(end).OUTP.vecCDI_AVG; ...
     Design(end).ITEROUTP(end).OUTP.vecCDP_AVG];
+% baseline = baseline.*(0.5.*Design(end).ITEROUTP(end).OUTP.valDENSITY.*vinf.^2.*(Design(end).ITEROUTP(end).OUTP.valAREA));
 
-designs = [Design(1).ITEROUTP(end).OUTP.vecCD_AVG, Design(2).ITEROUTP(end).OUTP.vecCD_AVG, Design(3).ITEROUTP(end).OUTP.vecCD_AVG; ...
-    Design(1).ITEROUTP(end).OUTP.vecCDI_AVG, Design(2).ITEROUTP(end).OUTP.vecCDI_AVG, Design(3).ITEROUTP(end).OUTP.vecCDI_AVG;...
-    Design(1).ITEROUTP(end).OUTP.vecCDP_AVG, Design(2).ITEROUTP(end).OUTP.vecCDP_AVG, Design(3).ITEROUTP(end).OUTP.vecCDP_AVG];
+for i = 1:3
+   designs(:,i) = [Design(i).ITEROUTP(end).OUTP.vecCD_AVG; Design(i).ITEROUTP(end).OUTP.vecCDI_AVG; Design(i).ITEROUTP(end).OUTP.vecCDP_AVG];
+%    designs(:,i) = designs(:,i).*(0.5.*Design(i).ITEROUTP(end).OUTP.valDENSITY.*vinf.^2.*(Design(i).ITEROUTP(end).OUTP.valAREA));
+end
 
 hFig200 = figure(200);
 clf(200);
@@ -62,10 +66,13 @@ x = categorical({'Total Power', 'Induced Power', 'Profile Power'});
 baseline = [Design(end).ITEROUTP(end).OUTP.vecCP_AVG; ...
     Design(end).ITEROUTP(end).OUTP.vecCPI_AVG; ...
     Design(end).ITEROUTP(end).OUTP.vecCPP_AVG];
+baseline = baseline.*(Design(end).ITEROUTP(end).OUTP.valDENSITY.*((Design(end).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(end).ITEROUTP(end).OUTP.vecROTDIAM(1).^5));
 
-designs = [mean(Design(1).ITEROUTP(end).OUTP.vecCP_AVG,2), mean(Design(2).ITEROUTP(end).OUTP.vecCP_AVG,2), mean(Design(3).ITEROUTP(end).OUTP.vecCP_AVG,2); ...
-    mean(Design(1).ITEROUTP(end).OUTP.vecCPI_AVG,2), mean(Design(2).ITEROUTP(end).OUTP.vecCPI_AVG,2), mean(Design(3).ITEROUTP(end).OUTP.vecCPI_AVG,2);...
-    mean(Design(1).ITEROUTP(end).OUTP.vecCPP_AVG,2), mean(Design(2).ITEROUTP(end).OUTP.vecCPP_AVG,2), mean(Design(3).ITEROUTP(end).OUTP.vecCPP_AVG,2)];
+designs = [];
+for i = 1:size(z,1)
+   designs(:,i) = [mean(Design(i).ITEROUTP(end).OUTP.vecCP_AVG,2); mean(Design(i).ITEROUTP(end).OUTP.vecCPI_AVG,2); mean(Design(i).ITEROUTP(end).OUTP.vecCPP_AVG,2)];
+   designs(:,i) = designs(:,i).*(Design(i).ITEROUTP(end).OUTP.valDENSITY.*((Design(i).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(i).ITEROUTP(end).OUTP.vecROTDIAM(1).^5));
+end
 
 hFig201 = figure(201);
 clf(201);
@@ -154,7 +161,7 @@ ylabel('Lift (N)', 'FontSize', 15);
 hold on
 for i = 1:size(z,1)
 loc = 2.*(Design(i).ITEROUTP(end).OUTP.WING(1).vecSPANLOC)./10;
-lift = Design(i).ITEROUTP(end).OUTP.WING(:).vecLDIST_AVG;
+lift = Design(i).ITEROUTP(end).OUTP.WING(1).vecLDIST_AVG;
 p = plot(loc, lift);
 p.LineStyle = linestyles{i+1,:};
 p.Marker = markers{i+1,:};

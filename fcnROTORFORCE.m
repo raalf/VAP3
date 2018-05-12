@@ -33,13 +33,13 @@ for i = 1:max(SURF.vecDVEROTOR)
     OUTP.ROTOR(i).vecTHRUSTDIST(valTIMESTEP,:,:) = reshape(vecTHRUSTDIST(idx), 1, [], num_blades);
     OUTP.ROTOR(i).vecTORQUEDIST(valTIMESTEP,:,:) = reshape(vecTORQUEDIST(idx), 1, [], num_blades);
 end
-power = torque.*2.*pi.*(COND.vecROTORRPM'./60);
-inviscid_power = inviscid_torque.*2.*pi.*(COND.vecROTORRPM'./60);
+power = torque.*2.*pi.*abs(COND.vecROTORRPM'./60);
+inviscid_power = inviscid_torque.*2.*pi.*abs((COND.vecROTORRPM'./60));
 
 % Compute coefficients in propeller convention (not rotor convention)
 OUTP.vecCT(valTIMESTEP,:) = thrust'./(((COND.vecROTORRPM/60).^2).*((INPU.vecROTDIAM).^4));
 vecCQ = torque'./(((COND.vecROTORRPM/60).^2).*((INPU.vecROTDIAM).^5));
-OUTP.vecCP(valTIMESTEP,:) = power'./(((COND.vecROTORRPM/60).^3).*((INPU.vecROTDIAM).^5));
-OUTP.vecCPI(valTIMESTEP,:) = inviscid_power'./(((COND.vecROTORRPM/60).^3).*((INPU.vecROTDIAM).^5));
+OUTP.vecCP(valTIMESTEP,:) = power'./((abs(COND.vecROTORRPM/60).^3).*((INPU.vecROTDIAM).^5));
+OUTP.vecCPI(valTIMESTEP,:) = inviscid_power'./((abs(COND.vecROTORRPM/60).^3).*((INPU.vecROTDIAM).^5));
 
 end
