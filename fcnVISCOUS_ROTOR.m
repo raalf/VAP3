@@ -110,9 +110,9 @@ for k = 1:length(uniqueAirfoil)
         vecCLMAXA(idxReOFR) = interp1(polarClmaxRe,polarClmaxA,vecREDIST(idxReOFR),'nearest','extrap');
         
         % Check for stall and change the CL
-        idxSTALL = (radtodeg(vecALPHAEFF) > vecCLMAXA) & isCurrentAirfoil;
+        idxSTALL = (rad2deg(vecALPHAEFF) > vecCLMAXA) & isCurrentAirfoil;
         
-        F = scatteredInterpolant(Re,Alpha,Cdp,'linear');
+        F = scatteredInterpolant(Re,Alpha,Cdp,'linear','nearest');
         
         if sum(idxSTALL) > 1
             if flagPRINT == 1
@@ -135,7 +135,7 @@ for k = 1:length(uniqueAirfoil)
             
         end
         
-        vecCDPDIST(idxSTALL==0) = F(vecREDIST(idxSTALL==0), radtodeg(vecALPHAEFF(idxSTALL==0)));
+        vecCDPDIST(idxSTALL==0) = F(vecREDIST(idxSTALL==0), rad2deg(vecALPHAEFF(idxSTALL==0)));
         
         clear pol foil
     end
