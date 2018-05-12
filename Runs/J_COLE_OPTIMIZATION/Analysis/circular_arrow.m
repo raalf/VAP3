@@ -103,7 +103,7 @@ while i < 3
     a = linspace(0,atan2(abs(c),dot(v1,v2)),n); % Angle range
     v3 = [0,-c;c,0]*v1; % v3 lies in plane of v1 and v2 and is orthog. to v1
     v{i} = v1*cos(a)+((norm(v1)/norm(v3))*v3)*sin(a); % Arc, center at (0,0)
-    plot3((v{i}(1,:)+xc).*0,v{i}(1,:)+xc,v{i}(2,:)+yc,'Color', colour) % Plot arc, centered at P0
+    plot3(v{i}(1,:)+xc,v{i}(2,:)+yc,'Color', colour) % Plot arc, centered at P0
 
     i = i + 1;
 
