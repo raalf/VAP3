@@ -6,8 +6,6 @@ cd C:\Users\travi\OneDrive\Desktop\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
 z(1,:) = [76 74 72 68 66 65 63 59 57 56 53 155 2250 -2 482 0 1 8 700 0 1 18 900 0 1 27 1100 0 1 35 1300 0 1 51 1600 0 1]; % 76907.3
 z(2,:) = [76 74 72 70 66 64 62 62 57 55 52 142 2209 -13 249 0 1 -3 476 1 0 18 888 1 1 35 1309 -2 1 52 1607 1 1 61 1801 1 1]; % 72133.5
 z(3,:) = [75 74 72 68 66 64 61 59 57 53 53 110 2100 -15 200 -1 1 -8 351 0 0 -2 483 0 1 16 900 -0 1 33 1300 1 1 52 1601 -0 1]; % 73381.7
-% z(2,:) = [76 74 72 70 66 64 62 62 57 55 52 142 2209 -13 249 0 1 -3 476 1 1 18 888 1 1 35 1309 -2 1 52 1607 1 1 61 1801 1 1]; % 72133.5
-
 
 rotors = [1, 2, 3, 1];
 
@@ -17,16 +15,16 @@ linestyles = {'--';'-.';'-';':'};
 markers = {'o';'x';'s';'^';'*';'d';'v';'>';'<';'p';'h'};
 colors = {'k';'b';'r';'m';'c';'g'};
 
-cd ./../
-for i = 2:size(z,1) + 1
-    if i == size(z,1) + 1
-        [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
-    else
-        [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, 6, 4);
-    end
-end
-cd Analysis/
-save('matlab.mat');
+% cd ./../
+% parfor i = 1:size(z,1) + 1
+%     if i == size(z,1) + 1
+%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
+%     else
+%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, 6, 4);
+%     end
+% end
+% cd Analysis/
+% save('matlab.mat');
 
 load('matlab.mat');
 
@@ -66,12 +64,12 @@ x = categorical({'Total Power', 'Induced Power', 'Profile Power'});
 baseline = [Design(end).ITEROUTP(end).OUTP.vecCP_AVG; ...
     Design(end).ITEROUTP(end).OUTP.vecCPI_AVG; ...
     Design(end).ITEROUTP(end).OUTP.vecCPP_AVG];
-baseline = baseline.*(Design(end).ITEROUTP(end).OUTP.valDENSITY.*((Design(end).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(end).ITEROUTP(end).OUTP.vecROTDIAM(1).^5));
+baseline = baseline.*(Design(end).ITEROUTP(end).OUTP.valDENSITY.*(abs(Design(end).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(end).ITEROUTP(end).OUTP.vecROTDIAM(1).^5));
 
 designs = [];
 for i = 1:size(z,1)
    designs(:,i) = [mean(Design(i).ITEROUTP(end).OUTP.vecCP_AVG,2); mean(Design(i).ITEROUTP(end).OUTP.vecCPI_AVG,2); mean(Design(i).ITEROUTP(end).OUTP.vecCPP_AVG,2)];
-   designs(:,i) = designs(:,i).*(Design(i).ITEROUTP(end).OUTP.valDENSITY.*((Design(i).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(i).ITEROUTP(end).OUTP.vecROTDIAM(1).^5));
+   designs(:,i) = designs(:,i).*rotors(i).*(Design(i).ITEROUTP(end).OUTP.valDENSITY.*(abs(Design(i).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(i).ITEROUTP(end).OUTP.vecROTDIAM(1).^5));
 end
 
 hFig201 = figure(201);
@@ -95,7 +93,7 @@ legend('Design 1', 'Design 2', 'Design 3')
 hFig202 = figure(202);
 clf(202);
 loc = 2.*(Design(end).ITEROUTP(end).OUTP.ROTOR.vecSPANLOC)./Design(end).ITEROUTP(end).OUTP.vecROTDIAM(1);
-p = plot(loc, mean(Design(end).ITEROUTP(end).OUTP.ROTOR.vecTHRUSTDIST_AVG,3));
+p = plot(loc, mean(reshape(Design(end).ITEROUTP(end).OUTP.ROTOR.vecTHRUSTDIST_AVG, 1, 19, 3),3));
 p.LineStyle = linestyles{1,:};
 p.Marker = markers{1,:};
 p.Color = colors{1,:};
@@ -109,7 +107,7 @@ ylabel('Time-Averaged Thrust (N)', 'FontSize', 15);
 hold on
 for i = 1:size(z,1)
 loc = 2.*(Design(i).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(i).ITEROUTP(end).OUTP.vecROTDIAM(1);
-thrust = mean(mean(cat(1, Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTHRUSTDIST_AVG),3),1);
+thrust = mean(mean(reshape(cat(1, [Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTHRUSTDIST_AVG]), 1, 10, rotors(i)*3),3),1);
 p = plot(loc, thrust);
 p.LineStyle = linestyles{i+1,:};
 p.Marker = markers{i+1,:};
@@ -122,7 +120,7 @@ hold off
 hFig203 = figure(203);
 clf(203);
 loc = 2.*(Design(end).ITEROUTP(end).OUTP.ROTOR.vecSPANLOC)./Design(end).ITEROUTP(end).OUTP.vecROTDIAM(1);
-p = plot(loc, mean(Design(end).ITEROUTP(end).OUTP.ROTOR.vecTORQUEDIST_AVG,3));
+p = plot(loc, mean(reshape(Design(end).ITEROUTP(end).OUTP.ROTOR.vecTORQUEDIST_AVG, 1, 19, 3),3));
 p.LineStyle = linestyles{1,:};
 p.Marker = markers{1,:};
 p.Color = colors{1,:};
@@ -135,7 +133,7 @@ ylabel('Time-Averaged Torque (Nm)', 'FontSize', 15);
 hold on
 for i = 1:size(z,1)
 loc = 2.*(Design(i).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(i).ITEROUTP(end).OUTP.vecROTDIAM(1);
-torque = mean(mean(cat(1, Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTORQUEDIST_AVG),3),1);
+torque = mean(mean(reshape(cat(1, [Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTORQUEDIST_AVG]), 1, 10, rotors(i)*3),3),1);
 p = plot(loc, torque);
 p.LineStyle = linestyles{i+1,:};
 p.Marker = markers{i+1,:};

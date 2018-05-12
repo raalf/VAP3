@@ -10,12 +10,8 @@ else
     clc
     
     N_chord = 11;
-    N_prop_max = 6;
+    N_prop_max = 3;
     Vars_prop = 4;
-    z = [76 74 72 70 66 64 62 62 57 55 52 142 2209 -13 249 0 1 -3 476 1 0 18 888 1 1 35 1309 -2 1 52 1607 1 1 61 1801 1 1];
-    %     try
-    %         load('z.mat');
-    %     end
 end
 
 % Constant propeller values
@@ -109,7 +105,7 @@ copyfile('X57_BLANK.vap', prop_sweep_filename);
 vap3_inputmod_prop(prop_sweep_filename, rotor, qmil_output_path);
 
 cd '../../'
-vecCOLLECTIVE = [-5:2:5];
+vecCOLLECTIVE = [-7:2:7];
 for i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
@@ -211,8 +207,6 @@ try
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-        VAP_IN.valMAXTIME = 80
-        VAP_IN.valSTARTFORCES = 70
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -229,7 +223,7 @@ try
         
         dCT = abs((ITER.CT(end) - CT)./CT);
         dCL = abs((ITER.CL(end) - CL)./CL);
-        if dCT <= 0.01 && dCL <= 0.01
+        if dCT <= 0.02 && dCL <= 0.02
             break;
         end
         
@@ -239,7 +233,7 @@ try
     dCT = abs((ITER.CT(end) - CT)./CT);
     dCL = abs((ITER.CL(end) - CL)./CL);
     
-    if dCT <= 0.01 && dCL <= 0.01
+    if dCT <= 0.02 && dCL <= 0.02
         TRIMMED = true;
     end
 catch

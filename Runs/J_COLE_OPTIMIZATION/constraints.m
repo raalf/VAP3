@@ -4,7 +4,7 @@ clear
 % All distance units in cm
 % Mixed integer optimization -> inequality constraints only!!
 N_chord = 11; % Number of chordwise stations
-N_prop = 6; % Maximum number of propellers
+N_prop = 3; % Maximum number of propellers
 % Constant for all propellers: PROP_DIAM, PROP_RPM
 % Unique to each propeller: PROP_XYZ, PROP_DIR
 Vars_prop = 4; % [PROP_XYZ, PROP_DIR]
@@ -84,56 +84,5 @@ b = [b; b_prop];
 lb = [lb_chord, lb_prop];
 ub = [ub_chord, ub_prop];
 
-%% Seed
-Seed = [];
-section_location = [0; cumsum(repmat(482/(N_chord-1),N_chord-1, 1))];
-x57_chord = section_location.*((53 - 75.6)/482) + 75.6; % Half-span area in cm^2
-
-% X57-ish
-y = [482 700 900 1100 1300 1600];
-x = le_location.*y - 25;
-z = y.*0;
-Seed(1,:) = [x57_chord', 155 2250, zeros(1,Vars_prop*N_prop)];
-tp = [];
-for i = 1:N_prop
-   tp = [tp, x(i) y(i) z(i) 1]; 
-end
-Seed(1,(N_chord + 3):end) = tp;
-
-% Multi-rotor
-y = [150 250 350 450 600 700];
-x = le_location.*y - 25;
-z = y.*0;
-direc = [1 0 1 0 1 1];
-Seed(2,:) = [x57_chord', 80 3000, zeros(1,Vars_prop*N_prop)];
-tp = [];
-for i = 1:N_prop
-   tp = [tp, x(i) y(i) z(i) direc(i)]; 
-end
-Seed(2,(N_chord + 3):end) = tp;
-
-% Multi-rotor
-y = [200 350 482 900 1300 1600];
-x = le_location.*y - 25;
-z = y.*0;
-direc = [1 0 1 1 1 1];
-Seed(3,:) = [x57_chord', 110 2100, zeros(1,Vars_prop*N_prop)];
-tp = [];
-for i = 1:N_prop
-   tp = [tp, x(i) y(i) z(i) direc(i)]; 
-end
-Seed(3,(N_chord + 3):end) = tp;
-
-% Multi-rotor
-y = [250 482 900 1300 1600 1800];
-x = le_location.*y - 25;
-z = y.*0;
-direc = [1 0 1 1 1 1];
-Seed(4,:) = [x57_chord', 140 2200, zeros(1,Vars_prop*N_prop)];
-tp = [];
-for i = 1:N_prop
-   tp = [tp, x(i) y(i) z(i) direc(i)]; 
-end
-Seed(4,(N_chord + 3):end) = tp;
 
 
