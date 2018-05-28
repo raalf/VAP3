@@ -62,7 +62,7 @@ le_location = 22.6/482;
 lb_prop = [75 1300];
 ub_prop = [160 2900];
 lb_prop = [lb_prop, repmat([-100 100 -30 0], 1, N_prop)];
-ub_prop = [ub_prop, [100 482 30 1], repmat([100 2000 30 1], 1, N_prop-1)];
+ub_prop = [ub_prop, [100 482 30 1], repmat([100 2000 180 1], 1, N_prop-1)];
 
 A_prop = [];
 b_prop = [];

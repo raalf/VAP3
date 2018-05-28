@@ -18,7 +18,11 @@ TolCon_Data = 1e-6;
 TolFun_Data = 1e-08;
 
 % load('seeds.mat');
-seeds = [];
+% seeds = [];
 
-options = optimoptions('ga','InitialPopulationMatrix', seeds, 'Display', 'iter', 'UseVectorized', false, 'UseParallel', false, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'PopulationSize', 120);
+% options = optimoptions('ga','InitialPopulationMatrix', seeds, 'Display', 'iter', 'UseVectorized', false, 'UseParallel', false, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'PopulationSize', 120);
+options = optimoptions('ga', 'Display', 'iter', 'UseVectorized', false, 'UseParallel', true, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'PopulationSize', 120);
 [x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_chord, N_prop, Vars_prop},nvars,A,b,[],[],lb,ub,[],IntCon,options);
+
+% fun = @(z)fcnOBJECTIVE(z, N_chord, N_prop, Vars_prop);
+% [x,fval,exitflag,output,population,scores] = ga(fun,nvars,A,b,[],[],lb,ub,[],IntCon,options);
