@@ -22,8 +22,8 @@ rotor.axis = [-1 0 0];
 rotor.m = 1;
 rotor.blades = 3;
 rotor.airfoil = 'MH-117';
-rotor.diam = z(N_chord + 1)./100;
-rotor.rpm = z(N_chord + 2);
+rotor.diam = z(N_chord*2 + 1)./100;
+rotor.rpm = z(N_chord*2 + 2);
 airfoil_data = load('airfoils/MH-117.mat');
 
 %% Preliminary steps
@@ -31,13 +31,13 @@ airfoil_data = load('airfoils/MH-117.mat');
 wing_geom(:,2) = [0; cumsum(repmat(482/(N_chord-1),N_chord-1, 1))]; % Chord stations
 wing_geom(:,1) = (22.6/482).*wing_geom(:,2);
 wing_geom(:,5) = (-4/482).*wing_geom(:,2) + 5;
-wing_geom(:,3) = wing_geom(:,1).*0;
+wing_geom(:,3) = z(N_chord+1:N_chord*2)';
 wing_geom(:,4) = z(1:N_chord)';
 wing_geom(:,1:4) = wing_geom(:,1:4)./100; % cm to m
 
 % Number of props ON THE HALF SPAN
 for i = 1:N_prop_max
-    prop_y(i) = z(N_chord + 2 + (i-1)*Vars_prop + 2);
+    prop_y(i) = z(N_chord*2 + 2 + (i-1)*Vars_prop + 2);
 end
 N_prop = sum(prop_y <= 484);
 
@@ -127,8 +127,8 @@ copyfile('X57_BLANK.vap', vap_filename);
 
 vap3_inputmod_wing(vap_filename, wing_geom)
 for i = 1:N_prop
-    rotor.hub = z((N_chord + 2 + (i-1)*Vars_prop) + [1:3])./100;
-    rotor.dir = z((N_chord + 2 + (i-1)*Vars_prop) + 4);
+    rotor.hub = z((N_chord*2 + 2 + (i-1)*Vars_prop) + [1:3])./100;
+    rotor.dir = z((N_chord*2 + 2 + (i-1)*Vars_prop) + 4);
     vap3_inputmod_prop(vap_filename, rotor, qmil_output_path);
 end
 delete(qmil_output_path);

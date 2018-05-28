@@ -38,8 +38,22 @@ A_area(end,:) = A_area(end,:).*-1;
 b_area(1,1) = 1.01*(2*area_x57/section_length);
 b_area(2,1) = -0.99*(2*area_x57/section_length);
 
-A = [A; padarray([A_taper; A_area], [0 Pad_prop], 0, 'post')];
+A = [A; padarray([A_taper; A_area], [0 Pad_prop + N_chord], 0, 'post')];
 b = [b; b_taper; b_area];
+
+%% DIHEDRAL
+lb_dihe = zeros(1, N_chord);
+ub_dihe = repmat(150, 1, N_chord);
+
+% No anhedral
+A_dihe = eye(N_chord) - diag(ones(N_chord-1,1),1);
+A_dihe(end,:) = [];
+b_dihe = zeros(size(A_taper,1),1);
+
+A_dihe =  padarray(A_dihe, [0 Pad_prop], 0, 'post');
+A_dihe =  padarray(A_dihe, [0 N_chord], 0, 'pre');
+A = [A; A_dihe];
+b = [b; b_dihe];
 
 %% PROPELLERS
 le_location = 22.6/482;
@@ -77,12 +91,12 @@ for i = 1:N_prop
     end
 end
 
-A = [A; padarray(A_prop, [0 N_chord], 0, 'pre')];
+A = [A; padarray(A_prop, [0 N_chord.*2], 0, 'pre')];
 b = [b; b_prop];
 
 %% COMPILING
-lb = [lb_chord, lb_prop];
-ub = [ub_chord, ub_prop];
+lb = [lb_chord, lb_dihe, lb_prop];
+ub = [ub_chord, lb_dihe, ub_prop];
 
 
 
