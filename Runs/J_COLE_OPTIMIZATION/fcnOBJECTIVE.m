@@ -3,7 +3,7 @@ function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
 %cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\
 
 % Temporary filenames
-temp_name = regexprep(tempname('\'), '\', '');
+temp_name = regexprep(tempname('/'), {'/', '\'}, '');
 matname = ['aux_files/z_', temp_name, '.mat'];
 if nargin > 0
     save(matname, 'z', 'N_chord', 'N_prop_max', 'Vars_prop');
@@ -48,7 +48,7 @@ vinf = 77.2;
 rho = 1.007;
 weightN = 13344.6648; % 3000 lb in N
 
-wing_sweep_filename = ['aux_files\wing_sweep_',temp_name,'.vap'];
+wing_sweep_filename = ['aux_files/wing_sweep_',temp_name,'.vap'];
 copyfile('X57_BLANK.vap', wing_sweep_filename);
 
 vap3_inputmod_wing(wing_sweep_filename, wing_geom);
@@ -85,13 +85,13 @@ thrust  = D/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
 %% Creating propeller in QMIL
 qmil_path = fcnQMILCREATE(temp_name, airfoil_data, rotor.blades, thrust, vinf, rotor.rpm, rotor.diam);
-qmil_filename = regexprep(qmil_path, 'aux_files\', '');
+qmil_filename = regexprep(qmil_path, 'aux_files/', '');
 
 % RUN QMIL
 qmil_output_filename = ['output_', qmil_filename];
-qmil_output_path = ['aux_files\', qmil_output_filename];
+qmil_output_path = ['aux_files/', qmil_output_filename];
 
-exeName = ['aux_files\', qmil_filename, '.exe'];
+exeName = ['aux_files/', qmil_filename, '.exe'];
 copyfile('qmil.exe', exeName);
 
 prmpt = sprintf('%s %s %s', exeName, qmil_path, qmil_output_path);
@@ -101,7 +101,7 @@ delete(exeName);
 delete(qmil_path);
 
 %% Propeller Collective Sweep
-prop_sweep_filename = ['aux_files\prop_sweep_',temp_name,'.vap'];
+prop_sweep_filename = ['aux_files/prop_sweep_',temp_name,'.vap'];
 copyfile('X57_BLANK.vap', prop_sweep_filename);
 
 vap3_inputmod_prop(prop_sweep_filename, rotor, qmil_output_path);
@@ -124,7 +124,7 @@ cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(prop_sweep_filename)
 
 %% Building Propeller & Wing VAP File
-vap_filename = ['aux_files\vap_',temp_name,'.vap'];
+vap_filename = ['aux_files/vap_',temp_name,'.vap'];
 copyfile('X57_BLANK.vap', vap_filename);
 
 vap3_inputmod_wing(vap_filename, wing_geom)

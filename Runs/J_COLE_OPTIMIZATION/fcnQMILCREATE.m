@@ -48,7 +48,7 @@ str_3 = sprintf('%.4f ! Thrust(N)\n%.4f ! Power(W)\n\n%.4f %.4f ! Ldes KQdes\n\n
 
 str = [str_1, str_2, str_3];
 
-qmil_filename = ['aux_files\', temp_name, '.prop'];
+qmil_filename = ['aux_files/', temp_name, '.prop'];
 
 fp = fopen(qmil_filename, 'w');
 fprintf(fp, str);
