@@ -1,6 +1,6 @@
 function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
 
-cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\
+%cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\
 
 % Temporary filenames
 temp_name = regexprep(tempname('\'), '\', '');
