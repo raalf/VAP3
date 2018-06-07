@@ -36,7 +36,7 @@ thrust  = D/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
 %% Propeller Collective Sweep
 cd '../../'
-vecCOLLECTIVE = [-7:2:7];
+vecCOLLECTIVE = [-5:2:5];
 for i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
