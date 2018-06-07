@@ -36,7 +36,7 @@ thrust  = D/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
 %% Propeller Collective Sweep
 cd '../../'
-vecCOLLECTIVE = [-5:2:5];
+vecCOLLECTIVE = [-7:2:7];
 for i = 1:length(vecCOLLECTIVE)
     VAP_IN = [];
     VAP_IN.vecCOLLECTIVE = vecCOLLECTIVE(i);
@@ -123,8 +123,8 @@ for n = 1:ITER.maxIter
     VAP_IN.vecVEHVINF = vinf;
     VAP_IN.valMAXTIME = 160;
     VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-    VAP_IN.valMAXTIME = 80
-    VAP_IN.valSTARTFORCES = 70
+    VAP_IN.valMAXTIME = 160;
+    VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
     VAP_IN.valDELTIME = (1/60)/(2250/60);
     OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
     cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -141,7 +141,7 @@ for n = 1:ITER.maxIter
     
     dCT = abs((ITER.CT(end) - CT)./CT);
     dCL = abs((ITER.CL(end) - CL)./CL);
-    if dCT <= 0.01 && dCL <= 0.01
+    if dCT <= 0.02 && dCL <= 0.02
         break;
     end
     
@@ -151,7 +151,7 @@ end
 dCT = abs((ITER.CT(end) - CT)./CT);
 dCL = abs((ITER.CL(end) - CL)./CL);
 
-if dCT <= 0.01 && dCL <= 0.01
+if dCT <= 0.02 && dCL <= 0.02
     TRIMMED = true;
 end
 

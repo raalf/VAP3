@@ -89,12 +89,13 @@ qmil_filename = regexprep(qmil_path, 'aux_files/', '');
 
 % RUN QMIL
 qmil_output_filename = ['output_', qmil_filename];
-qmil_output_path = ['aux_files/', qmil_output_filename];
 
 if ispc
-    exeName = ['aux_files/', qmil_filename, '.exe'];
+    qmil_output_path = ['aux_files\', qmil_output_filename];
+    exeName = ['aux_files\', qmil_filename, '.exe'];
     copyfile('qmil.exe', exeName);
 else
+    qmil_output_path = ['aux_files/', qmil_output_filename];
     exeName = ['aux_files/', qmil_filename, 'ex'];
     copyfile('qmilex', exeName);    
 end
