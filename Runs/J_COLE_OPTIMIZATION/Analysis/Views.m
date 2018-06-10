@@ -1,7 +1,10 @@
 clc
 clear
 
-cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
+addpath('../../../')
+addpath('../../../airfoils')
+addpath('./../../../Runs/J_COLE_OPTIMIZATION/aux_files')
+addpath('./../../../Runs/J_COLE_OPTIMIZATION/')
 
 % z(:,12) = diameter
 % z(:,14:16) = loc
