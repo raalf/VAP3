@@ -1,7 +1,7 @@
 clc
 clear
 
-cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
+% cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
 
 addpath('../../../')
 addpath('../../../airfoils')
@@ -17,16 +17,16 @@ linestyles = {'--';'-.';'-';':'};
 markers = {'o';'x';'s';'^';'*';'d';'v';'>';'<';'p';'h'};
 colors = {'k';'b';'r';'m';'c';'g'};
 
-cd ./../
-parfor i = 1:size(z,1) + 1
-    if i == size(z,1) + 1
-        [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
-    else
-        [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, 3, 4);
-    end
-end
-cd Analysis/
-save('matlab.mat');
+% cd ./../
+% parfor i = 1:size(z,1) + 1
+%     if i == size(z,1) + 1
+%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
+%     else
+%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, 3, 4);
+%     end
+% end
+% cd Analysis/
+% save('matlab.mat');
 
 load('matlab.mat');
 
@@ -38,7 +38,7 @@ baseline = [Design(end).ITEROUTP(end).OUTP.vecCD_AVG; ...
     Design(end).ITEROUTP(end).OUTP.vecCDP_AVG];
 % baseline = baseline.*(0.5.*Design(end).ITEROUTP(end).OUTP.valDENSITY.*vinf.^2.*(Design(end).ITEROUTP(end).OUTP.valAREA));
 
-for i = 1:3
+for i = 1:size(z,1)
    designs(:,i) = [Design(i).ITEROUTP(end).OUTP.vecCD_AVG; Design(i).ITEROUTP(end).OUTP.vecCDI_AVG; Design(i).ITEROUTP(end).OUTP.vecCDP_AVG];
 %    designs(:,i) = designs(:,i).*(0.5.*Design(i).ITEROUTP(end).OUTP.valDENSITY.*vinf.^2.*(Design(i).ITEROUTP(end).OUTP.valAREA));
 end
@@ -46,19 +46,19 @@ end
 hFig200 = figure(200);
 clf(200);
 
-b = bar( x, 100.*(designs - repmat(baseline,[1,3]))./repmat(baseline,[1,3]) );
+b = bar( x, 100.*(designs - repmat(baseline,[1,size(z,1)]))./repmat(baseline,[1,size(z,1)]) );
 b(1).LineStyle = '--';
 b(1).LineWidth = 1;
-b(2).LineStyle = '-.';
-b(2).LineWidth = 1;
-b(3).LineStyle = ':';
-b(3).LineWidth = 1;
+% b(2).LineStyle = '-.';
+% b(2).LineWidth = 1;
+% b(3).LineStyle = ':';
+% b(3).LineWidth = 1;
 grid minor
 box on
 axis tight
 
 ylabel('Percent Change from Baseline', 'FontSize', 15)
-legend('Design 1', 'Design 2', 'Design 3')
+% legend('Design 1')
 
 %% Power Bar Graph
 x = categorical({'Total Power', 'Induced Power', 'Profile Power'});
@@ -77,19 +77,19 @@ end
 hFig201 = figure(201);
 clf(201);
 
-b = bar( x, 100.*(designs - repmat(baseline,[1,3]))./repmat(baseline,[1,3]) );
+b = bar( x, 100.*(designs - repmat(baseline,[1,size(z,1)]))./repmat(baseline,[1,size(z,1)]) );
 b(1).LineStyle = '--';
 b(1).LineWidth = 1;
-b(2).LineStyle = '-.';
-b(2).LineWidth = 1;
-b(3).LineStyle = ':';
-b(3).LineWidth = 1;
+% b(2).LineStyle = '-.';
+% b(2).LineWidth = 1;
+% b(3).LineStyle = ':';
+% b(3).LineWidth = 1;
 grid minor
 box on
 axis tight
 
 ylabel('Percent Change from Baseline', 'FontSize', 15)
-legend('Design 1', 'Design 2', 'Design 3')
+% legend('Design 1', 'Design 2', 'Design 3')
 
 %% Prop Thrust Distribution
 hFig202 = figure(202);
@@ -109,14 +109,17 @@ ylabel('Time-Averaged Thrust (N)', 'FontSize', 15);
 hold on
 for i = 1:size(z,1)
 loc = 2.*(Design(i).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(i).ITEROUTP(end).OUTP.vecROTDIAM(1);
-thrust = mean(mean(reshape(cat(1, [Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTHRUSTDIST_AVG]), 1, 10, rotors(i)*3),3),1);
+thrust = mean(mean(reshape(cat(1, [Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTHRUSTDIST_AVG]), 1, 19, rotors(i)*3),3),1);
 p = plot(loc, thrust);
 p.LineStyle = linestyles{i+1,:};
 p.Marker = markers{i+1,:};
 p.Color = colors{i+1,:};
 end
-lgnd = legend(legend_entry,'Location','NorthWest');
+lgnd = legend(legend_entry,'Location','SouthEast');
 hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig202, 'prop_thrust_dist.pdf', 'figures', [6 3.5]);
 
 %% Prop Power Distribution
 hFig203 = figure(203);
@@ -135,14 +138,17 @@ ylabel('Time-Averaged Torque (Nm)', 'FontSize', 15);
 hold on
 for i = 1:size(z,1)
 loc = 2.*(Design(i).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(i).ITEROUTP(end).OUTP.vecROTDIAM(1);
-torque = mean(mean(reshape(cat(1, [Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTORQUEDIST_AVG]), 1, 10, rotors(i)*3),3),1);
+torque = mean(mean(reshape(cat(1, [Design(i).ITEROUTP(end).OUTP.ROTOR(:).vecTORQUEDIST_AVG]), 1, 19, rotors(i)*3),3),1);
 p = plot(loc, torque);
 p.LineStyle = linestyles{i+1,:};
 p.Marker = markers{i+1,:};
 p.Color = colors{i+1,:};
 end
-lgnd = legend(legend_entry,'Location','NorthWest');
+lgnd = legend(legend_entry,'Location','SouthEast');
 hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig203, 'prop_power_dist.pdf', 'figures', [6 3.5]);
 
 %% Lift Distribution
 hFig204 = figure(204);
@@ -167,8 +173,11 @@ p.LineStyle = linestyles{i+1,:};
 p.Marker = markers{i+1,:};
 p.Color = colors{i+1,:};
 end
-lgnd = legend(legend_entry,'Location','NorthWest');
+lgnd = legend(legend_entry,'Location','SouthWest');
 hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig204, 'lift_dist.pdf', 'figures', [6 3.5]);
 
 %% Drag Distribution
 hFig205 = figure(205);
@@ -194,6 +203,35 @@ for i = 1:size(z,1)
     p.Marker = markers{i+1,:};
     p.Color = colors{i+1,:};
 end
-lgnd = legend(legend_entry,'Location','NorthWest');
+lgnd = legend(legend_entry,'Location','SouthWest');
 hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig205, 'drag_dist.pdf', 'figures', [6 3.5]);
+
+%% Fitness vs Generation
+A = dlmread('fitness.txt','',2,0);
+
+hFig206 = figure(206);
+clf(206);
+scatter(A(:,1), A(:,3), 'ok');
+
+xlabel('Generation','FontSize',15);
+ylabel('Best Fitness (W)','FontSize',15);
+box on 
+grid minor
+axis tight
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig206, 'fitness_vs_generation.pdf', 'figures', [6 3.5]);
+
+
+
+
+
+
+
+
+
+
 
