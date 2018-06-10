@@ -1,10 +1,12 @@
 clc
 clear
+try clf(301); end
 
 addpath('../../../')
 addpath('../../../airfoils')
 addpath('./../../../Runs/J_COLE_OPTIMIZATION/aux_files')
 addpath('./../../../Runs/J_COLE_OPTIMIZATION/')
+addpath('./../../../Runs/J_COLE_OPTIMIZATION/Analysis')
 
 % z(:,12) = diameter
 % z(:,14:16) = loc
@@ -47,6 +49,91 @@ for i = 1:size(z,1) + 1
     hSub2 = subplot(2,1,2);
     copyobj(get(hFig_view(1),'Children'),hSub2);
     view([90 90])
+    
+    box off
+    grid on
+    axis image
+end
+
+len = size(z,1) + 1;
+for i = 1:len
+    cd '../../../'
+    VAP_IN = [];
+    VAP_IN.vecVEHALPHA = 0;
+    VAP_IN.vecCOLLECTIVE = repmat(0, num_props(i), 1);
+    VAP_IN.vecVEHVINF = 77.2;
+    VAP_IN.valMAXTIME = 0
+    VAP_IN.valSTARTFORCES = 0
+    VAP_IN.valDELTIME = (1/60)/(2250/60);
+    if i <= len - 1
+        OUTP = fcnVAP_MAIN(sprintf('Design_%d.vap',i), VAP_IN);
+    else
+        OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
+    end
+    cd 'Runs/J_COLE_OPTIMIZATION/Analysis/'
+    
+    hFig4 = gcf;
+    hFig_view = findobj('Parent',hFig4,'Type','axes');
+    hFig_temp = figure(301);
+%     clf(301)
+    hSub1 = subplot(len,1,(len + 1) - i);
+    copyobj(get(hFig_view(1),'Children'),hSub1);
+    view([90 90])
+    
+%     hold on
+% %     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
+%     hold off
+%     set(gca,'XTick',(-1:0.5:1))
+%     box off
+%     grid on
+%     axis image
+%     
+%     hSub2 = subplot(2,1,2);
+%     copyobj(get(hFig_view(1),'Children'),hSub2);
+%     view([90 90])
+    
+    box off
+    grid on
+    axis image
+end
+
+
+for i = 1:len
+    try clf(302); end;
+    cd '../../../'
+    VAP_IN = [];
+    VAP_IN.vecVEHALPHA = 0;
+    VAP_IN.vecCOLLECTIVE = repmat(0, num_props(i), 1);
+    VAP_IN.vecVEHVINF = 77.2;
+    VAP_IN.valMAXTIME = 0
+    VAP_IN.valSTARTFORCES = 0
+    VAP_IN.valDELTIME = (1/60)/(2250/60);
+    if i <= len - 1
+        OUTP = fcnVAP_MAIN(sprintf('Design_%d.vap',i), VAP_IN);
+    else
+        OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
+    end
+    cd 'Runs/J_COLE_OPTIMIZATION/Analysis/'
+    
+    hFig5 = gcf;
+    hFig_view = findobj('Parent',hFig5,'Type','axes');
+    hFig_temp = figure(302);
+%     clf(301)
+    hSub1 = axes;
+    copyobj(get(hFig_view(1),'Children'), hSub1);
+    view([90 90])
+    
+%     hold on
+% %     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
+%     hold off
+%     set(gca,'XTick',(-1:0.5:1))
+%     box off
+%     grid on
+%     axis image
+%     
+%     hSub2 = subplot(2,1,2);
+%     copyobj(get(hFig_view(1),'Children'),hSub2);
+%     view([90 90])
     
     box off
     grid on
