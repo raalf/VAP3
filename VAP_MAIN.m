@@ -2,9 +2,9 @@ clc
 clear
 warning off
 
-filename = 'inputs/Design_1.vap';
-VAP_IN.valMAXTIME = 160
-VAP_IN.valSTARTFORCES = 10
+filename = 'inputs/J_COLE_BASELINE_SYM.vap';
+VAP_IN.valMAXTIME = 20
+VAP_IN.valSTARTFORCES = 18
 
 OUTP = fcnVAP_MAIN(filename, VAP_IN);
 
