@@ -28,7 +28,7 @@ ub_chord = repmat(100, 1, N_chord);
 % Limited negative taper (can increase by 20 cm)
 A_taper = -eye(N_chord) + diag(ones(N_chord-1,1),1);
 A_taper(end,:) = [];
-b_taper = zeros(size(A_taper,1),1)+20; %cm
+b_taper = zeros(size(A_taper,1),1) + 20; %cm
 
 % % Fixing the area
 % A_area = ones(2, N_chord);
@@ -62,8 +62,8 @@ b = [b; b_dihe];
 le_location = 22.6/482;
 
 % xyz of propeller hub, propeller diameter, rpm, rotation direction
-lb_prop = [75 1300];
-ub_prop = [160 2900];
+lb_prop = [110 2000];
+ub_prop = [160 3000];
 lb_prop = [lb_prop, repmat([-100 100 -30 0], 1, N_prop)];
 ub_prop = [ub_prop, [100 482 30 1], repmat([100 2000 180 1], 1, N_prop-1)];
 
