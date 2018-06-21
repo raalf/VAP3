@@ -32,7 +32,7 @@ airfoil_data = load('airfoils/MH-117.mat');
 % Formating wing geometry
 wing_geom(:,2) = [0; cumsum(repmat(482/(N_chord-1),N_chord-1, 1))]; % Chord stations
 wing_geom(:,1) = (22.6/482).*wing_geom(:,2);
-wing_geom(:,5) = (-4/482).*wing_geom(:,2) + 5;
+wing_geom(:,5) = ((-4/482).*wing_geom(:,2) + 5).*0; % No more twist
 wing_geom(:,3) = z(N_chord+1:N_chord*2)';
 wing_geom(:,4) = z(1:N_chord)';
 wing_geom(:,1:4) = wing_geom(:,1:4)./100; % cm to m
@@ -136,7 +136,9 @@ copyfile('X57_BLANK.vap', vap_filename);
 vap3_inputmod_wing(vap_filename, wing_geom)
 for i = 1:N_prop
     rotor.hub = z((N_chord*2 + 2 + (i-1)*Vars_prop) + [1:3])./100;
-    rotor.dir = z((N_chord*2 + 2 + (i-1)*Vars_prop) + 4);
+    temp_dir = z((N_chord*2 + 2 + (i-1)*Vars_prop) + 4); % 0 to 1. 0 < x <= 0.5, clockwise
+    rotor.dir(temp_dir <= 0.5) = 0;
+    rotor.dir(temp_dir > 0.5) = 1;
     vap3_inputmod_prop(vap_filename, rotor, qmil_output_path);
 end
 delete(qmil_output_path);

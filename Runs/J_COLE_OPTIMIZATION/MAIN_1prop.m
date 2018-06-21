@@ -17,7 +17,8 @@ warning off
 
 constraints_1prop;
 nvars = length(lb);
-IntCon = 1:nvars;
+% IntCon = 1:nvars;
+IntCon = []
 
 TolCon_Data = 1e-6; 
 TolFun_Data = 1e-08;

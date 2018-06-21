@@ -30,13 +30,16 @@ A_taper = -eye(N_chord) + diag(ones(N_chord-1,1),1);
 A_taper(end,:) = [];
 b_taper = zeros(size(A_taper,1),1)+20; %cm
 
-% Fixing the area
-A_area = ones(2, N_chord);
-A_area(:,2:end-1) = A_area(:,2:end-1) + ones(2, N_chord - 2);
-A_area(end,:) = A_area(end,:).*-1;
+% % Fixing the area
+% A_area = ones(2, N_chord);
+% A_area(:,2:end-1) = A_area(:,2:end-1) + ones(2, N_chord - 2);
+% A_area(end,:) = A_area(end,:).*-1;
+% 
+% b_area(1,1) = 1.01*(2*area_x57/section_length);
+% b_area(2,1) = -0.99*(2*area_x57/section_length);
 
-b_area(1,1) = 1.01*(2*area_x57/section_length);
-b_area(2,1) = -0.99*(2*area_x57/section_length);
+A_area = [];
+b_area = [];
 
 A = [A; padarray([A_taper; A_area], [0 Pad_prop + N_chord], 0, 'post')];
 b = [b; b_taper; b_area];
