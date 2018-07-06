@@ -27,10 +27,10 @@ b_taper = [];
 lb_chord = repmat(50, 1, N_chord);
 ub_chord = repmat(100, 1, N_chord);
 
-% Limited negative taper (can increase by 20 cm)
-A_taper = -eye(N_chord) + diag(ones(N_chord-1,1),1);
-A_taper(end,:) = [];
-b_taper = zeros(size(A_taper,1),1) + 20; %cm
+% % Limited negative taper (can increase by 20 cm)
+% A_taper = -eye(N_chord) + diag(ones(N_chord-1,1),1);
+% A_taper(end,:) = [];
+% b_taper = zeros(size(A_taper,1),1) + 20; %cm
 
 % % % % % % % Fixing the area
 % % A_area = ones(2, N_chord);
@@ -75,13 +75,13 @@ count = 1;
 for i = 1:N_prop
     % Ensuring prop is 20 cm ahead of leading edge at this y-location
     A_prop(count,:) = zeros(1,2+N_prop*Vars_prop);
-    A_prop(count, [(i-1)*Vars_prop + 1:(i-1)*Vars_prop + 2]+2) = [1 -le_location];
+    A_prop(count, (i-1)*Vars_prop + 3) = 1;
     b_prop(count, 1) = -20;
     count = count + 1;
     
     % Ensuring prop is within 40 cm of leading edge at this y-location
     A_prop(count,:) = zeros(1,2+N_prop*Vars_prop);
-    A_prop(count, [(i-1)*Vars_prop + 1:(i-1)*Vars_prop + 2]+2) = [-1 le_location];
+    A_prop(count, (i-1)*Vars_prop + 3) = -1;
     b_prop(count, 1) = 40;
     count = count + 1;
     
