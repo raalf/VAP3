@@ -18,9 +18,11 @@ b = [];
 %% CHORD LENGTHS
 A_area = [];
 b_area = [];
+A_taper = [];
+b_taper = [];
 
-section_length = 482/(N_chord - 1);
-area_x57 = ((75.6 + 53)/2)*482; % Half-span area in cm^2
+% section_length = 482/(N_chord - 1);
+% area_x57 = ((75.6 + 53)/2)*482; % Half-span area in cm^2
 
 lb_chord = repmat(50, 1, N_chord);
 ub_chord = repmat(100, 1, N_chord);
@@ -30,13 +32,13 @@ A_taper = -eye(N_chord) + diag(ones(N_chord-1,1),1);
 A_taper(end,:) = [];
 b_taper = zeros(size(A_taper,1),1) + 20; %cm
 
-% % Fixing the area
-% A_area = ones(2, N_chord);
-% A_area(:,2:end-1) = A_area(:,2:end-1) + ones(2, N_chord - 2);
-% A_area(end,:) = A_area(end,:).*-1;
-% 
-% b_area(1,1) = 1.01*(2*area_x57/section_length);
-% b_area(2,1) = -0.99*(2*area_x57/section_length);
+% % % % % % % Fixing the area
+% % A_area = ones(2, N_chord);
+% % A_area(:,2:end-1) = A_area(:,2:end-1) + ones(2, N_chord - 2);
+% % A_area(end,:) = A_area(end,:).*-1;
+% % 
+% % b_area(1,1) = 1.01*(2*area_x57/section_length);
+% % b_area(2,1) = -0.99*(2*area_x57/section_length);
 
 A_area = [];
 b_area = [];
@@ -48,10 +50,10 @@ b = [b; b_taper; b_area];
 lb_dihe = zeros(1, N_chord);
 ub_dihe = repmat(150, 1, N_chord);
 
-% No anhedral
+% % No anhedral
 A_dihe = eye(N_chord) - diag(ones(N_chord-1,1),1);
 A_dihe(end,:) = [];
-b_dihe = zeros(size(A_taper,1),1);
+b_dihe = zeros(size(A_dihe,1),1);
 
 A_dihe =  padarray(A_dihe, [0 Pad_prop], 0, 'post');
 A_dihe =  padarray(A_dihe, [0 N_chord], 0, 'pre');

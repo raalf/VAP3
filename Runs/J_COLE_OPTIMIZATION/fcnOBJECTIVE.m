@@ -1,6 +1,11 @@
 function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
 
-%cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\
+% cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\
+
+fp2 = fopen('dvhistory.txt','at');
+fprintf(fp2,'%g ', z);
+fprintf(fp2,'\n');
+fclose(fp2);
 
 % Temporary filenames
 temp_name = regexprep(tempname('/'), {'/', '\'}, '');
@@ -61,8 +66,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
-    %         VAP_IN.valSTARTFORCES = 3
-    %         VAP_IN.valMAXTIME = 3
+%             VAP_IN.valSTARTFORCES = 3
+%             VAP_IN.valMAXTIME = 3
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
     %     view([90 90]);
 end
@@ -120,8 +125,8 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
-    %         VAP_IN.valSTARTFORCES = 3
-    %         VAP_IN.valMAXTIME = 3
+%             VAP_IN.valSTARTFORCES = 3
+%             VAP_IN.valMAXTIME = 3
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
     %     view([90 90]);
@@ -217,6 +222,7 @@ try
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
+%         VAP_IN.valMAXTIME = 2
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -252,6 +258,9 @@ end
 delete(vap_filename)
 
 %% ANALYZE RESULTS
+
+% cd 'Runs/J_COLE_OPTIMIZATION/'
+
 if TRIMMED == true
     out = sum(2.*OUTP.vecCP_AVG).*((rotor.rpm/60).^3).*(rotor.diam.^5).*OUTP.valDENSITY;
     

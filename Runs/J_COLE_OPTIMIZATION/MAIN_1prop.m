@@ -5,8 +5,8 @@ try
     parpool
 end
 
-
 delete optihistory.txt
+delete dvhistory.txt
 
 addpath('../../')
 addpath('../../airfoils')
@@ -18,8 +18,8 @@ warning off
 constraints_1prop;
 nvars = length(lb);
 % IntCon = 1:nvars;
-IntCon = []
+IntCon = [];
 seeds = [];
 
-options = optimoptions('ga', 'Display', 'iter', 'UseParallel', true, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'PopulationSize', 120, 'MutationFcn','mutationadaptfeasible', 'CrossoverFraction', 0.5);
+options = optimoptions('ga', 'Display', 'iter', 'UseParallel', true, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'MutationFcn','mutationadaptfeasible', 'CreationFcn', 'gacreationlinearfeasible');
 [x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_chord, N_prop, Vars_prop},nvars,A,b,[],[],lb,ub,[],IntCon,options);
