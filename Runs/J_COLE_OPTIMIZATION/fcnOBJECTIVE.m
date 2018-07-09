@@ -18,7 +18,7 @@ else
     
     N_chord = 11;
     N_prop_max = 3;
-    Vars_prop = 4;
+    Vars_prop = 3;
 end
 
 % Constant propeller values
@@ -43,8 +43,11 @@ wing_geom(:,4) = z(1:N_chord)';
 wing_geom(:,1:4) = wing_geom(:,1:4)./100; % cm to m
 
 % Number of props ON THE HALF SPAN
+le_location = 22.6/482;
 for i = 1:N_prop_max
-    prop_y(i) = z(N_chord*2 + 2 + (i-1)*Vars_prop + 2);
+    prop_y(i) = z(N_chord*2 + 2 + (i-1)*Vars_prop + 1);
+    prop_x(i) = (prop_y(i).*le_location) - 40;
+    prop_z(i) = (interp1(wing_geom(:,2), wing_geom(:,3), prop_y(i)./100,'linear','extrap').*100) + z((N_chord*2 + 2 + (i-1)*Vars_prop) + 2);
 end
 N_prop = sum(prop_y <= 484);
 
@@ -140,8 +143,8 @@ copyfile('X57_BLANK.vap', vap_filename);
 
 vap3_inputmod_wing(vap_filename, wing_geom)
 for i = 1:N_prop
-    rotor.hub = z((N_chord*2 + 2 + (i-1)*Vars_prop) + [1:3])./100;
-    temp_dir = z((N_chord*2 + 2 + (i-1)*Vars_prop) + 4); % 0 to 1. 0 < x <= 0.5, clockwise
+    rotor.hub = [prop_x(i) prop_y(i) prop_z(i)]./100;
+    temp_dir = z((N_chord*2 + 2 + (i-1)*Vars_prop) + 3); % 0 to 1. 0 < x <= 0.5, clockwise
     rotor.dir(temp_dir <= 0.5) = 0;
     rotor.dir(temp_dir > 0.5) = 1;
     vap3_inputmod_prop(vap_filename, rotor, qmil_output_path);
@@ -254,12 +257,11 @@ try
     end
 catch
     TRIMMED = false;
+    try cd 'Runs/J_COLE_OPTIMIZATION/'; end
 end
 delete(vap_filename)
 
 %% ANALYZE RESULTS
-
-% cd 'Runs/J_COLE_OPTIMIZATION/'
 
 if TRIMMED == true
     out = sum(2.*OUTP.vecCP_AVG).*((rotor.rpm/60).^3).*(rotor.diam.^5).*OUTP.valDENSITY;
