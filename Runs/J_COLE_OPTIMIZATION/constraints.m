@@ -97,6 +97,6 @@ b = [b; b_prop];
 %% COMPILING
 lb = [lb_chord, lb_dihe, lb_prop];
 % ub = [ub_chord, ub_dihe, ub_prop];
-ub = [ub_chord, lb_dihe, ub_prop]
+ub = [ub_chord, lb_dihe, ub_prop];
 
 
