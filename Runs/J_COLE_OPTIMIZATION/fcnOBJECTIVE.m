@@ -46,7 +46,7 @@ wing_geom(:,1:4) = wing_geom(:,1:4)./100; % cm to m
 le_location = 22.6/482;
 for i = 1:N_prop_max
     prop_y(i) = z(N_chord*2 + 2 + (i-1)*Vars_prop + 1);
-    prop_x(i) = (prop_y(i).*le_location) - 40;
+    prop_x(i) = (prop_y(i).*le_location) - (0.25*rotor.diam);
     prop_z(i) = (interp1(wing_geom(:,2), wing_geom(:,3), prop_y(i)./100,'linear','extrap').*100) + z((N_chord*2 + 2 + (i-1)*Vars_prop) + 2);
 end
 N_prop = sum(prop_y <= 484);

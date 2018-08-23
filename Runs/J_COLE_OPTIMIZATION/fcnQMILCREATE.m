@@ -1,5 +1,5 @@
 function qmil_filename = fcnQMILCREATE(temp_name, airfoil_data, blades, thrust, vinf, rpm, diam)
-hub_radius = 0.15;
+hub_radius = (diam*0.1875)/2;
 
 vref = (2*pi*((diam/2)*0.75))*(rpm/60);
 reref = (vref*0.15)/(1.4e-5);

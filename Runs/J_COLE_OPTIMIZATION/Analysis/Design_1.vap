@@ -50,78 +50,78 @@
 <section>
 <x>0.000000</x>
 <y>0.000000</y>
-<z>0.000000</z>
-<chord>0.713941</chord>
+<z>0.025028</z>
+<chord>0.965209</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.022600</x>
 <y>0.482000</y>
-<z>0.000000</z>
-<chord>0.687533</chord>
+<z>0.035607</z>
+<chord>0.939926</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.045200</x>
 <y>0.964000</y>
-<z>0.000000</z>
-<chord>0.686304</chord>
+<z>0.066361</z>
+<chord>0.939043</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.067800</x>
 <y>1.446000</y>
-<z>0.000000</z>
-<chord>0.659588</chord>
+<z>0.119593</z>
+<chord>0.935531</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.090400</x>
 <y>1.928000</y>
-<z>0.000000</z>
-<chord>0.645861</chord>
+<z>0.121554</z>
+<chord>0.887110</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.113000</x>
 <y>2.410000</y>
-<z>0.000000</z>
-<chord>0.632590</chord>
+<z>0.154155</z>
+<chord>0.866438</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.135600</x>
 <y>2.892000</y>
-<z>0.000000</z>
-<chord>0.618437</chord>
+<z>0.334635</z>
+<chord>0.808364</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.158200</x>
 <y>3.374000</y>
-<z>0.000000</z>
-<chord>0.614030</chord>
+<z>0.361569</z>
+<chord>0.791773</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.180800</x>
 <y>3.856000</y>
-<z>0.000000</z>
-<chord>0.611291</chord>
+<z>0.584280</z>
+<chord>0.780742</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.203400</x>
 <y>4.338000</y>
-<z>0.000000</z>
-<chord>0.600904</chord>
+<z>0.651575</z>
+<chord>0.652578</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.226000</x>
 <y>4.820000</y>
-<z>0.000000</z>
-<chord>0.590279</chord>
+<z>0.700533</z>
+<chord>0.526908</chord>
 <twist>0.000000</twist>
 </section>
 </panel>
@@ -129,13 +129,13 @@
 </wing>
 
 <rotor>
-	<rpm>2226.860000</rpm>
+	<rpm>4956.094737</rpm>
 	<flipy>FALSE</flipy>
 	<collective>0.000000</collective>
-	<dia>1.581860</dia>
-	<xhub>-0.188545</xhub>
-	<yhub>4.509790</yhub>
-	<zhub>-0.125485</zhub>
+	<dia>1.396200</dia>
+	<xhub>-0.352296</xhub>
+	<yhub>1.017399</yhub>
+	<zhub>0.184957</zhub>
 	<axisx>-1.000000</axisx>
 	<axisy>0.000000</axisy>
 	<axisz>0.000000</axisz>
@@ -146,144 +146,466 @@
 	<symmetry>0</symmetry>
 	<N>1</N>
 	<section>
-		<x>-0.009884</x>
-		<y>0.160680</y>
+		<x>-0.007523</x>
+		<y>0.140350</y>
 		<z>0.000000</z>
-		<chord>0.039535</chord>
-		<twist>66.197600</twist>
+		<chord>0.030093</chord>
+		<twist>49.621300</twist>
 	</section>
 	<section>
-		<x>-0.011909</x>
-		<y>0.193849</y>
+		<x>-0.007950</x>
+		<y>0.169705</y>
 		<z>0.000000</z>
-		<chord>0.047635</chord>
-		<twist>61.748024</twist>
+		<chord>0.031800</chord>
+		<twist>44.123414</twist>
 	</section>
 	<section>
-		<x>-0.013717</x>
-		<y>0.227019</y>
+		<x>-0.007993</x>
+		<y>0.199061</y>
 		<z>0.000000</z>
-		<chord>0.054867</chord>
-		<twist>57.613323</twist>
+		<chord>0.031974</chord>
+		<twist>39.466774</twist>
 	</section>
 	<section>
-		<x>-0.015216</x>
-		<y>0.260188</y>
+		<x>-0.007719</x>
+		<y>0.228416</y>
 		<z>0.000000</z>
-		<chord>0.060866</chord>
-		<twist>53.837855</twist>
+		<chord>0.030877</chord>
+		<twist>35.605661</twist>
 	</section>
 	<section>
-		<x>-0.016414</x>
-		<y>0.293358</y>
+		<x>-0.007259</x>
+		<y>0.257771</y>
 		<z>0.000000</z>
-		<chord>0.065658</chord>
-		<twist>50.373013</twist>
+		<chord>0.029034</chord>
+		<twist>32.313458</twist>
 	</section>
 	<section>
-		<x>-0.017299</x>
-		<y>0.326527</y>
+		<x>-0.006670</x>
+		<y>0.287126</y>
 		<z>0.000000</z>
-		<chord>0.069196</chord>
-		<twist>47.216703</twist>
+		<chord>0.026680</chord>
+		<twist>29.509946</twist>
 	</section>
 	<section>
-		<x>-0.017895</x>
-		<y>0.359697</y>
+		<x>-0.006007</x>
+		<y>0.316482</y>
 		<z>0.000000</z>
-		<chord>0.071579</chord>
-		<twist>44.339045</twist>
+		<chord>0.024028</chord>
+		<twist>27.087858</twist>
 	</section>
 	<section>
-		<x>-0.018236</x>
-		<y>0.392866</y>
+		<x>-0.005303</x>
+		<y>0.345837</y>
 		<z>0.000000</z>
-		<chord>0.072943</chord>
-		<twist>41.707915</twist>
+		<chord>0.021210</chord>
+		<twist>24.968455</twist>
 	</section>
 	<section>
-		<x>-0.018332</x>
-		<y>0.426036</y>
+		<x>-0.004577</x>
+		<y>0.375192</y>
 		<z>0.000000</z>
-		<chord>0.073330</chord>
-		<twist>39.314534</twist>
+		<chord>0.018309</chord>
+		<twist>23.110058</twist>
 	</section>
 	<section>
-		<x>-0.018234</x>
-		<y>0.459205</y>
+		<x>-0.003847</x>
+		<y>0.404547</y>
 		<z>0.000000</z>
-		<chord>0.072937</chord>
-		<twist>37.111993</twist>
+		<chord>0.015387</chord>
+		<twist>21.442968</twist>
 	</section>
 	<section>
-		<x>-0.017928</x>
-		<y>0.492375</y>
+		<x>-0.003124</x>
+		<y>0.433903</y>
 		<z>0.000000</z>
-		<chord>0.071713</chord>
-		<twist>35.108195</twist>
+		<chord>0.012494</chord>
+		<twist>19.958074</twist>
 	</section>
 	<section>
-		<x>-0.017459</x>
-		<y>0.525544</y>
+		<x>-0.002418</x>
+		<y>0.463258</y>
 		<z>0.000000</z>
-		<chord>0.069836</chord>
-		<twist>33.253402</twist>
+		<chord>0.009672</chord>
+		<twist>18.599163</twist>
 	</section>
 	<section>
-		<x>-0.016803</x>
-		<y>0.558714</y>
+		<x>-0.001746</x>
+		<y>0.492613</y>
 		<z>0.000000</z>
-		<chord>0.067212</chord>
-		<twist>31.554188</twist>
+		<chord>0.006986</chord>
+		<twist>17.359821</twist>
 	</section>
 	<section>
-		<x>-0.015976</x>
-		<y>0.591883</y>
+		<x>-0.001124</x>
+		<y>0.521968</y>
 		<z>0.000000</z>
-		<chord>0.063902</chord>
-		<twist>29.977374</twist>
+		<chord>0.004497</chord>
+		<twist>16.205066</twist>
 	</section>
 	<section>
-		<x>-0.014945</x>
-		<y>0.625053</y>
+		<x>-0.000584</x>
+		<y>0.551324</y>
 		<z>0.000000</z>
-		<chord>0.059781</chord>
-		<twist>28.519384</twist>
+		<chord>0.002336</chord>
+		<twist>15.119837</twist>
 	</section>
 	<section>
-		<x>-0.013680</x>
-		<y>0.658222</y>
+		<x>-0.000177</x>
+		<y>0.580679</y>
 		<z>0.000000</z>
-		<chord>0.054721</chord>
-		<twist>27.164249</twist>
+		<chord>0.000706</chord>
+		<twist>14.075429</twist>
 	</section>
 	<section>
-		<x>-0.012119</x>
-		<y>0.691392</y>
+		<x>-0.000007</x>
+		<y>0.610034</y>
 		<z>0.000000</z>
-		<chord>0.048475</chord>
-		<twist>25.900362</twist>
+		<chord>0.000029</chord>
+		<twist>13.135553</twist>
 	</section>
 	<section>
-		<x>-0.010086</x>
-		<y>0.724561</y>
+		<x>-0.000000</x>
+		<y>0.639389</y>
 		<z>0.000000</z>
-		<chord>0.040343</chord>
-		<twist>24.722268</twist>
+		<chord>0.000001</chord>
+		<twist>12.461933</twist>
 	</section>
 	<section>
-		<x>-0.007299</x>
-		<y>0.757731</y>
+		<x>-0.000000</x>
+		<y>0.668745</y>
 		<z>0.000000</z>
-		<chord>0.029197</chord>
-		<twist>23.614887</twist>
+		<chord>0.000002</chord>
+		<twist>11.852163</twist>
 	</section>
 	<section>
-		<x>-0.002339</x>
-		<y>0.790900</y>
+		<x>-0.000000</x>
+		<y>0.698100</y>
 		<z>0.000000</z>
-		<chord>0.009355</chord>
-		<twist>22.577300</twist>
+		<chord>0.000001</chord>
+		<twist>11.288600</twist>
+	</section>
+</panel>
+</rotor>
+
+
+<rotor>
+	<rpm>-4956.094737</rpm>
+	<flipy>TRUE</flipy>
+	<collective>0.000000</collective>
+	<dia>1.396200</dia>
+	<xhub>-0.276985</xhub>
+	<yhub>2.623598</yhub>
+	<zhub>0.145300</zhub>
+	<axisx>-1.000000</axisx>
+	<axisy>0.000000</axisy>
+	<axisz>0.000000</axisz>
+	<blades>3</blades>
+	<M>1</M>
+<panel>
+	<airfoil>MH-117</airfoil>
+	<symmetry>0</symmetry>
+	<N>1</N>
+	<section>
+		<x>-0.007523</x>
+		<y>0.140350</y>
+		<z>0.000000</z>
+		<chord>0.030093</chord>
+		<twist>49.621300</twist>
+	</section>
+	<section>
+		<x>-0.007950</x>
+		<y>0.169705</y>
+		<z>0.000000</z>
+		<chord>0.031800</chord>
+		<twist>44.123414</twist>
+	</section>
+	<section>
+		<x>-0.007993</x>
+		<y>0.199061</y>
+		<z>0.000000</z>
+		<chord>0.031974</chord>
+		<twist>39.466774</twist>
+	</section>
+	<section>
+		<x>-0.007719</x>
+		<y>0.228416</y>
+		<z>0.000000</z>
+		<chord>0.030877</chord>
+		<twist>35.605661</twist>
+	</section>
+	<section>
+		<x>-0.007259</x>
+		<y>0.257771</y>
+		<z>0.000000</z>
+		<chord>0.029034</chord>
+		<twist>32.313458</twist>
+	</section>
+	<section>
+		<x>-0.006670</x>
+		<y>0.287126</y>
+		<z>0.000000</z>
+		<chord>0.026680</chord>
+		<twist>29.509946</twist>
+	</section>
+	<section>
+		<x>-0.006007</x>
+		<y>0.316482</y>
+		<z>0.000000</z>
+		<chord>0.024028</chord>
+		<twist>27.087858</twist>
+	</section>
+	<section>
+		<x>-0.005303</x>
+		<y>0.345837</y>
+		<z>0.000000</z>
+		<chord>0.021210</chord>
+		<twist>24.968455</twist>
+	</section>
+	<section>
+		<x>-0.004577</x>
+		<y>0.375192</y>
+		<z>0.000000</z>
+		<chord>0.018309</chord>
+		<twist>23.110058</twist>
+	</section>
+	<section>
+		<x>-0.003847</x>
+		<y>0.404547</y>
+		<z>0.000000</z>
+		<chord>0.015387</chord>
+		<twist>21.442968</twist>
+	</section>
+	<section>
+		<x>-0.003124</x>
+		<y>0.433903</y>
+		<z>0.000000</z>
+		<chord>0.012494</chord>
+		<twist>19.958074</twist>
+	</section>
+	<section>
+		<x>-0.002418</x>
+		<y>0.463258</y>
+		<z>0.000000</z>
+		<chord>0.009672</chord>
+		<twist>18.599163</twist>
+	</section>
+	<section>
+		<x>-0.001746</x>
+		<y>0.492613</y>
+		<z>0.000000</z>
+		<chord>0.006986</chord>
+		<twist>17.359821</twist>
+	</section>
+	<section>
+		<x>-0.001124</x>
+		<y>0.521968</y>
+		<z>0.000000</z>
+		<chord>0.004497</chord>
+		<twist>16.205066</twist>
+	</section>
+	<section>
+		<x>-0.000584</x>
+		<y>0.551324</y>
+		<z>0.000000</z>
+		<chord>0.002336</chord>
+		<twist>15.119837</twist>
+	</section>
+	<section>
+		<x>-0.000177</x>
+		<y>0.580679</y>
+		<z>0.000000</z>
+		<chord>0.000706</chord>
+		<twist>14.075429</twist>
+	</section>
+	<section>
+		<x>-0.000007</x>
+		<y>0.610034</y>
+		<z>0.000000</z>
+		<chord>0.000029</chord>
+		<twist>13.135553</twist>
+	</section>
+	<section>
+		<x>-0.000000</x>
+		<y>0.639389</y>
+		<z>0.000000</z>
+		<chord>0.000001</chord>
+		<twist>12.461933</twist>
+	</section>
+	<section>
+		<x>-0.000000</x>
+		<y>0.668745</y>
+		<z>0.000000</z>
+		<chord>0.000002</chord>
+		<twist>11.852163</twist>
+	</section>
+	<section>
+		<x>-0.000000</x>
+		<y>0.698100</y>
+		<z>0.000000</z>
+		<chord>0.000001</chord>
+		<twist>11.288600</twist>
+	</section>
+</panel>
+</rotor>
+
+
+<rotor>
+	<rpm>4956.094737</rpm>
+	<flipy>FALSE</flipy>
+	<collective>0.000000</collective>
+	<dia>1.396200</dia>
+	<xhub>-0.201673</xhub>
+	<yhub>4.229798</yhub>
+	<zhub>0.529657</zhub>
+	<axisx>-1.000000</axisx>
+	<axisy>0.000000</axisy>
+	<axisz>0.000000</axisz>
+	<blades>3</blades>
+	<M>1</M>
+<panel>
+	<airfoil>MH-117</airfoil>
+	<symmetry>0</symmetry>
+	<N>1</N>
+	<section>
+		<x>-0.007523</x>
+		<y>0.140350</y>
+		<z>0.000000</z>
+		<chord>0.030093</chord>
+		<twist>49.621300</twist>
+	</section>
+	<section>
+		<x>-0.007950</x>
+		<y>0.169705</y>
+		<z>0.000000</z>
+		<chord>0.031800</chord>
+		<twist>44.123414</twist>
+	</section>
+	<section>
+		<x>-0.007993</x>
+		<y>0.199061</y>
+		<z>0.000000</z>
+		<chord>0.031974</chord>
+		<twist>39.466774</twist>
+	</section>
+	<section>
+		<x>-0.007719</x>
+		<y>0.228416</y>
+		<z>0.000000</z>
+		<chord>0.030877</chord>
+		<twist>35.605661</twist>
+	</section>
+	<section>
+		<x>-0.007259</x>
+		<y>0.257771</y>
+		<z>0.000000</z>
+		<chord>0.029034</chord>
+		<twist>32.313458</twist>
+	</section>
+	<section>
+		<x>-0.006670</x>
+		<y>0.287126</y>
+		<z>0.000000</z>
+		<chord>0.026680</chord>
+		<twist>29.509946</twist>
+	</section>
+	<section>
+		<x>-0.006007</x>
+		<y>0.316482</y>
+		<z>0.000000</z>
+		<chord>0.024028</chord>
+		<twist>27.087858</twist>
+	</section>
+	<section>
+		<x>-0.005303</x>
+		<y>0.345837</y>
+		<z>0.000000</z>
+		<chord>0.021210</chord>
+		<twist>24.968455</twist>
+	</section>
+	<section>
+		<x>-0.004577</x>
+		<y>0.375192</y>
+		<z>0.000000</z>
+		<chord>0.018309</chord>
+		<twist>23.110058</twist>
+	</section>
+	<section>
+		<x>-0.003847</x>
+		<y>0.404547</y>
+		<z>0.000000</z>
+		<chord>0.015387</chord>
+		<twist>21.442968</twist>
+	</section>
+	<section>
+		<x>-0.003124</x>
+		<y>0.433903</y>
+		<z>0.000000</z>
+		<chord>0.012494</chord>
+		<twist>19.958074</twist>
+	</section>
+	<section>
+		<x>-0.002418</x>
+		<y>0.463258</y>
+		<z>0.000000</z>
+		<chord>0.009672</chord>
+		<twist>18.599163</twist>
+	</section>
+	<section>
+		<x>-0.001746</x>
+		<y>0.492613</y>
+		<z>0.000000</z>
+		<chord>0.006986</chord>
+		<twist>17.359821</twist>
+	</section>
+	<section>
+		<x>-0.001124</x>
+		<y>0.521968</y>
+		<z>0.000000</z>
+		<chord>0.004497</chord>
+		<twist>16.205066</twist>
+	</section>
+	<section>
+		<x>-0.000584</x>
+		<y>0.551324</y>
+		<z>0.000000</z>
+		<chord>0.002336</chord>
+		<twist>15.119837</twist>
+	</section>
+	<section>
+		<x>-0.000177</x>
+		<y>0.580679</y>
+		<z>0.000000</z>
+		<chord>0.000706</chord>
+		<twist>14.075429</twist>
+	</section>
+	<section>
+		<x>-0.000007</x>
+		<y>0.610034</y>
+		<z>0.000000</z>
+		<chord>0.000029</chord>
+		<twist>13.135553</twist>
+	</section>
+	<section>
+		<x>-0.000000</x>
+		<y>0.639389</y>
+		<z>0.000000</z>
+		<chord>0.000001</chord>
+		<twist>12.461933</twist>
+	</section>
+	<section>
+		<x>-0.000000</x>
+		<y>0.668745</y>
+		<z>0.000000</z>
+		<chord>0.000002</chord>
+		<twist>11.852163</twist>
+	</section>
+	<section>
+		<x>-0.000000</x>
+		<y>0.698100</y>
+		<z>0.000000</z>
+		<chord>0.000001</chord>
+		<twist>11.288600</twist>
 	</section>
 </panel>
 </rotor>
