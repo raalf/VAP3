@@ -1,9 +1,9 @@
 clc
 clear
 
-% try
-%     parpool
-% end
+try
+    parpool
+end
 
 delete optihistory.txt
 delete dvhistory.txt

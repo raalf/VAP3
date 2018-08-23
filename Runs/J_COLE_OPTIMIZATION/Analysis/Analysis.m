@@ -1,15 +1,16 @@
 clc
 clear
 
-% cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
+cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
 
 addpath('../../../')
 addpath('../../../airfoils')
 addpath('./../../../Runs/J_COLE_OPTIMIZATION/aux_files')
 addpath('./../../../Runs/J_COLE_OPTIMIZATION/')
 
-z(1,:) = [76 74 69 69 66 64 63 60 55 55 54 zeros(1, 11) 160 2229 -5 451 -4 1 11 701 2 1 17 894 1 1]; % 76255.8
-rotors = [1, 1];
+z(1,:) = [71.3941 68.7533 68.6304 65.9588 64.5861 63.2590 61.8437 61.4030 61.1291 60.0904 59.0279 0 0 0 0 0 0 0 0 0 0 0 158.186 2226.86 450.979 -12.5485 0.770671]; % 74748.4
+z(2,:) = [85.9495 83.1285 80.1618 77.3493 75.7004 63.8025 60.9942 59.5311 58.3303 57.1046 52.2952 10.054 17.625	17.9299	20.7694	31.5342	33.8535	38.4692	44.6215	49.6259	64.9211	67.2667	159.808	2097.24	144.366	-13.7057 0.605461]; %75836.2
+rotors = [1, 1, 1];
 
 legend_entry = {'Baseline Design', 'Cruise-Optimized Design'};
 
@@ -22,7 +23,7 @@ colors = {'k';'b';'r';'m';'c';'g'};
 %     if i == size(z,1) + 1
 %         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnBASELINE_OBJ();
 %     else
-%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, 3, 4);
+%         [out(1,i), Design(i).ITER, Design(i).ITEROUTP] = fcnOBJECTIVE(z(i,:), 11, rotors(i), 3);
 %     end
 % end
 % cd Analysis/

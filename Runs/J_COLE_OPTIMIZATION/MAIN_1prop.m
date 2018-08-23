@@ -1,6 +1,12 @@
 clc
 clear
 
+%% 
+% Fix prop diam
+% Fix rotation direction
+% Seed with planar, and top candidates
+
+%%
 try
     parpool
 end
