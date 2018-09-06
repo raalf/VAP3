@@ -49,7 +49,7 @@ lb_dihe = zeros(1, N_dihe);
 ub_dihe = repmat(75, 1, N_dihe);
 
 % % No anhedral
-A_dihe = eye(N_chord) - diag(ones(N_chord-1,1),1);
+A_dihe = eye(N_dihe) - diag(ones(N_dihe-1,1),1);
 b_dihe = zeros(size(A_dihe,1),1);
 
 try
