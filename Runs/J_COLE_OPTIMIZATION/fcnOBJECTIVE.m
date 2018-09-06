@@ -1,4 +1,4 @@
-function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_prop_max, Vars_prop)
+function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed)
 
 % cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\
 
@@ -11,12 +11,13 @@ fclose(fp2);
 temp_name = regexprep(tempname('/'), {'/', '\'}, '');
 matname = ['aux_files/z_', temp_name, '.mat'];
 if nargin > 0
-    save(matname, 'z', 'N_chord', 'N_prop_max', 'Vars_prop');
+    save(matname, 'z', 'N_chord', 'N_dihe', 'N_prop_max', 'Vars_prop');
 else
     clearvars -except temp_name matname
     clc
     
     N_chord = 11;
+    N_dihe = 0;
     N_prop_max = 3;
     Vars_prop = 3;
 end
@@ -29,14 +30,12 @@ rotor.axis = [-1 0 0];
 rotor.m = 1;
 rotor.blades = 3;
 rotor.airfoil = 'MH-117';
-rotor.diam = z(N_chord*2 + 1)./100;
-rotor.rpm = z(N_chord*2 + 2);
+rotor.diam = z(N_chord+N_dihe + 1)./100;
+rotor.rpm = z(N_chord+N_dihe + 2);
 airfoil_data = load('airfoils/MH-117.mat');
 
 % Double checking propeller tip speed
-max_tip_speed = 290;
 max_prop_diam = ((max_tip_speed*(60/rotor.rpm))/pi);
-min_tip_speed = 150;
 min_prop_diam = ((min_tip_speed*(60/rotor.rpm))/pi);
 tip_speed = (rotor.diam*pi)/(60/rotor.rpm);
 if tip_speed > max_tip_speed
@@ -50,16 +49,20 @@ end
 wing_geom(:,2) = [0; cumsum(repmat(482/(N_chord-1),N_chord-1, 1))]; % Chord stations
 wing_geom(:,1) = (22.6/482).*wing_geom(:,2);
 wing_geom(:,5) = ((-4/482).*wing_geom(:,2) + 5).*0; % No more twist
-wing_geom(:,3) = z(N_chord+1:N_chord*2)';
+if N_dihe > 0
+    wing_geom(:,3) = z(N_chord+1:N_chord+N_dihe)';
+else
+    wing_geom(:,3) = wing_geom(:,5).*0; % no dihedral 
+end
 wing_geom(:,4) = z(1:N_chord)';
 wing_geom(:,1:4) = wing_geom(:,1:4)./100; % cm to m
 
 % Number of props ON THE HALF SPAN
 le_location = 22.6/482;
 for i = 1:N_prop_max
-    prop_y(i) = z(N_chord*2 + 2 + (i-1)*Vars_prop + 1);
+    prop_y(i) = z(N_chord+N_dihe + 2 + (i-1)*Vars_prop + 1);
     prop_x(i) = (prop_y(i).*le_location) - (0.25*rotor.diam);
-    prop_z(i) = (interp1(wing_geom(:,2), wing_geom(:,3), prop_y(i)./100,'linear','extrap').*100) + z((N_chord*2 + 2 + (i-1)*Vars_prop) + 2);
+    prop_z(i) = (interp1(wing_geom(:,2), wing_geom(:,3), prop_y(i)./100,'linear','extrap').*100) + z((N_chord+N_dihe + 2 + (i-1)*Vars_prop) + 2);
 end
 N_prop = sum(prop_y <= 484);
 
@@ -156,7 +159,7 @@ copyfile('X57_BLANK.vap', vap_filename);
 vap3_inputmod_wing(vap_filename, wing_geom)
 for i = 1:N_prop
     rotor.hub = [prop_x(i) prop_y(i) prop_z(i)]./100;
-    temp_dir = z((N_chord*2 + 2 + (i-1)*Vars_prop) + 3); % 0 to 1. 0 < x <= 0.5, clockwise
+    temp_dir = z((N_chord+N_dihe + 2 + (i-1)*Vars_prop) + 3); % 0 to 1. 0 < x <= 0.5, clockwise
     rotor.dir(temp_dir <= 0.5) = 0;
     rotor.dir(temp_dir > 0.5) = 1;
     vap3_inputmod_prop(vap_filename, rotor, qmil_output_path);

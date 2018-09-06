@@ -4,6 +4,7 @@ clear
 % All distance units in cm
 % Mixed integer optimization -> inequality constraints only!!
 N_chord = 11; % Number of chordwise stations
+N_dihe = 0;
 N_prop = 3; % Maximum number of propellers
 % Constant for all propellers: PROP_DIAM, PROP_RPM
 % Unique to each propeller: PROP_XYZ, PROP_DIR
@@ -40,20 +41,23 @@ b_taper = zeros(size(A_taper,1),1) + 20; %cm
 % b_area(1,1) = 1.01*(2*area_x57/section_length);
 % b_area(2,1) = -0.99*(2*area_x57/section_length);
 
-A = [A; padarray([A_taper; A_area], [0 Pad_prop + N_chord], 0, 'post')];
+A = [A; padarray([A_taper; A_area], [0 Pad_prop + N_dihe], 0, 'post')];
 b = [b; b_taper; b_area];
 
 %% DIHEDRAL
-lb_dihe = zeros(1, N_chord);
-ub_dihe = repmat(75, 1, N_chord);
+lb_dihe = zeros(1, N_dihe);
+ub_dihe = repmat(75, 1, N_dihe);
 
 % % No anhedral
 A_dihe = eye(N_chord) - diag(ones(N_chord-1,1),1);
-A_dihe(end,:) = [];
 b_dihe = zeros(size(A_dihe,1),1);
 
-A_dihe =  padarray(A_dihe, [0 Pad_prop], 0, 'post');
-A_dihe =  padarray(A_dihe, [0 N_chord], 0, 'pre');
+try
+    A_dihe(end,:) = [];
+    A_dihe =  padarray(A_dihe, [0 Pad_prop], 0, 'post');
+    A_dihe =  padarray(A_dihe, [0 N_dihe], 0, 'pre');
+end
+
 A = [A; A_dihe];
 b = [b; b_dihe];
 
@@ -75,7 +79,7 @@ for i = 1:N_prop
     end
 end
 
-A = [A; padarray(A_prop, [0 N_chord.*2], 0, 'pre')];
+A = [A; padarray(A_prop, [0 N_chord+N_dihe], 0, 'pre')];
 b = [b; b_prop];
 
 % xyz of propeller hub, propeller diameter, rpm, rotation direction

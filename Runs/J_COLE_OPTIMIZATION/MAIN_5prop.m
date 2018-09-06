@@ -19,7 +19,7 @@ constraints_5prop;
 nvars = length(lb);
 % IntCon = 1:nvars;
 IntCon = [];
-seeds = creation_5prop(nvars,5,160,ub,lb,A,b,N_chord,Vars_prop);
+seeds = creation(nvars,N_prop,160,ub,lb,A,b,N_chord,N_dihe,Vars_prop);
 
 options = optimoptions('ga', 'Display', 'iter', 'InitialPopulation',seeds,'UseParallel', true, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'MutationFcn','mutationadaptfeasible', 'CreationFcn', 'gacreationlinearfeasible');
-[x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_chord, N_prop, Vars_prop},nvars,A,b,[],[],lb,ub,[],IntCon,options);
+[x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_chord, N_dihe, N_prop, Vars_prop},nvars,A,b,[],[],lb,ub,[],IntCon,options);
