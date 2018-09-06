@@ -33,6 +33,18 @@ rotor.diam = z(N_chord*2 + 1)./100;
 rotor.rpm = z(N_chord*2 + 2);
 airfoil_data = load('airfoils/MH-117.mat');
 
+% Double checking propeller tip speed
+max_tip_speed = 290;
+max_prop_diam = ((max_tip_speed*(60/rotor.rpm))/pi);
+min_tip_speed = 150;
+min_prop_diam = ((min_tip_speed*(60/rotor.rpm))/pi);
+tip_speed = (rotor.diam*pi)/(60/rotor.rpm);
+if tip_speed > max_tip_speed
+   rotor.diam = max_prop_diam;
+elseif tip_speed < min_tip_speed
+   rotor.diam = min_prop_diam;    
+end
+
 %% Preliminary steps
 % Formating wing geometry
 wing_geom(:,2) = [0; cumsum(repmat(482/(N_chord-1),N_chord-1, 1))]; % Chord stations
@@ -69,8 +81,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
-%             VAP_IN.valSTARTFORCES = 3
-%             VAP_IN.valMAXTIME = 3
+    %             VAP_IN.valSTARTFORCES = 3
+    %             VAP_IN.valMAXTIME = 3
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
     %     view([90 90]);
 end
@@ -105,7 +117,7 @@ if ispc
 else
     qmil_output_path = ['aux_files/', qmil_output_filename];
     exeName = ['aux_files/', qmil_filename, 'ex'];
-    copyfile('qmilex', exeName);    
+    copyfile('qmilex', exeName);
 end
 
 prmpt = sprintf('%s %s %s', exeName, qmil_path, qmil_output_path);
@@ -128,8 +140,8 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
-%             VAP_IN.valSTARTFORCES = 3
-%             VAP_IN.valMAXTIME = 3
+    %             VAP_IN.valSTARTFORCES = 3
+    %             VAP_IN.valMAXTIME = 3
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
     %     view([90 90]);
@@ -225,7 +237,7 @@ try
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-%         VAP_IN.valMAXTIME = 2
+        %         VAP_IN.valMAXTIME = 2
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'

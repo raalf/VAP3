@@ -21,8 +21,20 @@ while i <= totalPopulationSize
     A_opt = A_prop;
     options = optimoptions('lsqlin','display','none');
     
-    prop_diam = [(ub(N_chord*2 + 1)-lb(N_chord*2 + 1)).*rand(1) + lb(N_chord*2 + 1)];
     prop_rpm = [(ub(N_chord*2 + 2)-lb(N_chord*2 + 2)).*rand(1) + lb(N_chord*2 + 2)];
+    
+    max_tip_speed = 290;
+    max_prop_diam = ((max_tip_speed*(60/prop_rpm))/pi)*100;
+    if max_prop_diam > ub(N_chord*2 + 1)
+        max_prop_diam = ub(N_chord*2 + 1);
+    end
+    min_tip_speed = 150;
+    min_prop_diam = ((min_tip_speed*(60/prop_rpm))/pi)*100;
+    if min_prop_diam > lb(N_chord*2 + 1)
+        min_prop_diam = lb(N_chord*2 + 1);
+    end
+    
+    prop_diam = [(max_prop_diam - min_prop_diam).*rand(1) + min_prop_diam];
     
     lb_prop_temp = lb_prop;
     ub_prop_temp = ub_prop;
