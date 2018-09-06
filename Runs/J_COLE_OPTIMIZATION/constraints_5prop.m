@@ -80,7 +80,7 @@ b = [b; b_prop];
 
 % xyz of propeller hub, propeller diameter, rpm, rotation direction
 lb_prop = [50 3000];
-ub_prop = [90 7000];
+ub_prop = [90 10000];
 lb_prop = [lb_prop, repmat([40 -15 0], 1, N_prop)];
 ub_prop = [ub_prop, [482 15 1], repmat([485 15 1], 1, N_prop-1)];
 
