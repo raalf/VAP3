@@ -23,7 +23,7 @@ while i <= totalPopulationSize
     end
     
     if rand(1) < 0.2
-       dihedral = dihedral.*0; 
+        dihedral = dihedral.*0;
     end
     
     A_opt = A_prop;
@@ -35,7 +35,7 @@ while i <= totalPopulationSize
     if max_prop_diam > ub(N_chord+N_dihe + 1)
         max_prop_diam = ub(N_chord+N_dihe + 1);
     end
-
+    
     min_prop_diam = ((min_tip_speed*(60/prop_rpm))/pi)*100;
     if min_prop_diam > lb(N_chord+N_dihe + 1)
         min_prop_diam = lb(N_chord+N_dihe + 1);
@@ -43,13 +43,17 @@ while i <= totalPopulationSize
     
     prop_diam = [(max_prop_diam - min_prop_diam).*rand(1) + min_prop_diam];
     
-    lb_prop_temp = lb_prop;
-    ub_prop_temp = ub_prop;
-    lb_prop_temp(1) = prop_diam;
-    ub_prop_temp(1) = prop_diam;
-    prop_temp_y = lsqlin(A_opt,b_prop-1,[],[],[],[],lb_prop_temp,ub_prop_temp,[],options); % Solve for remaining chord stations    
-    prop_y = prop_temp_y(3:Vars_prop:end)';
-        
+    if num_prop > 1
+        lb_prop_temp = lb_prop;
+        ub_prop_temp = ub_prop;
+        lb_prop_temp(1) = prop_diam;
+        ub_prop_temp(1) = prop_diam;
+        prop_temp_y = lsqlin(A_opt,b_prop-1,[],[],[],[],lb_prop_temp,ub_prop_temp,[],options); % Solve for remaining chord stations
+        prop_y = prop_temp_y(3:Vars_prop:end)';
+    else
+        prop_y = (ub(N_chord+N_dihe+3)-lb(N_chord+N_dihe+3)).*rand(1,1) + lb(N_chord+N_dihe+3);
+    end
+    
     pop(i,:) = [chord dihedral prop_diam prop_rpm zeros(1,num_prop*Vars_prop)];
     idx = N_chord+N_dihe + 3;
     for jj = 1:num_prop
@@ -62,7 +66,7 @@ while i <= totalPopulationSize
     if all(A*pop(i,:)' - b <= 0)
         i = i + 1;
     else
-       pop(i,:) = pop(i,:).*0; 
+        pop(i,:) = pop(i,:).*0;
     end
 end
 
