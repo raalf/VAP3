@@ -61,6 +61,18 @@
 					<chord>0.395</chord>
 					<twist>7.6396</twist>
 				</section>
+			</panel>
+			<panel>
+				<airfoil>RAALF-B8</airfoil>
+				<symmetry>0</symmetry>
+				<N>10</N>
+				<section>
+					<x>0</x>
+					<y>2.0831</y>
+					<z>0</z>
+					<chord>0.395</chord>
+					<twist>7.6396</twist>
+				</section>
 				<section>
 					<x>0</x>
 					<y>2.9731</y>

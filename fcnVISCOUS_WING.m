@@ -193,15 +193,15 @@ for i = 1:max(vecDVEWING)
                 fprintf('fcnVISCOUS_WING: Airfoil sections have stalled. (%s)\n', uniqueAirfoil{k})
             end
             
-            F = scatteredInterpolant(Re,Cl,Cdp,'linear');
+            F = scatteredInterpolant(Re,Cl,Cdp,'linear','nearest');
             vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
             clear pol foil
         end
 
-        F = scatteredInterpolant(Re,Cl,Cdp,'linear');
+        F = scatteredInterpolant(Re,Cl,Cdp,'linear','nearest');
         vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         
-        F = scatteredInterpolant(Re,Cl,Cm,'linear');
+        F = scatteredInterpolant(Re,Cl,Cm,'linear','nearest');
         vecCMDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         clear pol foil
     end
