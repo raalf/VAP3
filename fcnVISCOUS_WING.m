@@ -93,8 +93,8 @@ for i = 1:max(vecDVEWING)
     %% Wing/horizontal stabilizer lift and drag
     % Note that Re is compute with Vinf + Vind
     vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
-    % If fixed-lift is enabled, UINF is defined as unity. 
-    % Re values have to be scaled to have correct viscous results. 
+    % If fixed-lift is enabled, UINF is defined as unity.
+    % Re values have to be scaled to have correct viscous results.
     if fixed_lift == 1
         vecREDIST(isCurWing) = vecREDIST(isCurWing)*valVINF;
     end
@@ -108,7 +108,7 @@ for i = 1:max(vecDVEWING)
     for k = 1:length(uniqueAirfoil)
         % Load airfoil .mat files
         try
-            % only load variable 'pol' to avoid variable conflict. 
+            % only load variable 'pol' to avoid variable conflict.
             load(strcat('airfoils/',cellAIRFOIL{k},'.mat'),'pol');
             
         catch
@@ -122,22 +122,22 @@ for i = 1:max(vecDVEWING)
         
         %which rows of DVE belongs to the airfoil in this loop
         isCurrentAirfoil = isCurWing & idxAirfoil(lepanels) == k;
-
+        
         idxNans = isnan(Cl) | isnan(Cdp) | isnan(Re);
         Cl = Cl(~idxNans);
         Cdp = Cdp(~idxNans);
         Cm = Cm(~idxNans);
         Re = Re(~idxNans);
-
+        
         % Compare Re data range to panel Re
-%         if max(vecREDIST(isCurrentAirfoil)) > max(Re)
-%             disp('fcnVISCOUS_WING: Re higher than airfoil Re data.')
-%         end
-%         
-%         if min(vecREDIST(isCurrentAirfoil)) < min(Re)
-%             disp('fcnVISCOUS_WING: Re lower than airfoil Re data.')
-%         end
-
+        %         if max(vecREDIST(isCurrentAirfoil)) > max(Re)
+        %             disp('fcnVISCOUS_WING: Re higher than airfoil Re data.')
+        %         end
+        %
+        %         if min(vecREDIST(isCurrentAirfoil)) < min(Re)
+        %             disp('fcnVISCOUS_WING: Re lower than airfoil Re data.')
+        %         end
+        
         % find CLmax for each row of dves
         polarClmax = max(pol(:,2,:));
         polarClmax = polarClmax(:);
@@ -197,7 +197,7 @@ for i = 1:max(vecDVEWING)
             vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
             clear pol foil
         end
-
+        
         F = scatteredInterpolant(Re,Cl,Cdp,'linear','nearest');
         vecCDPDIST(isCurrentAirfoil) = F(vecREDIST(isCurrentAirfoil), vecCNDIST(isCurrentAirfoil));
         
@@ -207,7 +207,7 @@ for i = 1:max(vecDVEWING)
     end
     % CN in terms of Vinf instead of Vinf + Vind
     vecCNDIST(isCurWing) = vecCNDIST0(isCurWing).*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
-
+    
     temp_dist(i).LDIST = vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing);
     temp_dist(i).DPDIST = vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing);
     
@@ -274,7 +274,7 @@ if ~isempty(matFVLST)
     if fixed_lift == 1
         re = (re_len.*valVINF)./valKINV;
     else
-        re = (re_len.*valVEHVINF)./valKINV;     
+        re = (re_len.*valVEHVINF)./valKINV;
     end
     
     re(re < 1e5) = 1e4;
@@ -304,7 +304,11 @@ valCD = dtot/(q_inf*valAREA);
 
 %% Final calculations
 valLD = valCL./valCD;
-valPREQ = dtot.*valVEHVINF;
+if fixed_lift == 1
+    valPREQ = dtot.*valVINF;
+else
+    valPREQ = dtot.*valVEHVINF;
+end
 
 end
 
