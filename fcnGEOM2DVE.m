@@ -163,6 +163,7 @@ for i = 1:max(SURF.vecDVEWING)
    m = mean(INPU.vecM(vecPANELSURFACE == i));
    centers = mean(permute(reshape(SURF.matCENTER(SURF.vecDVEWING == i,:)', 3, m, []), [3 1 2]),3);
    OUTP.WING(i).vecSPANLOC = cumsum([sqrt(sum(centers(1,:).^2,2)); sqrt(sum((centers(2:end,:) - centers(1:end-1,:)).^2,2))]); 
+   OUTP.WING(i).vecSPANLOC_PROJ = centers(:,2);
 end
 
 [ VEHI.matVEHUVW, VEHI.matVEHROT, VEHI.matVEHROTRATE, MISC.matCIRORIG] = fcnINITVEHICLE( COND.vecVEHVINF, INPU.matVEHORIG, COND.vecVEHALPHA, COND.vecVEHBETA, COND.vecVEHFPA, COND.vecVEHROLL, COND.vecVEHTRK, VEHI.vecVEHRADIUS );

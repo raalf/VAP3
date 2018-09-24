@@ -47,7 +47,7 @@
 			<panel>
 				<airfoil>RAALF-B8</airfoil>
 				<symmetry>1</symmetry>
-				<N>10</N>
+				<N>15</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
@@ -66,7 +66,7 @@
 			<panel>
 				<airfoil>RAALF-B8</airfoil>
 				<symmetry>0</symmetry>
-				<N>10</N>
+				<N>30</N>
 				<section>
 					<x>0</x>
 					<y>1.5</y>
@@ -77,9 +77,9 @@
 				<section>
 					<x>0</x>
 					<y>3</y>
-					<z>0.1930</z>
+					<z>0.0</z>
 					<chord>0.395</chord>
-					<twist>-5</twist>
+					<twist>0</twist>
 				</section>
 			</panel>
 		</wing>
