@@ -44,18 +44,18 @@
 			<zorig>0</zorig>
 
 			<panel>
-				<symmetry>0</symmetry>
+				<symmetry>1</symmetry>
 				<N>2</N>
 				<section>
 					<x>0</x>
-					<y>-2</y>
+					<y>0</y>
 					<z>0</z>
 					<chord>1</chord>
 					<twist>0</twist>
 				</section>
 				<section>
 					<x>0</x>
-					<y>2</y>
+					<y>1</y>
 					<z>0</z>
 					<chord>1</chord>
 					<twist>0</twist>

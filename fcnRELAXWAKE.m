@@ -34,11 +34,11 @@ crdvec = WAKE.matWCENTER - WAKE.matWDVELEMP;
 spnvec = WAKE.matWDVEMPRLX(WAKE.matWDVEMPIDX(:,2),:) - WAKE.matWCENTER;
 
 % fix oldest wake
-semiinfvec = WAKE.matWCENTER(WAKE.matWDVELEMPIDX(end-1,:),:)-WAKE.matWDVELEMP(WAKE.matWDVELEMPIDX(end-1,:),:);
+% semiinfvec = WAKE.matWCENTER(WAKE.matWDVELEMPIDX(end-1,:),:)-WAKE.matWDVELEMP(WAKE.matWDVELEMPIDX(end-1,:),:);
 % WAKE.matWCENTER(WAKE.matWDVELEMPIDX(end,:),:) = WAKE.matWDVELEMP(WAKE.matWDVELEMPIDX(end,:),:)+semiinfvec;
 
-xsi0 = repmat(sqrt(semiinfvec(:,1).^2+semiinfvec(:,2).^2+semiinfvec(:,3).^2),1,3);
-WAKE.matWCENTER(WAKE.matWDVELEMPIDX(end,:),:) = WAKE.matWCENTER(WAKE.matWDVELEMPIDX(end-1,:),:)+semiinfvec+SURF.matUINF(SURF.vecDVETE == 3).*xsi0;
+% xsi0 = repmat(sqrt(semiinfvec(:,1).^2+semiinfvec(:,2).^2+semiinfvec(:,3).^2),1,3);
+% WAKE.matWCENTER(WAKE.matWDVELEMPIDX(end,:),:) = WAKE.matWCENTER(WAKE.matWDVELEMPIDX(end-1,:),:)+semiinfvec+SURF.matUINF(SURF.vecDVETE == 3).*xsi0;
 % crdvec(WAKE.matWDVELEMPIDX(end,:),:) = crdvec(WAKE.matWDVELEMPIDX(end-1,:),:);
 % spnvec(WAKE.matWDVELEMPIDX(end,:),:) = spnvec(WAKE.matWDVELEMPIDX(end-1,:),:);
 
