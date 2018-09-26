@@ -35,17 +35,17 @@ seqALPHA = [6:1:15];
 %     end
 % end
 % 
-% cd '../../'
-% filename = ['Runs/CREATeV/Design_', num2str(5),'.vap'];
-% parfor j = 1:length(seqALPHA)
-%     VAP_IN = [];
-%     VAP_IN.vecVEHALPHA = seqALPHA(j);
-%     VAP_IN.valMAXTIME = valMAXTIME;
-%     VAP_IN.valSTARTFORCES = valSTARTFORCES;
-%     VAP_IN.RELAX = RELAX;
-%     OUTP(j) = fcnVAP_MAIN(filename, VAP_IN);
-% end
-% cd 'Runs/CREATeV';
+cd '../../'
+filename = ['Runs/CREATeV/Design_', num2str(5),'.vap'];
+parfor j = 1:length(seqALPHA)
+    VAP_IN = [];
+    VAP_IN.vecVEHALPHA = seqALPHA(j);
+    VAP_IN.valMAXTIME = valMAXTIME;
+    VAP_IN.valSTARTFORCES = valSTARTFORCES;
+    VAP_IN.RELAX = RELAX;
+    OUTP(j) = fcnVAP_MAIN(filename, VAP_IN);
+end
+cd 'Runs/CREATeV';
 
 %%
 hFig1 = figure(1);
