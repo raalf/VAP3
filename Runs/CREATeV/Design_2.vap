@@ -53,14 +53,14 @@
 					<y>0</y>
 					<z>0</z>
 					<chord>0.395</chord>
-					<twist>7.6396</twist>
+					<twist>0</twist>
 				</section>	
 				<section>
 					<x>0</x>
-					<y>2.0831</y>
+					<y>1.44</y>
 					<z>0</z>
 					<chord>0.395</chord>
-					<twist>7.6396</twist>
+					<twist>0</twist>
 				</section>
 			</panel>
 			<panel>
@@ -69,17 +69,17 @@
 				<N>10</N>
 				<section>
 					<x>0</x>
-					<y>2.0831</y>
+					<y>1.44</y>
 					<z>0</z>
 					<chord>0.395</chord>
-					<twist>7.6396</twist>
+					<twist>0</twist>
 				</section>
 				<section>
 					<x>0</x>
-					<y>2.9731</y>
-					<z>0.1930</z>
+					<y>3</y>
+					<z>0.195</z>
 					<chord>0.395</chord>
-					<twist>-1.2512</twist>
+					<twist>0</twist>
 				</section>
 			</panel>
 		</wing>
