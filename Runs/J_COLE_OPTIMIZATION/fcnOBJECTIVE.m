@@ -84,8 +84,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
-    %             VAP_IN.valSTARTFORCES = 3
-    %             VAP_IN.valMAXTIME = 3
+%                 VAP_IN.valSTARTFORCES = 3
+%                 VAP_IN.valMAXTIME = 3
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
     %     view([90 90]);
 end
@@ -104,7 +104,7 @@ ALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL);
 LD = 14;
 CD = CL./(LD); % Calculate CD with Borer L/D Data
 D  = 0.5*rho*vinf.^2.*CD*S; % Calulate drag force in Newton
-thrust  = D/(2*N_prop); % Calculate Thrust force required from EACH PROP
+thrust  = (D./cosd(ALPHA))/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
 %% Creating propeller in QMIL
 qmil_path = fcnQMILCREATE(temp_name, airfoil_data, rotor.blades, thrust, vinf, rotor.rpm, rotor.diam);
@@ -211,7 +211,7 @@ seqALPHA = ALPHA;
 
 TRIMMED = false;
 
-try
+% try
     for n = 1:ITER.maxIter
         
         if n == 2
@@ -241,12 +241,14 @@ try
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
 %                 VAP_IN.valMAXTIME = 2
+%                 VAP_IN.valSTARTFORCES = 1
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'
         
         % Write results
-        ITER.CL(n,:) = OUTP.vecCL_AVG;
+%         CL_star = OUTP.vecCL_AVG + (OUTP.vecCT_AVG
+        ITER.CL(n,:) = OUTP.vecCL_AVG + (2.*(sind(ALPHA).*(OUTP.vecCT_AVG.*((OUTP.vecROTORRPM/60).^2).*(OUTP.vecROTDIAM.^4).*rho))./(rho.*S.*vinf.^2));
         ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
         
         CDtemp = [OUTP.vecCD];
@@ -270,10 +272,10 @@ try
     if dCT <= 0.02 && dCL <= 0.02
         TRIMMED = true;
     end
-catch
-    TRIMMED = false;
-    try cd 'Runs/J_COLE_OPTIMIZATION/'; end
-end
+% catch
+%     TRIMMED = false;
+%     try cd 'Runs/J_COLE_OPTIMIZATION/'; end
+% end
 delete(vap_filename)
 
 %% ANALYZE RESULTS
