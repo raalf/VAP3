@@ -1,6 +1,8 @@
 clc
 clear
 
+cd G:\GIT\VAP3\Runs\VELDHUIS
+
 addpath('../../')
 addpath('../../airfoils')
 addpath('./../../Runs/VELDHUIS/aux_files')
@@ -10,12 +12,13 @@ addpath('./../../Runs/VELDHUIS/')
 % Prop is 0.2018 m in front of wing
 % Prop is 4 bladed, diameter 0.236 m, 3/4 R pitch at 25 degrees
 
-prop_y = [0.24:0.08:0.64];
+% prop_y = linspace(0.24,0.64,6)
+prop_y = linspace(0.24,0.64,30)
 
 OUT = [];
 
 %%
-parfor i = 1:size(prop_y,2)
+for i = 1:size(prop_y,2)
     rotor = [];
     
     % Constant propeller values
@@ -31,7 +34,7 @@ parfor i = 1:size(prop_y,2)
     
     % Conditions
     rho = 1.225;
-    Re = 3e+5;
+    Re = 8e+5;
     kinv = 1.45e-5;
     cmac = 0.24;
     vinf = (Re*kinv)/cmac;
@@ -40,7 +43,7 @@ parfor i = 1:size(prop_y,2)
     rotor.rpm = n*60;
     T_C = 0.025; % (T/(rho.*V.^2.*D.^2))
     alpha = 4.2;
-    thrust = T_C*rho*(n^2)*(rotor.diam^2);
+    thrust = (T_C*rho*(vinf^2)*(rotor.diam^2))*3;
     
     
     %% QMIL
@@ -78,8 +81,8 @@ parfor i = 1:size(prop_y,2)
     VAP_IN.vecVEHVINF = vinf;
     VAP_IN.valMAXTIME = 160;
     VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-%                     VAP_IN.valMAXTIME = 5
-%                     VAP_IN.valSTARTFORCES = 4
+                    VAP_IN.valMAXTIME = 10
+                    VAP_IN.valSTARTFORCES = 12
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
     
@@ -98,7 +101,7 @@ clf(1);
 
 hold on
 for i = 1:size(prop_y,2)
-    scatter(prop_y(i)/0.64, OUT(i).OUTP.vecCL_AVG/OUT(i).OUTP.vecCD_AVG,'sk')
+    scatter(prop_y(i), nanmean(OUT(i).OUTP.vecE),'sk')
 end
 box on
 grid minor
