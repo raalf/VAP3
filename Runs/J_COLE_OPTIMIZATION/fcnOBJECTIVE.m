@@ -35,13 +35,20 @@ rotor.rpm = z(N_chord+N_dihe + 2);
 airfoil_data = load('airfoils/MH-117.mat');
 
 % Double checking propeller tip speed
-max_prop_diam = ((max_tip_speed*(60/rotor.rpm))/pi);
-min_prop_diam = ((min_tip_speed*(60/rotor.rpm))/pi);
 tip_speed = (rotor.diam*pi)/(60/rotor.rpm);
+% max_prop_diam = ((max_tip_speed*(60/rotor.rpm))/pi);
+% min_prop_diam = ((min_tip_speed*(60/rotor.rpm))/pi);
+% if tip_speed > max_tip_speed
+%    rotor.diam = max_prop_diam;
+% elseif tip_speed < min_tip_speed
+%    rotor.diam = min_prop_diam;    
+% end
+max_prop_rpm = 60*(max_tip_speed/(pi*rotor.diam));
+min_prop_rpm = 60*(min_tip_speed/(pi*rotor.diam));
 if tip_speed > max_tip_speed
-   rotor.diam = max_prop_diam;
+   rotor.rpm = max_prop_rpm;
 elseif tip_speed < min_tip_speed
-   rotor.diam = min_prop_diam;    
+   rotor.rpm = min_prop_rpm;    
 end
 
 %% Preliminary steps

@@ -64,7 +64,7 @@ le_location = 22.6/482;
 
 % xyz of propeller hub, propeller diameter, rpm, rotation direction
 lb_prop = [100 2000];
-ub_prop = [160 3000];
+ub_prop = [100 6000];
 lb_prop = [lb_prop, repmat([100 -15 0], 1, N_prop)];
 ub_prop = [ub_prop, [482 15 1], repmat([2000 15 1], 1, N_prop-1)];
 
