@@ -36,7 +36,7 @@ seqALPHA = [6:1:15];
 % end
 % 
 cd '../../'
-filename = ['Runs/CREATeV/Design_', num2str(5),'.vap'];
+filename = ['Runs/CREATeV/Design_', num2str(6),'.vap'];
 parfor j = 1:length(seqALPHA)
     VAP_IN = [];
     VAP_IN.vecVEHALPHA = seqALPHA(j);
@@ -53,17 +53,14 @@ clf(1);
 
 linestyles = {'--ok', '-.rs', '-b^', '-m+'};
 
-
 hold on
-load('design_1_fixed.mat');
+load('design_5_fixed.mat');
 plot([OUTP.vecVINF]',[OUTP.vecPREQ]',linestyles{1})
-load('design_2_fixed.mat');
+load('design_6_fixed.mat');
 plot([OUTP.vecVINF]',[OUTP.vecPREQ]',linestyles{2})
-load('design_3_fixed.mat');
-plot([OUTP.vecVINF]',[OUTP.vecPREQ]',linestyles{3})
-load('design_4_fixed.mat');
-plot([OUTP.vecVINF]',[OUTP.vecPREQ]',linestyles{4})
 hold off
+
+legend('With Dihedral and Twist','Without Dihedral and Twist','Location','NorthWest')
 
 %
 % hold on
