@@ -24,7 +24,7 @@ function [a, b, c] = fcnDVEIND_CHUNKS(dvenum_all, dvetype_all, fpg_all, vecK, ma
 % OUTPUT:
 %   a,b,c - influence coefficients (each are (x,y,z))
 
-chunk_sz = 4e6;
+chunk_sz = 1e6;
 
 num_pts = length(dvenum_all);
 
