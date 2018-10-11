@@ -255,7 +255,7 @@ TRIMMED = false;
         
         % Write results
 %         CL_star = OUTP.vecCL_AVG + (OUTP.vecCT_AVG
-        ITER.CL(n,:) = OUTP.vecCL_AVG + (2.*(sind(ALPHA).*(OUTP.vecCT_AVG.*((OUTP.vecROTORRPM/60).^2).*(OUTP.vecROTDIAM.^4).*rho))./(rho.*S.*vinf.^2));
+        ITER.CL(n,:) = OUTP.vecCL_AVG + (2.*(sind(ALPHA).*(sum(OUTP.vecCT_AVG).*((OUTP.vecROTORRPM(1)/60).^2).*(OUTP.vecROTDIAM(1).^4).*rho))./(rho.*S.*vinf.^2));
         ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
         
         CDtemp = [OUTP.vecCD];
