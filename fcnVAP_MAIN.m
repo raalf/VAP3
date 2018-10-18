@@ -214,6 +214,11 @@ if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0 && ~isempty(valTIMESTEP)
 %         OUTP.ROTOR(i).vecTORQUEDIST_AVG = fcnTIMEAVERAGE(OUTP.ROTOR(i).vecTORQUEDIST, COND.vecROTORRPM, COND.valDELTIME);
 %     end
     
+elseif FLAG.PREVIEW ~= 1 && ~any(SURF.vecDVEROTOR)
+    OUTP.vecCLv_AVG = OUTP.vecCLv(end);
+    OUTP.vecCD_AVG = OUTP.vecCD(end);
+    OUTP.vecCDI_AVG = OUTP.vecCDI(end);
+    OUTP.vecCDP_AVG = OUTP.vecCD(end) - OUTP.vecCDI(end);
 end
 
 if FLAG.PRINT == 1 && FLAG.PREVIEW == 0

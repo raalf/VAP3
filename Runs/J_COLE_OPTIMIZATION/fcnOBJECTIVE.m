@@ -105,7 +105,7 @@ CL   = weightN./(0.5*rho*vinf.^2*S);
 
 % interpolate alpha to maintain steady level flight at VINF
 % using wing only data
-ALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL);
+ALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL);
 
 % LD = interp1(borer(:,1),borer(:,2),vinf*1.94384); % get L/D from Borer Data
 LD = 14;
@@ -150,8 +150,8 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
-%                 VAP_IN.valSTARTFORCES = 3
-%                 VAP_IN.valMAXTIME = 3
+%                 VAP_IN.valSTARTFORCES = 20
+%                 VAP_IN.valMAXTIME = 20
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
     %     view([90 90]);
@@ -225,7 +225,7 @@ TRIMMED = false;
             dCL1 = CL - ITER.CL(1,:);
             dCT1 = CT - ITER.CT(1,:);
             % New sets of AOA input for 2nd iteration in order to hit the targeted CL
-            seqALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL + dCL1, 'linear', 'extrap');
+            seqALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL + dCL1, 'linear', 'extrap');
             % New sets of collective pitch input for 2nd iteration in order to hit the targeted CT
             vecCOLLECTIVE = interp1(propCT, propColl, CT + dCT1, 'linear', 'extrap');
         elseif n > 2
@@ -247,8 +247,8 @@ TRIMMED = false;
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-%                 VAP_IN.valMAXTIME = 2
-%                 VAP_IN.valSTARTFORCES = 1
+%                 VAP_IN.valMAXTIME = 30
+%                 VAP_IN.valSTARTFORCES = 10
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -257,10 +257,10 @@ TRIMMED = false;
 %         CL_star = OUTP.vecCL_AVG + (OUTP.vecCT_AVG
         ITER.CL(n,:) = OUTP.vecCL_AVG + (2.*(sind(ALPHA).*(sum(OUTP.vecCT_AVG).*((OUTP.vecROTORRPM(1)/60).^2).*(OUTP.vecROTDIAM(1).^4).*rho))./(rho.*S.*vinf.^2));
         ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
-        
-        CDtemp = [OUTP.vecCD];
-        CDtemp(isnan([OUTP.vecCLv])) = nan;
-        ITER.CD(n,:) = nanmean(CDtemp,1);
+        ITER.CD(n,:) = [OUTP.vecCD_AVG];
+%         CDtemp = [OUTP.vecCD_AVG];
+%         CDtemp(isnan([OUTP.vecCLv])) = nan;
+%         ITER.CD(n,:) = nanmean(CDtemp,1);
         
         ITEROUTP(n).OUTP = OUTP;
         
