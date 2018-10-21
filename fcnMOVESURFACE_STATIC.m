@@ -104,7 +104,7 @@ for n = 1:valROTORS
     
     dcmHUB2GLOB = angle2dcm(VEHI.matVEHROT(VEHI.vecROTORVEH(n),3),VEHI.matVEHROT(VEHI.vecROTORVEH(n),1),VEHI.matVEHROT(VEHI.vecROTORVEH(n),2),'ZXY');
 %     dcmXY2HUB = quat2dcm(axang2quat(vrrotvec(INPU.VISC.matROTORAXIS(n,:),[0 0 1])));
-    dcmXY2HUB = quat2dcm(axang2quat(vrrotvec([0 0 1], INPU.matROTORAXIS(n,:))));
+    dcmXY2HUB = quat2dcm(fcnAXANG2QUAT(vrrotvec([0 0 1], INPU.matROTORAXIS(n,:))));
     dcmROTORSTEP = angle2dcm(vecROTORDEL(n),0,0,'ZXY');
 
     % pre-calculate trans and rot matrices

@@ -88,7 +88,7 @@ for n = 1:valROTORS
     matCENTER0(idxDVEROTOR,:)  = matCENTER0(idxDVEROTOR,:) - matROTORHUB(n,:) - matVEHORIG(vecROTORVEH(n),:);
     
     % transform rotor from xy plane to hub plane
-    dcmROTORHUB = quat2dcm(axang2quat(vrrotvec([0 0 1], matROTORAXIS(n,:))));
+    dcmROTORHUB = quat2dcm(fcnAXANG2QUAT(vrrotvec([0 0 1], matROTORAXIS(n,:))));
     matVLST0(idxVLSTROTOR,:)   = matVLST0(idxVLSTROTOR,:)  * dcmROTORHUB;
     matNTVLST0(idxVLSTROTOR,:) = matNTVLST0(idxVLSTROTOR,:)* dcmROTORHUB;
     matCENTER0(idxDVEROTOR,:)  = matCENTER0(idxDVEROTOR,:) * dcmROTORHUB;
