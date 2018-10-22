@@ -99,7 +99,24 @@ xlabel('Propeller Spanwise Hub Location','FontSize',15);
 ylabel('Power (W)','FontSize',15);
 
 
+load('y_sweep2.mat')
 
+hFig23 = figure(24);
+clf(24);
+
+plot(yloc, [bu_out.out]', '--ok');
+hold on
+plot(yloc, [bd_out.out]', '-sb');
+plot(yloc, [su_out.out]', '--^m');
+plot(yloc, [sd_out.out]', '-.*r');
+hold off
+legend('Large Propeller - Inboard Up','Large Propeller - Inboard Down','Small Propeller - Inboard Up','Small Propeller - Inboard Down','Location','West');
+grid minor
+box on
+axis tight
+
+xlabel('Propeller Spanwise Hub Location','FontSize',15);
+ylabel('Power (W)','FontSize',15);
 
 
 

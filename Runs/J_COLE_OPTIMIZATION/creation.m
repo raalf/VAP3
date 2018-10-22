@@ -15,8 +15,9 @@ min_tip_speed = 0.5*c;
 
 i = 1;
 while i <= totalPopulationSize
-    chord = sort([(ub(1:N_chord)-lb(1:N_chord)).*rand(1,N_chord) + lb(1:N_chord)],'descend');
-    
+%     chord = sort([(ub(1:N_chord)-lb(1:N_chord)).*rand(1,N_chord) + lb(1:N_chord)],'descend');
+    chord = linspace(75.6, 53, 11);
+
     dihedral = [];
     if N_dihe > 0
         dihedral = sort([(ub(N_chord+1:(N_chord + N_dihe))-lb(N_chord+1:(N_chord + N_dihe))).*rand(1,N_dihe) + lb(N_chord+1:(N_chord + N_dihe))],'ascend');
