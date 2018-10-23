@@ -1,6 +1,3 @@
-clc
-clear
-
 % All distance units in cm
 % Mixed integer optimization -> inequality constraints only!!
 N_chord = 11; % Number of chordwise stations

@@ -1,11 +1,11 @@
 clc
 clear
 
-try
-    parpool
-end
+cores = 32;
+parpool(cores,'IdleTimeout',800)
+home_dir = pwd;
 
-delete optihistory.txt
+delete opthistory.txt
 delete dvhistory.txt
 
 addpath('../../')
@@ -22,4 +22,4 @@ IntCon = [];
 [seeds, max_tip_speed, min_tip_speed] = creation(nvars,N_prop,160,ub,lb,A,b,N_chord,N_dihe,Vars_prop);
 
 options = optimoptions('ga', 'Display', 'iter', 'InitialPopulation',seeds,'UseParallel', true, 'MaxGenerations', 1000, 'StallGenLimit', 50, 'MutationFcn','mutationadaptfeasible', 'CreationFcn', 'gacreationlinearfeasible');
-[x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_chord, N_dihe, N_prop, Vars_prop, max_tip_speed, min_tip_speed},nvars,A,b,[],[],lb,ub,[],IntCon,options);
+[x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_chord, N_dihe, N_prop, Vars_prop, max_tip_speed, min_tip_speed, home_dir},nvars,A,b,[],[],lb,ub,[],IntCon,options);

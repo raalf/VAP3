@@ -1,6 +1,6 @@
-function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed)
+function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed, home_dir)
 
-% cd /project/6010316/tkrebs/VAP3/Runs/J_COLE_OPTIMIZATION/
+cd(home_dir);
 
 fp2 = fopen('dvhistory.txt','at');
 fprintf(fp2,'%g ', z);
@@ -279,9 +279,10 @@ try
     if dCT <= 0.02 && dCL <= 0.02
         TRIMMED = true;
     end
+    
 catch
     TRIMMED = false;
-    try cd 'Runs/J_COLE_OPTIMIZATION/'; end
+    cd(home_dir);
 end
 delete(vap_filename)
 

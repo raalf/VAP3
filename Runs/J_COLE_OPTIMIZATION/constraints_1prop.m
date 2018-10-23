@@ -1,6 +1,3 @@
-clc
-clear
-
 % All distance units in cm
 % Mixed integer optimization -> inequality constraints only!!
 N_chord = 11; % Number of chordwise stations
@@ -22,27 +19,25 @@ b_area = [];
 A_taper = [];
 b_taper = [];
 
-% section_length = 482/(N_chord - 1);
-% area_x57 = ((75.6 + 53)/2)*482; % Half-span area in cm^2
+section_length = 482/(N_chord - 1);
+area_x57 = ((75.6 + 53)/2)*482; % Half-span area in cm^2
 
 lb_chord = repmat(50, 1, N_chord);
 ub_chord = repmat(100, 1, N_chord);
+ub_chord(end) = 70;
 
 % Limited negative taper (can increase by 20 cm)
 A_taper = -eye(N_chord) + diag(ones(N_chord-1,1),1);
 A_taper(end,:) = [];
 b_taper = zeros(size(A_taper,1),1) + 20; %cm
 
-% % % % % % % Fixing the area
-% % A_area = ones(2, N_chord);
-% % A_area(:,2:end-1) = A_area(:,2:end-1) + ones(2, N_chord - 2);
-% % A_area(end,:) = A_area(end,:).*-1;
-% %
-% % b_area(1,1) = 1.01*(2*area_x57/section_length);
-% % b_area(2,1) = -0.99*(2*area_x57/section_length);
+% Fixing the area
+A_area = ones(2, N_chord);
+A_area(:,2:end-1) = A_area(:,2:end-1) + ones(2, N_chord - 2);
+A_area(end,:) = A_area(end,:).*-1;
 
-A_area = [];
-b_area = [];
+b_area(1,1) = 1.01*(2*area_x57/section_length);
+b_area(2,1) = -0.99*(2*area_x57/section_length);
 
 A = [A; padarray([A_taper; A_area], [0 Pad_prop + N_dihe], 0, 'post')];
 b = [b; b_taper; b_area];
