@@ -9,7 +9,7 @@ fclose(fp);
 
 str_wing = sprintf('\n<wing>\n<incidence>0</incidence>\n<trimable>FALSE</trimable>\n<M>2</M>\n<xorig>0</xorig>\n<yorig>0</yorig>\n<zorig>0</zorig>\n');
 
-str_panel = sprintf('\n<panel>\n<airfoil>NASA GA(W)-2 Modified</airfoil>\n<symmetry>1</symmetry>\n<N>1</N>\n');
+str_panel = sprintf('\n<panel>\n<airfoil>NASA GA(W)-2 Modified</airfoil>\n<symmetry>1</symmetry>\n<N>2</N>\n');
 
 for i = 1:size(geom,1)
    str_panel = [str_panel, sprintf('<section>\n<x>%.6f</x>\n<y>%.6f</y>\n<z>%.6f</z>\n<chord>%.6f</chord>\n<twist>%.6f</twist>\n</section>\n', geom(i,1), geom(i,2), geom(i,3), geom(i,4), geom(i,5))];      

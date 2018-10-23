@@ -1,6 +1,6 @@
 function [out, ITER, ITEROUTP] = fcnOBJECTIVE(z, N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed)
 
-% cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\
+% cd /project/6010316/tkrebs/VAP3/Runs/J_COLE_OPTIMIZATION/
 
 fp2 = fopen('dvhistory.txt','at');
 fprintf(fp2,'%g ', z);
@@ -218,7 +218,7 @@ seqALPHA = ALPHA;
 
 TRIMMED = false;
 
-% try
+try
     for n = 1:ITER.maxIter
         
         if n == 2
@@ -247,7 +247,7 @@ TRIMMED = false;
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-%                 VAP_IN.valMAXTIME = 30
+%                 VAP_IN.valMAXTIME = 12
 %                 VAP_IN.valSTARTFORCES = 10
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
@@ -279,10 +279,10 @@ TRIMMED = false;
     if dCT <= 0.02 && dCL <= 0.02
         TRIMMED = true;
     end
-% catch
-%     TRIMMED = false;
-%     try cd 'Runs/J_COLE_OPTIMIZATION/'; end
-% end
+catch
+    TRIMMED = false;
+    try cd 'Runs/J_COLE_OPTIMIZATION/'; end
+end
 delete(vap_filename)
 
 %% ANALYZE RESULTS

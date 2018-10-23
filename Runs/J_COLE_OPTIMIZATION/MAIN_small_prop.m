@@ -1,9 +1,7 @@
 clc
 clear
 
-try
-    parpool
-end
+parpool(32,'IdleTimeout',800)
 
 delete optihistory.txt
 delete dvhistory.txt

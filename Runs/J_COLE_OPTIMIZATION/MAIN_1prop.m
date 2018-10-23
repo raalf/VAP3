@@ -7,9 +7,7 @@ clear
 % Seed with planar, and top candidates
 
 %%
-try
-    parpool
-end
+parpool(32,'IdleTimeout',800)
 
 delete optihistory.txt
 delete dvhistory.txt
