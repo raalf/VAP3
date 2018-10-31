@@ -6,6 +6,8 @@ addpath('../../airfoils')
 addpath('./../../Runs/J_COLE_OPTIMIZATION/aux_files')
 addpath('./../../Runs/J_COLE_OPTIMIZATION/')
 
+home_dir = pwd;
+
 N_chord = 11;
 N_dihe = 0;
 N_prop_max = 1;
@@ -14,8 +16,8 @@ Vars_prop = 3;
 max_tip_speed = 277.7821;
 min_tip_speed = 165.3465;
 
-stations = 15;
-yloc = linspace(150,482, stations);
+stations = 30;
+yloc = [linspace(150, 400, stations/2) linspace(410,482, stations/2)];
 design_vec = repmat([linspace(75.6, 53, 11) nan nan nan 0 nan],stations,1);
 design_vec(:,14) = yloc';
 
@@ -31,7 +33,7 @@ big_prop_rpm = 2250;
 % z(:,13) = small_prop_rpm;
 % z(:,16) = 0;
 % parfor i = 1:size(z,1)
-%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed);
+%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed, home_dir);
 %     
 %     sd_out(i).out = out;
 %     sd_out(i).ITER = ITER;
@@ -44,7 +46,7 @@ big_prop_rpm = 2250;
 % z(:,13) = small_prop_rpm;
 % z(:,16) = 1;
 % parfor i = 1:size(z,1)
-%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed);
+%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed, home_dir);
 %     
 %     su_out(i).out = out;
 %     su_out(i).ITER = ITER;
@@ -57,7 +59,7 @@ big_prop_rpm = 2250;
 % z(:,13) = big_prop_rpm;
 % z(:,16) = 0;
 % parfor i = 1:size(z,1)
-%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed);
+%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed, home_dir);
 %     
 %     bd_out(i).out = out;
 %     bd_out(i).ITER = ITER;
@@ -70,16 +72,16 @@ big_prop_rpm = 2250;
 % z(:,13) = big_prop_rpm;
 % z(:,16) = 1;
 % parfor i = 1:size(z,1)
-%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed);
+%     [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed, home_dir);
 %     
 %     bu_out(i).out = out;
 %     bu_out(i).ITER = ITER;
 %     bu_out(i).ITEROUTP = ITEROUTP;
 % end
 % 
-% save('y_sweep.mat')
+% save('y_sweep3.mat')
 
-load('y_sweep.mat')
+load('y_sweep3.mat')
 
 hFig23 = figure(23);
 clf(23);
@@ -99,7 +101,7 @@ xlabel('Propeller Spanwise Hub Location','FontSize',15);
 ylabel('Power (W)','FontSize',15);
 
 
-load('y_sweep2.mat')
+load('y_sweep3.mat')
 
 hFig23 = figure(24);
 clf(24);
@@ -117,11 +119,3 @@ axis tight
 
 xlabel('Propeller Spanwise Hub Location','FontSize',15);
 ylabel('Power (W)','FontSize',15);
-
-
-
-
-
-
-
-bu_out
