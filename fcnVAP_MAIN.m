@@ -14,8 +14,8 @@ COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
-FLAG.PRINT = 0;
-FLAG.PLOT = 0;
+FLAG.PRINT = 1;
+FLAG.PLOT = 1;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
@@ -81,10 +81,16 @@ end
 
 SURF.matNTDVE = SURF.matDVE;
 % Computing structure distributions if data exists
-try [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); catch; end
+try 
+    [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); 
+    FLAG.STRUCTURE = 1; % Create flag if structure data exists
+catch
+    FLAG.STRUCTURE = 0; 
+end
 
 n = 1;
 valGUSTTIME = 1;
+SURF.gust_vel_old = zeros(SURF.valNELE,1);
 
 %% Timestepping
 
@@ -105,13 +111,13 @@ for valTIMESTEP = 1:COND.valMAXTIME
     %% Moving the vehicles
     
     % Bend wing if applicable, else move wing normally
-    try
+    if FLAG.STRUCTURE == 1
         if valTIMESTEP <= COND.valSTIFFSTEPS || FLAG.STIFFWING == 1
             
             [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, valTIMESTEP);
             
             if FLAG.STIFFWING == 2
-                %                 [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
+                [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
             end
             
         elseif valTIMESTEP == n*COND.valSTIFFSTEPS + 1 || valGUSTTIME > 1
@@ -120,7 +126,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         else
             [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING_STATIC(INPU, VEHI, MISC, COND, SURF, VISC, OUTP, valTIMESTEP);
         end
-    catch
+    else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
     end
     

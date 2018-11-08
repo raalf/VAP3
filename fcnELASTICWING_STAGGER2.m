@@ -1,4 +1,4 @@
-function [OUTP] = fcnELASTICWING_STAGGER(OUTP, INPU, SURF, COND, valTIMESTEP, tempTIME)
+function [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, valTIMESTEP, tempTIME)
 % This function computes the spanwise deflection and twist using an
 % explicit finite difference method given a loading and structural
 % distribution.
@@ -46,18 +46,20 @@ valSTRUCTDELTIME = COND.valSDELTIME;
 
 %% Interpolate values at structural grid points
 
-[matEIx_interp(:,1)] = linterp(SURF.vecSPANDIST,INPU.matEIx(:,1)',temp_y);
-[matEIx_interp(:,2)] = linterp(SURF.vecSPANDIST,INPU.matEIx(:,2)',temp_y);
-[matEIx_interp(:,3)] = linterp(SURF.vecSPANDIST,INPU.matEIx(:,3)',temp_y);
-[matGJt_interp(:,1)] = linterp(SURF.vecSPANDIST,INPU.matGJt(:,1)',temp_y);
-[matGJt_interp(:,2)] = linterp(SURF.vecSPANDIST,INPU.matGJt(:,2)',temp_y);
-[INPU.vecLM] = linterp(SURF.vecSPANDIST,INPU.vecLM',temp_y);
-[INPU.vecJT] = linterp(SURF.vecSPANDIST,INPU.vecJT',temp_y);
-[SURF.vecLSM] = linterp(SURF.vecSPANDIST,SURF.vecLSM',temp_y);
-[OUTP.vecLIFTDIST] = linterp(SURF.vecSPANDIST,OUTP.vecLIFTDIST,temp_y);
-[OUTP.vecMOMDIST] = linterp(SURF.vecSPANDIST,OUTP.vecMOMDIST',temp_y);
+[matEIx_interp(:,1)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,1)',temp_y);
+[matEIx_interp(:,2)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,2)',temp_y);
+[matEIx_interp(:,3)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,3)',temp_y);
+[matGJt_interp(:,1)] = interp1(SURF.vecSPANDIST,INPU.matGJt(:,1)',temp_y);
+[matGJt_interp(:,2)] = interp1(SURF.vecSPANDIST,INPU.matGJt(:,2)',temp_y);
+[INPU.vecLM] = interp1(SURF.vecSPANDIST,INPU.vecLM',temp_y);
+[INPU.vecJT] = interp1(SURF.vecSPANDIST,INPU.vecJT',temp_y);
+[SURF.vecLSM] = interp1(SURF.vecSPANDIST,SURF.vecLSM',temp_y);
 
-% SURF.vecLSM = -SURF.vecLSM;
+if tempTIME == 1
+    [OUTP.vecLIFTDIST] = interp1(SURF.vecSPANDIST,OUTP.vecLIFTDIST',temp_y);
+    [OUTP.vecMOMDIST] = interp1(SURF.vecSPANDIST,OUTP.vecMOMDIST',temp_y);
+end
+
 INPU.matEIx = matEIx_interp;
 INPU.matGJt = matGJt_interp;
 
@@ -65,19 +67,9 @@ OUTP.vecDEF = zeros(1,INPU.valNSELE+4);
 OUTP.vecTWIST = zeros(1,INPU.valNSELE+4);
 vecSLOPE = zeros(1,INPU.valNSELE-1);
 
-% valSTRUCTTIME = valTIMESTEP;
 valSTRUCTTIME = tempTIME + 2;
 
 %% Beam boundary conditions
-
-% OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEFGLOB(1:valTIMESTEP-1,:);
-% OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF(1:valTIMESTEP-1,:);
-% if tempTIME == 1
-% OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEFGLOB((valTIMESTEP-2):valTIMESTEP-1,:);
-% OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWISTGLOB(1:valTIMESTEP-1,:);
-% OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST(1:valTIMESTEP-1,:);
-% OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWISTGLOB((valTIMESTEP-2):valTIMESTEP-1,:);
-% end
 
 if tempTIME == 1
     OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((end-1):end,:);
@@ -88,9 +80,7 @@ OUTP.vecDEF(3) = 0; % Zero deflection at root BC
 OUTP.vecTWIST(3) = 0; % Zero twist at root BC
 
 % Assemble load matrix
-matLOAD = [OUTP.vecLIFTDIST' - INPU.vecLM'.*9.81, OUTP.vecMOMDIST' + SURF.vecLSM'.*INPU.vecLM'.*9.81];
-% matLOAD = [OUTP.vecLIFTDIST', OUTP.vecMOMDIST'];
-% matLOAD(end,:) = [0,0]; 
+matLOAD = [OUTP.vecLIFTDIST - INPU.vecLM.*9.81, OUTP.vecMOMDIST + SURF.vecLSM.*INPU.vecLM.*9.81];
 
 for yy = 4:(INPU.valNSELE+2)
 
@@ -103,7 +93,7 @@ for yy = 4:(INPU.valNSELE+2)
     matK_1 = [INPU.matEIx(yy-2,3), 0; 0, 0];
     matK_2 = [INPU.matEIx(yy-2,2), 0; 0, -INPU.matGJt(yy-2,2)];
     matK_3 = [INPU.matEIx(yy-2,1), 0; 0, -INPU.matGJt(yy-2,1)];
-    matB = [50 0; 0 100];
+    matB = [0 0; 0 20];
 
     %% Finite difference relations for partial derivatives
 
@@ -163,10 +153,10 @@ OUTP.vecTWIST = OUTP.matTWIST(end,:);
 vecSLOPE = [0; vecSLOPE'];
 
 % Spanwise deflection and twist wrt to global timestep
-OUTP.matDEFGLOB(valTIMESTEP,:) = linterp(temp_y,OUTP.matDEF(valSTRUCTTIME,3:end-1),SURF.vecSPANDIST);
-OUTP.matTWISTGLOB(valTIMESTEP,:) = linterp(temp_y,OUTP.matTWIST(valSTRUCTTIME,3:end-1),SURF.vecSPANDIST);
+OUTP.matDEFGLOB(valTIMESTEP,:) = interp1(temp_y,OUTP.matDEF(valSTRUCTTIME,3:end-1),SURF.vecSPANDIST);
+OUTP.matTWISTGLOB(valTIMESTEP,:) = interp1(temp_y,OUTP.matTWIST(valSTRUCTTIME,3:end-1),SURF.vecSPANDIST);
 
-OUTP.matSLOPE(valTIMESTEP,:) = linterp(temp_y(1:end-1),vecSLOPE,SURF.vecSPANDIST(1:end-1));
+OUTP.matSLOPE(valTIMESTEP,:) = interp1(temp_y(1:end-1),vecSLOPE,SURF.vecSPANDIST(1:end-1));
 
 
 end

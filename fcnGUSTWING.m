@@ -26,15 +26,10 @@ gust_vel = zeros(size(fpg,1),1);
 
 % Create gust velocity for sine wave gust
 if flagGUSTMODE == 1
-    
-%     if any(idx1) > 0
-%         gust_vel(idx2) = valGUSTAMP*sin((2*pi*tau/(valGUSTL/valUINF)));
-%         matUINF(idx2,3) = matUINF(idx2,3) + (gust_vel(idx2));
-%     end
 
     if any(idx3 > 0)
         tau = delx(idx3_1,1)./valUINF;
-        gust_vel(idx3_1) = -0.5*valGUSTAMP*(1 - cos((2*pi*tau/(0.5*valGUSTL/valUINF))));
+        gust_vel(idx3_1) = 0.5*valGUSTAMP*(1 - cos((2*pi*tau/(0.5*valGUSTL/valUINF))));
         matUINF(idx3_1,3) = matUINF(idx3_1,3) + (gust_vel(idx3_1));
     end
 
@@ -46,7 +41,7 @@ if flagGUSTMODE == 1
 
     if any(idx5 > 0)
         tau = delx(idx5_1,1)./valUINF;
-        gust_vel(idx5_1) = 0.5*valGUSTAMP*(1 - cos((2*pi*tau/(0.5*valGUSTL/valUINF))));
+        gust_vel(idx5_1) = -0.5*valGUSTAMP*(1 - cos((2*pi*tau/(0.5*valGUSTL/valUINF))));
         matUINF(idx5_1,3) = matUINF(idx5_1,3) + (gust_vel(idx5_1));
     end
 
