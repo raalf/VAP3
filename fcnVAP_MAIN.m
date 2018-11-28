@@ -14,8 +14,8 @@ COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
-FLAG.PRINT = 0;
-FLAG.PLOT = 0;
+FLAG.PRINT = 1;
+FLAG.PLOT = 1;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
@@ -58,7 +58,7 @@ if ~isempty(COND.vecCOLLECTIVE)
     INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
 end
 [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, FLAG, OUTP);
-
+% fcnPLOTPKG([], FLAG, SURF, VISC, WAKE, COND, INPU)
 %% Advance Ratio
 MISC.vecROTORJ = [];
 for jj = 1:length(COND.vecROTORRPM)
@@ -187,14 +187,14 @@ if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0 && ~isempty(valTIMESTEP)
     OUTP.vecCDI_AVG = fcnTIMEAVERAGE(OUTP.vecCDI, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCDP_AVG = fcnTIMEAVERAGE(OUTP.vecCD - OUTP.vecCDI, COND.vecROTORRPM, COND.valDELTIME);
     
-%     for i = 1:max(SURF.vecDVEWING)
-%        OUTP.WING(i).vecLDIST(~any(OUTP.WING(i).vecLDIST, 2), :) = [];
-%        OUTP.WING(i).vecLDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecLDIST, COND.vecROTORRPM, COND.valDELTIME);
-%        OUTP.WING(i).vecDPDIST(~any(OUTP.WING(i).vecDPDIST, 2), :) = [];
-%        OUTP.WING(i).vecDPDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDPDIST, COND.vecROTORRPM, COND.valDELTIME);
-%        OUTP.WING(i).vecDIDIST(~any(OUTP.WING(i).vecDIDIST, 2), :) = [];
-%        OUTP.WING(i).vecDIDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDIDIST, COND.vecROTORRPM, COND.valDELTIME);
-%     end
+    for i = 1:max(SURF.vecDVEWING)
+       OUTP.WING(i).vecLDIST(~any(OUTP.WING(i).vecLDIST, 2), :) = [];
+       OUTP.WING(i).vecLDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecLDIST, COND.vecROTORRPM, COND.valDELTIME);
+       OUTP.WING(i).vecDPDIST(~any(OUTP.WING(i).vecDPDIST, 2), :) = [];
+       OUTP.WING(i).vecDPDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDPDIST, COND.vecROTORRPM, COND.valDELTIME);
+       OUTP.WING(i).vecDIDIST(~any(OUTP.WING(i).vecDIDIST, 2), :) = [];
+       OUTP.WING(i).vecDIDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDIDIST, COND.vecROTORRPM, COND.valDELTIME);
+    end
     
     OUTP.vecCT_AVG = fcnTIMEAVERAGE(OUTP.vecCT, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCFx_AVG = fcnTIMEAVERAGE(OUTP.vecCFx, COND.vecROTORRPM, COND.valDELTIME);
@@ -207,12 +207,12 @@ if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0 && ~isempty(valTIMESTEP)
     OUTP.vecCPI_AVG = fcnTIMEAVERAGE(OUTP.vecCPI, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCPP_AVG = fcnTIMEAVERAGE(OUTP.vecCP - OUTP.vecCPI, COND.vecROTORRPM, COND.valDELTIME);
 
-%     for i = 1:max(SURF.vecDVEROTOR)
-%         OUTP.ROTOR(i).vecTHRUSTDIST(any(~any(OUTP.ROTOR(i).vecTHRUSTDIST, 2), 3), :) = [];
-%         OUTP.ROTOR(i).vecTHRUSTDIST_AVG = fcnTIMEAVERAGE(OUTP.ROTOR(i).vecTHRUSTDIST, COND.vecROTORRPM, COND.valDELTIME);
-%         OUTP.ROTOR(i).vecTORQUEDIST(any(~any(OUTP.ROTOR(i).vecTORQUEDIST, 2), 3), :) = [];
-%         OUTP.ROTOR(i).vecTORQUEDIST_AVG = fcnTIMEAVERAGE(OUTP.ROTOR(i).vecTORQUEDIST, COND.vecROTORRPM, COND.valDELTIME);
-%     end
+    for i = 1:max(SURF.vecDVEROTOR)
+        OUTP.ROTOR(i).vecTHRUSTDIST(any(~any(OUTP.ROTOR(i).vecTHRUSTDIST, 2), 3), :) = [];
+        OUTP.ROTOR(i).vecTHRUSTDIST_AVG = fcnTIMEAVERAGE(OUTP.ROTOR(i).vecTHRUSTDIST, COND.vecROTORRPM, COND.valDELTIME);
+        OUTP.ROTOR(i).vecTORQUEDIST(any(~any(OUTP.ROTOR(i).vecTORQUEDIST, 2), 3), :) = [];
+        OUTP.ROTOR(i).vecTORQUEDIST_AVG = fcnTIMEAVERAGE(OUTP.ROTOR(i).vecTORQUEDIST, COND.vecROTORRPM, COND.valDELTIME);
+    end
     
 elseif FLAG.PREVIEW ~= 1 && ~any(SURF.vecDVEROTOR)
     OUTP.vecCLv_AVG = OUTP.vecCLv(end);

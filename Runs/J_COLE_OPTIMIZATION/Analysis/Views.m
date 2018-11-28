@@ -3,7 +3,8 @@ clear
 
 cd G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\Analysis
 
-try clf(301); end
+figure(300);
+clf(300);
 
 addpath('../../../')
 addpath('../../../airfoils')
@@ -11,18 +12,30 @@ addpath('./../../../Runs/J_COLE_OPTIMIZATION/aux_files')
 addpath('./../../../Runs/J_COLE_OPTIMIZATION/')
 addpath('./../../../Runs/J_COLE_OPTIMIZATION/Analysis')
 
-% z(1,:) = [85.5402	83.9746	76.0336	72.5489	71.8403	71.1037	70.6373	62.761	59.9215	56.108	52.742	125.063	2730.78	116.264	-4.25819	0.647225	262.327	5.79578	0.86871	408.39	-11.7387	0.633426];
-% rotors = [3];
+% z(1,:) = [75.7063 73.2314 71.9348 69.1322 66.9768 64.5894 63.0632 60.3538 58.0564 55.7221 53.5134 159.297 2278.42 464.469 -9.02921 0.865361];
+
 % z(1,:) = [95.4245	92.8958	92.1974	94.3823	87.104	80.0929	78.1465	66.699	58.2872	57.833	55.6887	160	2370.87	434.46	-8.43005	1];
 % rotors = 1;
 
-z(1,:) = [95.445	92.7811	92.1621	94.3397	87.2277	80.1124	78.1725	66.7732	58.3955	57.8899	55.8115	160	2346.6	435.491	-8.41503	1];
-rotors = 1;
+z{1} = [75.176 71.3419 69.6033 68.1224 64.8988 64.9348 61.9753 59.1098 59.9463 57.9888 52.4117 159.43 2276.93 464.578 -9.70714 0.886147];
+z{2} = [75.445 72.566 70.296 67.249 65.547 63.779 60.086 60.699 58.761 60.124 54.47 100 4982.9 463.55 -9.288 0.70461];
+z{3} = [75.9346 73.34 71.08 69.1693 66.56 64.5509 62.04 59.78 57.6571 55.3937 53 113.313 2963.08 125.786 -5.63318 0.79302 262.283 1.71466 0.743511 399.956 -4.10774 0.588716];
+rotors = [1 1 3 1];
+titles{1} = 'Case 1';
+titles{2} = 'Case 5';
+titles{3} = 'Case 3';
+titles{4} = 'Baseline Case';
 
-for i = 1:size(z,1) + 1
+air_temp = -1; % Celsius at 8000 ft altitude
+c = 331.3*sqrt(1 + air_temp/273.15);
+max_tip_speed = 0.84*c; % Mach 0.84 max tip speed
+min_tip_speed = 0.5*c;
+cases = [1 5 3];
 
-    if i <= size(z,1)
-    make_vap_file(z(i,:), i, 11, 0, rotors(i), 3)
+for i = 1:4
+    
+    if i <= 3
+        make_vap_file(z{i}, i, 11, 0, rotors(i), 3, max_tip_speed, min_tip_speed)
     end
     
     cd '../../../'
@@ -30,10 +43,10 @@ for i = 1:size(z,1) + 1
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.vecCOLLECTIVE = repmat(0, rotors(i), 1);
     VAP_IN.vecVEHVINF = 77.2;
-    VAP_IN.valMAXTIME = 0
-    VAP_IN.valSTARTFORCES = 0
+    VAP_IN.valMAXTIME = 1
+    VAP_IN.valSTARTFORCES = 1
     VAP_IN.valDELTIME = (1/60)/(2250/60);
-    if i <= size(z,1)
+    if i <= 3
         OUTP = fcnVAP_MAIN(sprintf('Design_%d.vap',i), VAP_IN);
     else
         OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
@@ -42,14 +55,19 @@ for i = 1:size(z,1) + 1
     
     hFig3 = gcf;
     hFig_view = findobj('Parent',hFig3,'Type','axes');
-    hFig_temp = figure(300);
-    clf(300)
+    hFig_temp = figure(300+i);
+    clf(300+i)
     hSub1 = subplot(2,1,1);
     copyobj(get(hFig_view(1),'Children'),hSub1);
+    gcf;
     view([-90 0])
     
+    title('Front View','FontSize',15)
+    xlabel('Y-Direction (m)','FontSize',10);
+    zlabel('Z-Direction (m)','FontSize',10);
+%     title(titles{i},'FontSize',15);
     hold on
-%     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
+    %     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
     hold off
     set(gca,'XTick',(-1:0.5:1))
     box off
@@ -58,94 +76,104 @@ for i = 1:size(z,1) + 1
     
     hSub2 = subplot(2,1,2);
     copyobj(get(hFig_view(1),'Children'),hSub2);
+    gcf;
     view([90 90])
-    
     box off
     grid on
     axis image
+    
+    title('Top View','FontSize',15)
+    xlabel('X-Direction (m)','FontSize',10);
+    ylabel('Y-Direction (m)','FontSize',10);
+    
+    if i <= 3
+        fcnFIG2LATEX(gcf, ['View_Case_',num2str(cases(i)),'.pdf'],[9 4]);
+    else
+        fcnFIG2LATEX(gcf, ['View_Baseline.pdf'],[9 4]);
+    end
 end
 
-len = size(z,1) + 1;
-for i = 1:len
-    cd '../../../'
-    VAP_IN = [];
-    VAP_IN.vecVEHALPHA = 0;
-    VAP_IN.vecCOLLECTIVE = repmat(0, num_props(i), 1);
-    VAP_IN.vecVEHVINF = 77.2;
-    VAP_IN.valMAXTIME = 0
-    VAP_IN.valSTARTFORCES = 0
-    VAP_IN.valDELTIME = (1/60)/(2250/60);
-    if i <= len - 1
-        OUTP = fcnVAP_MAIN(sprintf('Design_%d.vap',i), VAP_IN);
-    else
-        OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
-    end
-    cd 'Runs/J_COLE_OPTIMIZATION/Analysis/'
-    
-    hFig4 = gcf;
-    hFig_view = findobj('Parent',hFig4,'Type','axes');
-    hFig_temp = figure(301);
-%     clf(301)
-    hSub1 = subplot(len,1,(len + 1) - i);
-    copyobj(get(hFig_view(1),'Children'),hSub1);
-    view([90 90])
-    
-%     hold on
-% %     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
-%     hold off
-%     set(gca,'XTick',(-1:0.5:1))
+% len = size(z,1) + 1;
+% for i = 1:len
+%     cd '../../../'
+%     VAP_IN = [];
+%     VAP_IN.vecVEHALPHA = 0;
+%     VAP_IN.vecCOLLECTIVE = repmat(0, num_props(i), 1);
+%     VAP_IN.vecVEHVINF = 77.2;
+%     VAP_IN.valMAXTIME = 0
+%     VAP_IN.valSTARTFORCES = 0
+%     VAP_IN.valDELTIME = (1/60)/(2250/60);
+%     if i <= len - 1
+%         OUTP = fcnVAP_MAIN(sprintf('Design_%d.vap',i), VAP_IN);
+%     else
+%         OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
+%     end
+%     cd 'Runs/J_COLE_OPTIMIZATION/Analysis/'
+%
+%     hFig4 = gcf;
+%     hFig_view = findobj('Parent',hFig4,'Type','axes');
+%     hFig_temp = figure(301);
+% %     clf(301)
+%     hSub1 = subplot(len,1,(len + 1) - i);
+%     copyobj(get(hFig_view(1),'Children'),hSub1);
+%     view([90 90])
+%
+% %     hold on
+% % %     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
+% %     hold off
+% %     set(gca,'XTick',(-1:0.5:1))
+% %     box off
+% %     grid on
+% %     axis image
+% %
+% %     hSub2 = subplot(2,1,2);
+% %     copyobj(get(hFig_view(1),'Children'),hSub2);
+% %     view([90 90])
+%
 %     box off
 %     grid on
 %     axis image
-%     
-%     hSub2 = subplot(2,1,2);
-%     copyobj(get(hFig_view(1),'Children'),hSub2);
+% end
+%
+%
+% for i = 1:len
+%     try clf(302); end;
+%     cd '../../../'
+%     VAP_IN = [];
+%     VAP_IN.vecVEHALPHA = 0;
+%     VAP_IN.vecCOLLECTIVE = repmat(0, num_props(i), 1);
+%     VAP_IN.vecVEHVINF = 77.2;
+%     VAP_IN.valMAXTIME = 0
+%     VAP_IN.valSTARTFORCES = 0
+%     VAP_IN.valDELTIME = (1/60)/(2250/60);
+%     if i <= len - 1
+%         OUTP = fcnVAP_MAIN(sprintf('Design_%d.vap',i), VAP_IN);
+%     else
+%         OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
+%     end
+%     cd 'Runs/J_COLE_OPTIMIZATION/Analysis/'
+%
+%     hFig5 = gcf;
+%     hFig_view = findobj('Parent',hFig5,'Type','axes');
+%     hFig_temp = figure(302);
+% %     clf(301)
+%     hSub1 = axes;
+%     copyobj(get(hFig_view(1),'Children'), hSub1);
 %     view([90 90])
-    
-    box off
-    grid on
-    axis image
-end
-
-
-for i = 1:len
-    try clf(302); end;
-    cd '../../../'
-    VAP_IN = [];
-    VAP_IN.vecVEHALPHA = 0;
-    VAP_IN.vecCOLLECTIVE = repmat(0, num_props(i), 1);
-    VAP_IN.vecVEHVINF = 77.2;
-    VAP_IN.valMAXTIME = 0
-    VAP_IN.valSTARTFORCES = 0
-    VAP_IN.valDELTIME = (1/60)/(2250/60);
-    if i <= len - 1
-        OUTP = fcnVAP_MAIN(sprintf('Design_%d.vap',i), VAP_IN);
-    else
-        OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
-    end
-    cd 'Runs/J_COLE_OPTIMIZATION/Analysis/'
-    
-    hFig5 = gcf;
-    hFig_view = findobj('Parent',hFig5,'Type','axes');
-    hFig_temp = figure(302);
-%     clf(301)
-    hSub1 = axes;
-    copyobj(get(hFig_view(1),'Children'), hSub1);
-    view([90 90])
-    
-%     hold on
-% %     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
-%     hold off
-%     set(gca,'XTick',(-1:0.5:1))
+%
+% %     hold on
+% % %     circular_arrow(hFig_temp, 1.1*(z(i,12)/2)./100, z(i,15:-1:14)./100, 90, 70, 2, 'k', 1000);
+% %     hold off
+% %     set(gca,'XTick',(-1:0.5:1))
+% %     box off
+% %     grid on
+% %     axis image
+% %
+% %     hSub2 = subplot(2,1,2);
+% %     copyobj(get(hFig_view(1),'Children'),hSub2);
+% %     view([90 90])
+%
 %     box off
 %     grid on
 %     axis image
-%     
-%     hSub2 = subplot(2,1,2);
-%     copyobj(get(hFig_view(1),'Children'),hSub2);
-%     view([90 90])
-    
-    box off
-    grid on
-    axis image
-end
+% end

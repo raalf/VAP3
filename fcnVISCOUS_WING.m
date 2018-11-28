@@ -210,8 +210,7 @@ for i = 1:max(vecDVEWING)
     
 %     temp_dist(i).LDIST = vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*0.395%vecAREADIST(isCurWing);
     temp_dist(i).LDIST = vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing);
-    
-temp_dist(i).DPDIST = vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing);
+    temp_dist(i).DPDIST = vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing);
     
     % Lift force per wing
     LPerWing(i) = sum(vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing));
