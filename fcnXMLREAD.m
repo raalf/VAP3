@@ -220,6 +220,7 @@ for i = 1:INPU.valVEHICLES
         COND.valSDELTIME = str2double(struct.conditions.valSDELTIME.Text);
         INPU.valNSELE = str2double(struct.conditions.valNSELE.Text);
         COND.valSTIFFSTEPS = str2double(struct.conditions.valSTIFFSTEPS.Text);
+        COND.valSTAGGERSTEPS = str2double(struct.conditions.valSTAGGERSTEPS.Text);
         
         INPU.vecEIxCOEFF(1) = str2double(struct.properties.stiffness.A_vecEIx.Text);
         INPU.vecEIxCOEFF(2) = str2double(struct.properties.stiffness.B_vecEIx.Text);
