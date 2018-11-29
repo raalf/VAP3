@@ -106,10 +106,11 @@ CL   = weightN./(0.5*rho*vinf.^2*S);
 % interpolate alpha to maintain steady level flight at VINF
 % using wing only data
 ALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL);
-
+CDvap = interp1([WING_SWEEP.vecVEHALPHA],[WING_SWEEP.vecCD_AVG],ALPHA);
 % LD = interp1(borer(:,1),borer(:,2),vinf*1.94384); % get L/D from Borer Data
 LD = 14;
 CD = CL./(LD); % Calculate CD with Borer L/D Data
+CX = CD - CDvap;
 D  = 0.5*rho*vinf.^2.*CD*S; % Calulate drag force in Newton
 thrust  = (D./cosd(ALPHA))/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
