@@ -230,4 +230,5 @@ hold on
 plot(sweep_vinf, power, '--*b');
 hold off
 
+legend('Baseline','Large Propeller','Location','Northwest')
     

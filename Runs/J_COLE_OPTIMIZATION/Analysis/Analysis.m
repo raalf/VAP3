@@ -14,7 +14,7 @@ z(2,:) = [75.445 72.566 70.296 67.249 65.547 63.779 60.086 60.699 58.761 60.124 
 z(3,:) = [linspace(75.6, 53, 11) 100 4153 463.55 0 1]; %81000
 z(4,:) = [linspace(75.6, 53, 11) 100 4153 170.00 0 0.1]; %81500
 
-% z = [75.9346 73.34 71.08 69.1693 66.56 64.5509 62.04 59.78 57.6571 55.3937 53 113.313 2963.08 125.786 -5.63318 0.79302 262.283 1.71466 0.743511 399.956 -4.10774 0.588716]; % 76404.4
+% z = [76.0239 73.34 71.08 69.2211 66.56 64.6852 62.04 59.78 57.7109 55.6421 53 108.404 3088.79 130.146 -6.62312 0.691719 262.284 0.213806 0.677685 397.291 -3.78213 0.601127]; % 76325.2;
 
 rotors = [1, 1, 1, 1, 1, 3];
 linestyles = {'--';'-.';'-';':'};
@@ -38,18 +38,19 @@ min_tip_speed = 0.5*c;
 % cd Analysis/
 % save('matlab.mat');
 
-% load('matlab.mat');
-% 
-% rotors = [1, 1, 1, 1, 1, 3];
-% i = 6;
-% z = [75.9346 73.34 71.08 69.1693 66.56 64.5509 62.04 59.78 57.6571 55.3937 53 113.313 2963.08 125.786 -5.63318 0.79302 262.283 1.71466 0.743511 399.956 -4.10774 0.588716]; % 76404.4
-% cd ./../
-% [out_all(1,i), Design_all(i).ITER, Design_all(i).ITEROUTP] = fcnOBJECTIVE(z, 11, 0, rotors(i), 3, max_tip_speed, min_tip_speed, 'G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION');
-% cd Analysis/
-% save('matlab2.mat');
+load('matlab4.mat');
+Design_all(6) = [];
+
+rotors = [1, 1, 1, 1, 1, 3];
+i = 6;
+z = [76.0239 73.34 71.08 69.2211 66.56 64.6852 62.04 59.78 57.7109 55.6421 53 108.404 3088.79 130.146 -6.62312 0.691719 262.284 0.213806 0.677685 397.291 -3.78213 0.601127]; % 76325.2;
+cd ./../
+[out_all(1,i), Design_all(i).ITER, Design_all(i).ITEROUTP] = fcnOBJECTIVE(z, 11, 0, rotors(i), 3, max_tip_speed, min_tip_speed, 'G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION');
+cd Analysis/
+save('matlab5.mat');
 
 load('matlab4.mat');
-idx = [5 1 6 2];
+idx = [5 1 2 6];
 len = length(idx);
 
 m_wing = [2 2 2 2 2 1];
@@ -58,7 +59,7 @@ n_rotor = [19 19 19 19 19 10];
 Design = Design_all;
 out = out_all;
 
-legend_entry = {'Baseline Design', 'Case 1', 'Case 3', 'Case 5'};
+legend_entry = {'Baseline', 'Large Propeller', 'Small Propeller', 'Three Propeller'};
 %% Drag Bar Graph
 vinf = 77.2;
 baseline = [Design(idx(1)).ITEROUTP(end).OUTP.vecCD_AVG; ...
@@ -118,9 +119,9 @@ p.Color = colors{1,:};
 
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Radial Location', 'FontSize', 15);
-ylabel('Time-Averaged Thrust Distribution (N/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
+ylabel('Time-Averaged Thrust Distribution (N/m)', 'FontSize', 12);
 
 hold on
 for i = 2:len
@@ -147,9 +148,9 @@ p.Marker = markers{1,:};
 p.Color = colors{1,:};
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Radial Location', 'FontSize', 15);
-ylabel('Time-Averaged Torque Distribution (Nm/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
+ylabel('Time-Averaged Torque Distribution (Nm/m)', 'FontSize', 12);
 
 hold on
 for i = 2:len
@@ -178,9 +179,9 @@ p.Marker = markers{1,:};
 p.Color = colors{1,:};
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Spanwise Location', 'FontSize', 15);
-ylabel('Lift Distribution (N/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
+ylabel('Lift Distribution (N/m)', 'FontSize', 12);
 
 hold on
 for i = 2:len
@@ -208,9 +209,9 @@ p.Marker = markers{1,:};
 p.Color = colors{1,:};
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Spanwise Location', 'FontSize', 15);
-ylabel('Drag Distribution (N/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
+ylabel('Drag Distribution (N/m)', 'FontSize', 12);
 
 hold on
 for i = 2:len
@@ -287,7 +288,7 @@ for j = 1:length(i)
     ylabel('Best Fitness (W)','FontSize',10);
     box on
     grid minor
-    title(['Case ', num2str(i(j))],'FontSize',15)
+    title(['Case ', num2str(i(j))],'FontSize',12)
 %     axis tight
     
 end
@@ -307,7 +308,7 @@ for i = 1:len
     designs(:,i) = designs(:,i).*(0.5.*Design(idx(i)).ITEROUTP(end).OUTP.valDENSITY.*vinf.^2.*(Design(idx(i)).ITEROUTP(end).OUTP.valAREA));
 end
 
-legend_entry = {'y/b/2 = 0.96, Inboard up', 'y/b/2 = 0.35, Inboard down'};
+legend_entry = {'2y_p/b = 0.96, Inboard up', '2y_p/b = 0.35, Inboard down'};
 drag_table_small_props = array2table([designs]','VariableNames',{'D', 'D_i', 'D_p'},'RowNames',legend_entry)
 
 %% Power
@@ -330,9 +331,9 @@ clf(210);
 
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Radial Location', 'FontSize', 15);
-ylabel('Time-Averaged Thrust Distribution (N/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
+ylabel('Time-Averaged Thrust Distribution (N/m)', 'FontSize', 12);
 
 hold on
 for i = 1:len
@@ -359,9 +360,9 @@ clf(211);
 % p.Color = colors{1,:};
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Radial Location', 'FontSize', 15);
-ylabel('Time-Averaged Torque Distribution (Nm/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
+ylabel('Time-Averaged Torque Distribution (Nm/m)', 'FontSize', 12);
 
 hold on
 for i = 1:len
@@ -388,9 +389,9 @@ loc = [Design(6).ITEROUTP(end).OUTP.WING(1).vecSPANLOC_PROJ; 4.82]./(4.82);
 % p.Color = colors{1,:};
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Spanwise Location', 'FontSize', 15);
-ylabel('Lift Distribution (N/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
+ylabel('Lift Distribution (N/m)', 'FontSize', 12);
 
 hold on
 for i = 1:len
@@ -418,9 +419,9 @@ loc = [Design(6).ITEROUTP(end).OUTP.WING(1).vecSPANLOC_PROJ; 4.82]./(4.82);
 % p.Color = colors{1,:};
 grid minor
 box on
-axis tight
-xlabel('Nondimensionalized Spanwise Location', 'FontSize', 15);
-ylabel('Drag Distribution (N/m)', 'FontSize', 15);
+% axis tight
+xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
+ylabel('Drag Distribution (N/m)', 'FontSize', 12);
 
 hold on
 for i = 1:len

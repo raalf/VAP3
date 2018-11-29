@@ -7,7 +7,7 @@
 		<flagTRI>FALSE</flagTRI>
 		<valMAXTIME>160</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.25</valDELTIME>
+		<valDELTIME>0.0004</valDELTIME>
 		<valDELTAE>0</valDELTAE>
 	</settings>
 
@@ -21,8 +21,8 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>FALSE</vinf>
-		<weight>13344.6648</weight>
+		<vinf>77.2</vinf>
+
 		<alpha>10</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
@@ -51,7 +51,7 @@
 <x>0.000000</x>
 <y>0.000000</y>
 <z>0.000000</z>
-<chord>0.759346</chord>
+<chord>0.760239</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -72,7 +72,7 @@
 <x>0.067800</x>
 <y>1.446000</y>
 <z>0.000000</z>
-<chord>0.691693</chord>
+<chord>0.692211</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -86,7 +86,7 @@
 <x>0.113000</x>
 <y>2.410000</y>
 <z>0.000000</z>
-<chord>0.645509</chord>
+<chord>0.646852</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -107,14 +107,14 @@
 <x>0.180800</x>
 <y>3.856000</y>
 <z>0.000000</z>
-<chord>0.576571</chord>
+<chord>0.577109</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.203400</x>
 <y>4.338000</y>
 <z>0.000000</z>
-<chord>0.553937</chord>
+<chord>0.556421</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -127,7 +127,6 @@
 </panel>
 
 </wing>
-
 
 
 

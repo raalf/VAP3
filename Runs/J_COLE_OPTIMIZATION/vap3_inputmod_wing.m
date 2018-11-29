@@ -7,7 +7,7 @@ while ~feof(fp)
 end
 fclose(fp);
 
-wing_M = 2
+wing_M = 1
 str_wing = sprintf(['\n<wing>\n<incidence>0</incidence>\n<trimable>FALSE</trimable>\n<M>', num2str(wing_M), '</M>\n<xorig>0</xorig>\n<yorig>0</yorig>\n<zorig>0</zorig>\n']);
 
 str_panel = sprintf('\n<panel>\n<airfoil>NASA GA(W)-2 Modified</airfoil>\n<symmetry>1</symmetry>\n<N>2</N>\n');
