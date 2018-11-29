@@ -21,7 +21,8 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>77.2</vinf>
+		<vinf>FALSE</vinf>
+		<weight>13344.6648</weight>
 
 		<alpha>10</alpha>
 		<beta>0</beta>
@@ -51,7 +52,7 @@
 <x>0.000000</x>
 <y>0.000000</y>
 <z>0.000000</z>
-<chord>0.760239</chord>
+<chord>0.763609</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -72,7 +73,7 @@
 <x>0.067800</x>
 <y>1.446000</y>
 <z>0.000000</z>
-<chord>0.692211</chord>
+<chord>0.693580</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -86,7 +87,7 @@
 <x>0.113000</x>
 <y>2.410000</y>
 <z>0.000000</z>
-<chord>0.646852</chord>
+<chord>0.649754</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -107,14 +108,14 @@
 <x>0.180800</x>
 <y>3.856000</y>
 <z>0.000000</z>
-<chord>0.577109</chord>
+<chord>0.575467</chord>
 <twist>0.000000</twist>
 </section>
 <section>
 <x>0.203400</x>
 <y>4.338000</y>
 <z>0.000000</z>
-<chord>0.556421</chord>
+<chord>0.554369</chord>
 <twist>0.000000</twist>
 </section>
 <section>
@@ -125,7 +126,6 @@
 <twist>0.000000</twist>
 </section>
 </panel>
-
 </wing>
 
 
