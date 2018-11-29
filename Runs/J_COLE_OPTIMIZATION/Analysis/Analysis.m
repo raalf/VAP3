@@ -318,8 +318,8 @@ designs = [];
 for i = 1:len
     designs(:,i) = [mean(Design(idx(i)).ITEROUTP(end).OUTP.vecCP_AVG,2); mean(Design(idx(i)).ITEROUTP(end).OUTP.vecCPI_AVG,2); mean(Design(idx(i)).ITEROUTP(end).OUTP.vecCPP_AVG,2)];
     designs(:,i) = designs(:,i).*rotors(idx(i)).*(Design(idx(i)).ITEROUTP(end).OUTP.valDENSITY.*(abs(Design(idx(i)).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(idx(i)).ITEROUTP(end).OUTP.vecROTDIAM(1).^5));
-    eff(:,i) = (vinf.*d_tot(i))./...
-        (mean(Design(idx(i)).ITEROUTP(end).OUTP.vecCP_AVG,2).*rotors(idx(i)).*(Design(idx(i)).ITEROUTP(end).OUTP.valDENSITY.*(abs(Design(idx(i)).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(idx(i)).ITEROUTP(end).OUTP.vecROTDIAM(1).^5)));
+    eff(:,i) = (vinf.*(d_tot(i)+500))./...
+        (mean(Design(idx(i)).ITEROUTP(end).OUTP.vecCP_AVG,2).*rotors(idx(i)).*(Design(idx(i)).ITEROUTP(end).OUTP.valDENSITY.*(abs(Design(idx(i)).ITEROUTP(end).OUTP.vecROTORRPM(1)./60).^3).*(Design(idx(i)).ITEROUTP(end).OUTP.vecROTDIAM(1).^5)).*2);
 end
 
 power_table_small_props = array2table([designs.*2]','VariableNames',{'P', 'P_i', 'P_p'},'RowNames',legend_entry)
