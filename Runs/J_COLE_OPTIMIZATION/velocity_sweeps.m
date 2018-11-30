@@ -254,17 +254,19 @@ len = size(sweep_vinf,2);
 for i = 1:len
    aoa(i,1) = ITER(i).AOA(end);
    power(i,1) = sum(2.*ITEROUTP(i).OUTP.vecCP_AVG).*((sweep_rpm(i)/60).^3).*(rotor_diam.^5).*rho;
-   effic(i,:) = sweep_vinf(i).*(ITEROUTP(i).OUTP.vecCT_AVG.*((sweep_rpm(i)/60).^2).*(rotor_diam.^4).*rho)./(ITEROUTP(i).OUTP.vecCP_AVG.*((sweep_rpm(i)/60).^3).*(rotor_diam.^5).*rho);
+   effic(i,:) = sweep_vinf(i).*(ITEROUTP(i).OUTP.vecCT_AVG.*((ITEROUTP(i).OUTP.vecROTORRPM(1)/60).^2).*(ITEROUTP(i).OUTP.vecROTDIAM(1).^4).*rho)./(ITEROUTP(i).OUTP.vecCP_AVG.*((ITEROUTP(i).OUTP.vecROTORRPM(1)/60).^3).*(ITEROUTP(i).OUTP.vecROTDIAM(1).^5).*rho);
    cts(i,:) = ITEROUTP(i).OUTP.vecCT_AVG;
+   cps(i,:) = ITEROUTP(i).OUTP.vecCP_AVG;
 end
 hold on
 plot(sweep_vinf, power, '-.^m');
 hold off
 
-legend('Baseline','Large Propeller','Three Propellers','Location','Northwest')
+legend('Baseline','Large Propeller','Three Propellers','Location','Northwest');
 
-thrust_table = array2table([aoa cts],'VariableNames',{'AOA','CT_1','CT_2','CT_3'})
-
+thrust_table = array2table([aoa sweep_vinf' cts],'VariableNames',{'AOA','V_INF','CT_1','CT_2','CT_3'})
+power_table = array2table([aoa sweep_vinf' cps],'VariableNames',{'AOA','V_INF','CP_1','CP_2','CP_3'})
+efficiency_table = array2table([aoa sweep_vinf' effic],'VariableNames',{'AOA','V_INF','eta_1','eta_2','eta_3'})
 
 
     
