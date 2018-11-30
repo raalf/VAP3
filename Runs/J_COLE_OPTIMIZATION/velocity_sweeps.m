@@ -17,7 +17,6 @@ file = 'Baseline' % Case 3
 rotor_diam = 1.524;
 rotor_rpm = 2250;
 
-
 % %% Wing Sweep
 % 
 % wing_sweep_filename = ['Runs/J_COLE_OPTIMIZATION/',file, '/', file, '_wing.vap'];
@@ -197,30 +196,45 @@ rotor_rpm = 2250;
 %     
 % end   
 % save([file, '/', file, '_sweep.mat']);
-load([file, '/', file, '_sweep.mat']);
+% load([file, '/', file, '_sweep.mat']);
 
 hFig700 = figure(700);
 clf(700)
-rho = .957;
+
+
+% N_prop = 1
+% file = 'Design_1' % Case 3
+% rotor_diam = 1.594300;
+% rotor_rpm = 2276.93;
+
+% % N_prop = 3
+% % file = 'Design_3' % Case 3
+% % rotor_diam = 1.133130;
+% % rotor_rpm = 2963.080000;
+
+N_prop = 1
+file = 'Baseline' % Case 3
+load([file, '/', file, '_sweep.mat']);
+rotor_diam = 1.518;
+rho = .950;
 len = size(sweep_vinf,2);
 for i = 1:len
    aoa(i,1) = ITER(i).AOA(end);
    power(i,1) = sum(2.*ITEROUTP(i).OUTP.vecCP_AVG).*((sweep_rpm(i)/60).^3).*(rotor_diam.^5).*rho;
 end
 plot(sweep_vinf, power, '-ok');
-xlabel('Flight Speed (m/s)','FontSize',15);
-ylabel('Trimmed Power Required (W)','FontSize',15);
+xlabel('Flight Speed (m/s)','FontSize',12);
+ylabel('Trimmed Power Required (W)','FontSize',12);
 grid minor
 box on
-axis tight
+% axis tight
 
 N_prop = 1
 file = 'Design_1' % Case 3
-rotor_diam = 1.594300;
-rotor_rpm = 2276.93;
-clear power
 load([file, '/', file, '_sweep.mat']);
-rho = .957;
+rotor_diam = 1.594300;
+clear power
+rho = .950;
 len = size(sweep_vinf,2);
 for i = 1:len
    aoa(i,1) = ITER(i).AOA(end);
@@ -230,5 +244,27 @@ hold on
 plot(sweep_vinf, power, '--*b');
 hold off
 
-legend('Baseline','Large Propeller','Location','Northwest')
+N_prop = 3
+file = 'Design_3' % Case 3
+clear power aoa
+load([file, '/', file, '_sweep.mat']);
+rotor_diam = 1.0835;
+rho = .950;
+len = size(sweep_vinf,2);
+for i = 1:len
+   aoa(i,1) = ITER(i).AOA(end);
+   power(i,1) = sum(2.*ITEROUTP(i).OUTP.vecCP_AVG).*((sweep_rpm(i)/60).^3).*(rotor_diam.^5).*rho;
+   effic(i,:) = sweep_vinf(i).*(ITEROUTP(i).OUTP.vecCT_AVG.*((sweep_rpm(i)/60).^2).*(rotor_diam.^4).*rho)./(ITEROUTP(i).OUTP.vecCP_AVG.*((sweep_rpm(i)/60).^3).*(rotor_diam.^5).*rho);
+   cts(i,:) = ITEROUTP(i).OUTP.vecCT_AVG;
+end
+hold on
+plot(sweep_vinf, power, '-.^m');
+hold off
+
+legend('Baseline','Large Propeller','Three Propellers','Location','Northwest')
+
+thrust_table = array2table([aoa cts],'VariableNames',{'AOA','CT_1','CT_2','CT_3'})
+
+
+
     

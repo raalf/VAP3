@@ -47,7 +47,7 @@ cd ./../
 cd Analysis/
 save('matlab5.mat');
 
-load('matlab5.mat');
+% load('matlab5.mat');
 idx = [5 1 2 6];
 len = length(idx);
 
@@ -89,132 +89,162 @@ end
 power_table = array2table([baseline.*2 designs.*2]','VariableNames',{'P', 'P_i', 'P_p'},'RowNames',legend_entry)
 
 
-% hFig201 = figure(201);
-% clf(201);
-%
-% b = bar( x, 100.*(designs - repmat(baseline,[1,size(z,1)]))./repmat(baseline,[1,size(z,1)]) );
-% b(1).LineStyle = '--';
-% b(1).LineWidth = 1;
-% % b(2).LineStyle = '-.';
-% % b(2).LineWidth = 1;
-% % b(3).LineStyle = ':';
-% % b(3).LineWidth = 1;
-% grid minor
-% box on
-% axis tight
-%
-% ylabel('Percent Change from Baseline', 'FontSize', 15)
-% % legend('Design 1', 'Design 2', 'Design 3')
+hFig201 = figure(201);
+clf(201);
 
-% %% Prop Thrust Distribution
-% hFig202 = figure(202);
-% clf(202);
-% loc = 2.*(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecSPANLOC)./Design(idx(1)).ITEROUTP(end).OUTP.vecROTDIAM(1);
-% p = plot(loc, mean(reshape(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecTHRUSTDIST_AVG, 1, 19, 3),3)./mean(diff(loc)));
-% p.LineStyle = linestyles{1,:};
-% p.Marker = markers{1,:};
-% p.Color = colors{1,:};
-% 
-% grid minor
-% box on
-% % axis tight
-% xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
-% ylabel('Time-Averaged Thrust Distribution (N/m)', 'FontSize', 12);
-% 
-% hold on
-% for i = 2:len
-%     loc = 2.*(Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(idx(i)).ITEROUTP(end).OUTP.vecROTDIAM(1);
-%     thrust = mean(mean(reshape(cat(1, [Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(:).vecTHRUSTDIST_AVG]), 1, n_rotor(idx(i)), rotors(idx(i))*3),3),1)./mean(diff(loc));
-%     p = plot(loc, thrust);
-%     p.LineStyle = linestyles{i,:};
-%     p.Marker = markers{i,:};
-%     p.Color = colors{i,:};
-% end
-% lgnd = legend(legend_entry,'Location','NorthWest');
-% hold off
-% 
-% % Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
-% fcnFIG2LATEX(hFig202, 'prop_thrust_dist.pdf', 'figures', [7 5]);
-% 
-% %% Prop Power Distribution
-% hFig203 = figure(203);
-% clf(203);
-% loc = 2.*(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecSPANLOC)./Design(idx(1)).ITEROUTP(end).OUTP.vecROTDIAM(1);
-% p = plot(loc, mean(reshape(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecTORQUEDIST_AVG, 1, 19, 3),3)./mean(diff(loc)));
-% p.LineStyle = linestyles{1,:};
-% p.Marker = markers{1,:};
-% p.Color = colors{1,:};
-% grid minor
-% box on
-% % axis tight
-% xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
-% ylabel('Time-Averaged Torque Distribution (Nm/m)', 'FontSize', 12);
-% 
-% hold on
-% for i = 2:len
-%     loc = 2.*(Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(idx(i)).ITEROUTP(end).OUTP.vecROTDIAM(1);
-%     torque = mean(mean(reshape(cat(1, [Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(:).vecTORQUEDIST_AVG]), 1, n_rotor(idx(i)), rotors(idx(i))*3),3),1)./mean(diff(loc));
-%     p = plot(loc, torque);
-%     p.LineStyle = linestyles{i,:};
-%     p.Marker = markers{i,:};
-%     p.Color = colors{i,:};
-% end
-% lgnd = legend(legend_entry,'Location','NorthWest');
-% hold off
-% 
-% % Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
-% fcnFIG2LATEX(hFig203, 'prop_power_dist.pdf', 'figures', [7 5]);
-% 
-% %% Lift Distribution
-% hFig204 = figure(204);
-% clf(204);
-% loc = [Design(6).ITEROUTP(end).OUTP.WING(1).vecSPANLOC_PROJ; 4.82]./4.82;
-% lift = [Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecLDIST_AVG 0]./(4.82/20);
-% 
-% p = plot(loc, lift);
-% p.LineStyle = linestyles{1,:};
-% p.Marker = markers{1,:};
-% p.Color = colors{1,:};
-% grid minor
-% box on
-% % axis tight
-% xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
-% ylabel('Lift Distribution (N/m)', 'FontSize', 12);
-% 
-% hold on
-% for i = 2:len
-% %     loc = 2.*(Design(i).ITEROUTP(end).OUTP.WING(1).vecSPANLOC)./10;
-%     lift = [Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecLDIST_AVG 0]./(4.82/20);
-%     p = plot(loc, lift);
-%     p.LineStyle = linestyles{i,:};
-%     p.Marker = markers{i,:};
-%     p.Color = colors{i,:};
-%  end
-% lgnd = legend(legend_entry,'Location','SouthWest');
-% hold off
-% 
-% % Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
-% fcnFIG2LATEX(hFig204, 'lift_dist.pdf', 'figures', [7 5]);
-% 
+b = bar( x, 100.*(designs - repmat(baseline,[1,size(z,1)]))./repmat(baseline,[1,size(z,1)]) );
+b(1).LineStyle = '--';
+b(1).LineWidth = 1;
+% b(2).LineStyle = '-.';
+% b(2).LineWidth = 1;
+% b(3).LineStyle = ':';
+% b(3).LineWidth = 1;
+grid minor
+box on
+axis tight
+
+ylabel('Percent Change from Baseline', 'FontSize', 15)
+% legend('Design 1', 'Design 2', 'Design 3')
+
+%% Prop Thrust Distribution
+hFig202 = figure(202);
+clf(202);
+loc = 2.*(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecSPANLOC)./Design(idx(1)).ITEROUTP(end).OUTP.vecROTDIAM(1);
+p = plot(loc, mean(reshape(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecTHRUSTDIST_AVG, 1, 19, 3),3)./mean(diff(loc)));
+p.LineStyle = linestyles{1,:};
+p.Marker = markers{1,:};
+p.Color = colors{1,:};
+
+grid minor
+box on
+% axis tight
+xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
+ylabel('Time-Averaged Thrust Distribution (N/m)', 'FontSize', 12);
+
+hold on
+for i = 2:len
+    loc = 2.*(Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(idx(i)).ITEROUTP(end).OUTP.vecROTDIAM(1);
+    thrust = mean(mean(reshape(cat(1, [Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(:).vecTHRUSTDIST_AVG]), 1, n_rotor(idx(i)), rotors(idx(i))*3),3),1)./mean(diff(loc));
+    p = plot(loc, thrust);
+    p.LineStyle = linestyles{i,:};
+    p.Marker = markers{i,:};
+    p.Color = colors{i,:};
+end
+lgnd = legend(legend_entry,'Location','NorthWest');
+hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig202, 'prop_thrust_dist.pdf', 'figures', [7 5]);
+
+%% Prop Power Distribution
+hFig203 = figure(203);
+clf(203);
+loc = 2.*(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecSPANLOC)./Design(idx(1)).ITEROUTP(end).OUTP.vecROTDIAM(1);
+p = plot(loc, mean(reshape(Design(idx(1)).ITEROUTP(end).OUTP.ROTOR.vecTORQUEDIST_AVG, 1, 19, 3),3)./mean(diff(loc)));
+p.LineStyle = linestyles{1,:};
+p.Marker = markers{1,:};
+p.Color = colors{1,:};
+grid minor
+box on
+% axis tight
+xlabel('Nondimensionalized Radial Location', 'FontSize', 12);
+ylabel('Time-Averaged Torque Distribution (Nm/m)', 'FontSize', 12);
+
+hold on
+for i = 2:len
+    loc = 2.*(Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(1).vecSPANLOC)./Design(idx(i)).ITEROUTP(end).OUTP.vecROTDIAM(1);
+    torque = mean(mean(reshape(cat(1, [Design(idx(i)).ITEROUTP(end).OUTP.ROTOR(:).vecTORQUEDIST_AVG]), 1, n_rotor(idx(i)), rotors(idx(i))*3),3),1)./mean(diff(loc));
+    p = plot(loc, torque);
+    p.LineStyle = linestyles{i,:};
+    p.Marker = markers{i,:};
+    p.Color = colors{i,:};
+end
+lgnd = legend(legend_entry,'Location','NorthWest');
+hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig203, 'prop_power_dist.pdf', 'figures', [7 5]);
+
+%% Lift Distribution
+hFig204 = figure(204);
+clf(204);
+loc = [Design(6).ITEROUTP(end).OUTP.WING(1).vecSPANLOC_PROJ; 4.82]./4.82;
+lift = [Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecLDIST_AVG 0]./(4.82/20);
+
+p = plot(loc, lift);
+p.LineStyle = linestyles{1,:};
+p.Marker = markers{1,:};
+p.Color = colors{1,:};
+grid minor
+box on
+% axis tight
+xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
+ylabel('Lift Distribution (N/m)', 'FontSize', 12);
+
+hold on
+for i = 2:len
+%     loc = 2.*(Design(i).ITEROUTP(end).OUTP.WING(1).vecSPANLOC)./10;
+    lift = [Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecLDIST_AVG 0]./(4.82/20);
+    p = plot(loc, lift);
+    p.LineStyle = linestyles{i,:};
+    p.Marker = markers{i,:};
+    p.Color = colors{i,:};
+ end
+lgnd = legend(legend_entry,'Location','SouthWest');
+hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig204, 'lift_dist.pdf', 'figures', [7 5]);
+
+%% Drag Distribution
+hFig205 = figure(205);
+clf(205);
+loc = [Design(6).ITEROUTP(end).OUTP.WING(1).vecSPANLOC_PROJ; 4.82]./4.82;
+drag = [Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecDIDIST_AVG(21:end) + Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0]./(4.82/20);
+p = plot(loc, drag);
+p.LineStyle = linestyles{1,:};
+p.Marker = markers{1,:};
+p.Color = colors{1,:};
+grid minor
+box on
+% axis tight
+xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
+ylabel('Drag Distribution (N/m)', 'FontSize', 12);
+
+hold on
+for i = 2:len
+%     loc = 2.*(Design(i).ITEROUTP(end).OUTP.WING(1).vecSPANLOC)./10;
+    drag = [[nonzeros(Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecDIDIST_AVG)]' + Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0]./(4.82/20);
+    p = plot(loc, drag);
+    p.LineStyle = linestyles{i,:};
+    p.Marker = markers{i,:};
+    p.Color = colors{i,:};
+end
+lgnd = legend(legend_entry,'Location','NorthWest');
+hold off
+
+% Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
+fcnFIG2LATEX(hFig205, 'drag_dist.pdf', 'figures', [7 7]);
+
 % %% Drag Distribution
-% hFig205 = figure(205);
-% clf(205);
+% hFig808 = figure(808);
+% clf(808);
 % loc = [Design(6).ITEROUTP(end).OUTP.WING(1).vecSPANLOC_PROJ; 4.82]./4.82;
-% drag = [Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecDIDIST_AVG(21:end) + Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0]./(4.82/20);
+% drag = [Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0];
 % p = plot(loc, drag);
 % p.LineStyle = linestyles{1,:};
 % p.Marker = markers{1,:};
 % p.Color = colors{1,:};
 % grid minor
 % box on
-% % axis tight
-% xlabel('Nondimensionalized Spanwise Location', 'FontSize', 12);
-% ylabel('Drag Distribution (N/m)', 'FontSize', 12);
+% axis tight
+% xlabel('Spanwise Location (m)', 'FontSize', 15);
+% ylabel('Drag Distribution (N/m)', 'FontSize', 15);
 % 
 % hold on
 % for i = 2:len
 % %     loc = 2.*(Design(i).ITEROUTP(end).OUTP.WING(1).vecSPANLOC)./10;
-%     drag = [[nonzeros(Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecDIDIST_AVG)]' + Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0]./(4.82/20);
+%     drag = [Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0];
 %     p = plot(loc, drag);
 %     p.LineStyle = linestyles{i,:};
 %     p.Marker = markers{i,:};
@@ -224,37 +254,7 @@ power_table = array2table([baseline.*2 designs.*2]','VariableNames',{'P', 'P_i',
 % hold off
 % 
 % % Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
-% fcnFIG2LATEX(hFig205, 'drag_dist.pdf', 'figures', [7 7]);
-% 
-% % %% Drag Distribution
-% % hFig808 = figure(808);
-% % clf(808);
-% % loc = [Design(6).ITEROUTP(end).OUTP.WING(1).vecSPANLOC_PROJ; 4.82]./4.82;
-% % drag = [Design(idx(1)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0];
-% % p = plot(loc, drag);
-% % p.LineStyle = linestyles{1,:};
-% % p.Marker = markers{1,:};
-% % p.Color = colors{1,:};
-% % grid minor
-% % box on
-% % axis tight
-% % xlabel('Spanwise Location (m)', 'FontSize', 15);
-% % ylabel('Drag Distribution (N/m)', 'FontSize', 15);
-% % 
-% % hold on
-% % for i = 2:len
-% % %     loc = 2.*(Design(i).ITEROUTP(end).OUTP.WING(1).vecSPANLOC)./10;
-% %     drag = [Design(idx(i)).ITEROUTP(end).OUTP.WING(1).vecDPDIST_AVG 0];
-% %     p = plot(loc, drag);
-% %     p.LineStyle = linestyles{i,:};
-% %     p.Marker = markers{i,:};
-% %     p.Color = colors{i,:};
-% % end
-% % lgnd = legend(legend_entry,'Location','NorthWest');
-% % hold off
-% % 
-% % % Figure handle, figure name, figure path, [WIDTH HEIGHT] in inches
-% % fcnFIG2LATEX(hFig808, 'drag_dist.pdf', 'figures', [7 7]);
+% fcnFIG2LATEX(hFig808, 'drag_dist.pdf', 'figures', [7 7]);
 
 %% Fitness vs Generation
 hFig206 = figure(206);
