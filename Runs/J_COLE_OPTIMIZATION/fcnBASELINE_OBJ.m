@@ -14,8 +14,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
-    %     VAP_IN.valSTARTFORCES = 3
-    %     VAP_IN.valMAXTIME = 3
+%                 VAP_IN.valSTARTFORCES = 5
+%                 VAP_IN.valMAXTIME = 10
     WING_SWEEP(i) = fcnVAP_MAIN('X57_BASELINE_WING.vap', VAP_IN);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -26,13 +26,13 @@ CL   = weightN./(0.5*rho*vinf.^2*S);
 
 % interpolate alpha to maintain steady level flight at VINF
 % using wing only data
-ALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL);
+ALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL);
 
 % LD = interp1(borer(:,1),borer(:,2),vinf*1.94384); % get L/D from Borer Data
 LD = 14;
 CD = CL./(LD); % Calculate CD with Borer L/D Data
 D  = 0.5*rho*vinf.^2.*CD*S; % Calulate drag force in Newton
-thrust  = D/(2*N_prop); % Calculate Thrust force required from EACH PROP
+thrust  = (D./cosd(ALPHA))/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
 %% Propeller Collective Sweep
 cd '../../'
@@ -43,8 +43,8 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
-    %     VAP_IN.valSTARTFORCES = 3
-    %     VAP_IN.valMAXTIME = 3
+%                 VAP_IN.valSTARTFORCES = 15
+%                 VAP_IN.valMAXTIME = 20
     VAP_IN.valDELTIME = (1/60)/(2250/60);
     PROP_SWEEP(i) = fcnVAP_MAIN('X57_BASELINE_PROP.vap', VAP_IN);
     %     view([90 90]);
@@ -101,7 +101,7 @@ for n = 1:ITER.maxIter
         dCL1 = CL - ITER.CL(1,:);
         dCT1 = CT - ITER.CT(1,:);
         % New sets of AOA input for 2nd iteration in order to hit the targeted CL
-        seqALPHA = interp1([WING_SWEEP.vecCLv],[WING_SWEEP.vecVEHALPHA],CL + dCL1, 'linear', 'extrap');
+        seqALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL + dCL1, 'linear', 'extrap');
         % New sets of collective pitch input for 2nd iteration in order to hit the targeted CT
         vecCOLLECTIVE = interp1(propCT, propColl, CT + dCT1, 'linear', 'extrap');
     elseif n > 2
@@ -123,19 +123,16 @@ for n = 1:ITER.maxIter
     VAP_IN.vecVEHVINF = vinf;
     VAP_IN.valMAXTIME = 160;
     VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-    VAP_IN.valMAXTIME = 160;
-    VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
+%                     VAP_IN.valMAXTIME = 10
+%                 VAP_IN.valSTARTFORCES = 6
     VAP_IN.valDELTIME = (1/60)/(2250/60);
     OUTP = fcnVAP_MAIN('X57_BASELINE.vap', VAP_IN);
     cd 'Runs/J_COLE_OPTIMIZATION/'
     
     % Write results
-    ITER.CL(n,:) = OUTP.vecCL_AVG;
+    ITER.CL(n,:) = OUTP.vecCL_AVG + (2.*(sind(ALPHA).*(sum(OUTP.vecCT_AVG).*((OUTP.vecROTORRPM(1)/60).^2).*(OUTP.vecROTDIAM(1).^4).*rho))./(rho.*S.*vinf.^2));
     ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
-    
-    CDtemp = [OUTP.vecCD];
-    CDtemp(isnan([OUTP.vecCLv])) = nan;
-    ITER.CD(n,:) = nanmean(CDtemp,1);
+    ITER.CD(n,:) = [OUTP.vecCD_AVG];
     
     ITEROUTP(n).OUTP = OUTP;
     
