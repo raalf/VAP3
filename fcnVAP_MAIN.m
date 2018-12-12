@@ -79,7 +79,7 @@ end
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
 
-SURF.matNTDVE = SURF.matDVE;
+SURF.matNPDVE = SURF.matDVE;
 % Computing structure distributions if data exists
 try 
     [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); 
@@ -131,7 +131,9 @@ for valTIMESTEP = 1:COND.valMAXTIME
     end
     
     % Update structure location after moving wing
-    try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU); catch; end
+    try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU); 
+    catch 
+    end
     
     %% Generating new wake elements
     [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnCREATEWAKEROW(FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF);

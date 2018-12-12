@@ -58,7 +58,7 @@ lift_chord = SURF.vecDVELFREE(matROWS) + SURF.vecDVELIND(matROWS); % Lift distri
 % be used to calculate a moment arm between DVE and elastic axis
 for i = 1:INPU.vecM(1)
     
-    row_ledves(:,:,i) = [SURF.matNTVLST(SURF.matNTDVE(matROWS(:,i),1),:); SURF.matNTVLST(SURF.matNTDVE(matROWS(end,i),2),:)]; % LE coordinates of each set of chordwise DVEs
+    row_ledves(:,:,i) = [SURF.matNPVLST(SURF.matNPDVE(matROWS(:,i),1),:); SURF.matNPVLST(SURF.matNPDVE(matROWS(end,i),2),:)]; % LE coordinates of each set of chordwise DVEs
     
     temp_liftdist = repmat(lift_chord(:,i)', size(lift_chord,1),1);
 
