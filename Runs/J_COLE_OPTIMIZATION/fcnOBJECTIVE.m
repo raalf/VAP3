@@ -12,14 +12,6 @@ temp_name = regexprep(tempname('/'), {'/', '\'}, '');
 matname = ['aux_files/z_', temp_name, '.mat'];
 if nargin > 0
     save(matname, 'z', 'N_chord', 'N_dihe', 'N_prop_max', 'Vars_prop');
-else
-    clearvars -except temp_name matname
-    clc
-    
-    N_chord = 11;
-    N_dihe = 0;
-    N_prop_max = 3;
-    Vars_prop = 3;
 end
 
 % Constant propeller values
@@ -36,13 +28,6 @@ airfoil_data = load('airfoils/MH-117.mat');
 
 % Double checking propeller tip speed
 tip_speed = (rotor.diam*pi)/(60/rotor.rpm);
-% max_prop_diam = ((max_tip_speed*(60/rotor.rpm))/pi);
-% min_prop_diam = ((min_tip_speed*(60/rotor.rpm))/pi);
-% if tip_speed > max_tip_speed
-%    rotor.diam = max_prop_diam;
-% elseif tip_speed < min_tip_speed
-%    rotor.diam = min_prop_diam;    
-% end
 max_prop_rpm = 60*(max_tip_speed/(pi*rotor.diam));
 min_prop_rpm = 60*(min_tip_speed/(pi*rotor.diam));
 if tip_speed > max_tip_speed
@@ -94,7 +79,6 @@ for i = 1:length(seqALPHA)
 %                 VAP_IN.valSTARTFORCES = 5
 %                 VAP_IN.valMAXTIME = 10
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
-    %     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(wing_sweep_filename)
@@ -107,7 +91,6 @@ CL   = weightN./(0.5*rho*vinf.^2*S);
 % using wing only data
 ALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL);
 CDvap = interp1([WING_SWEEP.vecVEHALPHA],[WING_SWEEP.vecCD_AVG],ALPHA);
-% LD = interp1(borer(:,1),borer(:,2),vinf*1.94384); % get L/D from Borer Data
 LD = 14;
 CD = CL./(LD); % Calculate CD with Borer L/D Data
 CX = CD - CDvap;
@@ -155,7 +138,6 @@ for i = 1:length(vecCOLLECTIVE)
 %                 VAP_IN.valMAXTIME = 20
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
-    %     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 delete(prop_sweep_filename)
@@ -195,10 +177,6 @@ propColl = reshape(propColl,[],length(unique(propVINF)));
 [~,maxCTidx] = max(propCT);
 propCT(maxCTidx+1:end) = nan;
 
-% idx = propColl<=0; % quick way to hack off the partially stalled propeller
-% idx = ~isnan(propCT);
-% F = scatteredInterpolant(propVINF(idx), propCT(idx), propColl(idx),'linear','nearest');
-
 vecCOLLECTIVE = interp1(propCT, propColl, CT, 'linear', 'extrap');
 
 vecCOLLECTIVE = vecCOLLECTIVE(~isnan(vecCOLLECTIVE));
@@ -222,7 +200,12 @@ TRIMMED = false;
 try
     for n = 1:ITER.maxIter
         
-        if n == 2
+        if n > 1
+            % Alter thrust to account for updated drag prediction 
+            CT = (( ((CX + ITER.CD(n - 1))*(0.5*rho*(vinf.^2)*S))/ cosd(seqALPHA))/(2*N_prop))/(rho*rps^2*ROTDIAM^4);
+        end
+        
+        if n == 2           
             dCL1 = CL - ITER.CL(1,:);
             dCT1 = CT - ITER.CT(1,:);
             % New sets of AOA input for 2nd iteration in order to hit the targeted CL
@@ -232,10 +215,8 @@ try
         elseif n > 2
             % New sets of AOA input for the next iteration in order to hit the targeted CL
             seqALPHA = interp1(ITER.CL(1:n-1),ITER.AOA(1:n-1),CL,'linear','extrap');
-            
             % New sets of collective pitch input input for the next iteration in order to hit the targeted CT
-            vecCOLLECTIVE = interp1(ITER.CT(1:n-1),ITER.CLTV(1:n-1),CT,'linear','extrap');
-            
+            vecCOLLECTIVE = interp1(ITER.CT(1:n-1),ITER.CLTV(1:n-1),CT,'linear','extrap');   
         end
         
         ITER.AOA(n)  = seqALPHA;
@@ -255,14 +236,9 @@ try
         cd 'Runs/J_COLE_OPTIMIZATION/'
         
         % Write results
-%         CL_star = OUTP.vecCL_AVG + (OUTP.vecCT_AVG
         ITER.CL(n,:) = OUTP.vecCL_AVG + (2.*(sind(ALPHA).*(sum(OUTP.vecCT_AVG).*((OUTP.vecROTORRPM(1)/60).^2).*(OUTP.vecROTDIAM(1).^4).*rho))./(rho.*S.*vinf.^2));
         ITER.CT(n,:) = nanmean(OUTP.vecCT_AVG);
-        ITER.CD(n,:) = [OUTP.vecCD_AVG];
-%         CDtemp = [OUTP.vecCD_AVG];
-%         CDtemp(isnan([OUTP.vecCLv])) = nan;
-%         ITER.CD(n,:) = nanmean(CDtemp,1);
-        
+        ITER.CD(n,:) = [OUTP.vecCD_AVG];        
         ITEROUTP(n).OUTP = OUTP;
         
         dCT = abs((ITER.CT(end) - CT)./CT);

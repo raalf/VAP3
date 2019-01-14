@@ -23,8 +23,9 @@ Vars_prop = 3;
 max_tip_speed = 277.7821;
 min_tip_speed = 165.3465;
 
+home_dir = pwd;
 for i = 1:size(z,1)
-        [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed);
+        [out, ITER, ITEROUTP] = fcnOBJECTIVE(z(i,:), N_chord, N_dihe, N_prop_max, Vars_prop, max_tip_speed, min_tip_speed, home_dir);
         
         res_out(i).out = out;
         res_out(i).ITER = ITER;
