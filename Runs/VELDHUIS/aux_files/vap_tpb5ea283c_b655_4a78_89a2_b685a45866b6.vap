@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VAP>
+	<settings>
+		<flagRELAX>FALSE</flagRELAX>
+		<flagSTEADY>TRUE</flagSTEADY>
+		<flagTRI>FALSE</flagTRI>
+		<valMAXTIME>30</valMAXTIME>
+		<valMINTIME>0</valMINTIME>
+		<valDELTIME>0.15</valDELTIME>
+		<valDELTAE>0</valDELTAE>
+	</settings>
+
+	<conditions>
+		<valDENSITY>1.225</valDENSITY>
+		<valKINV>1.450000e-05</valKINV>
+	</conditions>
+
+	<vehicle>
+		<x>0</x>
+		<y>0</y>
+		<z>0</z>
+
+		<vinf>1</vinf>
+
+		<alpha>6</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<trk>0</trk>
+
+		<area>0.3072</area>
+		<span>1.28</span>
+		<cmac>0.24</cmac>
+
+		<interference>0</interference>
+
+		<wing>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+
+			<M>2</M>
+
+			<xorig>0</xorig>
+			<yorig>0</yorig>
+			<zorig>0</zorig>
+
+			<panel>
+				<airfoil>NASA GA(W)-2 Modified</airfoil>
+				<symmetry>1</symmetry>
+				<N>10</N>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>0.24</chord>
+					<twist>0</twist>
+				</section>	
+				<section>
+					<x>0</x>
+					<y>0.640</y>
+					<z>0</z>
+					<chord>0.24</chord>
+					<twist>0</twist>
+				</section>	
+			</panel>
+		</wing>
+
+
+<rotor>
+	<rpm>5008.750921</rpm>
+	<flipy>FALSE</flipy>
+	<collective>0.000000</collective>
+	<dia>0.236000</dia>
+	<xhub>-0.201800</xhub>
+	<yhub>0.240000</yhub>
+	<zhub>0.000000</zhub>
+	<axisx>-1.000000</axisx>
+	<axisy>0.000000</axisy>
+	<axisz>0.000000</axisz>
+	<blades>4</blades>
+	<M>1</M>
+<panel>
+	<airfoil>MH-117</airfoil>
+	<symmetry>0</symmetry>
+	<N>1</N>
+	<section>
+		<x>-0.013660</x>
+		<y>0.023698</y>
+		<z>0.000000</z>
+		<chord>0.054640</chord>
+		<twist>66.488900</twist>
+	</section>
+	<section>
+		<x>-0.016590</x>
+		<y>0.028661</y>
+		<z>0.000000</z>
+		<chord>0.066359</chord>
+		<twist>62.123313</twist>
+	</section>
+	<section>
+		<x>-0.019158</x>
+		<y>0.033625</y>
+		<z>0.000000</z>
+		<chord>0.076632</chord>
+		<twist>58.048358</twist>
+	</section>
+	<section>
+		<x>-0.021233</x>
+		<y>0.038588</y>
+		<z>0.000000</z>
+		<chord>0.084934</chord>
+		<twist>54.310362</twist>
+	</section>
+	<section>
+		<x>-0.022851</x>
+		<y>0.043551</y>
+		<z>0.000000</z>
+		<chord>0.091404</chord>
+		<twist>50.866211</twist>
+	</section>
+	<section>
+		<x>-0.024012</x>
+		<y>0.048514</y>
+		<z>0.000000</z>
+		<chord>0.096047</chord>
+		<twist>47.717574</twist>
+	</section>
+	<section>
+		<x>-0.024770</x>
+		<y>0.053478</y>
+		<z>0.000000</z>
+		<chord>0.099079</chord>
+		<twist>44.838016</twist>
+	</section>
+	<section>
+		<x>-0.025183</x>
+		<y>0.058441</y>
+		<z>0.000000</z>
+		<chord>0.100732</chord>
+		<twist>42.199220</twist>
+	</section>
+	<section>
+		<x>-0.025279</x>
+		<y>0.063404</y>
+		<z>0.000000</z>
+		<chord>0.101115</chord>
+		<twist>39.794242</twist>
+	</section>
+	<section>
+		<x>-0.025126</x>
+		<y>0.068367</y>
+		<z>0.000000</z>
+		<chord>0.100505</chord>
+		<twist>37.577898</twist>
+	</section>
+	<section>
+		<x>-0.024708</x>
+		<y>0.073331</y>
+		<z>0.000000</z>
+		<chord>0.098832</chord>
+		<twist>35.559700</twist>
+	</section>
+	<section>
+		<x>-0.024084</x>
+		<y>0.078294</y>
+		<z>0.000000</z>
+		<chord>0.096335</chord>
+		<twist>33.691177</twist>
+	</section>
+	<section>
+		<x>-0.023219</x>
+		<y>0.083257</y>
+		<z>0.000000</z>
+		<chord>0.092876</chord>
+		<twist>31.979168</twist>
+	</section>
+	<section>
+		<x>-0.022129</x>
+		<y>0.088220</y>
+		<z>0.000000</z>
+		<chord>0.088516</chord>
+		<twist>30.391538</twist>
+	</section>
+	<section>
+		<x>-0.020765</x>
+		<y>0.093184</y>
+		<z>0.000000</z>
+		<chord>0.083059</chord>
+		<twist>28.924711</twist>
+	</section>
+	<section>
+		<x>-0.019075</x>
+		<y>0.098147</y>
+		<z>0.000000</z>
+		<chord>0.076298</chord>
+		<twist>27.562830</twist>
+	</section>
+	<section>
+		<x>-0.016962</x>
+		<y>0.103110</y>
+		<z>0.000000</z>
+		<chord>0.067849</chord>
+		<twist>26.293208</twist>
+	</section>
+	<section>
+		<x>-0.014178</x>
+		<y>0.108073</y>
+		<z>0.000000</z>
+		<chord>0.056712</chord>
+		<twist>25.114220</twist>
+	</section>
+	<section>
+		<x>-0.010312</x>
+		<y>0.113037</y>
+		<z>0.000000</z>
+		<chord>0.041247</chord>
+		<twist>24.008161</twist>
+	</section>
+	<section>
+		<x>-0.003323</x>
+		<y>0.118000</y>
+		<z>0.000000</z>
+		<chord>0.013291</chord>
+		<twist>22.972700</twist>
+	</section>
+</panel>
+</rotor>
+
+
+
+	</vehicle>				
+
+</VAP>
+
+
+
+
