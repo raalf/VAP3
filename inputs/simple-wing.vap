@@ -5,7 +5,7 @@
 		<flagRELAX>FALSE</flagRELAX>
 		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
-		<valMAXTIME>10</valMAXTIME>
+		<valMAXTIME>30</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
 		<valDELTIME>0.25</valDELTIME>
 		<valDELTAE>0</valDELTAE>
@@ -23,14 +23,14 @@
 
 		<vinf>1</vinf>
 
-		<alpha>15</alpha>
+		<alpha>20</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
 		<trk>0</trk>
 
-		<area>10</area>
-		<span>10</span>
+		<area>3</area>
+		<span>3</span>
 		<cmac>1.0</cmac>
 
 		<wing>
@@ -45,28 +45,21 @@
 
 			<panel>
 				<symmetry>0</symmetry>
-				<N>3</N>
-				<section>
-					<x>0</x>
-					<y>-5</y>
-					<z>0</z>
-					<chord>1</chord>
-					<twist>3</twist>
-				</section>
+				<N>20</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
 					<z>0</z>
 					<chord>1</chord>
 					<twist>0</twist>
-				</section>	
+				</section>
 				<section>
 					<x>0</x>
-					<y>5</y>
+					<y>3</y>
 					<z>0</z>
 					<chord>1</chord>
-					<twist>3</twist>
-				</section>
+					<twist>0</twist>
+				</section>	
 			</panel>
 		</wing>
 
