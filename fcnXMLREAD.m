@@ -1,4 +1,4 @@
-function [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN)
+function [FLAG, COND, VISC, INPU, VEHI, SURF] = fcnXMLREAD(filename, VAP_IN)
 
 % clc
 % clear
@@ -47,6 +47,7 @@ end
 % if strcmpi(VAP.settings.FLAG.TRI.Text, 'true') FLAG.TRI = 1; else FLAG.TRI = 0; end
 
 try if strcmpi(VAP.settings.flagFIXEDLIFT.Text, 'true') FLAG.FIXEDLIFT = 1; end; catch FLAG.FIXEDLIFT = 0; end
+try if strcmpi(VAP.settings.flagTRIM.Text, 'true') FLAG.TRIM = 1; end; catch FLAG.TRIM = 0; end
 try FLAG.GUSTMODE = str2double(VAP.conditions.flagGUSTMODE.Text); catch; FLAG.GUSTMODE = 0; end
 
 COND.valMAXTIME = floor(str2double(VAP.settings.valMAXTIME.Text));
@@ -66,6 +67,7 @@ try COND.valGUSTSTART = str2double(VAP.conditions.valGUSTSTART.Text); catch; CON
 INPU.valVEHICLES = max(size(VAP.vehicle));
 
 INPU.matVEHORIG = nan(INPU.valVEHICLES,3);
+INPU.vecVEHCG = nan(INPU.valVEHICLES,3);
 COND.vecVEHVINF = nan(INPU.valVEHICLES,1);
 COND.vecVEHALPHA = nan(INPU.valVEHICLES,1);
 COND.vecVEHBETA = nan(INPU.valVEHICLES,1);
@@ -107,9 +109,9 @@ VISC.vecFPWIDTH = [];
 VISC.vecINTERF = 0;
 
 vecWINGINCID = [];
-vecTRIMABLE = [];
+FLAG.vecTRIMABLE = [];
 vecWINGM = [];
-matWINGORIG = [];
+SURF.matWINGORIG = [];
 vecPANELS = [];
 cellAIRFOILtemp = {};
 VISC.cellAIRFOIL = {};
@@ -146,6 +148,8 @@ for i = 1:INPU.valVEHICLES
     COND.vecVEHFPA(i,1) = str2double(veh.fpa.Text);
     COND.vecVEHTRK(i,1) = str2double(veh.trk.Text);
     
+    try INPU.vecVEHCG(i,:) = [str2double(veh.CG.x.Text) str2double(veh.CG.y.Text) str2double(veh.CG.z.Text)]; catch; INPU.vecVEHCG(i,1:3) = nan; end
+    
     try VEHI.vecVEHRADIUS(i,1) = str2double(veh.radius.Text); end
     
     try vecWINGS(i,1) = max(size(veh.wing)); catch; vecWINGS(i,1) = 0; end
@@ -170,12 +174,19 @@ for i = 1:INPU.valVEHICLES
         try if strcmpi(win.waketri.Text, 'true') COND.vecWAKETRI(k) = 1; end; end;
         
         vecWINGINCID(k) = str2double(win.incidence.Text);
-        if strcmpi(win.trimable.Text, 'true') vecTRIMABLE(j) = 1; else vecTRIMABLE(j) = 0; end
+        if strcmpi(win.trimable.Text, 'true') FLAG.vecTRIMABLE(j,i) = 1; else FLAG.vecTRIMABLE(j,i) = 0; end
+        try if strcmpi(win.flexible.Text, 'true') FLAG.vecFLEXIBLE(j,i) = 1; else FLAG.vecFLEXIBLE(j,i) = 0; end; catch; FLAG.vecFLEXIBLE(j,i) = 0; end
         
         vecWINGM(k,1) = str2double(win.M.Text);
         
-        try matWINGORIG(k,:) = [str2double(win.xorig.Text) str2double(win.yorig.Text) str2double(win.zorig.Text)];
-        catch; matWINGORIG(k,:) = [0 0 0]; end
+        try SURF.matWINGORIG(k,:) = [str2double(win.xorig.Text) str2double(win.yorig.Text) str2double(win.zorig.Text)];
+        catch; SURF.matWINGORIG(k,:) = [0 0 0]; end
+        
+        try SURF.matTRIMORIG(k,:) = [str2double(win.trimorigin.x.Text) str2double(win.trimorigin.y.Text) str2double(win.trimorigin.z.Text)];
+        catch; SURF.matTRIMORIG(k,:) = [0 0 0]; end
+        
+        try SURF.matTRIMAXIS(k,:) = [str2double(win.trimaxis.x.Text) str2double(win.trimaxis.y.Text) str2double(win.trimaxis.z.Text)];
+        catch; SURF.matTRIMAXIS(k,:) = [0 0 0]; end
         
         vecPANELS(k,1) = max(size(win.panel));
         
@@ -193,7 +204,7 @@ for i = 1:INPU.valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matWINGORIG(k,1) str2double(sec.y.Text) + matWINGORIG(k,2) str2double(sec.z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + SURF.matWINGORIG(k,1) str2double(sec.y.Text) + SURF.matWINGORIG(k,2) str2double(sec.z.Text) + SURF.matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;

@@ -1,4 +1,4 @@
-function [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU)
+function [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU, SURF)
 
 % Preallocating for a turbo-boost in performance
 OUTP.vecCL = nan(COND.valMAXTIME,INPU.valVEHICLES);

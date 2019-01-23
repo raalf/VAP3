@@ -14,6 +14,8 @@ vecROTORDEL = vecROTORRADPS.*COND.valDELTIME;
 % update INPU.matVEHORIG positions
 INPU.matVEHORIG = INPU.matVEHORIG + VEHI.matVEHUVW.*COND.valDELTIME;
 
+SURF.matTRIMORIG = SURF.matTRIMORIG + VEHI.matVEHUVW.*COND.valDELTIME;
+
 % crate vecVLSTVEH which is a lookup vector for vertice to vehicle ID
 vecVLSTVEH = unique([reshape(SURF.matDVE,[],1), repmat(SURF.vecDVEVEHICLE,4,1)],'rows');
 vecVLSTVEH = vecVLSTVEH(:,2);
@@ -25,6 +27,8 @@ end
 
 % translation matrix for the vertice list
 SURF.matVLSTTRANS = COND.valDELTIME.*VEHI.matVEHUVW(vecVLSTVEH,:);
+SURF.matNTVLSTTRANS = repmat(SURF.matVLSTTRANS(1,:),size(SURF.matNTVLST,1),1);
+SURF.matNPVLSTTRANS = repmat(SURF.matVLSTTRANS(1,:),size(SURF.matNPVLST,1),1);
 % translation matrix for the dve list
 SURF.matDVETRANS  = COND.valDELTIME.*VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);
 % [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,~, ~, ~, ~, SURF.matDVENORM, ~, ~, ~, ~] = fcnDVECORNER2PARAM(SURF.matCENTER, SURF.matVLST(SURF.matDVE(:,1),:), SURF.matVLST(SURF.matDVE(:,2),:), SURF.matVLST(SURF.matDVE(:,3),:), SURF.matVLST(SURF.matDVE(:,4),:) );
@@ -49,14 +53,14 @@ MISC.matNEWWAKE(:,:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
 MISC.matNEWWAKE(:,:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate WAKE.matWADJE)
-MISC.matNPNEWWAKE(:,:,4) = SURF.matNPVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,3) = SURF.matNPVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
 
 % Translate Vehicles
 SURF.matVLST = SURF.matVLST + SURF.matVLSTTRANS;
 SURF.matCENTER = SURF.matCENTER + SURF.matDVETRANS;
-SURF.matNTVLST = SURF.matNTVLST + SURF.matVLSTTRANS;
-SURF.matNPVLST = SURF.matNPVLST + SURF.matVLSTTRANS;
+SURF.matNTVLST = SURF.matNTVLST + SURF.matNTVLSTTRANS;
+SURF.matNPVLST = SURF.matNPVLST + SURF.matNPVLSTTRANS;
 
 % Circling Flight
 % "backtrack" the UVW translation from previous lines of code, and apply the circling instead
@@ -90,7 +94,9 @@ for n = 1:INPU.valVEHICLES
         SURF.matCENTER(idxDVEVEH,1:2)  = SURF.matCENTER(idxDVEVEH,1:2)  + MISC.matCIRORIG(n,1:2);
         %       VEHI.matVEHROTRATE(n,:)
         %       MISC.matCIRORIG(n,:)
+        
     end
+    try INPU.vecVEHCG(n,1) = INPU.vecVEHCG(n,1) - COND.valDELTIME*COND.vecVEHVINF(n); catch; end
 end
 
 % Rotate Rotors
@@ -165,5 +171,5 @@ MISC.matNEWWAKE(:,:,1) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
 MISC.matNEWWAKE(:,:,2) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
 
 % New non-planar trailing edge vertices (used to calculate WAKE.matWADJE)
-MISC.matNPNEWWAKE(:,:,1) = SURF.matNPVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,2) = SURF.matNPVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,1) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,2) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);

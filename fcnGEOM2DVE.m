@@ -1,4 +1,4 @@
-function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, FLAG, OUTP)
+function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, FLAG, OUTP, SURF)
 
 % tranlsate INPU.matGEOM to vehicle origin
 INPU.matGEOM(:,1:3,:) = INPU.matGEOM(:,1:3,:)+permute(reshape(INPU.matVEHORIG(INPU.matGEOM(:,6,:),:)',3,2,[]),[2,1,3]);

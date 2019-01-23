@@ -3,11 +3,12 @@
 <VAP>
 	<settings>
 		<flagRELAX>FALSE</flagRELAX>
-		<flagSTEADY>FALSE</flagSTEADY>
+		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
+		<flagTRIM>TRUE</flagTRIM>
 		<flagSTIFFWING>FALSE</flagSTIFFWING>
 		<flagGUSTMODE>1</flagGUSTMODE>
-		<valMAXTIME>120</valMAXTIME>
+		<valMAXTIME>75</valMAXTIME>
 		<valMINTIME>0</valMINTIME>
 		<valDELTIME>0.005</valDELTIME>
 		<valDELTAE>0</valDELTAE>
@@ -34,46 +35,97 @@
 		<fpa>0</fpa>
 		<trk>0</trk>
 
+		<CG>
+			<x>0.2</x>
+			<y>0</y>
+			<z>0</z>
+		</CG>
+
 		<area>15.0</area>
 		<span>20.0</span>
-		<cmac>1.0</cmac>
+		<cmac>0.75</cmac>
 
 		<wing>
-			<incidence>0</incidence>
+			<incidence>11</incidence>
 			<trimable>FALSE</trimable>
+			<flexible>TRUE</flexible>
 
-			<M>1</M>
+			<M>3</M>
 
 			<xorig>0</xorig>
 			<yorig>0</yorig>
 			<zorig>0</zorig>
 
 			<panel>
-				<airfoil>NACA2412</airfoil>
+				<airfoil>RAALF-B8</airfoil>
 				<symmetry>1</symmetry>
-				<N>12</N>
+				<N>30</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
 					<z>0</z>
 					<chord>1</chord>
-					<twist>12.65</twist>
+					<twist>0</twist>
 				</section>	
 				<section>
 					<x>0.25</x>
 					<y>10</y>
 					<z>0</z>
 					<chord>0.5</chord>
-					<twist>12.65</twist>
+					<twist>0</twist>
+				</section>
+			</panel>
+		</wing>
+
+		<wing>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+			<flexible>FALSE</flexible>
+
+			<trimorigin>
+				<x>8.625</x>
+				<y>0</y>
+				<z>0</z>
+			</trimorigin>
+
+			<trimaxis>
+				<x>0</x>
+				<y>1</y>
+				<z>0</z>
+			</trimaxis>
+
+			<M>2</M>
+
+			<xorig>8</xorig>
+			<yorig>0</yorig>
+			<zorig>0</zorig>
+
+			<panel>
+				<airfoil>NACA0012</airfoil>
+				<symmetry>1</symmetry>
+				<N>4</N>
+				<section>
+					<x>0</x>
+					<y>0</y>
+					<z>0</z>
+					<chord>1.25</chord>
+					<twist>0</twist>
+				</section>	
+				<section>
+					<x>0.2</x>
+					<y>1</y>
+					<z>0</z>
+					<chord>0.9</chord>
+					<twist>0</twist>
 				</section>
 			</panel>
 		</wing>
 
 		<structure>
 			<conditions>
-				<valSDELTIME>0.0005</valSDELTIME>
-				<valNSELE>20</valNSELE>
-				<valSTIFFSTEPS>30</valSTIFFSTEPS>
+				<valSDELTIME>0.005</valSDELTIME>
+				<valNSELE>30</valNSELE>
+				<valSTIFFSTEPS>75</valSTIFFSTEPS>
 				<valSTAGGERSTEPS>10</valSTAGGERSTEPS>
 			</conditions>
 
@@ -90,8 +142,8 @@
 
 				<geometry>
 					<A_vecEA>0</A_vecEA>
-					<B_vecEA>-0.03</B_vecEA>
-					<C_vecEA>0.5</C_vecEA>
+					<B_vecEA>0</B_vecEA>
+					<C_vecEA>0.25</C_vecEA>
 					
 					<A_vecCG>0</A_vecCG>
 					<B_vecCG>0</B_vecCG>
@@ -105,7 +157,7 @@
 
 					<A_vecLM>0</A_vecLM>
 					<B_vecLM>0</B_vecLM>
-					<C_vecLM>10.0</C_vecLM>
+					<C_vecLM>1.0</C_vecLM>
 				</mass>
 			</properties>
 		</structure>

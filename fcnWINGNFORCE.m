@@ -71,10 +71,19 @@ for i = 1:INPU.valVEHICLES
         try
             if FLAG.STIFFWING ~= 1
 
-                [SURF.vecLEDVES,~,~] = find(SURF.vecDVELE > 0);
+                [SURF.vecLEDVES,~,~] = find(SURF.vecDVELE(SURF.idxFLEX) > 0);
                 
                 [OUTP, ~, ~] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, 1);
                 [OUTP] = fcnFORCEDIST(SURF, COND, INPU, OUTP, valTIMESTEP);
+                
+                valDY = 0.5*INPU.vecSPAN/INPU.valNSELE;
+
+                temp_y = (0:valDY:0.5*INPU.vecSPAN)';
+
+                SURF.vecSPANDIST(end) = temp_y(end);
+                
+                [OUTP.vecLIFTDIST] = interp1(SURF.vecSPANDIST,OUTP.vecLIFTDIST,temp_y);
+                [OUTP.vecMOMDIST] = interp1(SURF.vecSPANDIST,OUTP.vecMOMDIST',temp_y);
 
             else
 

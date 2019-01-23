@@ -1,9 +1,13 @@
-function [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF)
+function [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF, FLAG)
 %% Geometric Properties
 
-% Find DVEs on LE and TE of wing
-[ledves, ~, ~] = find(SURF.vecDVELE > 0);
-[tedves, ~, ~] = find(SURF.vecDVETE > 0);
+% Find indices for flexible wing(s)
+SURF.idxFLEX = find(SURF.vecDVEWING == find(FLAG.vecFLEXIBLE == 1));
+SURF.idxTAIL = find(SURF.vecDVEWING == 2);
+
+% Find DVEs on LE and TE of flexible wing
+[ledves, ~, ~] = find(SURF.vecDVELE(SURF.idxFLEX) > 0);
+[tedves, ~, ~] = find(SURF.vecDVETE(SURF.idxFLEX) > 0);
 
 [matROWS] = fcnDVEROW(ledves, SURF, INPU);
 
@@ -16,11 +20,11 @@ tempDVEEDGECRD = sqrt(sum(tempDVEEDGECRD.^2,2)); % Chord length at each DVE edge
 % center based on DVE edge chord
 matDVEEDGECRD = [tempDVEEDGECRD, zeros(length(tempDVEEDGECRD),2)]; % Chord vector at each DVE edge in local DVE frame (vector pointing from LE to TE)
 
-matQTRCRD = fcnSTARGLOB(0.25*matDVEEDGECRD,[SURF.vecDVEROLL(matROWS(:,1));SURF.vecDVEROLL(matROWS(end,1))],[SURF.vecDVEPITCH(matROWS(:,1));SURF.vecDVEPITCH(matROWS(end,1))],[SURF.vecDVEYAW(matROWS(:,1));SURF.vecDVEYAW(matROWS(end,1))]);
+SURF.matQTRCRD = fcnSTARGLOB(0.25*matDVEEDGECRD,[SURF.vecDVEROLL(matROWS(:,1));SURF.vecDVEROLL(matROWS(end,1))],[SURF.vecDVEPITCH(matROWS(:,1));SURF.vecDVEPITCH(matROWS(end,1))],[SURF.vecDVEYAW(matROWS(:,1));SURF.vecDVEYAW(matROWS(end,1))]);
 
 tempLE = [SURF.matVLST(SURF.matDVE(ledves,1),:); SURF.matVLST(SURF.matDVE(ledves(end),2),:)]; % DVE LE coordinates
 
-SURF.matAEROCNTR = tempLE + matQTRCRD; % X, Y, Z location of aerodynamic center
+SURF.matAEROCNTR = tempLE + SURF.matQTRCRD; % X, Y, Z location of aerodynamic center
 
 % Determine spanwise location (y coordinate) of DVEs
 tempSPANDIST = 2*SURF.vecDVEHVSPN(ledves);
@@ -65,9 +69,9 @@ INPU.vecLM = INPU.vecLMCOEFF(1).*SURF.vecSPANDIST.^2 + INPU.vecLMCOEFF(2).*SURF.
 
 % Determining X,Y,Z location of elastic axis (shear center) and center of
 % mass (CG)
-tempEA = [INPU.vecEA, zeros(length(INPU.vecEA),2)]; % Distance to EA from LE in local coordinates
+tempEA = [INPU.vecEA.*tempDVEEDGECRD(:,1), zeros(length(INPU.vecEA),2)]; % Distance to EA from LE in local coordinates
 
-tempCG = [INPU.vecCG, zeros(length(INPU.vecCG),2)]; % Distance to CG from LE in local coordinates
+tempCG = [INPU.vecCG.*tempDVEEDGECRD(:,1), zeros(length(INPU.vecCG),2)]; % Distance to CG from LE in local coordinates
 
 matCG = fcnSTARGLOB(tempCG,[SURF.vecDVEROLL(matROWS(:,1));SURF.vecDVEROLL(matROWS(end,1))],[SURF.vecDVEPITCH(matROWS(:,1));SURF.vecDVEPITCH(matROWS(end,1))],[SURF.vecDVEYAW(matROWS(:,1));SURF.vecDVEYAW(matROWS(end,1))]); % Transform to global coordinates
 
@@ -88,23 +92,43 @@ SURF.vecLSM = -1.*sign(matLSM(:,1)).*sqrt(sum(matLSM.^2,2)); % If +ve --> CG is 
 % Determine distance of each vertex to SC (to be used for twist velocity
 % later)
 temp_leftV = [SURF.matDVE(matROWS,1),SURF.matDVE(matROWS,4)];
-temp_leftV = reshape(temp_leftV,sum(INPU.vecN,1),[]);
+temp_leftV = reshape(temp_leftV,sum(INPU.vecN(FLAG.vecFLEXIBLE == 1),1),[]);
 
 [move_row,~] = find(temp_leftV); % Vector corresponding to which shear center coordinate to use
 
-tempSCLST = zeros(size(SURF.matVLST,1),3);
+tempSCLST = zeros(size(unique(SURF.matVLST(SURF.matDVE(SURF.idxFLEX,:),:),'rows'),1),3);
 
 tempSCLST(temp_leftV,:) = SURF.matSC(move_row,:);
 
 temp_rightV = [SURF.matDVE(matROWS,2), SURF.matDVE(matROWS,3)];
-temp_rightV = reshape(temp_rightV,sum(INPU.vecN,1),[]);
+temp_rightV = reshape(temp_rightV,sum(INPU.vecN(FLAG.vecFLEXIBLE == 1),1),[]);
 
 [move_row,~] = find(temp_rightV); % Vector corresponding to which shear center coordinate to use
 tempSCLST(temp_rightV,:) = SURF.matSC(move_row+1,:);
 
 SURF.matSCLST = tempSCLST;
 
-SURF.matSCLST = SURF.matSCLST - SURF.matVLST; % Matrix of vectors between shear center and vertex
+SURF.matSCLST = SURF.matSCLST - unique(SURF.matVLST(SURF.matDVE(SURF.idxFLEX,:),:),'rows'); % Matrix of vectors between shear center and vertex
+
+%% Compute structural properties at each structural node
+
+valDY = 0.5*INPU.vecSPAN/INPU.valNSELE;
+
+temp_y = (0:valDY:0.5*INPU.vecSPAN)';
+
+SURF.vecSPANDIST(end) = temp_y(end);
+
+[matEIx_interp(:,1)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,1)',temp_y);
+[matEIx_interp(:,2)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,2)',temp_y);
+[matEIx_interp(:,3)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,3)',temp_y);
+[matGJt_interp(:,1)] = interp1(SURF.vecSPANDIST,INPU.matGJt(:,1)',temp_y);
+[matGJt_interp(:,2)] = interp1(SURF.vecSPANDIST,INPU.matGJt(:,2)',temp_y);
+[INPU.vecLM] = interp1(SURF.vecSPANDIST,INPU.vecLM',temp_y);
+[INPU.vecJT] = interp1(SURF.vecSPANDIST,INPU.vecJT',temp_y);
+[SURF.vecLSM] = interp1(SURF.vecSPANDIST,SURF.vecLSM',temp_y);
+
+INPU.matEIx = matEIx_interp;
+INPU.matGJt = matGJt_interp;
 
 % figure(4)
 % clf

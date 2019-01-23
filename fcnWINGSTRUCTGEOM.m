@@ -15,9 +15,9 @@ function [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU)
 
 SURF.vecSPNWSECRD = [];
 SURF.vecSPNWSEAREA = [];
-[ledves, ~, ~] = find(SURF.vecDVELE > 0);
+[ledves, ~, ~] = find(SURF.vecDVELE(SURF.idxFLEX) > 0);
 
-[matROWS] = fcnDVEROW(ledves, SURF.vecDVEPANEL, SURF.vecDVEWING, INPU.vecM, INPU.vecN);
+[matROWS] = fcnDVEROW(ledves, SURF, INPU);
 
 SURF.vecSPNWSECRD = [SURF.vecSPNWSECRD; 2*sum(SURF.vecDVEHVCRD(matROWS),2)];  % Chord length at each spanwise station mid-point
 SURF.vecSPNWSEAREA = [SURF.vecSPNWSEAREA; sum(SURF.vecDVEAREA(matROWS),2)];

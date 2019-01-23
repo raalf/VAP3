@@ -28,8 +28,9 @@ if FLAG.VISCOUS == 1
                 SURF.matCENTER, SURF.vecDVEHVCRD, VISC.cellAIRFOIL, FLAG.PRINT, INPU.vecSYM, VISC.vecVSPANELS, VISC.matVSGEOM, VISC.vecFPANELS, VISC.matFGEOM, VISC.vecFTURB, ...
                 VISC.vecFPWIDTH, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i), VISC.matFDVE(VISC.vecFDVEVEHICLE == i,:), VISC.matFVLST);
             
-            OUTP.WING(i).vecLDIST(valTIMESTEP,:) = OUTP.WINGDIST.LDIST(~isnan(OUTP.WINGDIST.LDIST))';
-            OUTP.WING(i).vecDPDIST(valTIMESTEP,:) = OUTP.WINGDIST.DPDIST(~isnan(OUTP.WINGDIST.DPDIST))';
+%             OUTP.WING(i).vecLDIST(valTIMESTEP,:) = OUTP.WINGDIST.LDIST(~isnan(OUTP.WINGDIST.LDIST))';
+%             OUTP.WING(i).vecDPDIST(valTIMESTEP,:) = OUTP.WINGDIST.DPDIST(~isnan(OUTP.WINGDIST.DPDIST))';
+% ^ JCole shit. Fix in San Diego
             
             
         end

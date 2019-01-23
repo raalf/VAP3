@@ -1,96 +1,96 @@
-function OUTP = fcnVAP_MAIN(filename, VAP_IN)
+function [OUTP, SURF, COND, INPU, MISC, VEHI, VISC, FLAG, matD, vecR] = fcnVAP_MAIN(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n)
 
-warning off
-if nargin == 0
-    VAP_MAIN;
-    return
-end
-
-%% Reading in geometry
-[FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
-
-COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
-COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
-FLAG.TRI = 0;
-FLAG.GPU = 0;
-
-FLAG.PRINT = 1;
-FLAG.PLOT = 1;
-FLAG.VISCOUS = 1;
-FLAG.CIRCPLOT = 0;
-FLAG.GIF = 0;
-FLAG.PREVIEW = 0;
-FLAG.PLOTWAKEVEL = 0;
-FLAG.PLOTUINF = 0;
-FLAG.VERBOSE = 0;
-FLAG.SAVETIMESTEP = 0;
-
-% Initializing parameters to null/zero/nan
-[WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
-
-if FLAG.PRINT == 1
-    disp('============================================================================');
-    disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$');
-    disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$$');
-    disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   |_  $$');
-    disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/     | $$');
-    disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$     | $$');
-    disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$     | $$');
-    disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$ /$$$$$$');
-    disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/|______/');
-    disp('============================================================================');
-    disp(' ');
-end
-
-% Setting up timestep saving feature
-if FLAG.SAVETIMESTEP == 1
-    if exist('timesteps/') ~= 7; mkdir(timesteps); end
-    timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
-    mkdir(timestep_folder);
-end
-
-% Check if the files required by the viscous calculations exist
-[FLAG] = fcnVISCOUSFILECHECK(FLAG, VISC);
-
-%% Discretizing geometry into DVEs
-% Adding collective pitch to the propeller/rotor
-if ~isempty(COND.vecCOLLECTIVE)
-    INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
-end
-[INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, FLAG, OUTP);
-% fcnPLOTPKG([], FLAG, SURF, VISC, WAKE, COND, INPU)
-%% Advance Ratio
-MISC.vecROTORJ = [];
-for jj = 1:length(COND.vecROTORRPM)
-    MISC.vecROTORJ(jj) = (COND.vecVEHVINF(VEHI.vecROTORVEH(jj))*60)./(abs(COND.vecROTORRPM(jj)).*INPU.vecROTDIAM(jj));
-end
-
-%% Add boundary conditions to D-Matrix
-[matD] = fcnDWING(SURF, INPU);
-
-%% Add kinematic conditions to D-Matrix
-[SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
-[matD] = fcnKINCON(matD, SURF, INPU, FLAG);
-
-%% Preparing to timestep
-% Building wing resultant
-[vecR] = fcnRWING(0, SURF, WAKE, FLAG);
-
-% Solving for wing coefficients
-[SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
-
-SURF.matNPDVE = SURF.matDVE;
-% Computing structure distributions if data exists
-try 
-    [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); 
-    FLAG.STRUCTURE = 1; % Create flag if structure data exists
-catch
-    FLAG.STRUCTURE = 0; 
-end
-
-n = 1;
-valGUSTTIME = 1;
-SURF.gust_vel_old = zeros(SURF.valNELE,1);
+% warning off
+% if nargin == 0
+%     VAP_MAIN;
+%     return
+% end
+% 
+% %% Reading in geometry
+% [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
+% 
+% COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
+% COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
+% FLAG.TRI = 0;
+% FLAG.GPU = 0;
+% 
+% FLAG.PRINT = 1;
+% FLAG.PLOT = 1;
+% FLAG.VISCOUS = 1;
+% FLAG.CIRCPLOT = 0;
+% FLAG.GIF = 0;
+% FLAG.PREVIEW = 0;
+% FLAG.PLOTWAKEVEL = 0;
+% FLAG.PLOTUINF = 0;
+% FLAG.VERBOSE = 0;
+% FLAG.SAVETIMESTEP = 0;
+% 
+% % Initializing parameters to null/zero/nan
+% [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
+% 
+% if FLAG.PRINT == 1
+%     disp('============================================================================');
+%     disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$');
+%     disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$$');
+%     disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   |_  $$');
+%     disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/     | $$');
+%     disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$     | $$');
+%     disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$     | $$');
+%     disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$ /$$$$$$');
+%     disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/|______/');
+%     disp('============================================================================');
+%     disp(' ');
+% end
+% 
+% % Setting up timestep saving feature
+% if FLAG.SAVETIMESTEP == 1
+%     if exist('timesteps/') ~= 7; mkdir(timesteps); end
+%     timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
+%     mkdir(timestep_folder);
+% end
+% 
+% % Check if the files required by the viscous calculations exist
+% [FLAG] = fcnVISCOUSFILECHECK(FLAG, VISC);
+% 
+% %% Discretizing geometry into DVEs
+% % Adding collective pitch to the propeller/rotor
+% if ~isempty(COND.vecCOLLECTIVE)
+%     INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
+% end
+% [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, FLAG, OUTP);
+% % fcnPLOTPKG([], FLAG, SURF, VISC, WAKE, COND, INPU)
+% %% Advance Ratio
+% MISC.vecROTORJ = [];
+% for jj = 1:length(COND.vecROTORRPM)
+%     MISC.vecROTORJ(jj) = (COND.vecVEHVINF(VEHI.vecROTORVEH(jj))*60)./(abs(COND.vecROTORRPM(jj)).*INPU.vecROTDIAM(jj));
+% end
+% 
+% %% Add boundary conditions to D-Matrix
+% [matD] = fcnDWING(SURF, INPU);
+% 
+% %% Add kinematic conditions to D-Matrix
+% [SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
+% [matD] = fcnKINCON(matD, SURF, INPU, FLAG);
+% 
+% %% Preparing to timestep
+% % Building wing resultant
+% [vecR] = fcnRWING(0, SURF, WAKE, FLAG);
+% 
+% % Solving for wing coefficients
+% [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+% 
+% SURF.matNPDVE = SURF.matDVE;
+% % Computing structure distributions if data exists
+% try 
+%     [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); 
+%     FLAG.STRUCTURE = 1; % Create flag if structure data exists
+% catch
+%     FLAG.STRUCTURE = 0; 
+% end
+% 
+% n = 1;
+% valGUSTTIME = 1;
+% SURF.gust_vel_old = zeros(SURF.valNELE,1);
 
 %% Timestepping
 
@@ -116,12 +116,12 @@ for valTIMESTEP = 1:COND.valMAXTIME
             
             [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, valTIMESTEP);
             
-            if FLAG.STIFFWING == 2
-                [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
-            end
+%             if FLAG.STIFFWING == 2
+%                 [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF, FLAG);
+%             end
             
-        elseif valTIMESTEP == n*COND.valSTIFFSTEPS + 1 || valGUSTTIME > 1
-            [COND, INPU, OUTP, MISC, SURF, valGUSTTIME] = fcnFLEXWING(INPU, COND, SURF, OUTP, FLAG, MISC, valGUSTTIME, valTIMESTEP);
+        elseif valTIMESTEP == n*COND.valSTIFFSTEPS + 1 || COND.valGUSTTIME > 1
+            [COND, INPU, OUTP, MISC, SURF, FLAG] = fcnFLEXWING(INPU, COND, SURF, OUTP, FLAG, MISC, VEHI, valTIMESTEP);
             n = n + 1;
         else
             [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING_STATIC(INPU, VEHI, MISC, COND, SURF, VISC, OUTP, valTIMESTEP);
@@ -134,7 +134,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU); 
     catch 
     end
-    
+       
     %% Generating new wake elements
     [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnCREATEWAKEROW(FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF);
     
@@ -167,7 +167,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         %% Forces
         if valTIMESTEP >= COND.valSTARTFORCES
-            [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
+            [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP, FLAG] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
         end
         
         if FLAG.SAVETIMESTEP == 1

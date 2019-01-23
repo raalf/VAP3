@@ -6,7 +6,7 @@ function [matROWS] = fcnDVEROW(ledves, SURF, INPU)
 lepanels = SURF.vecDVEPANEL(ledves);
 
 % Determine DVEs in each spanwise station
-for i = 1:max(SURF.vecDVEWING)
+for i = 1:max(SURF.vecDVEWING(SURF.idxFLEX))
 
 	idxdve = ledves(SURF.vecDVEWING(ledves) == i);
 	idxpanel = lepanels(SURF.vecDVEWING(ledves) == i);

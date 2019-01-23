@@ -1,19 +1,26 @@
-function [SURF, MISC, COND] = fcnMOVEFLEXWING(COND, SURF, OUTP, INPU, MISC, valTIMESTEP)
+function [SURF, MISC, COND] = fcnMOVEFLEXWING(COND, SURF, OUTP, INPU, MISC, FLAG, VEHI, valTIMESTEP)
 % MISC.matNEWWAKE, MISC.matNPNEWWAKE,
 % This function determines the velocities with which the DVEs are moved
 % based on the deflection and twist of the wing. The corresponding
 % translations are then computed of the DVE vertices and control points.
 
-[ledves, ~, ~] = find(SURF.vecDVELE > 0);
+if COND.valFULLTRIMSTEP > 1 && FLAG.FULLTRIM == 0
+    
+    OUTP.matDEFGLOB = OUTP.matDEFGLOBTRIM;
+    OUTP.matTWISTGLOB = OUTP.matTWISTGLOBTRIM;
+    
+end
+
+[ledves, ~, ~] = find(SURF.vecDVELE(SURF.idxFLEX) > 0);
 
 % Span of each spanwise set of DVEs
 vecDVESPAN = 2*SURF.vecDVEHVSPN(ledves)';
 
 % Calculate cartesian velocity of DVE edges
 
-temp = [linterp(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,1),SURF.vecSPANDIST(2:end-1))',...
-    linterp(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,2),SURF.vecSPANDIST(2:end-1))',...
-    linterp(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,3),SURF.vecSPANDIST(2:end-1))'];
+temp = [interp1(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,1),SURF.vecSPANDIST(2:end-1)),...
+    interp1(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,2),SURF.vecSPANDIST(2:end-1)),...
+    interp1(SURF.matCENTER(ledves,2),SURF.matUINF(ledves,3),SURF.vecSPANDIST(2:end-1))];
 
 % Extrapolate velocity at wing tips
 uinf_root = ((temp(1,:) - SURF.matUINF(ledves(1),:))./(SURF.vecSPANDIST(2)-SURF.matCENTER(ledves(1),2))).*(SURF.vecSPANDIST(1)-SURF.matCENTER(ledves(1),2))+SURF.matUINF(ledves(1),:);
@@ -37,13 +44,16 @@ vecZVEL = matUINF_edge(:,3) + ((OUTP.matDEFGLOB(valTIMESTEP,:) - OUTP.matDEFGLOB
 
 % All left LE and TE points to move
 temp_leftV = [SURF.matNPDVE(matROWS,1),SURF.matNPDVE(matROWS,4)];
-temp_leftV = reshape(temp_leftV,sum(INPU.vecN,1),[]);
+temp_leftV = reshape(temp_leftV,sum(INPU.vecN(FLAG.vecFLEXIBLE == 1),1),[]);
 
 [move_row,~] = find(temp_leftV); % Vector correspond to which index of deflection velocity matrix should be used for each element
 
+tempENDWING = max(max(SURF.matNPDVE(SURF.idxFLEX,:))); % Index for last row in matNPVLST that corresponds to the wing
+tempENDTAIL = max(max(SURF.matNPDVE(SURF.idxTAIL,:)));
+
 % Allocate space for translation matrices
-translateNTVLST = zeros(size(SURF.matNPVLST,1),3);
-temp_translate = zeros(size(SURF.matNPVLST,1),3);
+translateNTVLST = zeros(size(SURF.matNPVLST(1:tempENDWING),1),3);
+temp_translate = zeros(size(SURF.matNPVLST(1:tempENDWING),1),3);
 
 temp_r = [sqrt(sum(SURF.matSCLST.^2,2)), zeros(length(SURF.matSCLST(:,1)),2)]; % Distance between vertex and shear center
 
@@ -102,7 +112,7 @@ translateNTVLST(temp_leftV,3) = -1*COND.valDELTIME.*vecZVEL(move_row);
 % ======================== Right Edge Displacements =======================
 % All right LE and TE points to move
 temp_rightV = [SURF.matNPDVE(matROWS,2), SURF.matNPDVE(matROWS,3)];
-temp_rightV = reshape(temp_rightV,sum(INPU.vecN,1),[]);
+temp_rightV = reshape(temp_rightV,sum(INPU.vecN(FLAG.vecFLEXIBLE == 1),1),[]);
 
 [move_row,~] = find(temp_rightV); % Vector correspond to which index of deflection velocity matrix should be used for each element
 
@@ -136,20 +146,27 @@ translateNTVLST(temp_rightV,1) = COND.valDELTIME.*vecXVEL(move_row+1);
 translateNTVLST(temp_rightV,2) = COND.valDELTIME.*vecYVEL(move_row+1);
 translateNTVLST(temp_rightV,3) = -1*COND.valDELTIME.*vecZVEL(move_row+1);
 
+%% Move stiff tail if it exists
+SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matVEHUVW,size(SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:),1),1);
+SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matVEHUVW,size(SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:),1),1);
+
 %% Move wing and generate new wake elements
 
 % Old trailing edge vertices
-MISC.matNEWWAKE(:,:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
-MISC.matNEWWAKE(:,:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
+MISC.matNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
+MISC.matNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate matWADJE)
-MISC.matNPNEWWAKE(:,:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
+
+MISC.matNPNEWWAKE(length(find(SURF.vecDVETE(SURF.idxFLEX) == 3))+1:end,:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.idxTAIL(SURF.vecDVETE(SURF.idxTAIL)>0),4),:);
+MISC.matNPNEWWAKE(length(find(SURF.vecDVETE(SURF.idxFLEX) == 3))+1:end,:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.idxTAIL(SURF.vecDVETE(SURF.idxTAIL)>0),3),:);
 
 % Update SURF.matVLST and SURF.matNTVLST
-SURF.matNPVLST = SURF.matNPVLST - (translateNTVLST - temp_translate);
+SURF.matNPVLST(1:tempENDWING,:) = SURF.matNPVLST(1:tempENDWING,:) - (translateNTVLST - temp_translate);
 
 % New non-planar trailing edge vertices (used to calculate matWADJE)
-MISC.matNPNEWWAKE(:,:,1) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,2) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,1) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,2) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
 

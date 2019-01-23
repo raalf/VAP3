@@ -14,8 +14,8 @@ n = 1;
     
 % end
 
-OUTP.matDEFGLOB(valTIMESTEP,:) = zeros(1,sum(INPU.vecN,1)+1);
+OUTP.matDEFGLOB(valTIMESTEP,:) = zeros(1,sum(INPU.vecN(FLAG.vecFLEXIBLE == 1),1)+1);
 
-OUTP.matTWISTGLOB(valTIMESTEP,:) = zeros(1,sum(INPU.vecN,1)+1);
+OUTP.matTWISTGLOB(valTIMESTEP,:) = zeros(1,sum(INPU.vecN(FLAG.vecFLEXIBLE == 1),1)+1);
 
 end
