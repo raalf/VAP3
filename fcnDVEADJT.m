@@ -55,12 +55,12 @@ tempTIP(symidx) = 1;
 dveidx = findTIPSYM(symidx,1);
 vecDVESYM(dveidx) = 4;
 
-% If the panel has vecSYM = 2, those panels' local edge 2 has symmetry
-panelidx = find(vecSYM==2);
-symidx = (findTIPSYM(:,2)==2 & ismember(findTIPSYM(:,5),panelidx));
-tempTIP(symidx) = 1;
-dveidx = findTIPSYM(symidx,1);
-vecDVESYM(dveidx) = 2;
+% % If the panel has vecSYM = 2, those panels' local edge 2 has symmetry
+% panelidx = find(vecSYM==2);
+% symidx = (findTIPSYM(:,2)==2 & ismember(findTIPSYM(:,5),panelidx));
+% tempTIP(symidx) = 1;
+% dveidx = findTIPSYM(symidx,1);
+% vecDVESYM(dveidx) = 2;
 
 % If the edge is not touching another dve nor symmetry edge,
 % Define it as wing tip

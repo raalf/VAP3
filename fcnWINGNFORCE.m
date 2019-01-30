@@ -36,23 +36,14 @@ for i = 1:INPU.valVEHICLES
         inddragsum = 0;
         
         %sum values from all elements
-        ntfree(1) = sum(SURF.vecDVELFREE(idxvehwing));
-        ntfree(2) = sum(SURF.vecDVESFREE(idxvehwing));
+        ntfree(1) = sum(SURF.vecDVELFREE(idxvehwing)) + sum(SURF.vecDVELFREE(SURF.vecDVESYM(idxvehwing)));
+        ntfree(2) = sum(SURF.vecDVESFREE(idxvehwing)) + sum(SURF.vecDVESFREE(SURF.vecDVESYM(idxvehwing)));
         
-        ntind(1) = sum(SURF.vecDVELIND(idxvehwing));
-        ntind(2) = sum(SURF.vecDVESIND(idxvehwing));
+        ntind(1) = sum(SURF.vecDVELIND(idxvehwing)) + sum(SURF.vecDVELIND(SURF.vecDVESYM(idxvehwing)));
+        ntind(2) = sum(SURF.vecDVESIND(idxvehwing)) + sum(SURF.vecDVESIND(SURF.vecDVESYM(idxvehwing)));
         
-        inddragsum = sum(inddrag(idxvehwing));
-        %double the force if we are using symmetry. This only works with sym for
-        %the whole system
-        if any(SURF.vecDVESYM) == 1 && ~any(COND.vecVEHBETA(i)) %not sure why beta has to be zero
-%             disp('Symmetry is not currently working here! fcnWINGNFORCE');
-            ntfree(1) = ntfree(1)*2; %why dont we double the side force?
-            ntind(1) = ntind(1)*2;
-            ntind(2) = ntind(2)*2;
-            inddragsum = inddragsum*2;
-        end
-        
+        inddragsum = sum(inddrag(idxvehwing)) + sum(inddrag(SURF.vecDVESYM(idxvehwing)));
+                
         %non-dimensionalize
         valCL(i) = (ntfree(1) + ntind(1))/q(i);
         valCLF(i) = ntfree(1)/q(i);

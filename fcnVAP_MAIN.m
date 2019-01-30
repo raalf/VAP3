@@ -1,5 +1,4 @@
 function OUTP = fcnVAP_MAIN(filename, VAP_IN)
-
 warning off
 if nargin == 0
     VAP_MAIN;
@@ -9,17 +8,12 @@ end
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
 
-COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
-COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
-FLAG.TRI = 0;
-FLAG.GPU = 0;
-
 FLAG.PRINT = 1;
-FLAG.PLOT = 0;
-FLAG.VISCOUS = 1;
+FLAG.PLOT = 1;
+FLAG.VISCOUS = 0;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
-FLAG.PREVIEW = 0;
+FLAG.PREVIEW = 1;
 FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
@@ -28,6 +22,7 @@ FLAG.SAVETIMESTEP = 0;
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
 
+%%
 if FLAG.PRINT == 1
     disp('============================================================================');
     disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$');
@@ -42,6 +37,7 @@ if FLAG.PRINT == 1
     disp(' ');
 end
 
+%%
 % Setting up timestep saving feature
 if FLAG.SAVETIMESTEP == 1
     if exist('timesteps/') ~= 7; mkdir(timesteps); end
@@ -59,6 +55,7 @@ if ~isempty(COND.vecCOLLECTIVE)
 end
 [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, FLAG, OUTP);
 % fcnPLOTPKG([], FLAG, SURF, VISC, WAKE, COND, INPU)
+
 %% Advance Ratio
 MISC.vecROTORJ = [];
 for jj = 1:length(COND.vecROTORRPM)
@@ -93,7 +90,6 @@ valGUSTTIME = 1;
 SURF.gust_vel_old = zeros(SURF.valNELE,1);
 
 %% Timestepping
-
 for valTIMESTEP = 1:COND.valMAXTIME
     %% Timestep to solution
     %   Move wing
@@ -144,7 +140,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         idx = sparse(sum(ismember(WAKE.matWADJE,[((WAKE.valWNELE - WAKE.valWSIZE) + 1):WAKE.valWNELE]'),2)>0 & (WAKE.matWADJE(:,2) == 4 | WAKE.matWADJE(:,2) == 2));
         temp_WADJE = [WAKE.matWADJE(idx,1) - (valTIMESTEP-1)*WAKE.valWSIZE WAKE.matWADJE(idx,2) WAKE.matWADJE(idx,3) - (valTIMESTEP-1)*WAKE.valWSIZE];
         
-        [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWSIZE]', temp_WADJE, WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end), WAKE.vecWDVESYM(end-WAKE.valWSIZE+1:end), WAKE.vecWDVETIP(end-WAKE.valWSIZE+1:end), WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), INPU.vecN);
+        [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWSIZE]', temp_WADJE, WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end), WAKE.vecWDVESYMEDGE(end-WAKE.valWSIZE+1:end), WAKE.vecWDVETIP(end-WAKE.valWSIZE+1:end), WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), INPU.vecN);
         [WAKE.matWCOEFF(end-WAKE.valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWSIZE, WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end));
         
         %% Rebuilding and solving wing resultant
@@ -153,7 +149,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
         
         %% Creating and solving WD-Matrix
-        [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+        [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYMEDGE, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
         [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
         
         %% Relaxing wake
@@ -161,7 +157,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
             WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG, INPU);
             
             % Creating and solving WD-Matrix
-            [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+            [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYMEDGE, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
             [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
         end
         

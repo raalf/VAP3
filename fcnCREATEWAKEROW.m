@@ -30,9 +30,10 @@ WAKE.vecWDVEPANEL = cat(1, WAKE.vecWDVEPANEL, SURF.vecDVEPANEL(SURF.vecDVETE>0))
 WAKE.vecWK = cat(1, WAKE.vecWK, SURF.vecK(SURF.vecDVETE>0));
 WAKE.vecWDVESURFACE = cat(1, WAKE.vecWDVESURFACE, SURF.vecDVESURFACE(SURF.vecDVETE > 0));
 WAKE.vecWPLOTSURF = cat(1, WAKE.vecWPLOTSURF, SURF.vecDVEWING(SURF.vecDVETE > 0) + (SURF.vecDVEROTOR(SURF.vecDVETE > 0) + max(SURF.vecDVEWING).*uint8(SURF.vecDVEROTOR(SURF.vecDVETE > 0) > 0)));
-
+WAKE.vecWDVESYM = cat(1, WAKE.vecWDVESYM, SURF.vecDVESYM(SURF.vecDVETE > 0));
+    
 if WAKE.valWNELE - len == 0
-    [ WAKE.matWADJE, WAKE.vecWDVESYM, WAKE.vecWDVETIP, ~, ~ ] = fcnDVEADJT(MISC.matNPNEWWAKE(:,:,1), MISC.matNPNEWWAKE(:,:,2), MISC.matNPNEWWAKE(:,:,3), MISC.matNPNEWWAKE(:,:,4), WAKE.valWNELE, WAKE.vecWDVEPANEL, INPU.vecSYM );
+    [ WAKE.matWADJE, WAKE.vecWDVESYMEDGE, WAKE.vecWDVETIP, ~, ~ ] = fcnDVEADJT(MISC.matNPNEWWAKE(:,:,1), MISC.matNPNEWWAKE(:,:,2), MISC.matNPNEWWAKE(:,:,3), MISC.matNPNEWWAKE(:,:,4), WAKE.valWNELE, WAKE.vecWDVEPANEL, INPU.vecSYM );
     WAKE.valLENWADJE = length(WAKE.matWADJE(:,1));
 else
     
@@ -42,7 +43,7 @@ else
     
     % [WAKE.matWADJE]  DVE# | Local Edge | DVE# | # of Panels This DVE is Touching
     WAKE.matWADJE = uint32([WAKE.matWADJE(:,1:4); old_adje_le; new_adje_spanwise; new_adje_te]);
-    WAKE.vecWDVESYM = [WAKE.vecWDVESYM; WAKE.vecWDVESYM(1:len)];
+    WAKE.vecWDVESYMEDGE = [WAKE.vecWDVESYMEDGE; WAKE.vecWDVESYMEDGE(1:len)];
     WAKE.vecWDVETIP = [WAKE.vecWDVETIP; WAKE.vecWDVETIP(1:len)];
 end
 

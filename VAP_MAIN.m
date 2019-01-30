@@ -2,7 +2,7 @@
 clear
 warning off
 
-filename = 'inputs/simple-wing.vap';
+filename = 'inputs/Goland_Wing.vap';
 
 VAP_IN = [];
 OUTP = fcnVAP_MAIN(filename, VAP_IN);

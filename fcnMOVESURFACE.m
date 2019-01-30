@@ -29,15 +29,6 @@ SURF.matVLSTTRANS = COND.valDELTIME.*VEHI.matVEHUVW(vecVLSTVEH,:);
 SURF.matDVETRANS  = COND.valDELTIME.*VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);
 % [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,~, ~, ~, ~, SURF.matDVENORM, ~, ~, ~, ~] = fcnDVECORNER2PARAM(SURF.matCENTER, SURF.matVLST(SURF.matDVE(:,1),:), SURF.matVLST(SURF.matDVE(:,2),:), SURF.matVLST(SURF.matDVE(:,3),:), SURF.matVLST(SURF.matDVE(:,4),:) );
 
-
-
-% Fuselage
-if ~isempty(VISC.vecFUSEVEHICLE)
-    matFUSETRANS = COND.valDELTIME.*VEHI.matVEHUVW(VISC.vecFUSEVEHICLE,:);
-    VISC.matFVLST = VISC.matFVLST + matFUSETRANS;
-end
-
-
 % SURF.matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
 SURF.matUINFVEH = -VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);
@@ -64,18 +55,15 @@ for n = 1:INPU.valVEHICLES
     if ~isnan(VEHI.vecVEHRADIUS(n)) == 1
         idxDVEVEH = SURF.vecDVEVEHICLE == n;
         idxVLSTVEH = unique(SURF.matDVE(idxDVEVEH,:));
-        idxFUSEVEH = VISC.vecFUSEVEHICLE == n;
-        
+
         SURF.matVLST(idxVLSTVEH,1:2)   = SURF.matVLST(idxVLSTVEH,1:2)   - SURF.matVLSTTRANS(idxVLSTVEH,1:2);
         SURF.matNTVLST(idxVLSTVEH,1:2) = SURF.matNTVLST(idxVLSTVEH,1:2) - SURF.matVLSTTRANS(idxVLSTVEH,1:2);
         SURF.matCENTER(idxDVEVEH,1:2)  = SURF.matCENTER(idxDVEVEH,1:2)  - SURF.matDVETRANS(idxDVEVEH,1:2);
-        VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) = VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) + matFUSETRANS(:,:,1:2,idxFUSEVEH);
         
         % reposition to vecCIRORIG to rotate the vehicle
         SURF.matVLST(idxVLSTVEH,1:2)   = SURF.matVLST(idxVLSTVEH,1:2)   - MISC.matCIRORIG(n,1:2);
         SURF.matNTVLST(idxVLSTVEH,1:2) = SURF.matNTVLST(idxVLSTVEH,1:2) - MISC.matCIRORIG(n,1:2);
         SURF.matCENTER(idxDVEVEH,1:2)  = SURF.matCENTER(idxDVEVEH,1:2)  - MISC.matCIRORIG(n,1:2);
-        %         VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) = VISC.matFUSEGEOM(:,:,1:2,idxFUSEVEH) + MISC.matCIRORIG(n,1:2);
         
         % rotate(YAW) vehicle by VEHI.matVEHROTRATE(n,3)*COND.valDELTIME
         dcmVEHSTEP = angle2dcm(-VEHI.matVEHROTRATE(n,3)*COND.valDELTIME,0,0,'ZXY');

@@ -25,8 +25,8 @@ OUTP.ROTOR.vecTORQUEDIST = [];
 
 INPU.vecPANELROTOR = uint16(INPU.vecPANELROTOR);
 INPU.vecPANELWING = uint16(INPU.vecPANELWING);
-INPU.vecN = uint8(INPU.vecN);
-INPU.vecM = uint8(INPU.vecM);
+INPU.vecN = uint32(INPU.vecN);
+INPU.vecM = uint32(INPU.vecM);
 
 % Initializing wake parameters
 WAKE.matWAKEGEOM = [];
@@ -51,7 +51,7 @@ WAKE.matWADJE = uint32([]);
 WAKE.vecWDVEPANEL = uint16([]);
 WAKE.valLENWADJE = 0;
 WAKE.vecWKGAM = [];
-WAKE.vecWDVESYM = uint8([]);
+WAKE.vecWDVESYM = logical([]);
 WAKE.vecWDVETIP = uint8([]);
 WAKE.vecWDVESURFACE = uint8([]);
 WAKE.vecWDVETRI = [];

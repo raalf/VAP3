@@ -45,10 +45,10 @@ circ = fcnCREATEDSECT(circ, len, 3, idx3, idx5, gamma1, gamma2);
 
 %% Vorticity equations at symmetry
 vort_sym = [];
-if any(SURF.vecDVESYM)
-    [idx10, ~] = find(SURF.vecDVESYM);
+if any(SURF.vecDVESYMEDGE)
+    [idx10, ~] = find(SURF.vecDVESYMEDGE);
     len = length(idx10);
-    locedge = SURF.vecDVESYM(idx10);
+    locedge = SURF.vecDVESYMEDGE(idx10);
     
     dgamma_sym = zeros(len,3);
     dgamma_sym(locedge == 2,:) = [zeros(length(idx10(locedge == 2)),1) ones(length(idx10(locedge == 2)),1) 2.*SURF.vecDVEHVSPN(idx10(locedge == 2))];
@@ -65,7 +65,7 @@ end
 tip2 = uint32(tip2);
 tip4 = uint32(tip4);
 
-if sum(INPU.vecN) == 1 && ~any(SURF.vecDVESYM); tip2 = [1:length(SURF.vecDVETIP)]'; tip4 = [1:length(SURF.vecDVETIP)]'; end
+if sum(INPU.vecN) == 1 && ~any(SURF.vecDVESYMEDGE); tip2 = [1:length(SURF.vecDVETIP)]'; tip4 = [1:length(SURF.vecDVETIP)]'; end
 
 len = length(tip2) + length(tip4);
 

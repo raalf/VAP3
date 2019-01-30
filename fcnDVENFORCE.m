@@ -35,12 +35,11 @@ function [en, nfree,nind,liftfree,liftind,sidefree,sideind,el] = fcnDVENFORCE(va
 %for triangle elements:
 %we find all velocities directly at the LE
 
-if FLAG.TRI ==1  %tri elements
-    idx1 = ones(SURF.valNELE,1) == 1 ;
-    
-else %quad elements,
-    idx1 = SURF.vecDVELE == 1; %index of LE vectors (will be the same)
-end
+% Quad elements
+idx1 = SURF.vecDVELE == 1; %index of LE vectors (will be the same)
+% Tri elements
+idx1(SURF.vecDVETRI) = true;
+
 % find vector across element (should already have this somewhere...)
 % for first spanwise row, vector is LE vect, for all other spanwise rows,
 % vector is halfchord vect.
@@ -111,13 +110,12 @@ B(idx1) = SURF.matCOEFF(idx1,2);
 C(idx1) = SURF.matCOEFF(idx1,3);
 % if any other row, A= A-Aupstream, B= B-Bupstream, C= C-Cupstream
 
-idx2 = SURF.vecDVELE == 1; %idx2 since we need to do this even for triangles
-dvenum = find(idx2==0); %dvenum in question
+% idx2 = SURF.vecDVELE == 1; %idx2 since we need to do this even for triangles
+dvenum = find(idx1==0); %dvenum in question
 idxf = SURF.matADJE((ismember(SURF.matADJE(:,1), dvenum) & SURF.matADJE(:,2) == 1),3); %upstream dve num
-A(idx2 ==0) = (SURF.matCOEFF(idx2==0,1)-SURF.matCOEFF(idxf,1));
-B(idx2 ==0) = (SURF.matCOEFF(idx2==0,2)-SURF.matCOEFF(idxf,2));
-C(idx2 ==0) = (SURF.matCOEFF(idx2==0,3)-SURF.matCOEFF(idxf,3));
-
+A(idx1 ==0) = (SURF.matCOEFF(idx1==0,1)-SURF.matCOEFF(idxf,1));
+B(idx1 ==0) = (SURF.matCOEFF(idx1==0,2)-SURF.matCOEFF(idxf,2));
+C(idx1 ==0) = (SURF.matCOEFF(idx1==0,3)-SURF.matCOEFF(idxf,3));
 
 nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 

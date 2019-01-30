@@ -16,7 +16,7 @@ fpg = repmat(fpg,SURF.valNELE,1);
 % DVE type 0 is a regular surface DVE
 dvetype = zeros(length(dvenum),1);
 
-[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, SURF.matDVE, SURF.matVLST, SURF.matCOEFF, SURF.vecK, SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.vecDVELESWP, SURF.vecDVETESWP, INPU.vecSYM, FLAG.GPU);
+[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, SURF.matDVE, SURF.matVLST, SURF.matCOEFF, SURF.vecK, SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW, SURF.vecDVELESWP, SURF.vecDVETESWP, SURF.vecDVESYM);
 
 w_surf = reshape(sum(reshape(w_ind', len*3, [])',1),3,[])';
 end

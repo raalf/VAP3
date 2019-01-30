@@ -57,22 +57,12 @@ tepoints(:,:,3) = (xte + s.*repmat(eta8,1,3)); %right ride
 tepoints = repmat(tepoints,[numte,1,1]);
 
 %need to repmat the wing index of te elements (induced)
-% if FLAG.TRI == 1
-%     tewings = repmat(repmat(SURF.vecDVEWING(idte),[numte,1,1]),2,1,1);
-%     
-% else
-    tewings = repmat(SURF.vecDVEWING(idte),[numte,1,1]);
-% end
+tewings = repmat(SURF.vecDVEWING(idte),[numte,1,1]);
 
 %dvenum is inducer
 %need to keep the inducers index the same as the induced points
-
-if FLAG.TRI == 1
-    newest_row = sort([WAKE.valWNELE:-2:WAKE.valWNELE-WAKE.valWSIZE*2+1]-1)';
-    
-else
 newest_row = [((WAKE.valWNELE-WAKE.valWSIZE)+1):1:WAKE.valWNELE]';
-end
+
 dvenum = newest_row(repmat(1:WAKE.valWSIZE,WAKE.valWSIZE,1),:);
 
 
@@ -89,11 +79,8 @@ wwings = wwings(repmat(1:WAKE.valWSIZE,WAKE.valWSIZE,1),:);
 % on (1:numte), etc.
 % to keep this cleaner I move all points, then overwrite the cases when
 % the inducers wing is different than the induced points.
-% if FLAG.TRI == 1
-%     delx  = tepoints-repmat(xte(repmat(1:numte/2,numte/2,1),:),2,1,3);
-% else
-    delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
-% end
+delx  = tepoints-repmat(xte(repmat(1:numte,numte,1),:),[1 1 3]);
+
 %project into freestream direction
 % temps = dot(delx,repmat(vecUINF,[size(delx,1) 1 3]),2);
 % tempb = repmat(temps,1,3,1).* repmat(vecUINF,[size(delx,1) 1 3]); %should this be normalized Uinf?
@@ -111,40 +98,16 @@ newtepoint(diffw) = tepoints(diffw);
 %we have now accounted for all the current timestep of wake elements, now repmat to
 %account for remaining wake rows
 %fpg is all points to go into DVEVEL
+fpg = repmat(newtepoint,[valTIMESTEP,1,1]);
+dvenum = repmat(dvenum,[valTIMESTEP,1,1]);
 
-if FLAG.TRI == 1
-    fpg = repmat(newtepoint,[valTIMESTEP*2,1,1]);
-%     dvenum = repmat(dvenum,[valTIMESTEP*2,1,1]);
-else
-    fpg = repmat(newtepoint,[valTIMESTEP,1,1]);
-    dvenum = repmat(dvenum,[valTIMESTEP,1,1]);
-end
 
 % Oldest row of wake DVEs are semi-infinite
-if FLAG.TRI == 1
-    oldest_row = [2:2:WAKE.valWSIZE*2];
-else
-    oldest_row = [1:WAKE.valWSIZE]';
-end
-
-if FLAG.TRI == 1
-
-remaining = [(1:WAKE.valWNELE-WAKE.valWSIZE*2)' ; newest_row + 1];
-
-remainingnew = sort(repmat(remaining,WAKE.valWSIZE,1));
-dvenum = [dvenum;remainingnew];
-else
+oldest_row = [1:WAKE.valWSIZE]';
 mult = [1:valTIMESTEP]'; %need to renumber old timestep rows
-
-
 multnew = repmat(mult,[WAKE.valWSIZE*WAKE.valWSIZE,1,1]);
-
-
 multnew = sort(multnew);
 dvenum = dvenum - repmat(WAKE.valWSIZE,size(dvenum,1),1).*(multnew-1);
-
-
-end
 
 dvenum = repmat(dvenum,[1 1 3]);%correct inducers index
 % take second dimension, move to bottom. then take third dimension and move
@@ -188,7 +151,7 @@ elseif FLAG.STEADY == 0 || FLAG.STEADY == 2
 end
 
 %get all velocities %need to set singfct = 0 for le row of elements!!!
-[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCOEFF, tempwk, WAKE.vecWDVEHVSPN, WAKE.vecWDVEHVCRD, WAKE.vecWDVEROLL, WAKE.vecWDVEPITCH, WAKE.vecWDVEYAW, zeros(size(WAKE.vecWDVELESWP)), zeros(size(WAKE.vecWDVETESWP)), SURF.vecDVESYM, FLAG.GPU);
+[w_ind] = fcnDVEVEL(dvenum, fpg, dvetype, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCOEFF, tempwk, WAKE.vecWDVEHVSPN, WAKE.vecWDVEHVCRD, WAKE.vecWDVEROLL, WAKE.vecWDVEPITCH, WAKE.vecWDVEYAW, zeros(size(WAKE.vecWDVELESWP)), zeros(size(WAKE.vecWDVETESWP)), WAKE.vecWDVESYM);
 
 % idxnans = sum(isnan(w_ind),2);
 % idxnans = idxnans > 0;
