@@ -116,7 +116,7 @@ for i = 1:valPANELS
     % For DVE generation. Twist angle is handled along with dihedral angle
     panel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
     
-    if size(camber_airfoil,2) > 1 && ~any(cellfun(@isnan, camber_airfoil))
+    if size(camber_airfoil,2) > 1 && ~any(cellfun(@any, (cellfun(@isnan, camber_airfoil, 'UniformOutput', false))))
         % root
         airfoil(i,1).coord = dlmread(['airfoils/', camber_airfoil{i,1}, '.dat'],'',1,0);
         airfoil(i,1).coord = airfoil(i,1).coord.*matGEOM(1,4,i);

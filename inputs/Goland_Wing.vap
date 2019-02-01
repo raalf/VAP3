@@ -44,7 +44,7 @@
 			<symmetry>FALSE</symmetry>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
-			<triangular_elements>FALSE</triangular_elements>
+			<triangular_elements>TRUE</triangular_elements>
 
 			<chordwise_elements>5</chordwise_elements>
 			<chordwise_spacing>HALFCOSINE</chordwise_spacing>
@@ -63,6 +63,7 @@
 					<wing_z>0</wing_z>
 					<chord>1.8288</chord>
 					<twist>0</twist>
+					<camber_airfoil>NACA 4412</camber_airfoil>
 				</section>
 				<section>
 					<wing_x>0</wing_x>
@@ -70,6 +71,7 @@
 					<wing_z>0</wing_z>
 					<chord>1.8288</chord>
 					<twist>0</twist>
+					<camber_airfoil>NACA 4412</camber_airfoil>
 				</section>	
 			</panel>
 		</wing>
