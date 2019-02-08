@@ -53,60 +53,6 @@
 			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<spanwise_elements>3</spanwise_elements>
-				<strip_airfoil>nan</strip_airfoil>
-				<section>
-					<wing_x>0</wing_x>
-					<wing_y>0</wing_y>
-					<wing_z>0</wing_z>
-					<chord>1.8288</chord>
-					<twist>0</twist>
-					<camber_airfoil>nan</camber_airfoil>
-				</section>
-				<section>
-					<wing_x>0</wing_x>
-					<wing_y>6.096</wing_y>
-					<wing_z>0</wing_z>
-					<chord>1.8288</chord>
-					<twist>0</twist>
-					<camber_airfoil>nan</camber_airfoil>
-				</section>	
-			</panel>
-
-			<panel>
-				<spanwise_elements>5</spanwise_elements>
-				<strip_airfoil>nan</strip_airfoil>
-				<section>
-					<wing_x>0</wing_x>
-					<wing_y>6.096</wing_y>
-					<wing_z>0</wing_z>
-					<chord>1.8288</chord>
-					<twist>0</twist>
-					<camber_airfoil>nan</camber_airfoil>
-				</section>
-				<section>
-					<wing_x>0</wing_x>
-					<wing_y>10</wing_y>
-					<wing_z>0</wing_z>
-					<chord>1.8288</chord>
-					<twist>0</twist>
-					<camber_airfoil>nan</camber_airfoil>
-				</section>	
-			</panel>
-		</wing>
-
-		<wing>
-			<symmetry>FALSE</symmetry>
-			<incidence>0</incidence>
-			<trimable>FALSE</trimable>
-			<triangular_elements>TRUE</triangular_elements>
-
-			<chordwise_elements>2</chordwise_elements>
-
-			<vehicle_x>10</vehicle_x>
-			<vehicle_y>0</vehicle_y>
-			<vehicle_z>0</vehicle_z>
-			<panel>
 				<spanwise_elements>2</spanwise_elements>
 				<strip_airfoil>nan</strip_airfoil>
 				<section>
@@ -119,8 +65,37 @@
 				</section>
 				<section>
 					<wing_x>0</wing_x>
-					<wing_y>3</wing_y>
+					<wing_y>1</wing_y>
 					<wing_z>0</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>	
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>2</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>	
+			</panel>
+
+			<panel>
+				<spanwise_elements>2</spanwise_elements>
+				<strip_airfoil>nan</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>1</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>	
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>2</wing_y>
+					<wing_z>1</wing_z>
 					<chord>1</chord>
 					<twist>0</twist>
 					<camber_airfoil>nan</camber_airfoil>
