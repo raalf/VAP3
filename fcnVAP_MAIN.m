@@ -13,10 +13,10 @@ FLAG.PLOT = 1;
 FLAG.VISCOUS = 0;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
-FLAG.PREVIEW = 1;
+FLAG.PREVIEW = 0;
 FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
-FLAG.VERBOSE = 1;
+FLAG.VERBOSE = 0;
 FLAG.SAVETIMESTEP = 0;
 
 % Initializing parameters to null/zero/nan
@@ -54,7 +54,7 @@ if ~isempty(COND.vecCOLLECTIVE)
     INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
 end
 [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, FLAG, OUTP);
-fcnPLOTPKG([], FLAG, SURF, VISC, WAKE, COND, INPU)
+% fcnPLOTPKG([], FLAG, SURF, VISC, WAKE, COND, INPU)
 
 %% Advance Ratio
 MISC.vecROTORJ = [];
@@ -182,6 +182,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     
 end
 
+% Time-averaging if rotors are present
 if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0 && ~isempty(valTIMESTEP)
     % Time averaged lift
     OUTP.vecCL_AVG = fcnTIMEAVERAGE(OUTP.vecCLv, COND.vecROTORRPM, COND.valDELTIME);
@@ -244,3 +245,5 @@ OUTP.vecDVEAREA = SURF.vecDVEAREA;
 OUTP.valAREA = INPU.vecAREA;
 OUTP.matGEOM = INPU.matGEOM;
 OUTP.valDENSITY = COND.valDENSITY;
+
+end

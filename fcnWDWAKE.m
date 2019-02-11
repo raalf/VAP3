@@ -14,7 +14,7 @@ function [matWD, vecWR] = fcnWDWAKE(all_DVEs, matWADJE, vecWDVEHVSPN, vecWDVESYM
 
 nelements = length(all_DVEs);
 
-% Vorticity and circulation equations between DVEs ----------------------------------------------------------------------
+%% Vorticity and circulation equations between DVEs ----------------------------------------------------------------------
 
 idx1 = matWADJE(:,2) == 2; % Borders on 2nd local edge (right side)
 idx2 = matWADJE(:,2) == 4; % Borders on 4th local edge (left side)
@@ -86,8 +86,8 @@ end
 
 % Reassigning dsplit2 so it lines up with dsplit4
 dsplit2 = matWADJE(idx2,3);
-dsplit2 = dsplit2(idx26);
-dsplit4 = idx4(idx26);
+dsplit2 = double(dsplit2(idx26));
+dsplit4 = double(idx4(idx26));
 
 % circ = zeros(len,nelements*2);
 circ = sparse(len, nelements*2);
