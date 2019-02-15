@@ -116,7 +116,7 @@ for i = 1:INPU.valVEHICLES
     try veh = VAP.vehicle{1,i}; catch; veh = VAP.vehicle; end
     
     INPU.matVEHORIG(i,:) = [str2double(veh.global_x.Text) str2double(veh.global_y.Text) str2double(veh.global_z.Text)];
-    COND.vecVEHVINF(i,1) = str2double(veh.speed.Text);
+    try COND.vecVEHVINF(i,1) = str2double(veh.speed.Text); catch; COND.vecVEHVINF(i,1) = nan; end
     try COND.vecVEHWEIGHT(i,1) = str2double(veh.weight.Text); catch; COND.vecVEHWEIGHT(i,1) = nan; end
     COND.vecVEHALPHA(i,1) = str2double(veh.alpha.Text);
     COND.vecVEHBETA(i,1) = str2double(veh.beta.Text);
@@ -347,6 +347,8 @@ if any(isnan(COND.vecVEHVINF))
     disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
     COND.vecVEHVINF(isnan(COND.vecVEHVINF)) = ones(sum(isnan(COND.vecVEHVINF)),1);
     FLAG.FIXEDLIFT = 1;
+else
+    FLAG.FIXEDLIFT = 0;
 end
 
 end
