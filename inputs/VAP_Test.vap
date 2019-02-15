@@ -54,7 +54,7 @@
 
 			<panel>
 				<spanwise_elements>2</spanwise_elements>
-				<strip_airfoil>nan</strip_airfoil>
+				<strip_airfoil>NACA0012</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
@@ -83,7 +83,7 @@
 
 			<panel>
 				<spanwise_elements>2</spanwise_elements>
-				<strip_airfoil>nan</strip_airfoil>
+				<strip_airfoil>NACA0012</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>1</wing_y>
