@@ -12,7 +12,13 @@ str_wing = sprintf(['\n<wing>\n<symmetry>TRUE</symmetry>\n<incidence>0</incidenc
 
 str_panel = [];
 for ii = 1:size(pan,2)
-    str_panel = [str_panel sprintf('\n<panel>\n<spanwise_elements>2</spanwise_elements>\n<strip_airfoil>NASA GA(W)-2 Modified</strip_airfoil>\n')];
+    if ii == 1
+    airfoil = 'FX S 02-196';
+    else
+    airfoil = 'PSU 94-097';
+    end
+    
+    str_panel = [str_panel sprintf('\n<panel>\n<spanwise_elements>2</spanwise_elements>\n<strip_airfoil>%s</strip_airfoil>\n',airfoil)];
 
     for i = 1:size(pan(ii).geom,1)
        str_panel = [str_panel, sprintf('<section>\n\t<wing_x>%.6f</wing_x>\n\t<wing_y>%.6f</wing_y>\n\t<wing_z>%.6f</wing_z>\n\t<chord>%.6f</chord>\n\t<twist>%.6f</twist>\n\t<camber_airfoil>nan</camber_airfoil>\n</section>\n', pan(ii).geom(i,1), pan(ii).geom(i,2), pan(ii).geom(i,3), pan(ii).geom(i,4), pan(ii).geom(i,5))];      

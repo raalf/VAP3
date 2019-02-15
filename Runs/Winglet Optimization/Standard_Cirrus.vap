@@ -25,7 +25,7 @@
 		<global_y>0</global_y>
 		<global_z>0</global_z>
 
-		<speed>1</speed>
+        <speed>nan</speed>
 		<weight>3649.32</weight>
 		<interference_drag>0</interference_drag>
 

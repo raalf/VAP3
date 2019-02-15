@@ -1,7 +1,7 @@
 % clc
 clear
 
-cd('G:\GIT\VAP3\Runs\Winglet Optimization')
+cd('C:\Users\travi\OneDrive\Desktop\GIT\VAP3\Runs\Winglet Optimization')
 
 if exist('aux_files','file') ~= 7
     mkdir('aux_files');
@@ -25,13 +25,14 @@ geom(3,2) = 7.5 - z(1);
 geom(3,3) = geom(2,3) + (7.5 - (z(1)) - 4.5).*((geom(3,3) - geom(2,3))./(geom(3,2) - geom(2,2)));
 geom(3,4) = geom(2,4) + (7.5 - (z(1)) - 4.5).*((geom(3,4) - geom(2,4))./(geom(3,2) - geom(2,2)));
 
-pan(1).geom = [geom; z(2:6); z(7:11)];
-pan(2).geom = [geom(end,:); z(12:16); z(17:end)];
+pan(1).geom = geom;
+pan(2).geom = [geom(end,:); z(2:6); z(7:11)];
+pan(3).geom = [geom(end,:); z(12:16); z(17:end)];
 
 vap3_inputmod_wing(vap_filename, pan)
 
 cd ./../../
-seqALPHA = 2:13;
+seqALPHA = 10;
 for i = 1:length(seqALPHA)
     VAP_IN = [];
     VAP_IN.RELAX = 1;
