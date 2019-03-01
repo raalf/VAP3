@@ -1,6 +1,6 @@
 function [valCL, valCD, valPREQ, valLD, valVINF, vecCMDIST, temp_dist, temp_CN] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-    matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT)
+    matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, tridves)
 
 warning off
 
@@ -76,9 +76,17 @@ for i = 1:max(vecDVEWING)
     % It is done this way because n can be different for each panel. Unlike in the wake,
     % we can't just add a constant value to get to the same spanwise location in the next
     % row of elements
-    tempm = repmat(vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel~=0),1);
-    
-    rows = repmat(idxdve,1,m) + uint16(tempm);
+    if ~all(tridves)
+        tempm = repmat(vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel~=0),1);
+        rows = repmat(idxdve,1,m) + uint16(tempm);
+    elseif all(tridves)
+        tempm = nan(vecN,m);
+        tempm(:,1:2:m) = repmat(idxdve, 1, m/2);
+        tempm(:,2:2:m) = repmat(idxdve, 1, m/2) + 1;
+        tmp2 = [0:(double(m)/2) - 1];
+        tmp2 = repmat(reshape(repmat(tmp2,2,1),1,[]), vecN, 1);
+        rows = tempm + tmp2.*(double(vecN).*2);     
+    end
     
     % Note this CN is non-dimensionalized with Vinf + Vind
     vecCNDIST(isCurWing) = (sum(vecDVECN(rows),2).*2)./((mean(vecV(rows),2).^2).*sum(vecDVEAREA(rows),2));
