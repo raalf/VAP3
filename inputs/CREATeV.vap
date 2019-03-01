@@ -46,14 +46,14 @@
 			<trimable>FALSE</trimable>
 			<triangular_elements>TRUE</triangular_elements>
 
-			<chordwise_elements>2</chordwise_elements>
+			<chordwise_elements>6</chordwise_elements>
 
 			<vehicle_x>0</vehicle_x>
 			<vehicle_y>0</vehicle_y>
 			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<spanwise_elements>2</spanwise_elements>
+				<spanwise_elements>10</spanwise_elements>
 				<strip_airfoil>RAALF-B8</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
