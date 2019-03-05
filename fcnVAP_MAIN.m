@@ -16,7 +16,7 @@ FLAG.GIF = 0;
 FLAG.PREVIEW = 0;
 FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
-FLAG.VERBOSE = 0;
+FLAG.VERBOSE = 1;
 FLAG.SAVETIMESTEP = 0;
 
 % Initializing parameters to null/zero/nan
