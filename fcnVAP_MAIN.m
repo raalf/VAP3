@@ -14,7 +14,7 @@ COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
 FLAG.TRI = 0;
 FLAG.GPU = 0;
 
-FLAG.PRINT = 1;
+FLAG.PRINT = 0;
 FLAG.PLOT = 0;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
@@ -24,6 +24,7 @@ FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
 FLAG.SAVETIMESTEP = 0;
+FLAG.NACELLE = 1;
 
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
@@ -195,14 +196,14 @@ if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0 && ~isempty(valTIMESTEP)
     OUTP.vecCDI_AVG = fcnTIMEAVERAGE(OUTP.vecCDI, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCDP_AVG = fcnTIMEAVERAGE(OUTP.vecCD - OUTP.vecCDI, COND.vecROTORRPM, COND.valDELTIME);
     
-    for i = 1:max(SURF.vecDVEWING)
-       OUTP.WING(i).vecLDIST(~any(OUTP.WING(i).vecLDIST, 2), :) = [];
-       OUTP.WING(i).vecLDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecLDIST, COND.vecROTORRPM, COND.valDELTIME);
-       OUTP.WING(i).vecDPDIST(~any(OUTP.WING(i).vecDPDIST, 2), :) = [];
-       OUTP.WING(i).vecDPDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDPDIST, COND.vecROTORRPM, COND.valDELTIME);
-       OUTP.WING(i).vecDIDIST(~any(OUTP.WING(i).vecDIDIST, 2), :) = [];
-       OUTP.WING(i).vecDIDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDIDIST, COND.vecROTORRPM, COND.valDELTIME);
-    end
+%     for i = 1:max(SURF.vecDVEWING)
+%        OUTP.WING(i).vecLDIST(~any(OUTP.WING(i).vecLDIST, 2), :) = [];
+%        OUTP.WING(i).vecLDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecLDIST, COND.vecROTORRPM, COND.valDELTIME);
+%        OUTP.WING(i).vecDPDIST(~any(OUTP.WING(i).vecDPDIST, 2), :) = [];
+%        OUTP.WING(i).vecDPDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDPDIST, COND.vecROTORRPM, COND.valDELTIME);
+%        OUTP.WING(i).vecDIDIST(~any(OUTP.WING(i).vecDIDIST, 2), :) = [];
+%        OUTP.WING(i).vecDIDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDIDIST, COND.vecROTORRPM, COND.valDELTIME);
+%     end
     
     OUTP.vecCT_AVG = fcnTIMEAVERAGE(OUTP.vecCT, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCFx_AVG = fcnTIMEAVERAGE(OUTP.vecCFx, COND.vecROTORRPM, COND.valDELTIME);

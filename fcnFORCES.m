@@ -14,13 +14,13 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTE
 
 %% Induced Drag force
 [inddrag] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG);
-OUTP.WING.vecDIDIST(valTIMESTEP,:) = inddrag(SURF.vecDVEWING > 0)';
+OUTP.WING(1).vecDIDIST(valTIMESTEP,:) = inddrag(SURF.vecDVEWING == 1)';
 
 %% Sum up element forces to generate total wing forces
 OUTP = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP, FLAG, WAKE, VISC);
 
 %% Viscous wrapper
-[OUTP, matROTORCDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, 0);
+[OUTP, matROTORCDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, VEHI, 0);
 
 %% Rotor Forces
 if max(SURF.vecDVEROTOR) > 0
