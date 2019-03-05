@@ -1,4 +1,4 @@
-function qmil_filename = fcnQMILCREATE(temp_name, airfoil_data, blades, thrust, vinf, rpm, diam)
+function [qmil_filename, collective_for_camber] = fcnQMILCREATE(temp_name, airfoil_data, blades, thrust, vinf, rpm, diam)
 hub_radius = (diam*0.1875)/2;
 
 vref = (2*pi*((diam/2)*0.75))*(rpm/60);
@@ -23,6 +23,11 @@ Re_lift = scatteredInterpolant(Re,deg2rad(Alpha),Cl,'linear');
 alphas = deg2rad([2:8]');
 cla = mean(diff(Re_lift(repmat(reref,length(alphas),1), alphas))./diff(alphas));
 cl0 = Re_lift(reref,0);
+
+% y = mx + b
+% 0 = cl_a.*alpha + cl0
+% cl0./cl_a
+collective_for_camber = rad2deg(cl0/cla);  
 
 alphas = deg2rad([-5:15]');
 [clmax,idx_max] = max(Re_lift(repmat(reref,length(alphas),1), alphas));

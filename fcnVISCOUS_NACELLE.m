@@ -33,6 +33,10 @@ for i = 1:size(INPU.vecROTDIAM,1)
         
     tempCRDS = sum(2*SURF.vecDVEHVCRD(matROWS),2);
     
+    tempCRDS1 = nan(size(matROWS,1),1);
+    tempCRDS1(matROWS(:,1),:) = tempCRDS;
+    tempCRDS = tempCRDS1;
+    
     idx = temp <= size(tempCRDS,1); % NOTE: this assumes that the wing DVE is ordered first
     tempCRDS = tempCRDS(temp(idx));
     
