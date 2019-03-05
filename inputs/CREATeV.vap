@@ -4,20 +4,20 @@
 	<settings>
 		<relax>FALSE</relax>
 		<steady>TRUE</steady>
-		<maxtime>40</maxtime>
+		<maxtime>100</maxtime>
 		<delta_time>0.125</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>TRUE</stiff_wing>
 		<fixed_lift>1</fixed_lift>
-		<gust_mode>0</gust_mode>
+		<gust_mode>2</gust_mode>
 	</settings>
 
 	<conditions>
 		<density>1.0</density>
 		<kin_viscosity>1.46e-05</kin_viscosity>
-		<gust_amplitude>0</gust_amplitude>
-		<gust_length>0</gust_length>
-		<gust_start>0</gust_start>
+		<gust_amplitude>15.24</gust_amplitude>
+		<gust_length>5</gust_length>
+		<gust_start>50</gust_start>
 	</conditions>
 
 	<vehicle>

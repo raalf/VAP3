@@ -8,7 +8,6 @@ seqALPHA = 13
 filename = 'inputs/CREATeV.vap';
 for i = 1:length(seqALPHA)
     VAP_IN.vecVEHALPHA = seqALPHA(i);
-    VAP_IN.valMAXTIME = 40
     OUTP(i) = fcnVAP_MAIN(filename, VAP_IN);
 end
 % 
