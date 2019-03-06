@@ -344,7 +344,7 @@ if ~isempty(VAP_IN)
 end
 
 if any(isnan(COND.vecVEHVINF))
-    disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
+%     disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
     COND.vecVEHVINF(isnan(COND.vecVEHVINF)) = ones(sum(isnan(COND.vecVEHVINF)),1);
     FLAG.FIXEDLIFT = 1;
 else
