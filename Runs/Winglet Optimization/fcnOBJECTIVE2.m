@@ -136,10 +136,9 @@ idx = 2;
 root_bending = sum(WING_SWEEP(idx).WING.vecLDIST(end,:)'.*WING_SWEEP(idx).WING.vecSPANLOC_PROJ);
 
 %% Output
+out = [invVxcMAX_low invVxcMAX_med invVxcMAX_high root_bending highspeed_cd];
 if any(out < 0)
-    out = zero(5,1) + 10000;
-else
-    out = [invVxcMAX_low invVxcMAX_med invVxcMAX_high root_bending highspeed_cd];
+    out = zeros(1,5) + 10000;
 end
 fp2 = fopen('opthistory.txt','at');
 fprintf(fp2,'%g ', [out, z]);
