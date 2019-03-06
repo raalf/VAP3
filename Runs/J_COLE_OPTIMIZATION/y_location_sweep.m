@@ -1,12 +1,12 @@
 clc
 clear
 
-addpath('../../')
-addpath('../../airfoils')
-addpath('./../../Runs/J_COLE_OPTIMIZATION/aux_files')
-addpath('./../../Runs/J_COLE_OPTIMIZATION/')
+% addpath('../../')
+% addpath('../../airfoils')
+% addpath('./../../Runs/J_COLE_OPTIMIZATION/aux_files')
+% addpath('./../../Runs/J_COLE_OPTIMIZATION/')
 
-home_dir = pwd;
+% home_dir = pwd;
 
 N_chord = 11;
 N_dihe = 0;

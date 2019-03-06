@@ -21,7 +21,8 @@
 		<y>0</y>
 		<z>0</z>
 
-		<vinf>77.2</vinf>
+		<vinf>FALSE</vinf>
+		<weight>13344.6648</weight>
 
 		<alpha>10</alpha>
 		<beta>0</beta>

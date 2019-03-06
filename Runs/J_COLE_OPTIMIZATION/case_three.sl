@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --job-name=matlab_test
+#SBATCH --job-name=case_3
 #SBATCH --account=def-brami # adjust this to match the accounting group you are using to submit jobs
 #SBATCH --time=27-23:15         # adjust this to match the walltime of your job
 #SBATCH --nodes=1      

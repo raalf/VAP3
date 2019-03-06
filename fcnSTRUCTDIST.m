@@ -7,8 +7,8 @@ function [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF)
 
 [matROWS] = fcnDVEROW(ledves, SURF, INPU);
 
-tempDVEEDGECRD = abs(SURF.matNTVLST(SURF.matNTDVE(ledves,1),:) - SURF.matNTVLST(SURF.matNTDVE(tedves,4),:));
-tempDVEEDGECRD = [tempDVEEDGECRD; abs(SURF.matNTVLST(SURF.matNTDVE(ledves(end),2),:) - SURF.matNTVLST(SURF.matNTDVE(tedves(end),3),:))];
+tempDVEEDGECRD = abs(SURF.matNPVLST(SURF.matNPDVE(ledves,1),:) - SURF.matNPVLST(SURF.matNPDVE(tedves,4),:));
+tempDVEEDGECRD = [tempDVEEDGECRD; abs(SURF.matNPVLST(SURF.matNPDVE(ledves(end),2),:) - SURF.matNPVLST(SURF.matNPDVE(tedves(end),3),:))];
 
 tempDVEEDGECRD = sqrt(sum(tempDVEEDGECRD.^2,2)); % Chord length at each DVE edge
 

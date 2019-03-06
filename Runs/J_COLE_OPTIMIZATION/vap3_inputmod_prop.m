@@ -14,7 +14,8 @@ if rotor.dir == 0
 end
 
 str_rotor = sprintf('\n<rotor>\n\t<rpm>%.6f</rpm>\n\t<flipy>%s</flipy>\n\t<collective>%.6f</collective>\n\t<dia>%.6f</dia>\n\t<xhub>%.6f</xhub>\n\t<yhub>%.6f</yhub>\n\t<zhub>%.6f</zhub>\n\t<axisx>%.6f</axisx>\n\t<axisy>%.6f</axisy>\n\t<axisz>%.6f</axisz>\n\t<blades>%d</blades>\n\t<M>%d</M>\n', rotor.rpm, flipy, rotor.collective, rotor.diam, rotor.hub(1), rotor.hub(2), rotor.hub(3), rotor.axis(1), rotor.axis(2), rotor.axis(3), rotor.blades, rotor.m);
-str_rotor_geom = fcnQMIL2VAP(qmil_output_filename, 19, 'MH-117');
+rotor_n = 10
+str_rotor_geom = fcnQMIL2VAP(qmil_output_filename, rotor_n, 'MH-117');
 str_rotor = [str_rotor, str_rotor_geom, sprintf('</rotor>\n')];
 
 k = strfind(str, '</vehicle>') - 6;

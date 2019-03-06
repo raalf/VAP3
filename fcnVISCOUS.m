@@ -28,8 +28,8 @@ if FLAG.VISCOUS == 1
                 SURF.matCENTER, SURF.vecDVEHVCRD, VISC.cellAIRFOIL, FLAG.PRINT, INPU.vecSYM, VISC.vecVSPANELS, VISC.matVSGEOM, VISC.vecFPANELS, VISC.matFGEOM, VISC.vecFTURB, ...
                 VISC.vecFPWIDTH, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i), VISC.matFDVE(VISC.vecFDVEVEHICLE == i,:), VISC.matFVLST);
             
-%             OUTP.WING(i).vecLDIST(valTIMESTEP,:) = temp_dist.LDIST(~isnan(temp_dist.LDIST))';
-%             OUTP.WING(i).vecDPDIST(valTIMESTEP,:) = temp_dist.DPDIST(~isnan(temp_dist.DPDIST))';
+            OUTP.WING(i).vecLDIST(valTIMESTEP,:) = OUTP.WINGDIST.LDIST(~isnan(OUTP.WINGDIST.LDIST))';
+            OUTP.WING(i).vecDPDIST(valTIMESTEP,:) = OUTP.WINGDIST.DPDIST(~isnan(OUTP.WINGDIST.DPDIST))';
             
             
         end

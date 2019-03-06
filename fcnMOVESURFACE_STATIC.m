@@ -18,7 +18,7 @@ INPU.matVEHORIG = INPU.matVEHORIG + VEHI.matVEHUVW.*COND.valDELTIME;
 vecVLSTVEH = unique([reshape(SURF.matDVE,[],1), repmat(SURF.vecDVEVEHICLE,4,1)],'rows');
 vecVLSTVEH = vecVLSTVEH(:,2);
 
-vecNTVLSTVEH = unique([reshape(SURF.matNTDVE,[],1), repmat(SURF.vecDVEVEHICLE,4,1)],'rows');
+vecNTVLSTVEH = unique([reshape(SURF.matNPDVE,[],1), repmat(SURF.vecDVEVEHICLE,4,1)],'rows');
 vecNTVLSTVEH = vecNTVLSTVEH(:,2);
 % check error (should never fail if no vertices are shared between
 % differnet vehicles
@@ -54,13 +54,14 @@ MISC.matNEWWAKE(:,:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
 MISC.matNEWWAKE(:,:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate WAKE.matWADJE)
-MISC.matNPNEWWAKE(:,:,4) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,3) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
 
 % Translate Vehicles
 SURF.matVLST = SURF.matVLST + SURF.matVLSTTRANS;
 SURF.matCENTER = SURF.matCENTER + SURF.matDVETRANS;
 SURF.matNTVLST = SURF.matNTVLST + SURF.matNTVLSTTRANS;
+SURF.matNPVLST = SURF.matNPVLST + SURF.matNTVLSTTRANS;
 
 
 % Circling Flight
@@ -170,5 +171,5 @@ MISC.matNEWWAKE(:,:,1) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
 MISC.matNEWWAKE(:,:,2) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
 
 % New non-planar trailing edge vertices (used to calculate WAKE.matWADJE)
-MISC.matNPNEWWAKE(:,:,1) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,2) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,1) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,2) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);

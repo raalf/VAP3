@@ -36,14 +36,14 @@ vecZVEL = matUINF_edge(:,3) + ((OUTP.matDEFGLOB(valTIMESTEP,:) - OUTP.matDEFGLOB
 % Determine vertices that need to be moved at each spanwise station
 
 % All left LE and TE points to move
-temp_leftV = [SURF.matNTDVE(matROWS,1),SURF.matNTDVE(matROWS,4)];
+temp_leftV = [SURF.matNPDVE(matROWS,1),SURF.matNPDVE(matROWS,4)];
 temp_leftV = reshape(temp_leftV,sum(INPU.vecN,1),[]);
 
 [move_row,~] = find(temp_leftV); % Vector correspond to which index of deflection velocity matrix should be used for each element
 
 % Allocate space for translation matrices
-translateNTVLST = zeros(size(SURF.matNTVLST,1),3);
-temp_translate = zeros(size(SURF.matNTVLST,1),3);
+translateNTVLST = zeros(size(SURF.matNPVLST,1),3);
+temp_translate = zeros(size(SURF.matNPVLST,1),3);
 
 temp_r = [sqrt(sum(SURF.matSCLST.^2,2)), zeros(length(SURF.matSCLST(:,1)),2)]; % Distance between vertex and shear center
 
@@ -90,7 +90,7 @@ v_rot = temp_r(temp_leftV,1).*omega(move_row)';
 temp_translate(temp_leftV,1) = twistXDIST;
 temp_translate(temp_leftV,3) = twistZDIST;
 
-test = zeros(size(SURF.matNTVLST,1),3);
+test = zeros(size(SURF.matNPVLST,1),3);
 test(temp_leftV,1) = v_rot.*sin(OUTP.matTWISTGLOB(valTIMESTEP,move_row)+vecEDGEPITCH(move_row))'.*COND.valDELTIME;
 test(temp_leftV,3) = v_rot.*cos(OUTP.matTWISTGLOB(valTIMESTEP,move_row)+vecEDGEPITCH(move_row))'.*COND.valDELTIME;
 
@@ -101,7 +101,7 @@ translateNTVLST(temp_leftV,3) = -1*COND.valDELTIME.*vecZVEL(move_row);
 
 % ======================== Right Edge Displacements =======================
 % All right LE and TE points to move
-temp_rightV = [SURF.matNTDVE(matROWS,2), SURF.matNTDVE(matROWS,3)];
+temp_rightV = [SURF.matNPDVE(matROWS,2), SURF.matNPDVE(matROWS,3)];
 temp_rightV = reshape(temp_rightV,sum(INPU.vecN,1),[]);
 
 [move_row,~] = find(temp_rightV); % Vector correspond to which index of deflection velocity matrix should be used for each element
@@ -143,13 +143,13 @@ MISC.matNEWWAKE(:,:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
 MISC.matNEWWAKE(:,:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate matWADJE)
-MISC.matNPNEWWAKE(:,:,4) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,3) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
 
 % Update SURF.matVLST and SURF.matNTVLST
-SURF.matNTVLST = SURF.matNTVLST - (translateNTVLST - temp_translate);
+SURF.matNPVLST = SURF.matNPVLST - (translateNTVLST - temp_translate);
 
 % New non-planar trailing edge vertices (used to calculate matWADJE)
-MISC.matNPNEWWAKE(:,:,1) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,2) = SURF.matNTVLST(SURF.matNTDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,1) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,2) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
 

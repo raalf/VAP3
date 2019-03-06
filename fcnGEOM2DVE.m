@@ -21,6 +21,7 @@ SURF.vecDVEAREA = [];
 SURF.matDVENORM = [];
 SURF.matVLST = [];
 SURF.matNTVLST = [];
+SURF.matNPVLST = [];
 SURF.matDVE = uint16([]);
 SURF.valNELE = 0;
 SURF.matADJE = [];
@@ -45,7 +46,7 @@ for i = unique(vecPANELSURFACE,'stable')'
 %     if isnan(COND.vecWINGTRI(i))
         [tSURF.matCENTER, tSURF.vecDVEHVSPN, tSURF.vecDVEHVCRD, tSURF.vecDVELESWP, tSURF.vecDVEMCSWP, tSURF.vecDVETESWP, ...
             tSURF.vecDVEROLL, tSURF.vecDVEPITCH, tSURF.vecDVEYAW, tSURF.vecDVEAREA, tSURF.matDVENORM, ...
-            tSURF.matVLST, tSURF.matNTVLST, tSURF.matDVE, tSURF.valNELE, tSURF.matADJE, ...
+            tSURF.matVLST, tSURF.matNTVLST, tSURF.matNPVLST, tSURF.matDVE, tSURF.valNELE, tSURF.matADJE, ...
             tSURF.vecDVESYM, tSURF.vecDVETIP, tSURF.vecDVESURFACE, tSURF.vecDVELE, tSURF.vecDVETE, tSURF.vecDVEPANEL, tSURF.matPANELTE] = ...
             fcnGENERATEDVES(panels, INPU.matGEOM(:,:,(vecPANELSURFACE == i)), INPU.vecSYM(vecPANELSURFACE == i), INPU.vecN(vecPANELSURFACE == i), INPU.vecM(vecPANELSURFACE == i));
         
@@ -100,6 +101,7 @@ for i = unique(vecPANELSURFACE,'stable')'
     SURF.matDVE = [SURF.matDVE; tSURF.matDVE + vlstoffset];
     SURF.matVLST = [SURF.matVLST; tSURF.matVLST];
     SURF.matNTVLST = [SURF.matNTVLST; tSURF.matNTVLST];
+    SURF.matNPVLST = [SURF.matNPVLST; tSURF.matNPVLST];
   
     tSURF.matADJE = [tSURF.matADJE(:,1) + dveoffset tSURF.matADJE(:,2) tSURF.matADJE(:,3) + dveoffset tSURF.matADJE(:,4)];
     SURF.matADJE = [SURF.matADJE; tSURF.matADJE];

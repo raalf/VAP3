@@ -91,8 +91,8 @@ for i = 1:length(seqALPHA)
     VAP_IN.valDELTIME = .25/vinf;
     VAP_IN.valSTARTFORCES = 30;
     VAP_IN.valMAXTIME = 30;
-%                 VAP_IN.valSTARTFORCES = 3
-%                 VAP_IN.valMAXTIME = 3
+%                 VAP_IN.valSTARTFORCES = 5
+%                 VAP_IN.valMAXTIME = 10
     WING_SWEEP(i) = fcnVAP_MAIN(wing_sweep_filename, VAP_IN);
     %     view([90 90]);
 end
@@ -106,10 +106,11 @@ CL   = weightN./(0.5*rho*vinf.^2*S);
 % interpolate alpha to maintain steady level flight at VINF
 % using wing only data
 ALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL);
-
+CDvap = interp1([WING_SWEEP.vecVEHALPHA],[WING_SWEEP.vecCD_AVG],ALPHA);
 % LD = interp1(borer(:,1),borer(:,2),vinf*1.94384); % get L/D from Borer Data
 LD = 14;
 CD = CL./(LD); % Calculate CD with Borer L/D Data
+CX = CD - CDvap;
 D  = 0.5*rho*vinf.^2.*CD*S; % Calulate drag force in Newton
 thrust  = (D./cosd(ALPHA))/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
@@ -150,7 +151,7 @@ for i = 1:length(vecCOLLECTIVE)
     VAP_IN.vecVEHALPHA = 0;
     VAP_IN.valSTARTFORCES = 100;
     VAP_IN.valMAXTIME = 100;
-%                 VAP_IN.valSTARTFORCES = 20
+%                 VAP_IN.valSTARTFORCES = 15
 %                 VAP_IN.valMAXTIME = 20
     VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
     PROP_SWEEP(i) = fcnVAP_MAIN(prop_sweep_filename, VAP_IN);
@@ -247,8 +248,8 @@ try
         VAP_IN.vecVEHVINF = vinf;
         VAP_IN.valMAXTIME = 160;
         VAP_IN.valSTARTFORCES = VAP_IN.valMAXTIME-20;
-%                 VAP_IN.valMAXTIME = 12
-%                 VAP_IN.valSTARTFORCES = 10
+%                 VAP_IN.valMAXTIME = 10
+%                 VAP_IN.valSTARTFORCES = 6
         VAP_IN.valDELTIME = (1/60)/(rotor.rpm/60);
         OUTP = fcnVAP_MAIN(vap_filename, VAP_IN);
         cd 'Runs/J_COLE_OPTIMIZATION/'
