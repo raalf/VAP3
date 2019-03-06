@@ -24,6 +24,7 @@ FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
 FLAG.SAVETIMESTEP = 0;
+FLAG.HOVERWAKE = 1;
 
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
@@ -179,7 +180,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     end
     
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)
-        fcnGIF(FLAG.VERBOSE, valTIMESTEP, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, VISC.matFUSEGEOM, WAKE.valWNELE, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCENTER, WAKE.vecWPLOTSURF, 1);
+       fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, 1)
     end
     
 end

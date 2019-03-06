@@ -1,11 +1,9 @@
-function [hFig3] = fcnGIF(flagVERBOSE, valTIMESTEP, valNELE, matDVE, matVLST, matCENTER, matFUSEGEOM,...
-                    valWNELE, matWDVE, matWVLST, matWCENTER, vecWDVESURFACE, case_num)
+function [hFig3] = fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, case_num)
 
-[hFig3] = fcnPLOTBODY(flagVERBOSE, valNELE, matDVE, matVLST, matCENTER, []);
-[hFig3] = fcnPLOTWAKE(flagVERBOSE, hFig3, valWNELE, matWDVE, matWVLST, matWCENTER, vecWDVESURFACE);
+fcnPLOTPKG(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU)
 % view([33 22])
 view([-45 20])
-
+hFig3 = figure(3);
 frame = getframe(hFig3);
 im = frame2im(frame);
 [imind,cm] = rgb2ind(im,256);
@@ -17,5 +15,5 @@ gif_str = ['GIF/output_',num2str(case_num),'.gif'];
 if valTIMESTEP == 1
     imwrite(imind,cm, gif_str,'gif', 'Loopcount',inf);
 else
-    imwrite(imind,cm, gif_str,'gif','WriteMode','append');
+    imwrite(imind,cm, gif_str,'gif','WriteMode','append', 'DelayTime', 0.2);
 end

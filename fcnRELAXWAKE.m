@@ -6,6 +6,15 @@ function WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG, INPU)
 
 % Get mid-points induced velocity
 [WAKE.matWDVEMPIND] = fcnINDVEL(WAKE.matWDVEMP, valTIMESTEP, SURF, WAKE, INPU, FLAG);
+
+maxRot = 2;
+startVel = 6;
+valAZNUM = 1/(COND.valDELTIME*(abs(COND.vecROTORRPM(1))/60));
+if valTIMESTEP/valAZNUM <= maxRot && FLAG.HOVERWAKE == 1 && sum(COND.vecVEHVINF) == 0
+    Vel = -startVel/maxRot*(valTIMESTEP/valAZNUM)+startVel;
+    WAKE.matWDVEMPIND(:,3) = WAKE.matWDVEMPIND(:,3) - Vel;
+end
+
 % Assemble matrices for fcnDISPLACE (vup, vnow, vdown)
 [ matVUP, matVNOW, matVDOWN ] = fcnDISPMAT(WAKE.matWDVEMPIND, vecWMPUP, vecWMPDN );
 

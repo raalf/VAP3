@@ -54,7 +54,7 @@ for j = 1:len_Re
     fprintf(fileID,'%s\n', filename);
     fprintf(fileID,'oper\n');
     fprintf(fileID,'iter\n');
-    fprintf(fileID,'15\n');
+    fprintf(fileID,'100\n');
     fprintf(fileID,'visc\n');
     fprintf(fileID,'%i\n', Re);
     
