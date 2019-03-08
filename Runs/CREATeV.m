@@ -3,7 +3,7 @@ clear
 
 seqALPHA = [-4:1:12];
 
-seqALPHA = 13
+seqALPHA = 12
 
 filename = 'inputs/CREATeV.vap';
 for i = 1:length(seqALPHA)
@@ -30,20 +30,31 @@ end
 % grid minor
 % box on
 
-load('airfoils/RAALF-B8.mat')
+% load('airfoils/RAALF-B8.mat')
+% 
+% linestyles = {'--';'-.';'-';':'};
+% markers = {'o';'x';'s';'^';'*';'d';'v';'>';'<';'p';'h'};
+% colors = {'k';'b';'r';'m';'c';'g'};
+% 
+% hFig23 = figure(23);
+% clf(23);
+% hold on
+% for i = 1:size(pol,3)
+%    
+%     plot(pol(:,1,i), pol(:,2,i), [linestyles{1+mod(i,4)}, markers{1+mod(i,11)}, colors{1+mod(i,6)}])
+%     
+% end
+% hold off
+% grid minor
+% box on
 
-linestyles = {'--';'-.';'-';':'};
-markers = {'o';'x';'s';'^';'*';'d';'v';'>';'<';'p';'h'};
-colors = {'k';'b';'r';'m';'c';'g'};
+hFig67 = figure(67);
+clf(67)
 
-hFig23 = figure(23);
-clf(23);
-hold on
-for i = 1:size(pol,3)
-   
-    plot(pol(:,1,i), pol(:,2,i), [linestyles{1+mod(i,4)}, markers{1+mod(i,11)}, colors{1+mod(i,6)}])
-    
-end
-hold off
+plot(1:length(OUTP.vecCL),OUTP.vecCL, '-ok')
 grid minor
 box on
+axis tight
+
+xlabel('Timestep','FontSize',15);
+ylabel('C_L','FontSize',15);

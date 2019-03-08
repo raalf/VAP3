@@ -3,9 +3,9 @@
 <VAP>
 	<settings>
 		<relax>FALSE</relax>
-		<steady>TRUE</steady>
-		<maxtime>100</maxtime>
-		<delta_time>0.125</delta_time>
+		<steady>FALSE</steady>
+		<maxtime>200</maxtime>
+		<delta_time>0.008</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>TRUE</stiff_wing>
 		<fixed_lift>1</fixed_lift>
@@ -17,7 +17,7 @@
 		<kin_viscosity>1.46e-05</kin_viscosity>
 		<gust_amplitude>15.24</gust_amplitude>
 		<gust_length>5</gust_length>
-		<gust_start>50</gust_start>
+		<gust_start>90</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -25,7 +25,7 @@
 		<global_y>0</global_y>
 		<global_z>0</global_z>
 
-		<speed>nan</speed>
+		<speed>8</speed>
 		<weight>119</weight>
 		<interference_drag>0</interference_drag>
 
@@ -44,9 +44,9 @@
 			<symmetry>TRUE</symmetry>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
-			<triangular_elements>TRUE</triangular_elements>
+			<triangular_elements>FALSE</triangular_elements>
 
-			<chordwise_elements>6</chordwise_elements>
+			<chordwise_elements>3</chordwise_elements>
 
 			<vehicle_x>0</vehicle_x>
 			<vehicle_y>0</vehicle_y>

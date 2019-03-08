@@ -46,7 +46,7 @@ catch
 end
 
 try if strcmpi(VAP.settings.fixed_lift.Text, 'true') FLAG.FIXEDLIFT = 1; end; catch FLAG.FIXEDLIFT = 0; end
-try FLAG.GUSTMODE = str2double(VAP.conditions.gust_mode.Text); catch; FLAG.GUSTMODE = 0; end
+try FLAG.GUSTMODE = str2double(VAP.settings.gust_mode.Text); catch; FLAG.GUSTMODE = 0; end
 
 COND.valMAXTIME = floor(str2double(VAP.settings.maxtime.Text));
 COND.valDELTIME = str2double(VAP.settings.delta_time.Text);

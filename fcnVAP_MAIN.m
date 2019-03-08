@@ -8,15 +8,15 @@ end
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
 
-FLAG.PRINT = 0;
-FLAG.PLOT = 0;
+FLAG.PRINT = 1;
+FLAG.PLOT = 1;
 FLAG.VISCOUS = 1;
 FLAG.CIRCPLOT = 0;
 FLAG.GIF = 0;
 FLAG.PREVIEW = 0;
 FLAG.PLOTWAKEVEL = 0;
 FLAG.PLOTUINF = 0;
-FLAG.VERBOSE = 1;
+FLAG.VERBOSE = 0;
 FLAG.SAVETIMESTEP = 0;
 
 % Initializing parameters to null/zero/nan
@@ -78,11 +78,11 @@ end
 
 SURF.matNPDVE = SURF.matDVE;
 % Computing structure distributions if data exists
-try 
-    [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); 
+try
+    [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
     FLAG.STRUCTURE = 1; % Create flag if structure data exists
 catch
-    FLAG.STRUCTURE = 0; 
+    FLAG.STRUCTURE = 0;
 end
 
 n = 1;
@@ -124,11 +124,16 @@ for valTIMESTEP = 1:COND.valMAXTIME
         end
     else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
+        if valGUSTTIME > 1 || valTIMESTEP == COND.valGUSTSTART
+            valUINF = norm(VEHI.matVEHUVW);
+            [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWINGSTIFF(SURF.matUINF, COND.valGUSTAMP, COND.valGUSTL, FLAG.GUSTMODE, COND.valDELTIME, valUINF, COND.valGUSTSTART, SURF.matCENTER, SURF.gust_vel_old);
+            valGUSTTIME = valGUSTTIME + 1;
+        end
     end
     
     % Update structure location after moving wing
-    try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU); 
-    catch 
+    try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU);
+    catch
     end
     
     %% Generating new wake elements
@@ -193,12 +198,12 @@ if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0 && ~isempty(valTIMESTEP)
     OUTP.vecCDP_AVG = fcnTIMEAVERAGE(OUTP.vecCD - OUTP.vecCDI, COND.vecROTORRPM, COND.valDELTIME);
     
     for i = 1:max(SURF.vecDVEWING)
-       OUTP.WING(i).vecLDIST(~any(OUTP.WING(i).vecLDIST, 2), :) = [];
-       OUTP.WING(i).vecLDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecLDIST, COND.vecROTORRPM, COND.valDELTIME);
-       OUTP.WING(i).vecDPDIST(~any(OUTP.WING(i).vecDPDIST, 2), :) = [];
-       OUTP.WING(i).vecDPDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDPDIST, COND.vecROTORRPM, COND.valDELTIME);
-       OUTP.WING(i).vecDIDIST(~any(OUTP.WING(i).vecDIDIST, 2), :) = [];
-       OUTP.WING(i).vecDIDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDIDIST, COND.vecROTORRPM, COND.valDELTIME);
+        OUTP.WING(i).vecLDIST(~any(OUTP.WING(i).vecLDIST, 2), :) = [];
+        OUTP.WING(i).vecLDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecLDIST, COND.vecROTORRPM, COND.valDELTIME);
+        OUTP.WING(i).vecDPDIST(~any(OUTP.WING(i).vecDPDIST, 2), :) = [];
+        OUTP.WING(i).vecDPDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDPDIST, COND.vecROTORRPM, COND.valDELTIME);
+        OUTP.WING(i).vecDIDIST(~any(OUTP.WING(i).vecDIDIST, 2), :) = [];
+        OUTP.WING(i).vecDIDIST_AVG = fcnTIMEAVERAGE(OUTP.WING(i).vecDIDIST, COND.vecROTORRPM, COND.valDELTIME);
     end
     
     OUTP.vecCT_AVG = fcnTIMEAVERAGE(OUTP.vecCT, COND.vecROTORRPM, COND.valDELTIME);
@@ -211,7 +216,7 @@ if FLAG.PREVIEW ~= 1 && max(SURF.vecDVEROTOR) > 0 && ~isempty(valTIMESTEP)
     OUTP.vecCP_AVG = fcnTIMEAVERAGE(OUTP.vecCP, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCPI_AVG = fcnTIMEAVERAGE(OUTP.vecCPI, COND.vecROTORRPM, COND.valDELTIME);
     OUTP.vecCPP_AVG = fcnTIMEAVERAGE(OUTP.vecCP - OUTP.vecCPI, COND.vecROTORRPM, COND.valDELTIME);
-
+    
     for i = 1:max(SURF.vecDVEROTOR)
         OUTP.ROTOR(i).vecTHRUSTDIST(any(~any(OUTP.ROTOR(i).vecTHRUSTDIST, 2), 3), :) = [];
         OUTP.ROTOR(i).vecTHRUSTDIST_AVG = fcnTIMEAVERAGE(OUTP.ROTOR(i).vecTHRUSTDIST, COND.vecROTORRPM, COND.valDELTIME);
