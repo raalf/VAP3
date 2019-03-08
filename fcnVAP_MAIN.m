@@ -126,7 +126,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
         if valGUSTTIME > 1 || valTIMESTEP == COND.valGUSTSTART
             valUINF = norm(VEHI.matVEHUVW);
-            [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWINGSTIFF(SURF.matUINF, COND.valGUSTAMP, COND.valGUSTL, FLAG.GUSTMODE, COND.valDELTIME, valUINF, COND.valGUSTSTART, SURF.matCENTER, SURF.gust_vel_old);
+            [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF, COND.valGUSTAMP, COND.valGUSTL, FLAG.GUSTMODE, COND.valDELTIME, valUINF, COND.valGUSTSTART, SURF.matCENTER, SURF.gust_vel_old);
             valGUSTTIME = valGUSTTIME + 1;
         end
     end

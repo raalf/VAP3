@@ -4,7 +4,7 @@
 	<settings>
 		<relax>FALSE</relax>
 		<steady>FALSE</steady>
-		<maxtime>200</maxtime>
+		<maxtime>300</maxtime>
 		<delta_time>0.008</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>TRUE</stiff_wing>
@@ -46,7 +46,7 @@
 			<trimable>FALSE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
 
-			<chordwise_elements>3</chordwise_elements>
+			<chordwise_elements>5</chordwise_elements>
 
 			<vehicle_x>0</vehicle_x>
 			<vehicle_y>0</vehicle_y>
