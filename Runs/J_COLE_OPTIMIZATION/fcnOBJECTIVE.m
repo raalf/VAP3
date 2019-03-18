@@ -93,7 +93,7 @@ ALPHA = interp1([WING_SWEEP.vecCLv_AVG],[WING_SWEEP.vecVEHALPHA],CL);
 CDvap = interp1([WING_SWEEP.vecVEHALPHA],[WING_SWEEP.vecCD_AVG],ALPHA);
 LD = 14;
 CD = CL./(LD); % Calculate CD with Borer L/D Data
-CX = 0.0294
+CX = 0.0294;
 D  = 0.5*rho*vinf.^2.*CD*S; % Calulate drag force in Newton
 thrust  = (D./cosd(ALPHA))/(2*N_prop); % Calculate Thrust force required from EACH PROP
 
