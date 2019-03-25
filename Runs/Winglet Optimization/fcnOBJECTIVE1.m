@@ -1,4 +1,4 @@
-function out = fcnOBJECTIVE1(z, home_dir)
+function [out, dataout] = fcnOBJECTIVE1(z, home_dir, views)
 cd(home_dir)
 
 if exist('aux_files','file') ~= 7
@@ -23,22 +23,55 @@ pan(2).geom = [geom(end,:); [geom(end,1) (geom(end,2) + 0.1) (geom(end,3) + 0.05
 vap3_inputmod_wing(vap_filename, pan)
 
 cd ./../../
-seqALPHA = [2:2:12];
+seqALPHA = [2:1:8];
+% seqALPHA = [2:0.25:8];
+if views == true
+    seqALPHA = 0
+end
 for i = 1:length(seqALPHA)
     VAP_IN = [];
     VAP_IN.RELAX = 0;
     VAP_IN.valSTARTFORCES = 40;
     VAP_IN.vecVEHALPHA = seqALPHA(i);
+    if views == true
+        VAP_IN.valMAXTIME = 0
+    end
     WING_SWEEP(i) = fcnVAP_MAIN(['Runs/Winglet Optimization/', vap_filename], VAP_IN);
 end
 cd('Runs/Winglet Optimization/');
 delete(vap_filename)
-
+dataout.WING_SWEEP = WING_SWEEP;
 % gca;
 % xlim([0 1]-(40*0.25))
 % ylim([7.50-0.7 7.6])
 % zlim([-0.1 0.9])
 % view([-48 11])
+
+if views == true
+    wh = [5 5];
+    % XZ
+    gca;
+    xlim([0.2 0.8])
+    ylim([7 7.6])
+    zlim([0.3 0.9])
+    view([0 0])
+    saveFig2Latex(gcf, 'blended-xz.pdf', wh);
+    
+    % XY
+    gca;
+    xlim([0.2 0.8])
+    ylim([7 7.6])
+    zlim([0.3 0.9])
+    view([0 90])
+    saveFig2Latex(gcf, 'blended-xy.pdf', wh);
+    % YZ
+    gca;
+    xlim([0.2 0.8])
+    ylim([7 7.6])
+    zlim([0.3 0.9])
+    view([-90 0])
+    saveFig2Latex(gcf, 'blended-yz.pdf', wh);
+end
 
 %% Analysis
 % Calculate CL at VINF and S&L flight
@@ -65,6 +98,19 @@ LD = LDfit(range_vxc);
 Vcruise = Vinffit(range_vxc);
 wglide = Vcruise.*(CD./CL);
 [~, LDindex] = max(LD);
+
+dataout.range_vxc = range_vxc;
+dataout.CL = CL;
+dataout.CD = CD;
+dataout.LD = LD;
+dataout.Vcruise = Vcruise;
+dataout.wglide = wglide;
+
+dataout.LDfit = LDfit;
+dataout.CLfit = CLfit;
+dataout.CDfit = CDfit;
+dataout.Vinffit = Vinffit;
+dataout.Cdifit = Cdifit;
 
 
 % % Check
@@ -100,8 +146,8 @@ WSroh = 2*valWEIGHT/(valAREA*valDENSITY);
 
 k = 1;
 
-% for wmaxth = 2:0.25:8
-for wmaxth = 2:3:8
+for wmaxth = 2:0.25:8
+    % for wmaxth = 2:3:8
     j = 1;
     
     for i = LDindex:size(CL)
@@ -122,16 +168,19 @@ for wmaxth = 2:3:8
     
 end
 
+dataout.Vxc = Vxc;
 invVxcMAX_low = invVxcMAX(1,1);
 invVxcMAX_med = invVxcMAX(ceil(end/2),1);
 invVxcMAX_high = invVxcMAX(end,1);
 
 %% High speed CD
 highspeed_cd = interp1(vecVINF, vecCD, 51, 'linear', 'extrap');
+dataout.highspeed_cd = highspeed_cd;
 
 %% Wing root bending moment
 idx = 2;
 root_bending = sum(WING_SWEEP(idx).WING.vecLDIST(end,:)'.*WING_SWEEP(idx).WING.vecSPANLOC_PROJ);
+dataout.root_bending = root_bending;
 
 %% Output
 out = [invVxcMAX_low invVxcMAX_med invVxcMAX_high root_bending highspeed_cd];

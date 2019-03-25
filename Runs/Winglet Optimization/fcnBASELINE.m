@@ -1,4 +1,4 @@
-function out = fcnBASELINE(home_dir)
+function [out, dataout] = fcnBASELINE(home_dir)
 cd(home_dir)
 
 if exist('aux_files','file') ~= 7
@@ -19,7 +19,8 @@ pan(1).geom = geom;
 vap3_inputmod_wing(vap_filename, pan)
 
 cd ./../../
-seqALPHA = [2:2:12];
+seqALPHA = [2:1:8];
+% seqALPHA = [2:0.25:8];
 for i = 1:length(seqALPHA)
     VAP_IN = [];
     VAP_IN.RELAX = 0;
@@ -29,6 +30,8 @@ for i = 1:length(seqALPHA)
 end
 cd('Runs/Winglet Optimization/');
 delete(vap_filename)
+
+dataout.WING_SWEEP = WING_SWEEP;
 
 % gca;
 % xlim([0 1]-(40*0.25))
@@ -61,6 +64,19 @@ LD = LDfit(range_vxc);
 Vcruise = Vinffit(range_vxc);
 wglide = Vcruise.*(CD./CL);
 [~, LDindex] = max(LD);
+
+dataout.range_vxc = range_vxc;
+dataout.CL = CL;
+dataout.CD = CD;
+dataout.LD = LD;
+dataout.Vcruise = Vcruise;
+dataout.wglide = wglide;
+
+dataout.LDfit = LDfit;
+dataout.CLfit = CLfit;
+dataout.CDfit = CDfit;
+dataout.Vinffit = Vinffit;
+dataout.Cdifit = Cdifit;
 
 
 % % Check
@@ -96,8 +112,8 @@ WSroh = 2*valWEIGHT/(valAREA*valDENSITY);
 
 k = 1;
 
-% for wmaxth = 2:0.25:8
-for wmaxth = 2:3:8
+for wmaxth = 2:0.25:8
+% for wmaxth = 2:3:8
     j = 1;
     
     for i = LDindex:size(CL)
@@ -118,16 +134,19 @@ for wmaxth = 2:3:8
     
 end
 
+dataout.Vxc = Vxc;
 invVxcMAX_low = invVxcMAX(1,1);
 invVxcMAX_med = invVxcMAX(ceil(end/2),1);
 invVxcMAX_high = invVxcMAX(end,1);
 
 %% High speed CD
 highspeed_cd = interp1(vecVINF, vecCD, 51, 'linear', 'extrap');
+dataout.highspeed_cd = highspeed_cd;
 
 %% Wing root bending moment
 idx = 2;
 root_bending = sum(WING_SWEEP(idx).WING.vecLDIST(end,:)'.*WING_SWEEP(idx).WING.vecSPANLOC_PROJ);
+dataout.root_bending = root_bending;
 
 %% Output
 out = [invVxcMAX_low invVxcMAX_med invVxcMAX_high root_bending highspeed_cd];

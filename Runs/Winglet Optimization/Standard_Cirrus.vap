@@ -26,7 +26,7 @@
 		<global_z>0</global_z>
 
         <speed>nan</speed>
-		<weight>3649.32</weight>
+		<weight>3237.3</weight>
 		<interference_drag>0</interference_drag>
 
 		<alpha>10</alpha>
@@ -37,7 +37,7 @@
 		<radius>nan</radius>
 
 		<ref_area>12.6</ref_area>
-		<ref_span>15</ref_span>
+		<ref_span>10</ref_span>
 		<ref_cmac>0.707</ref_cmac>
 
 
