@@ -109,10 +109,10 @@ for i = 1:max(vecDVEWING)
         % Load airfoil .mat files
         try
             % only load variable 'pol' to avoid variable conflict.
-            load(strcat('airfoils/',cellAIRFOIL{k},'.mat'),'pol');
+            load(strcat('airfoils/',uniqueAirfoil{k},'.mat'),'pol');
             
         catch
-            error('Error: Unable to locate airfoil file: %s.mat.', cellAIRFOIL{k});
+            error('Error: Unable to locate airfoil file: %s.mat.', uniqueAirfoil{k});
         end
         
         Cl  = reshape(pol(:,2,:),[],1);

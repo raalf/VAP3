@@ -55,10 +55,10 @@ vecCLMAXA   = nan(size(vecCNDIST));
 for k = 1:length(uniqueAirfoil)
     % Load airfoil .mat files
     try
-        load(strcat('airfoils/',cellAIRFOIL{k},'.mat'));
+        load(strcat('airfoils/',uniqueAirfoil{k},'.mat'));
         
     catch
-        error('Error: Unable to locate airfoil file: %s.mat.', cellAIRFOIL{k});
+        error('Error: Unable to locate airfoil file: %s.mat.', uniqueAirfoil{k});
     end
     
     Alpha  = reshape(pol(:,1,:),[],1);

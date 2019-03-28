@@ -194,6 +194,7 @@ for i = 1:INPU.valVEHICLES
                 sec = pan.section{1,n};
                 
                 matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matWINGORIG(k,1) str2double(sec.y.Text) + matWINGORIG(k,2) str2double(sec.z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
+
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
@@ -211,6 +212,9 @@ for i = 1:INPU.valVEHICLES
         k = k + 1;
     end
     
+	if isfield(VAP_IN,'vecWINGTWIST')
+        matSECTIONS(:,5) = VAP_IN.vecWINGTWIST;
+	end
     %% Loading Wing Structure
     
     for j = 1:vecSTRUCTURE(i)
