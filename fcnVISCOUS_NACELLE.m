@@ -32,13 +32,15 @@ for i = 1:size(INPU.vecROTDIAM,1)
     [matWUINF] = fcnINDVEL(SURF.matCENTER(temp,:), valTIMESTEP, SURF, WAKE, INPU, FLAG);
         
     tempCRDS = sum(2*SURF.vecDVEHVCRD(matROWS),2);
-    
-    tempCRDS1 = nan(size(matROWS,1),1);
+    tempCRDS1 = nan(size(matROWS(:),1),1);
     tempCRDS1(matROWS(:,1),:) = tempCRDS;
     tempCRDS = tempCRDS1;
     
     idx = temp <= size(tempCRDS,1); % NOTE: this assumes that the wing DVE is ordered first
     tempCRDS = tempCRDS(temp(idx));
+    idx_nan = isnan(tempCRDS);
+    tempCRDS = tempCRDS(~idx_nan);
+    temp = temp(~idx_nan);
     
     % Calculate taper ratio of each DVE
     idx1 = 1:(length(tempCRDS)-1); % Index of root chord elements
@@ -49,7 +51,7 @@ for i = 1:size(INPU.vecROTDIAM,1)
 
     vecMAC(i,1) = (2/3)*tempCRDS(1,1).*(1 + taper_ratio + taper_ratio.^2)./(1 + taper_ratio);
     
-    tempNACTOT = SURF.matUINF(temp,:) + matWUINF;
+    tempNACTOT = SURF.matUINF(temp,:) + matWUINF(~idx_nan,:);
     valNACUTOT(i,1) = mean(sqrt(sum(tempNACTOT.^2,2)));
     Re(i,1) = valNACUTOT(i)*OUTP.valNACLEN(i)/VISC.valKINV;
   
