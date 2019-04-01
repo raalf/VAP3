@@ -109,7 +109,7 @@ VISC.vecINTERF = 0;
 vecWINGINCID = [];
 vecTRIMABLE = [];
 vecWINGM = [];
-matWINGORIG = [];
+INPU.matWINGORIG = [];
 vecPANELS = [];
 cellAIRFOILtemp = {};
 VISC.cellAIRFOIL = {};
@@ -174,8 +174,8 @@ for i = 1:INPU.valVEHICLES
         
         vecWINGM(k,1) = str2double(win.M.Text);
         
-        try matWINGORIG(k,:) = [str2double(win.xorig.Text) str2double(win.yorig.Text) str2double(win.zorig.Text)];
-        catch; matWINGORIG(k,:) = [0 0 0]; end
+        try INPU.matWINGORIG(k,:) = [str2double(win.xorig.Text) str2double(win.yorig.Text) str2double(win.zorig.Text)];
+        catch; INPU.matWINGORIG(k,:) = [0 0 0]; end
         
         vecPANELS(k,1) = max(size(win.panel));
         
@@ -193,7 +193,7 @@ for i = 1:INPU.valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + matWINGORIG(k,1) str2double(sec.y.Text) + matWINGORIG(k,2) str2double(sec.z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + INPU.matWINGORIG(k,1) str2double(sec.y.Text) + INPU.matWINGORIG(k,2) str2double(sec.z.Text) + INPU.matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
 
                 vecSECTIONPANEL(kkk,1) = kk;
                 

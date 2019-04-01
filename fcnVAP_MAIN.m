@@ -25,6 +25,7 @@ FLAG.PLOTUINF = 0;
 FLAG.VERBOSE = 0;
 FLAG.SAVETIMESTEP = 0;
 FLAG.HOVERWAKE = 0;
+FLAG.NACELLE = 1;
 
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
