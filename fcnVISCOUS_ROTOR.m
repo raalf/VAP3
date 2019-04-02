@@ -51,7 +51,7 @@ vecCDPDIST = nan(size(vecCNDIST)); % pre-allocate the array to store viscous dra
 vecCLMAXA   = nan(size(vecCNDIST));
 
 % collect all the unique airfoils and load them
-[uniqueAirfoil,~,idxAirfoil] = unique(cellAIRFOIL);
+[uniqueAirfoil,~,idxAirfoil] = unique(cellAIRFOIL,'stable');
 for k = 1:length(uniqueAirfoil)
     % Load airfoil .mat files
     try

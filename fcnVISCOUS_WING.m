@@ -104,7 +104,7 @@ for i = 1:max(vecDVEWING)
     vecCNDIST0 = vecCNDIST;
     
     % collect all the unique airfoils and load them
-    [uniqueAirfoil,~,idxAirfoil] = unique(cellAIRFOIL);
+    [uniqueAirfoil,~,idxAirfoil] = unique(cellAIRFOIL, 'stable');
     for k = 1:length(uniqueAirfoil)
         % Load airfoil .mat files
         try
