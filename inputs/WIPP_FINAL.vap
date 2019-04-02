@@ -48,7 +48,7 @@
 			<panel>
 				<airfoil>1WIPP_Wing</airfoil>
 				<symmetry>1</symmetry>
-				<N>7</N>
+				<N>30</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
@@ -56,27 +56,6 @@
 					<chord>0.2863</chord>
 					<twist>0</twist>
 				</section>	
-				<section>
-					<x>0.018627</x>
-					<y>0.484</y>
-					<z>0</z>
-					<chord>0.26274</chord>
-					<twist>0</twist>
-				</section>	
-				<section>
-					<x>0.038602</x>
-					<y>1.0599</y>
-					<z>0</z>
-					<chord>0.23865</chord>
-					<twist>0</twist>
-				</section>	
-				<section>
-					<x>0.053197</x>
-					<y>1.442</y>
-					<z>0</z>
-					<chord>0.219781</chord>
-					<twist>0</twist>
-				</section>
 				<section>
 					<x>0.0586088</x>
 					<y>1.584</y>
@@ -121,7 +100,7 @@
 			      <y>0.04916</y>
 			      <z>-0.003323</z>
 			      <chord>0.025405</chord>
-			      <twist>51.5174</twist>
+			      <twist>50.5928</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -133,14 +112,14 @@
 			      <y>0.04916</y>
 			      <z>-0.003323</z>
 			      <chord>0.025405</chord>
-			      <twist>51.5174</twist>
+			      <twist>50.5928</twist>
 			   </section>
 				<section>
 			      <x>-0.005213</x>
 			      <y>0.05791</y>
 			      <z>-0.00514</z>
 			      <chord>0.031219</chord>
-			      <twist>49.0012</twist>
+			      <twist>48.6051</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -152,14 +131,14 @@
 			      <y>0.05791</y>
 			      <z>-0.00514</z>
 			      <chord>0.031219</chord>
-			      <twist>49.0012</twist>
+			      <twist>48.6051</twist>
 			   </section>
 			   <section>
 			      <x>-0.007428</x>
 			      <y>0.06666</y>
 			      <z>-0.006432</z>
 			      <chord>0.035791</chord>
-			      <twist>46.6747</twist>
+			      <twist>46.8147</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -171,14 +150,14 @@
 			      <y>0.06666</y>
 			      <z>-0.006432</z>
 			      <chord>0.035791</chord>
-			      <twist>46.6747</twist>
+			      <twist>46.8147</twist>
 			   </section>
 			   <section>
 			      <x>-0.00934</x>
 			      <y>0.07541</y>
 			      <z>-0.007209</z>
 			      <chord>0.039175</chord>
-			      <twist>44.5724</twist>
+			      <twist>44.5310</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -190,14 +169,14 @@
 			      <y>0.07541</y>
 			      <z>-0.007209</z>
 			      <chord>0.039175</chord>
-			      <twist>44.5724</twist>
+			      <twist>44.5310</twist>
 			   </section>
 			   <section>
 			      <x>-0.010988</x>
 			      <y>0.08416</y>
 			      <z>-0.007559</z>
 			      <chord>0.041601</chord>
-			      <twist>42.3077</twist>
+			      <twist>42.6881</twist>
 			   </section>			   
 			</panel>
 			<panel>
@@ -209,14 +188,14 @@
 			      <y>0.08416</y>
 			      <z>-0.007559</z>
 			      <chord>0.041601</chord>
-			      <twist>42.3077</twist>
+			      <twist>42.6881</twist>
 			   </section>
 			   <section>
 			      <x>-0.012428</x>
 			      <y>0.09291</y>
 			      <z>-0.007574</z>
 			      <chord>0.043312</chord>
-			      <twist>40.0991</twist>
+			      <twist>40.8862</twist>
 			   </section>			   
 			</panel>
 			<panel>
@@ -228,14 +207,14 @@
 			      <y>0.09291</y>
 			      <z>-0.007574</z>
 			      <chord>0.043312</chord>
-			      <twist>40.0991</twist>
+			      <twist>40.8862</twist>
 			   </section>
 			   <section>
 			      <x>-0.013713</x>
 			      <y>0.10166</y>
 			      <z>-0.007343</z>
 			      <chord>0.044537</chord>
-			      <twist>39.7866</twist>
+			      <twist>39.0986</twist>
 			   </section>			   
 			</panel>
 			<panel>
@@ -247,14 +226,14 @@
 			      <y>0.10166</y>
 			      <z>-0.007343</z>
 			      <chord>0.044537</chord>
-			      <twist>39.7866</twist>
+			      <twist>39.0986</twist>
 			   </section>
 			   <section>
 			      <x>-0.014895</x>
 			      <y>0.11041</y>
 			      <z>-0.006953</z>
 			      <chord>0.045499</chord>
-			      <twist>37.6654</twist>
+			      <twist>37.3843</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -266,14 +245,14 @@
 			      <y>0.11041</y>
 			      <z>-0.006953</z>
 			      <chord>0.045499</chord>
-			      <twist>37.6654</twist>
+			      <twist>37.3843</twist>
 			   </section>
 			   <section>
 			      <x>-0.016023</x>
 			      <y>0.11916</y>
 			      <z>-0.006487</z>
 			      <chord>0.046402</chord>
-			      <twist>35.6343</twist>
+			      <twist>35.8314</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -285,14 +264,14 @@
 			      <y>0.11916</y>
 			      <z>-0.006487</z>
 			      <chord>0.046402</chord>
-			      <twist>35.6343</twist>
+			      <twist>35.8314</twist>
 			   </section>
 			   <section>
 			      <x>-0.017101</x>
 			      <y>0.12791</y>
 			      <z>-0.00598</z>
 			      <chord>0.047296</chord>
-			      <twist>33.7359</twist>
+			      <twist>34.0131</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -304,14 +283,14 @@
 			      <y>0.12791</y>
 			      <z>-0.00598</z>
 			      <chord>0.047296</chord>
-			      <twist>33.7359</twist>
+			      <twist>34.0131</twist>
 			   </section>
 			   <section>
 			      <x>-0.01809</x>
 			      <y>0.13666</y>
 			      <z>-0.005427</z>
 			      <chord>0.048099</chord>
-			      <twist>32.3347</twist>
+			      <twist>32.3158</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -323,14 +302,14 @@
 			      <y>0.13666</y>
 			      <z>-0.005427</z>
 			      <chord>0.048099</chord>
-			      <twist>32.3347</twist>
+			      <twist>32.3158</twist>
 			   </section>
 			   <section>
 			      <x>-0.018948</x>
 			      <y>0.14541</y>
 			      <z>-0.004819</z>
 			      <chord>0.048721</chord>
-			      <twist>30.6952</twist>
+			      <twist>30.7423</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -342,14 +321,14 @@
 			      <y>0.14541</y>
 			      <z>-0.004819</z>
 			      <chord>0.048721</chord>
-			      <twist>30.6952</twist>
+			      <twist>30.7423</twist>
 			   </section>
 			   <section>
 			      <x>-0.019634</x>
 			      <y>0.15416</y>
 			      <z>-0.004145</z>
 			      <chord>0.049075</chord>
-			      <twist>29.1790</twist>
+			      <twist>29.2304</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -361,14 +340,14 @@
 			      <y>0.15416</y>
 			      <z>-0.004145</z>
 			      <chord>0.049075</chord>
-			      <twist>29.1790</twist>
+			      <twist>29.2304</twist>
 			   </section>
 			   <section>
 			      <x>-0.020106</x>
 			      <y>0.16291</y>
 			      <z>-0.003399</z>
 			      <chord>0.049071</chord>
-			      <twist>27.7668</twist>
+			      <twist>27.7421</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -380,14 +359,14 @@
 			      <y>0.16291</y>
 			      <z>-0.003399</z>
 			      <chord>0.049071</chord>
-			      <twist>27.7668</twist>
+			      <twist>27.7421</twist>
 			   </section>
 			   <section>
 			      <x>-0.020327</x>
 			      <y>0.17166</y>
 			      <z>-0.00257</z>
 			      <chord>0.048628</chord>
-			      <twist>26.1764</twist>
+			      <twist>26.3294</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -399,14 +378,14 @@
 			      <y>0.17166</y>
 			      <z>-0.00257</z>
 			      <chord>0.048628</chord>
-			      <twist>26.1764</twist>
+			      <twist>26.3294</twist>
 			   </section>
 			   <section>
 			      <x>-0.020271</x>
 			      <y>0.18041</y>
 			      <z>-0.001651</z>
 			      <chord>0.047699</chord>
-			      <twist>24.8933</twist>
+			      <twist>24.9658</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -418,14 +397,14 @@
 			      <y>0.18041</y>
 			      <z>-0.001651</z>
 			      <chord>0.047699</chord>
-			      <twist>24.8933</twist>
+			      <twist>24.9658</twist>
 			   </section>
 			   <section>
 			      <x>-0.019925</x>
 			      <y>0.18916</y>
 			      <z>-0.000635</z>
 			      <chord>0.046259</chord>
-			      <twist>23.6318</twist>
+			      <twist>23.6609</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -437,14 +416,14 @@
 			      <y>0.18916</y>
 			      <z>-0.000635</z>
 			      <chord>0.046259</chord>
-			      <twist>23.6318</twist>
+			      <twist>23.6609</twist>
 			   </section>
 			   <section>
 			      <x>-0.019276</x>
 			      <y>0.19791</y>
 			      <z>0.000487</z>
 			      <chord>0.044282</chord>
-			      <twist>22.3609</twist>
+			      <twist>22.4115</twist>
 			   </section>
 			</panel>
 			<panel>
@@ -456,7 +435,7 @@
 			      <y>0.19791</y>
 			      <z>0.000487</z>
 			      <chord>0.044282</chord>
-			      <twist>22.3609</twist>
+			      <twist>22.4115</twist>
 			   </section>
 			   <section>
 			      <x>-0.018665</x>
