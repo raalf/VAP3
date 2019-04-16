@@ -21,24 +21,28 @@ seqVEL_PRIORITY2 = seqMACH_PRIORITY2*343;
 
 rps_setting = [98.42,78.41,57.6;134.33,107.33,79.33];
 
-
 for i = 1:length(seqCT_PRIORITY2)
+    if seqCT_PRIORITY2(i) == 0.04
+    CT = seqCT_PRIORITY2(i);
     for j = 1:length(seqMACH_PRIORITY2)
         vel = seqVEL_PRIORITY2(j);
         rps = rps_setting(j,i);
-        parfor k = 1:length(seqALPHA_PRIORITY2)
+        MACH = seqMACH_PRIORITY2(j);
+        for k = 1:length(seqALPHA_PRIORITY2)
             filename = '/inputs/WIPP_FINAL.vap';
             valAZNUM = 80;
             VAP_IN = [];
-            VAP_IN.valMAXTIME = 280;
-            VAP_IN.valSTARTFORCES = 200;
+            VAP_IN.valMAXTIME = 10;
+            VAP_IN.valSTARTFORCES = 5;
             VAP_IN.vecCOLLECTIVE = 6;
             
+            VAP_IN.TimestepName = strcat('CT',num2str(CT),'_Mach',num2str(MACH),'_AoA',num2str(seqALPHA_PRIORITY2(k)));
             VAP_IN.vecVEHALPHA = seqALPHA_PRIORITY2(k);
             VAP_IN.vecVEHVINF = vel;
             VAP_IN.vecROTORRPM = rps*60;
             VAP_IN.valDELTIME = 1./(valAZNUM.*rps);
             OUTP = fcnVAP_MAIN(filename, VAP_IN);
         end
+    end
     end
 end

@@ -11,4 +11,5 @@ VAP_IN.valSTARTFORCES = 200;
 VAP_IN.vecVEHALPHA = 0;
 rps = 4705/60;
 VAP_IN.valDELTIME = 1./(valAZNUM.*rps);
+VAP_IN.TimestepName = 'Testing';
 OUTP = fcnVAP_MAIN(filename, VAP_IN);

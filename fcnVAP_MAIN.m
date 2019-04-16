@@ -46,9 +46,13 @@ end
 
 % Setting up timestep saving feature
 if FLAG.SAVETIMESTEP == 1
-    if exist('timesteps/') ~= 7; mkdir(timesteps); end
-    timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
-    mkdir(timestep_folder);
+    if exist('timesteps/') ~= 7; mkdir('timesteps'); end
+    if isfield(VAP_IN,'TimestepName')
+        timestep_folder = strcat('timesteps/',VAP_IN.TimestepName,'/');
+    else
+        timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
+    end
+    mkdir(timestep_folder); 
 end
 
 % Check if the files required by the viscous calculations exist
