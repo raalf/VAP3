@@ -30,7 +30,7 @@
 		<trk>0</trk>
 
 		<area>0.7911</area>
-		<span>3.168</span>
+		<span>3.53</span>
 		<cmac>0.25</cmac>
 
 		<interference>10</interference>
@@ -48,20 +48,40 @@
 			<panel>
 				<airfoil>1WIPP_Wing</airfoil>
 				<symmetry>1</symmetry>
-				<N>30</N>
+				<N>5</N>
 				<section>
 					<x>0</x>
 					<y>0</y>
 					<z>0</z>
-					<chord>0.2863</chord>
-					<twist>0</twist>
+					<chord>0.2947</chord>
+					<twist>6.5</twist>
 				</section>	
 				<section>
-					<x>0.0586088</x>
-					<y>1.584</y>
+					<x>0.0067</x>
+					<y>0.1807</y>
+					<z>0</z>
+					<chord>0.2863</chord>
+					<twist>6.5</twist>
+				</section>	
+			</panel>
+
+			<panel>
+				<airfoil>1WIPP_Wing</airfoil>
+				<symmetry>0</symmetry>
+				<N>30</N>
+				<section>
+					<x>0.0067</x>
+					<y>0.1807</y>
+					<z>0</z>
+					<chord>0.2863</chord>
+					<twist>6.5</twist>
+				</section>	
+				<section>
+					<x>0.0653088</x>
+					<y>1.765</y>
 					<z>0</z>
 					<chord>0.2127504</chord>
-					<twist>0</twist>
+					<twist>6.5</twist>
 				</section>	
 			</panel>
 		</wing>
@@ -73,7 +93,7 @@
 			<dia>0.41332</dia>
 
 			<xhub>0</xhub>
-			<yhub>1.5195</yhub>
+			<yhub>1.700</yhub>
 			<zhub>0</zhub>
 
 			<axisx>-1</axisx>
