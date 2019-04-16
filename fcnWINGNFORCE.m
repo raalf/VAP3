@@ -21,7 +21,6 @@ valCYF = nan(1,INPU.valVEHICLES,1);
 valCYI = nan(1,INPU.valVEHICLES,1);
 valCDI = nan(1,INPU.valVEHICLES,1);
 valE = nan(1,INPU.valVEHICLES,1);
-
 for i = 1:INPU.valVEHICLES
     
     idxvehwing = SURF.vecDVEWING > 0 & SURF.vecDVEVEHICLE == i; %(SURF.vecDVEWING.*SURF.vecDVEVEHICLE == i) > 0;
@@ -67,6 +66,11 @@ for i = 1:INPU.valVEHICLES
         
         AR(i) = (INPU.vecSPAN(i)*INPU.vecSPAN(i))/INPU.vecAREA(i);
         valE(i) = (valCL(i)*valCL(i))/ (pi*AR(i)*valCDI(i));
+        
+        OUTP.WING(i).vecDVELFREE(valTIMESTEP,:) = SURF.vecDVELFREE(idxvehwing);
+        OUTP.WING(i).vecDVELIND(valTIMESTEP,:) = SURF.vecDVELIND(idxvehwing);
+        OUTP.WING(i).vecINDDRAG(valTIMESTEP,:) = inddrag(idxvehwing);
+
         
         try
             if FLAG.STIFFWING ~= 1

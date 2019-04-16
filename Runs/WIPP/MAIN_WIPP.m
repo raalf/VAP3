@@ -2,7 +2,7 @@ clc
 clear
 warning off
 
-filename = 'inputs/WIPP_PROP.vap';
+filename = 'inputs/WIPP_FINAL.vap';
 valAZNUM = 80;
 VAP_IN = [];
 VAP_IN.vecCOLLECTIVE = 0;
