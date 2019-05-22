@@ -2,7 +2,7 @@
 % Mixed integer optimization -> inequality constraints only!!
 N_chord = 11; % Number of chordwise stations
 N_dihe = 0;
-N_prop = 3; % Maximum number of propellers
+N_prop = 2; % Maximum number of propellers
 % Constant for all propellers: PROP_DIAM, PROP_RPM
 % Unique to each propeller: PROP_XYZ, PROP_DIR
 Vars_prop = 3; % [PROP_YZ, PROP_DIR]
