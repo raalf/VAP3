@@ -5,6 +5,10 @@ cores = 32;
 parpool(cores,'IdleTimeout',800)
 home_dir = pwd;
 
+if ~exist('aux_files', 'dir')
+   mkdir('aux_files');
+end
+
 delete opthistory.txt
 delete dvhistory.txt
 
