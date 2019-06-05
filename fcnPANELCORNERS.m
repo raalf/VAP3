@@ -31,6 +31,7 @@ panel4corners(4:6)= [tLE(1),tLE(2),tLE(3)];
 % TE tip (X,Y,Z), take LE tip and add
 panel4corners(7:9) = panel4corners(4:6) + [tchord*cos(tepsilon),tchord*sin(tepsilon)*sin(nu),tchord*-sin(tepsilon)*cos(nu)];
 
+
 % TE root (X,Y,Z)
 
 % the TE root location is built off the LE root specified

@@ -272,7 +272,7 @@ for i = 1:INPU.valVEHICLES
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.rotor_x.Text) + INPU.matROTORHUB(p,1) flip*str2double(sec.rotor_y.Text) + INPU.matROTORHUB(p,2) str2double(sec.rotor_z.Text) + INPU.matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
+                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + INPU.matROTORHUB(p,1) flip*str2double(sec.y.Text) + INPU.matROTORHUB(p,2) str2double(sec.z.Text) + INPU.matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
                 try cellCAIRFOIL{kkk,:} = sec.camber_airfoil.Text; catch cellCAIRFOIL{kkk,:} = nan; end
                 vecSECTIONPANEL(kkk,1) = kk;
                 

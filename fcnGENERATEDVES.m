@@ -115,8 +115,8 @@ for i = 1:valPANELS
     % Read panel corners
     % For DVE generation. Twist angle is handled along with dihedral angle
     panel4corners = reshape(fcnPANELCORNERS(rLE,tLE,rchord,tchord,repsilon,tepsilon),3,4)';
-    
-    if size(camber_airfoil,2) > 1 && ~any(cellfun(@any, (cellfun(@isnan, camber_airfoil, 'UniformOutput', false))))
+    camber_airfoil = reshape(camber_airfoil, [], 2, 1);
+    if strcmpi(element_type, 'TRI') && size(camber_airfoil,2) > 1 && all(~any(cellfun(@any, (cellfun(@isnan, camber_airfoil, 'UniformOutput', false)))))
         % root
         airfoil(i,1).coord = dlmread(['airfoils/', camber_airfoil{i,1}, '.dat'],'',1,0);
         airfoil(i,1).coord = airfoil(i,1).coord.*matGEOM(1,4,i);
@@ -136,8 +136,8 @@ for i = 1:valPANELS
         ac_shift = -airfoil(i,2).coord(idx,:) + matGEOM(2,1:2:3,i);
         airfoil(i,2).coord = airfoil(i,2).coord + ac_shift;
         
-        panel4corners(4,1:2:3) = (airfoil(i,1).coord(1,:) + airfoil(i,1).coord(end,:))./2;
-        panel4corners(3,1:2:3) = (airfoil(i,2).coord(1,:) + airfoil(i,2).coord(end,:))./2;
+%         panel4corners(4,1:2:3) = (airfoil(i,1).coord(1,:) + airfoil(i,1).coord(end,:))./2;
+%         panel4corners(3,1:2:3) = (airfoil(i,2).coord(1,:) + airfoil(i,2).coord(end,:))./2;
     else
         airfoil = [];
     end    

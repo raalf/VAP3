@@ -34,6 +34,9 @@ function [ CP, LE_Left, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE( panel4corn
         yspacing = linspace(0,1,N+1);
     end
 
+    chordY(:,1) = linspace(panelY(1,1),panelY(2,1),M+1)';
+    chordY(:,2) = linspace(panelY(1,2),panelY(2,2),M+1)';
+    
     if isempty(airfoil)
         chordX(:,1) = linspace(panelX(1,1),panelX(2,1),M+1)';
         chordX(:,2) = linspace(panelX(1,2),panelX(2,2),M+1)';
@@ -43,22 +46,25 @@ function [ CP, LE_Left, LE_Right, TE_Left, TE_Right ] = fcnPANEL2DVE( panel4corn
         % Cosine spacing in the chordwise direction to improve LE resolution
         chordX(:,1) = (panelX(2,1) - panelX(1,1)).*xspacing + panelX(1,1);
         chordX(:,2) = (panelX(2,2) - panelX(1,2)).*xspacing + panelX(1,2);
-        % Upper surface Z-coordinates
-        tmp = fcnLINSPLINE(airfoil(i,1).coord(1:airfoil(i,1).le_idx,1), airfoil(i,1).coord(1:airfoil(i,1).le_idx,2));
-        tmpZ(:,1,1) = tmp(chordX(:,1));
-        tmp = fcnLINSPLINE(airfoil(i,2).coord(1:airfoil(i,2).le_idx,1), airfoil(i,2).coord(1:airfoil(i,2).le_idx,2));
-        tmpZ(:,2,1) = tmp(chordX(:,2));
-        % Lower surface Z-coordinates
-        tmp = fcnLINSPLINE(airfoil(i,1).coord(airfoil(i,1).le_idx:end,1), airfoil(i,1).coord(airfoil(i,1).le_idx:end,2));
-        tmpZ(:,1,2) = tmp(chordX(:,1));
-        chordZ(:,1) = mean(tmpZ(:,1,:),3);
-        tmp = fcnLINSPLINE(airfoil(i,2).coord(airfoil(i,2).le_idx:end,1), airfoil(i,2).coord(airfoil(i,2).le_idx:end,2));
-        tmpZ(:,2,2) = tmp(chordX(:,2));
-        chordZ(:,2) = mean(tmpZ(:,2,:),3);
+        
+        chordZ(:,1) = (panelZ(2,1) - panelZ(1,1)).*xspacing + panelZ(1,1);
+        chordZ(:,2) = (panelZ(2,2) - panelZ(1,2)).*xspacing + panelZ(1,2);
+        
+%         % Upper surface Z-coordinates
+%         tmp = fcnLINSPLINE(airfoil(i,1).coord(1:airfoil(i,1).le_idx,1), airfoil(i,1).coord(1:airfoil(i,1).le_idx,2));
+%         tmpZ(:,1,1) = tmp(chordX(:,1));
+%         tmp = fcnLINSPLINE(airfoil(i,2).coord(1:airfoil(i,2).le_idx,1), airfoil(i,2).coord(1:airfoil(i,2).le_idx,2));
+%         tmpZ(:,2,1) = tmp(chordX(:,2));
+%         % Lower surface Z-coordinates
+%         tmp = fcnLINSPLINE(airfoil(i,1).coord(airfoil(i,1).le_idx:end,1), airfoil(i,1).coord(airfoil(i,1).le_idx:end,2));
+%         tmpZ(:,1,2) = tmp(chordX(:,1));
+%         chordZ(:,1) = mean(tmpZ(:,1,:),3);
+%         tmp = fcnLINSPLINE(airfoil(i,2).coord(airfoil(i,2).le_idx:end,1), airfoil(i,2).coord(airfoil(i,2).le_idx:end,2));
+%         tmpZ(:,2,2) = tmp(chordX(:,2));
+%         chordZ(:,2) = mean(tmpZ(:,2,:),3);
     end 
         
-    chordY(:,1) = linspace(panelY(1,1),panelY(2,1),M+1)';
-    chordY(:,2) = linspace(panelY(1,2),panelY(2,2),M+1)';
+
     
     
     % Preallocate the memories for point matrices

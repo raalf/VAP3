@@ -6,7 +6,7 @@ function [ FLAG ] = fcnVISCOUSFILECHECK(FLAG, VISC)
 if FLAG.VISCOUS == 1
     
     % case 1, no airfoil file specified
-    if isempty(VISC.cellAIRFOIL) == 1
+    if isempty(VISC.cellAIRFOIL) == 1 %|| all(cellfun(@isnan, VISC.cellAIRFOIL,'UniformOutput',false))
         % no airfoil tag found in the input file
         disp('FLAG.VISCOUS = 0: No airfoil tag found in the input file.')
         FLAG.VISCOUS = 0;
