@@ -6,8 +6,8 @@ addpath('../../airfoils')
 addpath('./../../Runs/J_COLE_OPTIMIZATION/aux_files')
 addpath('./../../Runs/J_COLE_OPTIMIZATION/')
 
-cores = 37;
-parpool(cores,'IdleTimeout',800)
+% cores = 37;
+% parpool(cores,'IdleTimeout',800)
 home_dir = pwd;
 
 N_chord = 11;
@@ -16,9 +16,9 @@ N_prop_max = 1;
 Vars_prop = 3;
 
 %%
-d = linspace(100,160,3);
-y = linspace(140, 482*0.95, 3);
-z = [-15:10:15];
+d = linspace(100,160,6);
+y = linspace(140, 482*0.95, 12);
+z = [-15:5:15];
 [D,Y,Z] = meshgrid(d,y,z);
 swp_inp = [D(:), Y(:), Z(:)];
 
