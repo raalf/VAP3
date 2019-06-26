@@ -9,11 +9,6 @@ end
 %% Reading in geometry
 [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
 
-COND.vecWINGTRI(~isnan(COND.vecWINGTRI)) = nan;
-COND.vecWAKETRI(~isnan(COND.vecWAKETRI)) = nan;
-FLAG.TRI = 0;
-FLAG.GPU = 0;
-
 FLAG.PRINT = 1;
 FLAG.PLOT = 1;
 FLAG.VISCOUS = 1;
@@ -26,6 +21,7 @@ FLAG.VERBOSE = 0;
 FLAG.SAVETIMESTEP = 0;
 FLAG.HOVERWAKE = 0;
 FLAG.NACELLE = 0;
+FLAG.GPU = 0;
 
 % Initializing parameters to null/zero/nan
 [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);

@@ -34,15 +34,6 @@ SURF.matDVETRANS  = COND.valDELTIME.*VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);
 % [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,~, ~, ~, ~, SURF.matDVENORM, ~, ~, ~, ~] = fcnDVECORNER2PARAM(SURF.matCENTER, SURF.matVLST(SURF.matDVE(:,1),:), SURF.matVLST(SURF.matDVE(:,2),:), SURF.matVLST(SURF.matDVE(:,3),:), SURF.matVLST(SURF.matDVE(:,4),:) );
 
 
-
-% Fuselage
-if ~isempty(VISC.vecFUSEVEHICLE)
-    matFUSETRANS = COND.valDELTIME.*VEHI.matVEHUVW(VISC.vecFUSEVEHICLE,:);
-    VISC.matFVLST = VISC.matFVLST + matFUSETRANS;
-end
-
-
-
 % SURF.matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
 SURF.matUINFVEH = -VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);

@@ -35,12 +35,8 @@ function [en, nfree,nind,liftfree,liftind,sidefree,sideind,el] = fcnDVENFORCE(va
 %for triangle elements:
 %we find all velocities directly at the LE
 
-if FLAG.TRI ==1  %tri elements
-    idx1 = ones(SURF.valNELE,1) == 1 ;
-    
-else %quad elements,
-    idx1 = SURF.vecDVELE == 1; %index of LE vectors (will be the same)
-end
+idx1 = SURF.vecDVELE == 1; %index of LE vectors (will be the same)
+
 % find vector across element (should already have this somewhere...)
 % for first spanwise row, vector is LE vect, for all other spanwise rows,
 % vector is halfchord vect.

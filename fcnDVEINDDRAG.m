@@ -67,12 +67,7 @@ tepoints = repmat(tepoints,[numte,1,1]);
 %dvenum is inducer
 %need to keep the inducers index the same as the induced points
 
-if FLAG.TRI == 1
-    newest_row = sort([WAKE.valWNELE:-2:WAKE.valWNELE-WAKE.valWSIZE*2+1]-1)';
-    
-else
 newest_row = [((WAKE.valWNELE-WAKE.valWSIZE)+1):1:WAKE.valWNELE]';
-end
 dvenum = newest_row(repmat(1:WAKE.valWSIZE,WAKE.valWSIZE,1),:);
 
 
@@ -112,39 +107,18 @@ newtepoint(diffw) = tepoints(diffw);
 %account for remaining wake rows
 %fpg is all points to go into DVEVEL
 
-if FLAG.TRI == 1
-    fpg = repmat(newtepoint,[valTIMESTEP*2,1,1]);
-%     dvenum = repmat(dvenum,[valTIMESTEP*2,1,1]);
-else
-    fpg = repmat(newtepoint,[valTIMESTEP,1,1]);
-    dvenum = repmat(dvenum,[valTIMESTEP,1,1]);
-end
+
+fpg = repmat(newtepoint,[valTIMESTEP,1,1]);
+dvenum = repmat(dvenum,[valTIMESTEP,1,1]);
+
 
 % Oldest row of wake DVEs are semi-infinite
-if FLAG.TRI == 1
-    oldest_row = [2:2:WAKE.valWSIZE*2];
-else
-    oldest_row = [1:WAKE.valWSIZE]';
-end
+oldest_row = [1:WAKE.valWSIZE]';
 
-if FLAG.TRI == 1
-
-remaining = [(1:WAKE.valWNELE-WAKE.valWSIZE*2)' ; newest_row + 1];
-
-remainingnew = sort(repmat(remaining,WAKE.valWSIZE,1));
-dvenum = [dvenum;remainingnew];
-else
 mult = [1:valTIMESTEP]'; %need to renumber old timestep rows
-
-
 multnew = repmat(mult,[WAKE.valWSIZE*WAKE.valWSIZE,1,1]);
-
-
 multnew = sort(multnew);
 dvenum = dvenum - repmat(WAKE.valWSIZE,size(dvenum,1),1).*(multnew-1);
-
-
-end
 
 dvenum = repmat(dvenum,[1 1 3]);%correct inducers index
 % take second dimension, move to bottom. then take third dimension and move

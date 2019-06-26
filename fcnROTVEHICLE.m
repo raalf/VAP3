@@ -1,8 +1,7 @@
-function [matVLST, matCENTER, matFVLST, ...
+function [matVLST, matCENTER,...
     matROTORHUBGLOB, matROTORAXIS, matNTVLST] = fcnROTVEHICLE( matDVE, matVLST, ...
     matCENTER, valVEHICLES, vecDVEVEHICLE, matVEHORIG, ...
-    matVEHROT, matFVLST, vecFUSEVEHICLE, ...
-    matROTORHUB, matROTORAXIS, vecROTORVEH, matNTVLST, vecFDVEVEHICLE)
+    matVEHROT, matROTORHUB, matROTORAXIS, vecROTORVEH, matNTVLST)
 %FCNROTVEHICLE Summary of this function goes here
 %   using for loop to rotate each vehicle with respect with their origin
 %   position in global coordinates
@@ -41,21 +40,5 @@ for n = 1:valVEHICLES
     matVLST(idxVLSTVEH,:) = matVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matNTVLST(idxVLSTVEH,:) = matNTVLST(idxVLSTVEH,:) + repmat(matVEHORIG(n,:),valVLSTVEH,1);
     matCENTER(idxDVEVEH,:) = matCENTER(idxDVEVEH,:) + repmat(matVEHORIG(n,:),valDVEVEH,1);
-    
-    for i = 1:length(vecFUSEVEHICLE)
-        % This doesn't work
-        X = matFVLST(:,1,i);
-        Y = matFVLST(:,2,i);
-        Z = matFVLST(:,3,i);
-        temp=[X(:),Y(:),Z(:)]*dcm;
-        sz=size(X);
-        Xrot=reshape(temp(:,1),sz);
-        Yrot=reshape(temp(:,2),sz);
-        Zrot=reshape(temp(:,3),sz);
-        matFVLST(:,1,i) = Xrot + matVEHORIG(i,1);
-        matFVLST(:,2,i) = Yrot + matVEHORIG(i,2);
-        matFVLST(:,3,i) = Zrot + matVEHORIG(i,3);
-        
-    end
 end
 

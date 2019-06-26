@@ -8,7 +8,7 @@ else
     sym = false;
 end
 
-[hFig2] = fcnPLOTBODY(FLAG.VERBOSE, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, VISC.matFDVE, VISC.matFVLST, sym);
+[hFig2] = fcnPLOTBODY(FLAG.VERBOSE, SURF.valNELE, SURF.matDVE, SURF.matVLST, SURF.matCENTER, sym);
 if ~isempty(valTIMESTEP)
     [hFig2] = fcnPLOTWAKE(FLAG.VERBOSE, hFig2, WAKE.valWNELE, WAKE.matWDVE, WAKE.matWVLST, WAKE.matWCENTER, WAKE.vecWDVESURFACE, sym);
 end

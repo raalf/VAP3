@@ -1,7 +1,7 @@
 function [valCL, valCD, valPREQ, valLD, valVINF, vecCMDIST, temp_dist, temp_CN, vecCDPDIST] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
-    matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, valVSPANELS, matVSGEOM, valFPANELS, matFGEOM, valFTURB, ...
-    valFPWIDTH, valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, matFDVE, matFVLST)
+    matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, ...
+    valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT)
 
 warning off
 
@@ -242,59 +242,9 @@ valCL = sum(LPerWing)/(q_inf*valAREA);
 % sum profile drag per wing
 dprof = sum(dprofPerWing);
 
-%% Vertical tail drag
-
-dvt = 0;
-% for ii = 1:valVSPANELS
-%     Re = valVINF*matVSGEOM(ii,2)/valKINV;
-%
-%     % Load airfoil data
-%     airfoil = dlmread(strcat('airfoils/airfoil',num2str(matVSGEOM(ii,4)),'.dat'),'', 1, 0);
-%
-%     % determining the drag coefficient corresponding to lift
-%     % coefficient of 0
-%
-%     % MATLAB:
-%     F = scatteredInterpolant(airfoil(:,4), airfoil(:,2), airfoil(:,3),'nearest');
-%     cdvt = F(Re, 0);
-%     % Octave:
-%     % cdvt = griddata(Temp.Airfoil(:,4), Temp.Airfoil(:,2), Temp.Airfoil(:,3), Re, 0, 'nearest');
-%
-%     dvt = dvt + cdvt*matVSGEOM(ii,3);
-% end
-
-dvt = dvt*q_inf;
-
-%% Fuselage drag
-
-dfuselage = 0;
-
-if ~isempty(matFVLST)
-    center = (matFVLST(matFDVE(:,1),:) + matFVLST(matFDVE(:,2),:) + matFVLST(matFDVE(:,3),:))./3;
-    [ ~, ~, ~, ~, ~, ~, ~, ~, re_area, ~, ~, ~, ~, ~] = fcnDVECORNER2PARAM( center, matFVLST(matFDVE(:,1),:), matFVLST(matFDVE(:,2),:), matFVLST(matFDVE(:,3),:), matFVLST(matFDVE(:,1),:), []);
-    re_len = (center(:,1) - min(center(:,1)));
-    
-    if fixed_lift == 1
-        re = (re_len.*valVINF)./valKINV;
-    else
-        re = (re_len.*valVEHVINF)./valKINV;
-    end
-    
-    re(re < 1e5) = 1e4;
-    
-    transition = 0;
-    % Turbulent
-    cdf_turb = 0.0576./(re.^0.2);
-    % Laminar
-    cdf_lam = 0.664./sqrt(re);
-    cdf = (transition.*cdf_lam).*re_area + ((1 - transition).*cdf_turb).*re_area;
-    
-    dfuselage = sum((cdf(~isnan(cdf)).*re_area(~isnan(cdf)))).*q_inf;
-end
-
 %% Total Drag
 
-dtot = di + dprof + dvt + dfuselage;
+dtot = di + dprof;
 
 dint = dtot*(valINTERF/100);
 
