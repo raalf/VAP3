@@ -6,65 +6,67 @@ if nargin == 0
     return
 end
 
-%% Reading in geometry
-[FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
-
-FLAG.PRINT = 1;
-FLAG.PLOT = 1;
-FLAG.VISCOUS = 1;
-FLAG.CIRCPLOT = 0;
-FLAG.GIF = 0;
-FLAG.PREVIEW = 0;
-FLAG.PLOTWAKEVEL = 0;
-FLAG.PLOTUINF = 0;
-FLAG.VERBOSE = 0;
-FLAG.SAVETIMESTEP = 0;
-FLAG.HOVERWAKE = 0;
-FLAG.NACELLE = 0;
-FLAG.GPU = 0;
-
-% Initializing parameters to null/zero/nan
-[WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
-
-if FLAG.PRINT == 1
-    disp('============================================================================');
-    disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$     /$$$$$$$') 
-    disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$   | $$____/') ;
-    disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$      ');
-    disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$$$$$$ ');
-    disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   |_____  $$');
-    disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$    /$$  \ $$');
-    disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
-    disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/ ');
-    disp('============================================================================');
-    disp(' ');                                                   
-end
-
-% Setting up timestep saving feature
-if FLAG.SAVETIMESTEP == 1
-    if exist('timesteps/') ~= 7; mkdir('timesteps'); end
-    if isfield(VAP_IN,'TimestepName')
-        timestep_folder = strcat('timesteps/',VAP_IN.TimestepName,'/');
-    else
-        timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
+if nargin == 2
+    %% Reading in geometry
+    [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
+    
+    FLAG.PRINT = 1;
+    FLAG.PLOT = 1;
+    FLAG.VISCOUS = 1;
+    FLAG.CIRCPLOT = 0;
+    FLAG.GIF = 0;
+    FLAG.PREVIEW = 0;
+    FLAG.PLOTWAKEVEL = 0;
+    FLAG.PLOTUINF = 0;
+    FLAG.VERBOSE = 0;
+    FLAG.SAVETIMESTEP = 0;
+    FLAG.HOVERWAKE = 0;
+    FLAG.NACELLE = 0;
+    FLAG.GPU = 0;
+    
+    % Initializing parameters to null/zero/nan
+    [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU);
+    
+    if FLAG.PRINT == 1
+        disp('============================================================================');
+        disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$     /$$$$$$$')
+        disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$   | $$____/') ;
+        disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$      ');
+        disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$$$$$$ ');
+        disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   |_____  $$');
+        disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$    /$$  \ $$');
+        disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
+        disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/ ');
+        disp('============================================================================');
+        disp(' ');
     end
-    mkdir(timestep_folder); 
-end
-
-% Check if the files required by the viscous calculations exist
-[FLAG] = fcnVISCOUSFILECHECK(FLAG, VISC);
-
-%% Discretizing geometry into DVEs
-% Adding collective pitch to the propeller/rotor
-if ~isempty(COND.vecCOLLECTIVE)
-    INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
-end
-[INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, OUTP, SURF);
-
-%% Advance Ratio
-MISC.vecROTORJ = [];
-for jj = 1:length(COND.vecROTORRPM)
-    MISC.vecROTORJ(jj) = (COND.vecVEHVINF(VEHI.vecROTORVEH(jj))*60)./(abs(COND.vecROTORRPM(jj)).*INPU.vecROTDIAM(jj));
+    
+    % Setting up timestep saving feature
+    if FLAG.SAVETIMESTEP == 1
+        if exist('timesteps/') ~= 7; mkdir('timesteps'); end
+        if isfield(VAP_IN,'TimestepName')
+            timestep_folder = strcat('timesteps/',VAP_IN.TimestepName,'/');
+        else
+            timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
+        end
+        mkdir(timestep_folder);
+    end
+    
+    % Check if the files required by the viscous calculations exist
+    [FLAG] = fcnVISCOUSFILECHECK(FLAG, VISC);
+    
+    %% Discretizing geometry into DVEs
+    % Adding collective pitch to the propeller/rotor
+    if ~isempty(COND.vecCOLLECTIVE)
+        INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
+    end
+    [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, OUTP, SURF);
+    
+    %% Advance Ratio
+    MISC.vecROTORJ = [];
+    for jj = 1:length(COND.vecROTORRPM)
+        MISC.vecROTORJ(jj) = (COND.vecVEHVINF(VEHI.vecROTORVEH(jj))*60)./(abs(COND.vecROTORRPM(jj)).*INPU.vecROTDIAM(jj));
+    end
 end
 
 %% Add boundary conditions to D-Matrix
@@ -83,11 +85,11 @@ end
 SURF.matNPDVE = SURF.matDVE;
 
 % Computing structure distributions if data exists
-try 
-    [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); 
+try
+    [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
     FLAG.STRUCTURE = 1; % Create flag if structure data exists
 catch
-    FLAG.STRUCTURE = 0; 
+    FLAG.STRUCTURE = 0;
 end
 
 n = 1;
@@ -161,7 +163,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     end
     
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)
-       fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, 1)
+        fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, 1)
     end
 end
 
