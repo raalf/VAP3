@@ -28,16 +28,16 @@ FLAG.GPU = 0;
 
 if FLAG.PRINT == 1
     disp('============================================================================');
-    disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$      /$$');
-    disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$    /$$$$');
-    disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   |_  $$');
-    disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/     | $$');
-    disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$     | $$');
-    disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$     | $$');
-    disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$ /$$$$$$');
-    disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/|______/');
+    disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$     /$$$$$$$') 
+    disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$   | $$____/') ;
+    disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$      ');
+    disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$$$$$$ ');
+    disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   |_____  $$');
+    disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$    /$$  \ $$');
+    disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
+    disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/ ');
     disp('============================================================================');
-    disp(' ');
+    disp(' ');                                                   
 end
 
 % Setting up timestep saving feature
@@ -114,27 +114,9 @@ for valTIMESTEP = 1:COND.valMAXTIME
     
     % Bend wing if applicable, else move wing normally
     if FLAG.STRUCTURE == 1
-        if valTIMESTEP <= COND.valSTIFFSTEPS || FLAG.STIFFWING == 1
-            
-            [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, valTIMESTEP);
-            
-            if FLAG.STIFFWING == 2
-                [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
-            end
-            
-        elseif valTIMESTEP == n*COND.valSTIFFSTEPS + 1 || valGUSTTIME > 1
-            [COND, INPU, OUTP, MISC, SURF, valGUSTTIME] = fcnFLEXWING(INPU, COND, SURF, OUTP, FLAG, MISC, valGUSTTIME, valTIMESTEP);
-            n = n + 1;
-        else
-            [SURF, INPU, MISC, VISC, OUTP] = fcnSTIFFWING_STATIC(INPU, VEHI, MISC, COND, SURF, VISC, OUTP, valTIMESTEP);
-        end
+        [SURF, INPU, COND, MISC, VISC, OUTP, valGUSTTIME, n] = fcnMOVESTRUCTURE(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, valGUSTTIME, valTIMESTEP, n);
     else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
-    end
-    
-    % Update structure location after moving wing
-    try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU); 
-    catch 
     end
     
     %% Generating new wake elements
