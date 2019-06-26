@@ -42,7 +42,8 @@ di = valCDI*valAREA*q_inf;
 % Summing freestream and induced forces of each DVE
 vecDVECN = (vecDVENFREE + vecDVENIND);
 
-[ledves, ~, ~] = find(vecDVELE > 0);
+% [ledves, ~, ~] = find(vecDVELE > 0);
+[ledves, ~, ~] = find(vecDVELE > 0 & vecDVEWING > 0);
 lepanels = vecDVEPANEL(ledves);
 
 vecCNDIST    = nan(size(ledves,1),1);
