@@ -60,7 +60,7 @@ if ~isempty(COND.vecCOLLECTIVE)
     INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
 end
 [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, OUTP, SURF);
-% fcnPLOTPKG([], FLAG, SURF, VISC, WAKE, COND, INPU)
+
 %% Advance Ratio
 MISC.vecROTORJ = [];
 for jj = 1:length(COND.vecROTORRPM)
