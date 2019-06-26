@@ -1,4 +1,4 @@
-function OUTP = fcnVAP_MAIN(filename, VAP_IN)
+function [OUTP, COND, INPU, FLAG, MISC, SURF, VEHI, VISC, WAKE] = fcnVAP_MAIN(filename, VAP_IN)
 
 warning off
 if nargin == 0
