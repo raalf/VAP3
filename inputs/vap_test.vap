@@ -2,328 +2,109 @@
 
 <VAP>
 	<settings>
-		<flagRELAX>FALSE</flagRELAX>
-		<flagSTEADY>TRUE</flagSTEADY>
-		<flagTRI>FALSE</flagTRI>
-		<valMAXTIME>160</valMAXTIME>
-		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.0004</valDELTIME>
-		<valDELTAE>0</valDELTAE>
+		<relax>FALSE</relax>
+		<steady>TRUE</steady>
+		<maxtime>10</maxtime>
+		<delta_time>0.25</delta_time>
+		<start_forces>0</start_forces>
+		<stiff_wing>1</stiff_wing>
+		<fixed_lift>0</fixed_lift>
+		<gust_mode>0</gust_mode>
 	</settings>
 
 	<conditions>
-		<valDENSITY>0.957</valDENSITY>
-		<valKINV>1.787e-05</valKINV>
+		<density>1.225</density>
+		<kin_viscosity>1.46e-05</kin_viscosity>
+		<gust_amplitude>0</gust_amplitude>
+		<gust_length>0</gust_length>
+		<gust_start>0</gust_start>
 	</conditions>
 
 	<vehicle>
-		<x>0</x>
-		<y>0</y>
-		<z>0</z>
+		<global_x>0</global_x>
+		<global_y>0</global_y>
+		<global_z>0</global_z>
 
-		<vinf>77.2</vinf>
+		<speed>1</speed>
+		<weight>nan</weight>
+		<interference_drag>0</interference_drag>
 
-		<alpha>10</alpha>
+		<alpha>20</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
-		<trk>0</trk>
+		<track>0</track>
+		<radius>nan</radius>
 
-		<area>6.196633</area>
-		<span>9.63168</span>
-		<cmac>0.6096</cmac>
+		<ref_area>11.1484</ref_area>
+		<ref_span>6.096</ref_span>
+		<ref_cmac>1.8288</ref_cmac>
 
-		<interference>10</interference>
+		<wing>
+			<symmetry>TRUE</symmetry>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+			<triangular_elements>FALSE</triangular_elements>
 
-<wing>
-<incidence>0</incidence>
-<trimable>FALSE</trimable>
-<M>2</M>
-<xorig>0</xorig>
-<yorig>0</yorig>
-<zorig>0</zorig>
+			<chordwise_elements>2</chordwise_elements>
 
-<panel>
-<airfoil>NASA GA(W)-2 Modified</airfoil>
-<symmetry>1</symmetry>
-<N>1</N>
-<section>
-<x>0.000000</x>
-<y>0.000000</y>
-<z>0.000000</z>
-<chord>0.760000</chord>
-<twist>5.000000</twist>
-</section>
-<section>
-<x>0.022600</x>
-<y>0.482000</y>
-<z>0.000000</z>
-<chord>0.740000</chord>
-<twist>4.600000</twist>
-</section>
-<section>
-<x>0.045200</x>
-<y>0.964000</y>
-<z>0.000000</z>
-<chord>0.720000</chord>
-<twist>4.200000</twist>
-</section>
-<section>
-<x>0.067800</x>
-<y>1.446000</y>
-<z>0.000000</z>
-<chord>0.700000</chord>
-<twist>3.800000</twist>
-</section>
-<section>
-<x>0.090400</x>
-<y>1.928000</y>
-<z>0.000000</z>
-<chord>0.660000</chord>
-<twist>3.400000</twist>
-</section>
-<section>
-<x>0.113000</x>
-<y>2.410000</y>
-<z>0.000000</z>
-<chord>0.640000</chord>
-<twist>3.000000</twist>
-</section>
-<section>
-<x>0.135600</x>
-<y>2.892000</y>
-<z>0.000000</z>
-<chord>0.620000</chord>
-<twist>2.600000</twist>
-</section>
-<section>
-<x>0.158200</x>
-<y>3.374000</y>
-<z>0.000000</z>
-<chord>0.620000</chord>
-<twist>2.200000</twist>
-</section>
-<section>
-<x>0.180800</x>
-<y>3.856000</y>
-<z>0.000000</z>
-<chord>0.570000</chord>
-<twist>1.800000</twist>
-</section>
-<section>
-<x>0.203400</x>
-<y>4.338000</y>
-<z>0.000000</z>
-<chord>0.550000</chord>
-<twist>1.400000</twist>
-</section>
-<section>
-<x>0.226000</x>
-<y>4.820000</y>
-<z>0.000000</z>
-<chord>0.520000</chord>
-<twist>1.000000</twist>
-</section>
-</panel>
+			<vehicle_x>0</vehicle_x>
+			<vehicle_y>0</vehicle_y>
+			<vehicle_z>0</vehicle_z>
 
-</wing>
+			<panel>
+				<spanwise_elements>2</spanwise_elements>
+				<strip_airfoil>NACA0012</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>0</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>1</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>	
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>2</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>	
+			</panel>
 
-<rotor>
-	<rpm>2209.000000</rpm>
-	<flipy>FALSE</flipy>
-	<collective>0.000000</collective>
-	<dia>1.420000</dia>
-	<xhub>-0.130000</xhub>
-	<yhub>2.490000</yhub>
-	<zhub>0.000000</zhub>
-	<axisx>-1.000000</axisx>
-	<axisy>0.000000</axisy>
-	<axisz>0.000000</axisz>
-	<blades>3</blades>
-	<M>1</M>
-<panel>
-	<airfoil>MH-117</airfoil>
-	<symmetry>0</symmetry>
-	<N>1</N>
-	<section>
-		<x>-0.006762</x>
-		<y>0.159330</y>
-		<z>0.000000</z>
-		<chord>0.027047</chord>
-		<twist>65.905500</twist>
-	</section>
-	<section>
-		<x>-0.009006</x>
-		<y>0.214397</y>
-		<z>0.000000</z>
-		<chord>0.036024</chord>
-		<twist>58.628175</twist>
-	</section>
-	<section>
-		<x>-0.010713</x>
-		<y>0.269464</y>
-		<z>0.000000</z>
-		<chord>0.042854</chord>
-		<twist>52.294620</twist>
-	</section>
-	<section>
-		<x>-0.011795</x>
-		<y>0.324531</y>
-		<z>0.000000</z>
-		<chord>0.047179</chord>
-		<twist>46.841035</twist>
-	</section>
-	<section>
-		<x>-0.012283</x>
-		<y>0.379598</y>
-		<z>0.000000</z>
-		<chord>0.049131</chord>
-		<twist>42.160660</twist>
-	</section>
-	<section>
-		<x>-0.012246</x>
-		<y>0.434665</y>
-		<z>0.000000</z>
-		<chord>0.048984</chord>
-		<twist>38.137275</twist>
-	</section>
-	<section>
-		<x>-0.011737</x>
-		<y>0.489732</y>
-		<z>0.000000</z>
-		<chord>0.046949</chord>
-		<twist>34.662350</twist>
-	</section>
-	<section>
-		<x>-0.010760</x>
-		<y>0.544799</y>
-		<z>0.000000</z>
-		<chord>0.043042</chord>
-		<twist>31.641810</twist>
-	</section>
-	<section>
-		<x>-0.009227</x>
-		<y>0.599866</y>
-		<z>0.000000</z>
-		<chord>0.036910</chord>
-		<twist>28.997160</twist>
-	</section>
-	<section>
-		<x>-0.006805</x>
-		<y>0.654933</y>
-		<z>0.000000</z>
-		<chord>0.027220</chord>
-		<twist>26.664120</twist>
-	</section>
-	<section>
-		<x>-0.001619</x>
-		<y>0.710000</y>
-		<z>0.000000</z>
-		<chord>0.006475</chord>
-		<twist>24.587900</twist>
-	</section>
-</panel>
-</rotor>
-
-
-<rotor>
-	<rpm>-2209.000000</rpm>
-	<flipy>TRUE</flipy>
-	<collective>0.000000</collective>
-	<dia>1.420000</dia>
-	<xhub>-0.030000</xhub>
-	<yhub>4.760000</yhub>
-	<zhub>0.010000</zhub>
-	<axisx>-1.000000</axisx>
-	<axisy>0.000000</axisy>
-	<axisz>0.000000</axisz>
-	<blades>3</blades>
-	<M>1</M>
-<panel>
-	<airfoil>MH-117</airfoil>
-	<symmetry>0</symmetry>
-	<N>1</N>
-	<section>
-		<x>-0.006762</x>
-		<y>0.159330</y>
-		<z>0.000000</z>
-		<chord>0.027047</chord>
-		<twist>65.905500</twist>
-	</section>
-	<section>
-		<x>-0.009006</x>
-		<y>0.214397</y>
-		<z>0.000000</z>
-		<chord>0.036024</chord>
-		<twist>58.628175</twist>
-	</section>
-	<section>
-		<x>-0.010713</x>
-		<y>0.269464</y>
-		<z>0.000000</z>
-		<chord>0.042854</chord>
-		<twist>52.294620</twist>
-	</section>
-	<section>
-		<x>-0.011795</x>
-		<y>0.324531</y>
-		<z>0.000000</z>
-		<chord>0.047179</chord>
-		<twist>46.841035</twist>
-	</section>
-	<section>
-		<x>-0.012283</x>
-		<y>0.379598</y>
-		<z>0.000000</z>
-		<chord>0.049131</chord>
-		<twist>42.160660</twist>
-	</section>
-	<section>
-		<x>-0.012246</x>
-		<y>0.434665</y>
-		<z>0.000000</z>
-		<chord>0.048984</chord>
-		<twist>38.137275</twist>
-	</section>
-	<section>
-		<x>-0.011737</x>
-		<y>0.489732</y>
-		<z>0.000000</z>
-		<chord>0.046949</chord>
-		<twist>34.662350</twist>
-	</section>
-	<section>
-		<x>-0.010760</x>
-		<y>0.544799</y>
-		<z>0.000000</z>
-		<chord>0.043042</chord>
-		<twist>31.641810</twist>
-	</section>
-	<section>
-		<x>-0.009227</x>
-		<y>0.599866</y>
-		<z>0.000000</z>
-		<chord>0.036910</chord>
-		<twist>28.997160</twist>
-	</section>
-	<section>
-		<x>-0.006805</x>
-		<y>0.654933</y>
-		<z>0.000000</z>
-		<chord>0.027220</chord>
-		<twist>26.664120</twist>
-	</section>
-	<section>
-		<x>-0.001619</x>
-		<y>0.710000</y>
-		<z>0.000000</z>
-		<chord>0.006475</chord>
-		<twist>24.587900</twist>
-	</section>
-</panel>
-</rotor>
-
-
-
+			<panel>
+				<spanwise_elements>2</spanwise_elements>
+				<strip_airfoil>NACA0012</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>1</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>	
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>2</wing_y>
+					<wing_z>1</wing_z>
+					<chord>1</chord>
+					<twist>0</twist>
+					<camber_airfoil>nan</camber_airfoil>
+				</section>	
+			</panel>
+		</wing>
 	</vehicle>				
 </VAP>
+
+
+
+

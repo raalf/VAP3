@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VAP>
+	<settings>
+		<relax>FALSE</relax>
+		<steady>TRUE</steady>
+		<maxtime>30</maxtime>
+		<delta_time>0.001</delta_time>
+		<start_forces>0</start_forces>
+		<stiff_wing>1</stiff_wing>
+		<fixed_lift>0</fixed_lift>
+		<gust_mode>0</gust_mode>
+	</settings>
+
+	<conditions>
+		<density>1.225</density>
+		<kin_viscosity>1.46e-05</kin_viscosity>
+		<gust_amplitude>0</gust_amplitude>
+		<gust_length>0</gust_length>
+		<gust_start>0</gust_start>
+	</conditions>
+
+	<vehicle>
+		<global_x>0</global_x>
+		<global_y>0</global_y>
+		<global_z>0</global_z>
+
+		<speed>77</speed>
+		<weight>nan</weight>
+		<interference_drag>0</interference_drag>
+
+		<alpha>20</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<track>0</track>
+		<radius>nan</radius>
+
+		<ref_area>6.196633</ref_area>
+		<ref_span>9.63168</ref_span>
+		<ref_cmac>0.6096</ref_cmac>
+
+		<wing>
+			<symmetry>TRUE</symmetry>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+			<triangular_elements>FALSE</triangular_elements>
+
+			<chordwise_elements>2</chordwise_elements>
+
+			<vehicle_x>0</vehicle_x>
+			<vehicle_y>0</vehicle_y>
+			<vehicle_z>0</vehicle_z>
+
+			<panel>
+				<spanwise_elements>12</spanwise_elements>
+				<strip_airfoil>NASA GA(W)-2 Modified</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>0</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.756</chord>
+					<twist>5</twist>
+				</section>	
+				<section>
+					<wing_x>0.226</wing_x>
+					<wing_y>4.82</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.530</chord>
+					<twist>1</twist>
+				</section>	
+			</panel>
+		</wing>
+
+
+		<wing>
+			<symmetry>TRUE</symmetry>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+			<triangular_elements>FALSE</triangular_elements>
+
+			<chordwise_elements>1</chordwise_elements>
+
+			<vehicle_x>4.2</vehicle_x>
+			<vehicle_y>0</vehicle_y>
+			<vehicle_z>-0.6</vehicle_z>
+
+			<panel>
+				<strip_airfoil>NACA0012</strip_airfoil>
+				<spanwise_elements>3</spanwise_elements>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>0</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.8</chord>
+					<twist>0</twist>
+				</section>	
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>1.524</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.8</chord>
+					<twist>0</twist>
+				</section>	
+			</panel>
+		</wing>
+
+		<rotor>
+			<symmetry>TRUE</symmetry>
+			<rpm>2250</rpm>
+			<collective>0</collective>
+			
+			<ref_diam>1.524</ref_diam>
+
+			<veh_x_hub>-0.1</veh_x_hub>
+			<veh_y_hub>4.82</veh_y_hub>
+			<veh_z_hub>0</veh_z_hub>
+
+			<veh_x_axis>-1</veh_x_axis>
+			<veh_y_axis>0</veh_y_axis>
+			<veh_z_axis>0</veh_z_axis>
+
+			<blades>3</blades>
+
+			<chordwise_elements>1</chordwise_elements>
+
+			<panel>
+				<strip_airfoil>MH-117</strip_airfoil>
+				<spanwise_elements>1</spanwise_elements>
+				<section>
+					<rotor_x>-0.060812</rotor_x>
+					<rotor_y>0.152400</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.119867</chord>
+					<twist>70.516094</twist>
+				</section>
+				<section>
+					<rotor_x>-0.067087</rotor_x>
+					<rotor_y>0.182880</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.130749</chord>
+					<twist>68.371899</twist>
+				</section>
+				<section>
+					<rotor_x>-0.069932</rotor_x>
+					<rotor_y>0.213360</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.136207</chord>
+					<twist>65.340054</twist>
+				</section>
+				<section>
+					<rotor_x>-0.071014</rotor_x>
+					<rotor_y>0.243840</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.138486</chord>
+					<twist>62.325363</twist>
+				</section>
+				<section>
+					<rotor_x>-0.071069</rotor_x>
+					<rotor_y>0.274320</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.138541</chord>
+					<twist>59.441963</twist>
+				</section>
+				<section>
+					<rotor_x>-0.070674</rotor_x>
+					<rotor_y>0.304800</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.137578</chord>
+					<twist>56.466009</twist>
+				</section>
+				<section>
+					<rotor_x>-0.068192</rotor_x>
+					<rotor_y>0.335280</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.133791</chord>
+					<twist>53.830341</twist>
+				</section>
+				<section>
+					<rotor_x>-0.065690</rotor_x>
+					<rotor_y>0.365760</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.128876</chord>
+					<twist>51.394878</twist>
+				</section>
+				<section>
+					<rotor_x>-0.063397</rotor_x>
+					<rotor_y>0.396240</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.123330</chord>
+					<twist>49.482496</twist>
+				</section>
+				<section>
+					<rotor_x>-0.060567</rotor_x>
+					<rotor_y>0.426720</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.116801</chord>
+					<twist>46.990979</twist>
+				</section>
+				<section>
+					<rotor_x>-0.057298</rotor_x>
+					<rotor_y>0.457200</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.109832</chord>
+					<twist>45.222234</twist>
+				</section>
+				<section>
+					<rotor_x>-0.053875</rotor_x>
+					<rotor_y>0.487680</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.103180</chord>
+					<twist>43.484240</twist>
+				</section>
+				<section>
+					<rotor_x>-0.050729</rotor_x>
+					<rotor_y>0.518160</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.097201</chord>
+					<twist>41.701629</twist>
+				</section>
+				<section>
+					<rotor_x>-0.047971</rotor_x>
+					<rotor_y>0.548640</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.091290</chord>
+					<twist>39.872799</twist>
+				</section>
+				<section>
+					<rotor_x>-0.045091</rotor_x>
+					<rotor_y>0.579120</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.084896</chord>
+					<twist>38.591876</twist>
+				</section>
+				<section>
+					<rotor_x>-0.041434</rotor_x>
+					<rotor_y>0.609600</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.077660</chord>
+					<twist>37.352350</twist>
+				</section>
+				<section>
+					<rotor_x>-0.036688</rotor_x>
+					<rotor_y>0.640080</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.068066</chord>
+					<twist>35.922557</twist>
+				</section>
+				<section>
+					<rotor_x>-0.031776</rotor_x>
+					<rotor_y>0.670560</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.057037</chord>
+					<twist>34.764883</twist>
+				</section>
+				<section>
+					<rotor_x>-0.026453</rotor_x>
+					<rotor_y>0.701040</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.047291</chord>
+					<twist>33.716312</twist>
+				</section>
+				<section>
+					<rotor_x>-0.019074</rotor_x>
+					<rotor_y>0.731520</rotor_y>
+					<rotor_z>0.000000</rotor_z>
+					<chord>0.033505</chord>
+					<twist>32.711486</twist>
+				</section>
+			</panel>
+		</rotor>
+
+	</vehicle>				
+
+</VAP>
+
+
+
+

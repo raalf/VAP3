@@ -2,121 +2,79 @@
 
 <VAP>
 	<settings>
-		<flagRELAX>FALSE</flagRELAX>
-		<flagSTEADY>TRUE</flagSTEADY>
-		<flagTRI>FALSE</flagTRI>
-		<valMAXTIME>40</valMAXTIME>
-		<valMINTIME>0</valMINTIME>
-		<valDELTIME>0.2</valDELTIME>
-		<valDELTAE>0</valDELTAE>
+		<relax>FALSE</relax>
+		<steady>FALSE</steady>
+		<maxtime>300</maxtime>
+		<delta_time>0.008</delta_time>
+		<start_forces>0</start_forces>
+		<stiff_wing>TRUE</stiff_wing>
+		<fixed_lift>1</fixed_lift>
+		<gust_mode>2</gust_mode>
 	</settings>
 
 	<conditions>
-		<valDENSITY>1.2</valDENSITY>
-		<valKINV>1.460000e-05</valKINV>
+		<density>1.0</density>
+		<kin_viscosity>1.46e-05</kin_viscosity>
+		<gust_amplitude>15.24</gust_amplitude>
+		<gust_length>5</gust_length>
+		<gust_start>90</gust_start>
 	</conditions>
 
 	<vehicle>
-		<x>0</x>
-		<y>0</y>
-		<z>0</z>
+		<global_x>0</global_x>
+		<global_y>0</global_y>
+		<global_z>0</global_z>
 
-		<vinf>FALSE</vinf>
-		<weight>130</weight>
+		<speed>8</speed>
+		<weight>119</weight>
+		<interference_drag>0</interference_drag>
 
-		<alpha>15</alpha>
+		<alpha>10</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
-		<trk>0</trk>
+		<track>0</track>
+		<radius>nan</radius>
 
-		<area>2.37</area>
-		<span>6</span>
-		<cmac>0.395</cmac>
-
-		<wing>
-			<incidence>0</incidence>
-			<trimable>FALSE</trimable>
-
-			<M>3</M>
-
-			<xorig>0</xorig>
-			<yorig>0</yorig>
-			<zorig>0</zorig>
-
-			<panel>
-				<airfoil>RAALF-B8</airfoil>
-				<symmetry>1</symmetry>
-				<N>10</N>
-				<section>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
-					<chord>0.395</chord>
-					<twist>7.6396</twist>
-				</section>	
-				<section>
-					<x>0</x>
-					<y>2.0831</y>
-					<z>0</z>
-					<chord>0.395</chord>
-					<twist>7.6396</twist>
-				</section>
-			</panel>
-			<panel>
-				<airfoil>RAALF-B8</airfoil>
-				<symmetry>0</symmetry>
-				<N>10</N>
-				<section>
-					<x>0</x>
-					<y>2.0831</y>
-					<z>0</z>
-					<chord>0.395</chord>
-					<twist>7.6396</twist>
-				</section>
-				<section>
-					<x>0</x>
-					<y>2.9731</y>
-					<z>0.1930</z>
-					<chord>0.395</chord>
-					<twist>-1.2512</twist>
-				</section>
-			</panel>
-		</wing>
+		<ref_area>2.482</ref_area>
+		<ref_span>6.28</ref_span>
+		<ref_cmac>0.395</ref_cmac>
 
 		<wing>
+			<symmetry>TRUE</symmetry>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
+			<triangular_elements>FALSE</triangular_elements>
 
-			<M>3</M>
+			<chordwise_elements>5</chordwise_elements>
 
-			<xorig>2.5</xorig>
-			<yorig>0</yorig>
-			<zorig>0</zorig>
+			<vehicle_x>0</vehicle_x>
+			<vehicle_y>0</vehicle_y>
+			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<airfoil>NACA0012</airfoil>
-				<symmetry>1</symmetry>
-				<N>10</N>
+				<spanwise_elements>10</spanwise_elements>
+				<strip_airfoil>RAALF-B8</strip_airfoil>
 				<section>
-					<x>0</x>
-					<y>0</y>
-					<z>0</z>
-					<chord>0.25</chord>
+					<wing_x>0</wing_x>
+					<wing_y>0</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.395</chord>
 					<twist>0</twist>
-				</section>	
-				<section>
-					<x>0</x>
-					<y>0.5</y>
-					<z>0</z>
-					<chord>0.25</chord>
-					<twist>0</twist>
+					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>3.14</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.395</chord>
+					<twist>0</twist>
+					<camber_airfoil>RAALF-B8</camber_airfoil>
+				</section>	
 			</panel>
 		</wing>
 
 	</vehicle>				
-
 </VAP>
 
 

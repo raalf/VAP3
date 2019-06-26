@@ -35,32 +35,29 @@ inp = fcnXML2STRUCT(filename);
 VAP = inp.VAP;
 
 %% Settings
-if strcmpi(VAP.settings.flagRELAX.Text, 'true') FLAG.RELAX = 1; else FLAG.RELAX = 0; end
-if strcmpi(VAP.settings.flagSTEADY.Text, 'true') FLAG.STEADY = 1; else FLAG.STEADY = 0; end
+if strcmpi(VAP.settings.relax.Text, 'true') FLAG.RELAX = 1; else FLAG.RELAX = 0; end
+if strcmpi(VAP.settings.steady.Text, 'true') FLAG.STEADY = 1; else FLAG.STEADY = 0; end
 try
-    if strcmpi(VAP.settings.flagSTIFFWING.Text, 'true') FLAG.STIFFWING = 1;
+    if strcmpi(VAP.settings.stiff_wing.Text, 'true') FLAG.STIFFWING = 1;
     else FLAG.STIFFWING = 2;
     end
 catch
     FLAG.STIFFWING = 1;
 end
-% if strcmpi(VAP.settings.FLAG.TRI.Text, 'true') FLAG.TRI = 1; else FLAG.TRI = 0; end
 
-try if strcmpi(VAP.settings.flagFIXEDLIFT.Text, 'true') FLAG.FIXEDLIFT = 1; end; catch FLAG.FIXEDLIFT = 0; end
-try FLAG.GUSTMODE = str2double(VAP.conditions.flagGUSTMODE.Text); catch; FLAG.GUSTMODE = 0; end
+try if strcmpi(VAP.settings.fixed_lift.Text, 'true') FLAG.FIXEDLIFT = 1; end; catch FLAG.FIXEDLIFT = 0; end
+try FLAG.GUSTMODE = str2double(VAP.settings.gust_mode.Text); catch; FLAG.GUSTMODE = 0; end
 
-COND.valMAXTIME = floor(str2double(VAP.settings.valMAXTIME.Text));
-COND.valMINTIME = floor(str2double(VAP.settings.valMINTIME.Text));
-COND.valDELTIME = str2double(VAP.settings.valDELTIME.Text);
-COND.valDELTAE = str2double(VAP.settings.valDELTAE.Text);
-try COND.valSTARTFORCES = floor(str2double(VAP.settings.valSTARTFORCES.Text)); catch; COND.valSTARTFORCES = 0; end
+COND.valMAXTIME = floor(str2double(VAP.settings.maxtime.Text));
+COND.valDELTIME = str2double(VAP.settings.delta_time.Text);
+try COND.valSTARTFORCES = floor(str2double(VAP.settings.start_forces.Text)); catch; COND.valSTARTFORCES = 0; end
 
 %% Conditions
-COND.valDENSITY = str2double(VAP.conditions.valDENSITY.Text);
-VISC.valKINV = str2double(VAP.conditions.valKINV.Text);
-try COND.valGUSTAMP = str2double(VAP.conditions.valGUSTAMP.Text); catch; COND.valGUSTAMP = 0; end
-try COND.valGUSTL = str2double(VAP.conditions.valGUSTL.Text); catch; COND.valGUSTL = 0; end
-try COND.valGUSTSTART = str2double(VAP.conditions.valGUSTSTART.Text); catch; COND.valGUSTSTART = 0; end
+COND.valDENSITY = str2double(VAP.conditions.density.Text);
+VISC.valKINV = str2double(VAP.conditions.kin_viscosity.Text);
+try COND.valGUSTAMP = str2double(VAP.conditions.gust_amplitude.Text); catch; COND.valGUSTAMP = 0; end
+try COND.valGUSTL = str2double(VAP.conditions.gust_length.Text); catch; COND.valGUSTL = 0; end
+try COND.valGUSTSTART = str2double(VAP.conditions.gust_start.Text); catch; COND.valGUSTSTART = 0; end
 
 %% Vehicles
 INPU.valVEHICLES = max(size(VAP.vehicle));
@@ -89,39 +86,20 @@ INPU.vecROTORBLADES = [];
 vecROTORM = [];
 COND.vecCOLLECTIVE = [];
 
-VISC.vecFTURB = [];
-VISC.vecFUSESECTIONS = [];
-VISC.matFUSEAXIS = [];
-VISC.matFUSEORIG = [];
-VISC.matFGEOM = [];
-VISC.matSECTIONFUSELAGE = [];
-VISC.vecFUSEVEHICLE = [];
-VISC.matFDVE = [];
-VISC.matFVLST = [];
-VISC.vecFDVEVEHICLE = [];
-
-VISC.vecVSPANELS = [];
-VISC.matVSGEOM = [];
-VISC.vecFPANELS = [];
-VISC.vecFPWIDTH = [];
 VISC.vecINTERF = 0;
 
 vecWINGINCID = [];
 vecTRIMABLE = [];
 vecWINGM = [];
-INPU.matWINGORIG = [];
+matWINGORIG = [];
 vecPANELS = [];
 cellAIRFOILtemp = {};
 VISC.cellAIRFOIL = {};
-INPU.vecSYMtemp = [];
-INPU.vecNtemp = [];
-INPU.vecMtemp = [];
 vecSECTIONS = [];
 matSECTIONS = [];
 vecSECTIONPANEL = [];
 
-COND.vecWINGTRI = [];
-COND.vecWAKETRI = [];
+COND.vecSURFTRI = [];
 
 k = 1;
 kk = 1;
@@ -137,45 +115,44 @@ for i = 1:INPU.valVEHICLES
     
     try veh = VAP.vehicle{1,i}; catch; veh = VAP.vehicle; end
     
-    INPU.matVEHORIG(i,:) = [str2double(veh.x.Text) str2double(veh.y.Text) str2double(veh.z.Text)];
-    COND.vecVEHVINF(i,1) = str2double(veh.vinf.Text);
+    INPU.matVEHORIG(i,:) = [str2double(veh.global_x.Text) str2double(veh.global_y.Text) str2double(veh.global_z.Text)];
+    try COND.vecVEHVINF(i,1) = str2double(veh.speed.Text); catch; COND.vecVEHVINF(i,1) = nan; end
     try COND.vecVEHWEIGHT(i,1) = str2double(veh.weight.Text); catch; COND.vecVEHWEIGHT(i,1) = nan; end
     COND.vecVEHALPHA(i,1) = str2double(veh.alpha.Text);
     COND.vecVEHBETA(i,1) = str2double(veh.beta.Text);
     COND.vecVEHROLL(i,1) = str2double(veh.roll.Text);
     COND.vecVEHFPA(i,1) = str2double(veh.fpa.Text);
-    COND.vecVEHTRK(i,1) = str2double(veh.trk.Text);
+    COND.vecVEHTRK(i,1) = str2double(veh.track.Text);
     
-    try VEHI.vecVEHRADIUS(i,1) = str2double(veh.radius.Text); end
+    try VEHI.vecVEHRADIUS(i,1) = str2double(veh.radius.Text); catch VEHI.vecVEHRADIUS(i,1) = nan; end
     
     try vecWINGS(i,1) = max(size(veh.wing)); catch; vecWINGS(i,1) = 0; end
     try vecSTRUCTURE(i,1) = max(size(veh.structure)); catch; vecSTRUCTURE(i,1) = 0; end
     try vecROTORS(i,1) = max(size(veh.rotor)); catch; vecROTORS(i,1) = 0; end
     try vecFUSELAGES(i,1) = max(size(veh.fuselage)); catch; vecFUSELAGES(i,1) = 0; end
     
-    INPU.vecAREA(i) = str2double(veh.area.Text);
-    INPU.vecSPAN(i) = str2double(veh.span.Text);
-    INPU.vecCMAC(i) = str2double(veh.cmac.Text);
+    INPU.vecAREA(i) = str2double(veh.ref_area.Text);
+    INPU.vecSPAN(i) = str2double(veh.ref_span.Text);
+    INPU.vecCMAC(i) = str2double(veh.ref_cmac.Text);
     
-    try VISC.vecINTERF = str2double(veh.interference.Text); end
+    try VISC.vecINTERF = str2double(veh.interference_drag.Text); end
     
     %% Loading Wings
     for j = 1:vecWINGS(i)
         
         try win = veh.wing{1,j}; catch; win = veh.wing; end
         
-        COND.vecWINGTRI(k,1) = nan;
-        COND.vecWAKETRI(k,1) = nan;
-        try if strcmpi(win.surfacetri.Text, 'true') COND.vecWINGTRI(k) = 1; end; end;
-        try if strcmpi(win.waketri.Text, 'true') COND.vecWAKETRI(k) = 1; end; end;
+        COND.vecSURFTRI(k,1) = false;
+        try if strcmpi(win.triangular_elements.Text, 'true') COND.vecSURFTRI(k) = true; end; end;
+        try if strcmpi(win.symmetry.Text, 'true') sym = true; else sym = false; end; catch sym = false; end;     
         
         vecWINGINCID(k) = str2double(win.incidence.Text);
         if strcmpi(win.trimable.Text, 'true') vecTRIMABLE(j) = 1; else vecTRIMABLE(j) = 0; end
         
-        vecWINGM(k,1) = str2double(win.M.Text);
+        vecWINGM(k,1) = str2double(win.chordwise_elements.Text);
         
-        try INPU.matWINGORIG(k,:) = [str2double(win.xorig.Text) str2double(win.yorig.Text) str2double(win.zorig.Text)];
-        catch; INPU.matWINGORIG(k,:) = [0 0 0]; end
+        try matWINGORIG(k,:) = [str2double(win.vehicle_x.Text) str2double(win.vehicle_y.Text) str2double(win.vehicle_z.Text)];
+        catch; matWINGORIG(k,:) = [0 0 0]; end
         
         vecPANELS(k,1) = max(size(win.panel));
         
@@ -183,18 +160,22 @@ for i = 1:INPU.valVEHICLES
             
             try pan = win.panel{1,m}; catch; pan = win.panel; end
             
-            INPU.vecSYMtemp(kk,1) = floor(str2double(pan.symmetry.Text));
-            try cellAIRFOILtemp{kk} = pan.airfoil.Text; end
-            INPU.vecNtemp(kk,1) = floor(str2double(pan.N.Text));
-            INPU.vecMtemp(kk,1) = floor(vecWINGM(k,1)); % Same for entire wing
+            vecSYMtemp(kk,1) = sym;
+            
+            try cellAIRFOILtemp{kk} = pan.strip_airfoil.Text; catch cellAIRFOILtemp{kk} = nan; end
+            vecNtemp(kk,1) = floor(str2double(pan.spanwise_elements.Text));
+            vecMtemp(kk,1) = str2double(win.chordwise_elements.Text);
+            try cellNSPACEtemp{kk,1} = pan.spanwise_spacing.Text; catch cellNSPACEtemp{kk,1} = 'NORMAL'; end
+            try cellMSPACEtemp{kk,1} = win.chordwise_spacing.Text; catch cellMSPACEtemp{kk,1} = 'NORMAL'; end   
             
             vecSECTIONS(kk,1) = max(size(pan.section));
             
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + INPU.matWINGORIG(k,1) str2double(sec.y.Text) + INPU.matWINGORIG(k,2) str2double(sec.z.Text) + INPU.matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
-
+                matSECTIONS(kkk,:) = [str2double(sec.wing_x.Text) + matWINGORIG(k,1) str2double(sec.wing_y.Text) + matWINGORIG(k,2) str2double(sec.wing_z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
+                try cellCAIRFOIL{kkk,:} = sec.camber_airfoil.Text; catch cellCAIRFOIL{kkk,:} = nan; end
+                
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
@@ -212,9 +193,6 @@ for i = 1:INPU.valVEHICLES
         k = k + 1;
     end
     
-	if isfield(VAP_IN,'vecWINGTWIST')
-        matSECTIONS(:,5) = VAP_IN.vecWINGTWIST;
-	end
     %% Loading Wing Structure
     
     for j = 1:vecSTRUCTURE(i)
@@ -256,39 +234,46 @@ for i = 1:INPU.valVEHICLES
     for j = 1:vecROTORS(i)
         
         try rot = veh.rotor{1,j}; catch; rot = veh.rotor; end
+        COND.vecSURFTRI(k,1) = false;
+        try if strcmpi(rot.triangular_elements.Text, 'true') COND.vecSURFTRI(k) = true; end; end;
+        try if strcmpi(rot.symmetry.Text, 'true') sym = true; else sym = false; end; catch sym = false; end;
         
         COND.vecROTORRPM(p,1) = str2double(rot.rpm.Text);
-        INPU.vecROTDIAM(p,1) = str2double(rot.dia.Text);
+        INPU.vecROTDIAM(p,1) = str2double(rot.ref_diam.Text);
         
-        INPU.matROTORHUB(p,:) = [str2double(rot.xhub.Text) str2double(rot.yhub.Text) str2double(rot.zhub.Text)];
-        INPU.matROTORAXIS(p,:) = [str2double(rot.axisx.Text) str2double(rot.axisy.Text) str2double(rot.axisz.Text)];
+        INPU.matROTORHUB(p,:) = [str2double(rot.veh_x_hub.Text) str2double(rot.veh_y_hub.Text) str2double(rot.veh_z_hub.Text)];
+        INPU.matROTORAXIS(p,:) = [str2double(rot.veh_x_axis.Text) str2double(rot.veh_y_axis.Text) str2double(rot.veh_z_axis.Text)];
         
         INPU.vecROTORBLADES(p,:) = floor(str2double(rot.blades.Text));
         
-        vecROTORM(p,1) = floor(str2double(rot.M.Text));
+        vecROTORM(p,1) = floor(str2double(rot.chordwise_elements.Text));
         
         try COND.vecCOLLECTIVE(p,1) = str2double(rot.collective.Text); catch; COND.vecCOLLECTIVE(p,1) = 0; end;
         
         vecPANELS(k,1) = max(size(rot.panel));
         
         flip = 1;
-        try if strcmpi(rot.flipy.Text,'TRUE'); flip = -1; end; end
-        
+        try if strcmpi(rot.rotation_direction.Text,'CW'); flip = -1; end; end
+        COND.vecROTORRPM(p,1) = COND.vecROTORRPM(p,1)*flip;
         for m = 1:vecPANELS(k,1)
             
             try pan = rot.panel{1,m}; catch; pan = rot.panel; end
             
-            INPU.vecSYMtemp(kk,1) = 0;
-            try cellAIRFOILtemp{kk} = pan.airfoil.Text; end
-            INPU.vecNtemp(kk,1) = floor(str2double(pan.N.Text));
-            INPU.vecMtemp(kk,1) = floor(vecROTORM(p,1)); % Same for entire wing
+            vecSYMtemp(kk,1) = sym;
+            
+            try cellAIRFOILtemp{kk} = pan.strip_airfoil.Text; catch cellAIRFOILtemp{kk} = nan; end
+            vecNtemp(kk,1) = floor(str2double(pan.spanwise_elements.Text));
+            vecMtemp(kk,1) = str2double(rot.chordwise_elements.Text);
+            try cellNSPACEtemp{kk,1} = pan.spanwise_spacing.Text; catch cellNSPACEtemp{kk,1} = 'NORMAL'; end
+            try cellMSPACEtemp{kk,1} = rot.chordwise_spacing.Text; catch cellMSPACEtemp{kk,1} = 'NORMAL'; end   
             
             vecSECTIONS(kk,1) = max(size(pan.section));
             
             for n = 1:vecSECTIONS(kk,1)
                 sec = pan.section{1,n};
                 
-                matSECTIONS(kkk,:) = [str2double(sec.x.Text) + INPU.matROTORHUB(p,1) flip*str2double(sec.y.Text) + INPU.matROTORHUB(p,2) str2double(sec.z.Text) + INPU.matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
+                matSECTIONS(kkk,:) = [str2double(sec.rotor_x.Text) + INPU.matROTORHUB(p,1) flip*str2double(sec.rotor_y.Text) + INPU.matROTORHUB(p,2) str2double(sec.rotor_z.Text) + INPU.matROTORHUB(p,3) str2double(sec.chord.Text) str2double(sec.twist.Text) i];
+                try cellCAIRFOIL{kkk,:} = sec.camber_airfoil.Text; catch cellCAIRFOIL{kkk,:} = nan; end
                 vecSECTIONPANEL(kkk,1) = kk;
                 
                 kkk = kkk + 1;
@@ -305,90 +290,36 @@ for i = 1:INPU.valVEHICLES
         VEHI.vecSURFACEVEHICLE(k,1) = i;
         k = k + 1;
     end
-    
-    %% Fuselage
-    
-    for j = 1:vecFUSELAGES(i)
-        try fuse = veh.fuselage{1,j}; catch; fuse = veh.fuselage; end
-        
-        VISC.vecFTURB(q,1) = str2double(fuse.transitionpanel.Text);
-        
-        VISC.vecFUSESECTIONS(q,1) = max(size(fuse.fsection));
-        
-        VISC.matFUSEAXIS(q,:) = [str2double(fuse.xaxis.Text) str2double(fuse.yaxis.Text) str2double(fuse.zaxis.Text)];
-        VISC.matFUSEORIG(q,:) = [str2double(fuse.xorig.Text) str2double(fuse.yorig.Text) str2double(fuse.zorig.Text)];
-        
-        for m = 1:VISC.vecFUSESECTIONS(q,1)
-            sec = fuse.fsection{1,m};
-            
-            VISC.matFGEOM(kkkk,:) = [str2double(sec.x.Text) str2double(sec.diameter.Text)];
-            VISC.matSECTIONFUSELAGE(kkkk,1) = q;
-            
-            kkkk = kkkk + 1;
-        end
-        
-        VISC.vecFUSEVEHICLE(q,1) = i;
-        q = q + 1;
-        
-    end
 end
 
 INPU.valPANELS = sum(vecPANELS);
 
-
 %% Reorganizing data for output
-
 k = 1;
-
 for i = 1:INPU.valPANELS
-    
     sections = matSECTIONS(vecSECTIONPANEL == i,:);
-    
-    % (VAP3) add vehicle id to INPU.matGEOM
-    %     sections(:,6) = VEHI.vecSURFACEVEHICLE(i);
     len = size(sections,1);
-    
-    if len == 2
-        INPU.matGEOM(1,:,k) = sections(1,:);
-        INPU.matGEOM(2,:,k) = sections(2,:);
+
+    for j = 1:len - 1
+        INPU.matGEOM(1,:,k) = sections(j,:);
+        INPU.matGEOM(2,:,k) = sections(j+1,:);
+        INPU.cellCAIRFOIL{k,1} = cellCAIRFOIL{j};
+        INPU.cellCAIRFOIL{k,2} = cellCAIRFOIL{j+1};
         INPU.vecPANELWING(k,1) = INPU.vecPANELWING(i);
         INPU.vecPANELROTOR(k,1) = panel_rotors(i);
-        
+
+        INPU.vecSYM(k,1) = vecSYMtemp(i);           
+        INPU.vecN(k,1) = vecNtemp(i);
+        INPU.vecM(k,1) = vecMtemp(i);
+        INPU.cellMSPACE{k,1} = cellMSPACEtemp{i,1};
+        INPU.cellNSPACE{k,1} = cellNSPACEtemp{i,1};
+
         if ~isempty(cellAIRFOILtemp)
             VISC.cellAIRFOIL{k,1} = cellAIRFOILtemp{i};
         end
-        
-        INPU.vecSYM(k,1) = INPU.vecSYMtemp(i);
-        INPU.vecN(k,1) = INPU.vecNtemp(i);
-        INPU.vecM(k,1) = INPU.vecMtemp(i);
+
         k = k + 1;
-    else
-        for j = 1:len - 1
-            INPU.matGEOM(1,:,k) = sections(j,:);
-            INPU.matGEOM(2,:,k) = sections(j+1,:);
-            INPU.vecPANELWING(k,1) = INPU.vecPANELWING(i);
-            INPU.vecPANELROTOR(k,1) = panel_rotors(i);
-            
-            INPU.vecN(k,1) = INPU.vecNtemp(i);
-            INPU.vecM(k,1) = INPU.vecMtemp(i);
-            
-            if ~isempty(cellAIRFOILtemp)
-                VISC.cellAIRFOIL{k,1} = cellAIRFOILtemp{i};
-            end
-            
-            INPU.vecSYM(k,1) = 0;
-            
-            k = k + 1;
-        end
-        
-        if INPU.vecSYMtemp(i) == 1
-            INPU.vecSYM(k-len + 1) = 1;
-        elseif INPU.vecSYMtemp(i) == 2
-            INPU.vecSYM(k-1) = 2;
-        end
-        
-    end
-    
+    end     
 end
 
 INPU.valPANELS = size(INPU.matGEOM,3);
@@ -413,9 +344,11 @@ if ~isempty(VAP_IN)
 end
 
 if any(isnan(COND.vecVEHVINF))
-    disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
+%     disp('One or more vehicle velocities was not read in - setting to unity and enabling fixed-lift analysis');
     COND.vecVEHVINF(isnan(COND.vecVEHVINF)) = ones(sum(isnan(COND.vecVEHVINF)),1);
     FLAG.FIXEDLIFT = 1;
+else
+    FLAG.FIXEDLIFT = 0;
 end
 
 end
