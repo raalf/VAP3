@@ -1,4 +1,4 @@
-function [OUTP] = fcnOUTPUT(COND, FLAG, SURF, OUTP, valTIMESTEP)
+function [OUTP] = fcnOUTPUT(COND, FLAG, INPU, SURF, OUTP, valTIMESTEP)
 
 % Setting up variables for outputting. Includes time-averaged forces (if
 % applicable).
