@@ -14,7 +14,6 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTE
 
 %% Induced Drag force
 [inddrag] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG);
-% OUTP.WING.vecDIDIST(valTIMESTEP,:) = inddrag(SURF.vecDVEWING > 0)';
 
 %% Sum up element forces to generate total wing forces
 OUTP = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP, FLAG, WAKE, VISC);
