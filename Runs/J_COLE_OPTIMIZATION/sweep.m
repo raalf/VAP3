@@ -6,8 +6,8 @@ addpath('../../airfoils')
 addpath('./../../Runs/J_COLE_OPTIMIZATION/aux_files')
 addpath('./../../Runs/J_COLE_OPTIMIZATION/')
 
-% cores = 37;
-% parpool(cores,'IdleTimeout',800)
+cores = 37;
+parpool(cores,'IdleTimeout',800)
 home_dir = pwd;
 
 N_chord = 11;

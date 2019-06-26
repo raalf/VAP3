@@ -131,6 +131,10 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
     end
     
+    if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
+        matD = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG);
+    end
+    
     % Update structure location after moving wing
     try [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU); 
     catch 
