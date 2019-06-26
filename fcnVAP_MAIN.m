@@ -80,8 +80,8 @@ end
 
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
-
 SURF.matNPDVE = SURF.matDVE;
+
 % Computing structure distributions if data exists
 try 
     [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF); 
@@ -95,7 +95,6 @@ valGUSTTIME = 1;
 SURF.gust_vel_old = zeros(SURF.valNELE,1);
 
 %% Timestepping
-
 for valTIMESTEP = 1:COND.valMAXTIME
     %% Timestep to solution
     %   Move wing
@@ -133,7 +132,6 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         %% Rebuilding and solving wing resultant
         [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
-        
         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
         
         %% Creating and solving WD-Matrix
@@ -142,11 +140,9 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         %% Relaxing wake
         if valTIMESTEP > 2 && FLAG.RELAX == 1
+            old_span = WAKE.vecWDVEHVSPN;
             WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG, INPU);
-            
-            % Creating and solving WD-Matrix
-            [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
-            [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+            WAKE.matWCOEFF(:,2:3) = WAKE.matWCOEFF(:,2:3).*[old_span./WAKE.vecWDVEHVSPN (old_span./WAKE.vecWDVEHVSPN).^2];
         end
         
         %% Forces
@@ -167,7 +163,6 @@ for valTIMESTEP = 1:COND.valMAXTIME
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)
        fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, 1)
     end
-    
 end
 
 [OUTP] = fcnOUTPUT(COND, FLAG, INPU, SURF, OUTP, valTIMESTEP);
