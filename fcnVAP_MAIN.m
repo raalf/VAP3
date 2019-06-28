@@ -120,6 +120,11 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
     end
     
+    % Add in gust velocity if applicable
+    if FLAG.GUSTMODE > 0
+        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old);
+    end
+    
     if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
         matD = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG);
     end

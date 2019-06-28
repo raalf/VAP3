@@ -3,21 +3,21 @@
 <VAP>
 	<settings>
 		<relax>FALSE</relax>
-		<steady>TRUE</steady>
-		<maxtime>10</maxtime>
-		<delta_time>0.25</delta_time>
+		<steady>FALSE</steady>
+		<maxtime>100</maxtime>
+		<delta_time>0.03</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>0</gust_mode>
+		<gust_mode>2</gust_mode>
 	</settings>
 
 	<conditions>
 		<density>1.225</density>
 		<kin_viscosity>1.46e-05</kin_viscosity>
-		<gust_amplitude>0</gust_amplitude>
-		<gust_length>0</gust_length>
-		<gust_start>0</gust_start>
+		<gust_amplitude>0.01</gust_amplitude>
+		<gust_length>7.3152</gust_length>
+		<gust_start>28</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -25,29 +25,29 @@
 		<global_y>0</global_y>
 		<global_z>0</global_z>
 
-		<speed>1</speed>
+		<speed>10</speed>
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>20</alpha>
+		<alpha>0</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
 		<track>0</track>
 		<radius>nan</radius>
 
-		<ref_area>11.1484</ref_area>
-		<ref_span>6.096</ref_span>
+		<ref_area>22.296</ref_area>
+		<ref_span>12.192</ref_span>
 		<ref_cmac>1.8288</ref_cmac>
 
 		<wing>
 			<symmetry>FALSE</symmetry>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
-			<triangular_elements>TRUE</triangular_elements>
+			<triangular_elements>FALSE</triangular_elements>
 
 			<chordwise_elements>5</chordwise_elements>
-			<chordwise_spacing>HALFCOSINE</chordwise_spacing>
+			<chordwise_spacing>NORMAL</chordwise_spacing>
 
 			<vehicle_x>0</vehicle_x>
 			<vehicle_y>0</vehicle_y>
@@ -63,7 +63,7 @@
 					<wing_z>0</wing_z>
 					<chord>1.8288</chord>
 					<twist>0</twist>
-					<camber_airfoil>NACA 4412</camber_airfoil>
+					<camber_airfoil>NACA 0012</camber_airfoil>
 				</section>
 				<section>
 					<wing_x>0</wing_x>
@@ -71,7 +71,7 @@
 					<wing_z>0</wing_z>
 					<chord>1.8288</chord>
 					<twist>0</twist>
-					<camber_airfoil>NACA 4412</camber_airfoil>
+					<camber_airfoil>NACA 0012</camber_airfoil>
 				</section>	
 			</panel>
 		</wing>
