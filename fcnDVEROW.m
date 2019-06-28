@@ -20,7 +20,7 @@ for i = 1:max(SURF.vecDVEWING)
 
     tempm = repmat(INPU.vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel),1);
     
-    matROWS = repmat(idxdve,1,m) + double(tempm);
+    matROWS{i} = repmat(idxdve,1,m) + double(tempm);
 
 end
 

@@ -4,7 +4,7 @@
 	<settings>
 		<relax>FALSE</relax>
 		<steady>FALSE</steady>
-		<maxtime>100</maxtime>
+		<maxtime>30</maxtime>
 		<delta_time>0.03</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
@@ -17,7 +17,7 @@
 		<kin_viscosity>1.46e-05</kin_viscosity>
 		<gust_amplitude>0.01</gust_amplitude>
 		<gust_length>7.3152</gust_length>
-		<gust_start>28</gust_start>
+		<gust_start>4</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -41,12 +41,12 @@
 		<ref_cmac>1.8288</ref_cmac>
 
 		<wing>
-			<symmetry>FALSE</symmetry>
+			<symmetry>TRUE</symmetry>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
 
-			<chordwise_elements>5</chordwise_elements>
+			<chordwise_elements>6</chordwise_elements>
 			<chordwise_spacing>NORMAL</chordwise_spacing>
 
 			<vehicle_x>0</vehicle_x>
@@ -54,7 +54,7 @@
 			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<spanwise_elements>8</spanwise_elements>
+				<spanwise_elements>15</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
 				<strip_airfoil>nan</strip_airfoil>
 				<section>

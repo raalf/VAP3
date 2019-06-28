@@ -11,7 +11,7 @@ if nargin == 2
     [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN);
     
     FLAG.PRINT = 1;
-    FLAG.PLOT = 1;
+    FLAG.PLOT = 0;
     FLAG.VISCOUS = 1;
     FLAG.CIRCPLOT = 0;
     FLAG.GIF = 0;
