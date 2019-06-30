@@ -1,5 +1,7 @@
 function [hFig3] = fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, case_num)
 
+if exist('GIF/','dir') ~= 7; mkdir('GIF'); end
+
 fcnPLOTPKG(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU)
 % view([33 22])
 view([-45 20])
