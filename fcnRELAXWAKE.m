@@ -73,16 +73,25 @@ WP1(oldestwake,:) = WP4(secondoldestwake,:);
 WP2(oldestwake,:) = WP3(secondoldestwake,:);
 timesteptranslate = SURF.matUINF(SURF.vecDVETE == 3,:)*COND.valDELTIME;
 
+
 % Condition: if there is are rotors, do not prescibe the last row of wake
 % elements in the freestream, instead base it off the delta between the
 % TE to LE angle of the second last row of wake elements
-if any(SURF.vecDVEROTOR)
-    WP4(oldestwake,:) = WP4(oldestwake,:)+translationp1;
-    WP3(oldestwake,:) = WP3(oldestwake,:)+translationp2;
-else
-    WP4(oldestwake,:) = WP1(oldestwake,:)+timesteptranslate;
-    WP3(oldestwake,:) = WP2(oldestwake,:)+timesteptranslate;
-end
+
+WP4_rotor = WP4; WP4_wing = WP4;
+WP3_rotor = WP3; WP3_wing = WP3;
+temp = unique(SURF.vecDVESURFACE(SURF.vecDVEWING>0)); % Identify which surfaces are wings
+idx = sum(repmat(WAKE.vecWDVESURFACE,1,length(temp)) == repmat(temp',length(WAKE.vecWDVESURFACE),1),2) == 1;
+WP4_wing(oldestwake,:) = WP1(oldestwake,:)+timesteptranslate;
+WP3_wing(oldestwake,:) = WP2(oldestwake,:)+timesteptranslate;
+
+WP4_rotor(oldestwake,:) = WP4(oldestwake,:)+translationp1;
+WP3_rotor(oldestwake,:) = WP3(oldestwake,:)+translationp2;
+
+% Add wing or rotor specific last row to the WP4 and WP3
+WP4(idx,:) = WP4_wing(idx,:); WP3(idx,:) = WP3_wing(idx,:);
+WP4(~idx,:) = WP4_rotor(~idx,:); WP3(~idx,:) = WP3_rotor(~idx,:);
+
 WAKE.matWCENTER(oldestwake,:) = (WP1(oldestwake,:)+WP2(oldestwake,:)+WP3(oldestwake,:)+WP4(oldestwake,:))./4;
 
 %%
