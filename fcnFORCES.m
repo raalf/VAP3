@@ -18,7 +18,9 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTE
 %% Sum up element forces to generate total wing forces
 OUTP = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP, FLAG, WAKE, VISC);
 
-[OUTP, SURF] = fcnSURFACEDIST(COND, INPU, SURF, OUTP, valTIMESTEP);
+if ~any(SURF.vecDVEROTOR)
+    [OUTP, SURF] = fcnSURFACEDIST(COND, INPU, SURF, OUTP, valTIMESTEP);
+end
 
 %% Viscous wrapper
 [OUTP, matROTORCDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, 0);

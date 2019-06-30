@@ -14,7 +14,7 @@ if nargin == 2
     FLAG.PLOT = 0;
     FLAG.VISCOUS = 1;
     FLAG.CIRCPLOT = 0;
-    FLAG.GIF = 0;
+    FLAG.GIF = 1;
     FLAG.PREVIEW = 0;
     FLAG.PLOTWAKEVEL = 0;
     FLAG.PLOTUINF = 0;

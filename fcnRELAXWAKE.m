@@ -65,14 +65,25 @@ WP4 = WAKE.matWCENTER + crdvec - spnvec;
 % This overwrites the WP1-WP4 points of oldest wake elements
 oldestwake = reshape(WAKE.matWDVELEMPIDX(end,:),[],1);
 secondoldestwake = reshape(WAKE.matWDVELEMPIDX(end-1,:),[],1);
+
+translationp1 = WP1(oldestwake,:)-WP4(secondoldestwake,:);
+translationp2 = WP2(oldestwake,:)-WP3(secondoldestwake,:);
+
 WP1(oldestwake,:) = WP4(secondoldestwake,:);
 WP2(oldestwake,:) = WP3(secondoldestwake,:);
 timesteptranslate = SURF.matUINF(SURF.vecDVETE == 3,:)*COND.valDELTIME;
-WP4(oldestwake,:) = WP1(oldestwake,:)+timesteptranslate;
-WP3(oldestwake,:) = WP2(oldestwake,:)+timesteptranslate;
+
+% Condition: if there is are rotors, do not prescibe the last row of wake
+% elements in the freestream, instead base it off the delta between the
+% TE to LE angle of the second last row of wake elements
+if any(SURF.vecDVEROTOR)
+    WP4(oldestwake,:) = WP4(oldestwake,:)+translationp1;
+    WP3(oldestwake,:) = WP3(oldestwake,:)+translationp2;
+else
+    WP4(oldestwake,:) = WP1(oldestwake,:)+timesteptranslate;
+    WP3(oldestwake,:) = WP2(oldestwake,:)+timesteptranslate;
+end
 WAKE.matWCENTER(oldestwake,:) = (WP1(oldestwake,:)+WP2(oldestwake,:)+WP3(oldestwake,:)+WP4(oldestwake,:))./4;
-
-
 
 %%
 % update relax wake dves
