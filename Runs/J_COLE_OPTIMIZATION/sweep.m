@@ -16,7 +16,7 @@ N_prop_max = 1;
 Vars_prop = 3;
 
 %%
-d = linspace(100,160,6);
+d = linspace(140,200,6);
 y = linspace(140, 482*0.95, 12);
 z = [-15:5:15];
 [D,Y,Z] = meshgrid(d,y,z);

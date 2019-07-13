@@ -39,10 +39,8 @@ if FLAG.VISCOUS == 1
                     SURF.vecDVEHVCRD(idxvehrotor==1), INPU.vecN, INPU.vecM, SURF.vecDVELE(idxvehrotor==1), SURF.vecDVEPANEL(idxvehrotor==1), VISC.cellAIRFOIL, SURF.vecDVENFREE(idxvehrotor==1)+SURF.vecDVENIND(idxvehrotor==1), SURF.vecDVEAREA(idxvehrotor==1),SURF.matUINF(idxvehrotor==1,:), SURF.matVLST, SURF.matDVE(idxvehrotor==1,:), matWUINF, FLAG.PRINT);
             end
         end
-            if FLAG.NACELLE == 1 && any(idxvehrotor) && any(idxvehwing)
+            if FLAG.NACELLE == 1 && any(idxvehrotor) && any(idxvehwing) && valTIMESTEP == COND.valMAXTIME
                 [OUTP] = fcnVISCOUS_NACELLE(valTIMESTEP, COND, SURF, WAKE, INPU, FLAG, VISC, OUTP, VEHI);
-%             OUTP.WING(i).vecLDIST(valTIMESTEP,:) = OUTP.WINGDIST.LDIST(~isnan(OUTP.WINGDIST.LDIST))';
-%             OUTP.WING(i).vecDPDIST(valTIMESTEP,:) = OUTP.WINGDIST.DPDIST(~isnan(OUTP.WINGDIST.DPDIST))';
             end
     end
 end
