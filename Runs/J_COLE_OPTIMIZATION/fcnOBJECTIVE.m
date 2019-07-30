@@ -240,7 +240,7 @@ try
         
         dCT = abs((ITER.CT(end) - CT)./CT);
         dCL = abs((ITER.CL(end) - CL)./CL);
-        if dCT <= 0.005 && dCL <= 0.01 && n > 1
+        if dCT <= 0.01 && dCL <= 0.01 && n > 1
             break;
         end
         
@@ -250,7 +250,7 @@ try
     dCT = abs((ITER.CT(end) - CT)./CT);
     dCL = abs((ITER.CL(end) - CL)./CL);
     
-    if dCT <= 0.005 && dCL <= 0.01
+    if dCT <= 0.01 && dCL <= 0.01
         TRIMMED = true;
     end
     
