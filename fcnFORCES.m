@@ -10,7 +10,7 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTE
 % valE - Span Efficiency
 
 %% Element normal forces, lift forces and side forces (freestream and induced)
-[en, SURF.vecDVENFREE, SURF.vecDVENIND, SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE, SURF.vecDVESIND, SURF.matLIFTDIR] = fcnDVENFORCE(valTIMESTEP, SURF, WAKE, VEHI, FLAG, INPU);
+[en, SURF.vecDVENFREE, SURF.vecDVENIND, SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE, SURF.vecDVESIND, SURF.matLIFTDIR, SURF.gamma_old, SURF.dGammadt] = fcnDVENFORCE(valTIMESTEP, COND, SURF, WAKE, VEHI, FLAG, INPU);
 
 %% Induced Drag force
 [inddrag] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG);

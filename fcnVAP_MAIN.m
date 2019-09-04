@@ -12,7 +12,7 @@ if nargin == 2
     
     FLAG.PRINT = 1;
     FLAG.PLOT = 0;
-    FLAG.VISCOUS = 1;
+    FLAG.VISCOUS = 0;
     FLAG.CIRCPLOT = 0;
     FLAG.GIF = 0;
     FLAG.PREVIEW = 0;
