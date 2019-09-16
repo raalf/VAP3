@@ -144,7 +144,9 @@ for i = 1:INPU.valVEHICLES
         
         COND.vecSURFTRI(k,1) = false;
         try if strcmpi(win.triangular_elements.Text, 'true') COND.vecSURFTRI(k) = true; end; end;
-        try if strcmpi(win.symmetry.Text, 'true') sym = true; else sym = false; end; catch sym = false; end;     
+        try if strcmpi(win.symmetry.Text, 'true') sym = true; else sym = false; end; catch sym = false; end;
+        
+        try if strcmpi(win.type.Text, 'main wing') INPU.vecWINGTYPE(k) = 1; elseif strcmpi(win.type.Text, 'hstab') INPU.vecWINGTYPE(k) = 2; elseif strcmpi(win.type.Text, 'vstab') INPU.vecWINGTYPE(k) = 3; end; catch INPU.vecWINGTYPE(k) = 1; end;
         
         vecWINGINCID(k) = str2double(win.incidence.Text);
         if strcmpi(win.trimable.Text, 'true') vecTRIMABLE(j) = 1; else vecTRIMABLE(j) = 0; end
@@ -237,6 +239,8 @@ for i = 1:INPU.valVEHICLES
         COND.vecSURFTRI(k,1) = false;
         try if strcmpi(rot.triangular_elements.Text, 'true') COND.vecSURFTRI(k) = true; end; end;
         try if strcmpi(rot.symmetry.Text, 'true') sym = true; else sym = false; end; catch sym = false; end;
+        
+        try if strcmpi(win.type.Text, 'rotor') INPU.vecWINGTYPE(k) = 4; end; catch INPU.vecWINGTYPE(k) = 4; end;
         
         COND.vecROTORRPM(p,1) = str2double(rot.rpm.Text);
         INPU.vecROTDIAM(p,1) = str2double(rot.ref_diam.Text);

@@ -33,6 +33,7 @@ SURF.vecDVETE = uint8([]);
 SURF.vecDVEPANEL = uint16([]);
 SURF.matPANELTE = uint16([]);
 SURF.vecDVETRI = [];
+SURF.vecWINGTYPE = [];
 
 INPU.vecPANELROTOR = uint8(INPU.vecPANELROTOR);
 
@@ -51,6 +52,8 @@ for i = unique(vecPANELSURFACE,'stable')'
             fcnGENERATEDVES(panels, INPU.matGEOM(:,:,(vecPANELSURFACE == i)), INPU.vecSYM(vecPANELSURFACE == i), INPU.vecN(vecPANELSURFACE == i), INPU.vecM(vecPANELSURFACE == i));
         
         SURF.vecDVETRI = [SURF.vecDVETRI; zeros(tSURF.valNELE,1)];
+        
+    SURF.vecWINGTYPE = [SURF.vecWINGTYPE; repmat(INPU.vecWINGTYPE(i),size(tSURF.matCENTER,1),1)];
         
     SURF.valNELE = SURF.valNELE + tSURF.valNELE;
     SURF.matCENTER = [SURF.matCENTER; tSURF.matCENTER];

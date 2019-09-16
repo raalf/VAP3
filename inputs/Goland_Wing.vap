@@ -3,13 +3,13 @@
 <VAP>
 	<settings>
 		<relax>FALSE</relax>
-		<steady>FALSE</steady>
-		<maxtime>100</maxtime>
+		<steady>TRUE</steady>
+		<maxtime>20</maxtime>
 		<delta_time>0.03</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>2</gust_mode>
+		<gust_mode>0</gust_mode>
 	</settings>
 
 	<conditions>
@@ -29,7 +29,7 @@
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>0</alpha>
+		<alpha>7</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -41,6 +41,7 @@
 		<ref_cmac>1.8288</ref_cmac>
 
 		<wing>
+			<type>MAIN WING</type>
 			<symmetry>TRUE</symmetry>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
@@ -54,7 +55,7 @@
 			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<spanwise_elements>15</spanwise_elements>
+				<spanwise_elements>7</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
 				<strip_airfoil>nan</strip_airfoil>
 				<section>
@@ -74,7 +75,69 @@
 					<camber_airfoil>NACA 0012</camber_airfoil>
 				</section>	
 			</panel>
+			<panel>
+				<spanwise_elements>8</spanwise_elements>
+				<spanwise_spacing>NORMAL</spanwise_spacing>
+				<strip_airfoil>nan</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>6.096</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1.8288</chord>
+					<twist>0</twist>
+					<camber_airfoil>NACA 0012</camber_airfoil>
+				</section>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>12.192</wing_y>
+					<wing_z>0</wing_z>
+					<chord>1.8288</chord>
+					<twist>0</twist>
+					<camber_airfoil>NACA 0012</camber_airfoil>
+				</section>	
+			</panel>
 		</wing>
+
+		<wing>
+			<type>HSTAB</type>
+			<symmetry>TRUE</symmetry>
+			<incidence>0</incidence>
+			<trimable>TRUE</trimable>
+			<triangular_elements>FALSE</triangular_elements>
+
+			<chordwise_elements>1</chordwise_elements>
+			<chordwise_spacing>NORMAL</chordwise_spacing>
+
+			<vehicle_x>4.16</vehicle_x>
+			<vehicle_y>0</vehicle_y>
+			<vehicle_z>1.32</vehicle_z>
+
+			<trimorigin>
+				<x>4.2875</x>
+				<y>0</y>
+				<z>1.32</z>
+			</trimorigin>
+
+			<panel>
+				<spanwise_elements>6</spanwise_elements>
+				<spanwise_spacing>NORMAL</spanwise_spacing>
+				<strip_airfoil>HT14</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>0</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.510</chord>
+					<twist>0</twist>
+				</section>	
+				<section>
+					<wing_x>0.217</wing_x>
+					<wing_y>1.25</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.288</chord>
+					<twist>0</twist>
+				</section>	
+			</panel>
+		</wing>		
 	</vehicle>				
 </VAP>
 
