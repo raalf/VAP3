@@ -1,4 +1,4 @@
-function [FLAG, COND, VISC, INPU, VEHI] = fcnXMLREAD(filename, VAP_IN)
+function [FLAG, COND, VISC, INPU, VEHI, SURF] = fcnXMLREAD(filename, VAP_IN)
 
 % clc
 % clear
@@ -123,6 +123,7 @@ for i = 1:INPU.valVEHICLES
     COND.vecVEHROLL(i,1) = str2double(veh.roll.Text);
     COND.vecVEHFPA(i,1) = str2double(veh.fpa.Text);
     COND.vecVEHTRK(i,1) = str2double(veh.track.Text);
+    try INPU.vecVEHCG(i,:) = [str2double(veh.vehicle_CG.x.Text) str2double(veh.vehicle_CG.y.Text) str2double(veh.vehicle_CG.z.Text)]; end
     
     try VEHI.vecVEHRADIUS(i,1) = str2double(veh.radius.Text); catch VEHI.vecVEHRADIUS(i,1) = nan; end
     
@@ -149,12 +150,16 @@ for i = 1:INPU.valVEHICLES
         try if strcmpi(win.type.Text, 'main wing') INPU.vecWINGTYPE(k) = 1; elseif strcmpi(win.type.Text, 'hstab') INPU.vecWINGTYPE(k) = 2; elseif strcmpi(win.type.Text, 'vstab') INPU.vecWINGTYPE(k) = 3; end; catch INPU.vecWINGTYPE(k) = 1; end;
         
         vecWINGINCID(k) = str2double(win.incidence.Text);
-        if strcmpi(win.trimable.Text, 'true') vecTRIMABLE(j) = 1; else vecTRIMABLE(j) = 0; end
+        if strcmpi(win.trimable.Text, 'true') FLAG.vecTRIMABLE(j,i) = 1; else FLAG.vecTRIMABLE(j,i) = 0; end
+        try if strcmpi(win.flexible.Text, 'true') FLAG.vecFLEXIBLE(j,i) = 1; else FLAG.vecFLEXIBLE(j,i) = 0; end; catch; FLAG.vecFLEXIBLE(j,i) = 0; end
         
         vecWINGM(k,1) = str2double(win.chordwise_elements.Text);
         
         try matWINGORIG(k,:) = [str2double(win.vehicle_x.Text) str2double(win.vehicle_y.Text) str2double(win.vehicle_z.Text)];
         catch; matWINGORIG(k,:) = [0 0 0]; end
+        
+        try SURF.matTRIMORIG(k,:) = [str2double(win.trimorigin.x.Text) str2double(win.trimorigin.y.Text) str2double(win.trimorigin.z.Text)];
+        catch; SURF.matTRIMORIG(k,:) = [0 0 0]; end
         
         vecPANELS(k,1) = max(size(win.panel));
         

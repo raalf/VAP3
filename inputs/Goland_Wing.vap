@@ -25,6 +25,12 @@
 		<global_y>0</global_y>
 		<global_z>0</global_z>
 
+		<vehicle_CG>
+			<x>0.25</x>
+			<y>0</y>
+			<z>0</z>
+		</vehicle_CG>
+
 		<speed>10</speed>
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>

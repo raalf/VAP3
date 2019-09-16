@@ -25,6 +25,12 @@ end
 %% Viscous wrapper
 [OUTP, matROTORCDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, 0);
 
+%% Trim routine
+% if valTIMESTEP == COND.valMAXTIME && any(FLAG.vecTRIMABLE == 1) == 1 && FLAG.TRIM == 1
+%     [OUTP, SURF, FLAG] = fcnLONGTRIM(SURF, INPU, OUTP, FLAG, COND);
+%     OUTP.vecCM(valTIMESTEP,1) = OUTP.vecVEHCM;
+% end
+
 %% Rotor Forces
 if max(SURF.vecDVEROTOR) > 0
     OUTP = fcnROTORFORCE(valTIMESTEP, matROTORCDP, en, inddrag, vecDELNDIST, SURF, VEHI, INPU, COND, OUTP);

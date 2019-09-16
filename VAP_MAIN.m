@@ -1,4 +1,4 @@
-% clc
+clc
 clear
 warning off
 
