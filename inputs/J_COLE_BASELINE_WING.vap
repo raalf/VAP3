@@ -2,7 +2,7 @@
 
 <VAP>
 	<settings>
-		<flagRELAX>TRUE</flagRELAX>
+		<flagRELAX>FALSE</flagRELAX>
 		<flagSTEADY>TRUE</flagSTEADY>
 		<flagTRI>FALSE</flagTRI>
 		<valMAXTIME>40</valMAXTIME>
@@ -12,7 +12,7 @@
 	</settings>
 
 	<conditions>
-		<valDENSITY>1.225</valDENSITY>
+		<valDENSITY>1.007</valDENSITY>
 		<valKINV>1.460000e-05</valKINV>
 	</conditions>
 
