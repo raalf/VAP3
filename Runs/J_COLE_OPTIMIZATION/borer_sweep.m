@@ -1,9 +1,17 @@
 clc
 clear
 
-% vinf = [69 73 75 78]
-vinf = 78;
-[out, ITER, ITEROUTP] = fcnBASELINE_OBJ2(vinf)
+cores = 5;
+parpool(cores,'IdleTimeout',800)
+
+vinf = [69 73 75 78]
+% vinf = 78;
+
+parfor i = 1:length(vinf)
+    [out, ITER, ITEROUTP] = fcnBASELINE_OBJ2(vinf(i));
+    CL(i) = ITER.CL(end);
+    CD(i) = ITER.CD(end);
+end
 
 % load('borer_paper_data.mat');
 % 
