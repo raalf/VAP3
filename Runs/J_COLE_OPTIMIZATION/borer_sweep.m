@@ -1,13 +1,13 @@
 clc
 clear
 
-% cores = 5;
-% parpool(cores,'IdleTimeout',800)
+cores = 5;
+parpool(cores,'IdleTimeout',800)
 
 vinf = [69 73 75 78]
 % vinf = 78;
 
-for i = 1:length(vinf)
+parfor i = 1:length(vinf)
     [out, ITER, ITEROUTP] = fcnBASELINE_OBJ2(vinf(i));
     CL(i) = ITER.CL(end);
     CD(i) = ITER.CD(end);
