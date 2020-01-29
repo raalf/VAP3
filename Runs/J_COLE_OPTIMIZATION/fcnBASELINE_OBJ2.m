@@ -16,7 +16,7 @@ for i = 1:length(seqALPHA)
     VAP_IN.valMAXTIME = 30;
 %                 VAP_IN.valSTARTFORCES = 5
 %                 VAP_IN.valMAXTIME = 10
-    WING_SWEEP(i) = fcnVAP_MAIN('G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\X57_BASELINE_WING.vap', VAP_IN);
+    WING_SWEEP(i) = fcnVAP_MAIN('Runs\J_COLE_OPTIMIZATION\X57_BASELINE_WING.vap', VAP_IN);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
 
@@ -47,7 +47,7 @@ for i = 1:length(vecCOLLECTIVE)
 %                 VAP_IN.valSTARTFORCES = 15
 %                 VAP_IN.valMAXTIME = 20
     VAP_IN.valDELTIME = (1/60)/(2250/60);
-    PROP_SWEEP(i) = fcnVAP_MAIN('G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\X57_BASELINE_PROP.vap', VAP_IN);
+    PROP_SWEEP(i) = fcnVAP_MAIN('Runs\J_COLE_OPTIMIZATION\X57_BASELINE_PROP.vap', VAP_IN);
     %     view([90 90]);
 end
 cd 'Runs/J_COLE_OPTIMIZATION/'
@@ -126,7 +126,7 @@ for n = 1:ITER.maxIter
 %                     VAP_IN.valMAXTIME = 10
 %                 VAP_IN.valSTARTFORCES = 6
     VAP_IN.valDELTIME = (1/60)/(2250/60);
-    OUTP = fcnVAP_MAIN('G:\GIT\VAP3\Runs\J_COLE_OPTIMIZATION\X57_BASELINE.vap', VAP_IN);
+    OUTP = fcnVAP_MAIN('Runs\J_COLE_OPTIMIZATION\X57_BASELINE.vap', VAP_IN);
     cd 'Runs/J_COLE_OPTIMIZATION/'
     
     % Write results
