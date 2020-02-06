@@ -5,7 +5,7 @@
 		<relax>FALSE</relax>
 		<steady>TRUE</steady>
 		<maxtime>10</maxtime>
-		<delta_time>0.25</delta_time>
+		<delta_time>0.025</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
@@ -25,11 +25,11 @@
 		<global_y>0</global_y>
 		<global_z>0</global_z>
 
-		<speed>1</speed>
+		<speed>10</speed>
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>20</alpha>
+		<alpha>10</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
