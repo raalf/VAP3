@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VAP>
+	<settings>
+		<relax>TRUE</relax>
+		<steady>TRUE</steady>
+		<maxtime>30</maxtime>
+		<delta_time>0.01</delta_time>
+		<start_forces>0</start_forces>
+		<stiff_wing>1</stiff_wing>
+		<fixed_lift>0</fixed_lift>
+		<gust_mode>0</gust_mode>
+	</settings>
+
+	<conditions>
+		<density>1.225</density>
+		<kin_viscosity>1.46e-05</kin_viscosity>
+		<gust_amplitude>0.01</gust_amplitude>
+		<gust_length>7.3152</gust_length>
+		<gust_start>4</gust_start>
+	</conditions>
+
+	<vehicle>
+		<global_x>0</global_x>
+		<global_y>0</global_y>
+		<global_z>0</global_z>
+
+		<vehicle_CG>
+			<x>0.15</x>
+			<y>0</y>
+			<z>0</z>
+		</vehicle_CG>
+
+		<speed>10</speed>
+		<weight>120</weight>
+		<interference_drag>0</interference_drag>
+
+		<alpha>0</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<track>0</track>
+		<radius>nan</radius>
+
+		<ref_area>2.482</ref_area>
+		<ref_span>6.28</ref_span>
+		<ref_cmac>0.395</ref_cmac>
+
+		<wing>
+			<type>MAIN WING</type>
+			<symmetry>TRUE</symmetry>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+			<triangular_elements>FALSE</triangular_elements>
+
+			<chordwise_elements>6</chordwise_elements>
+			<chordwise_spacing>NORMAL</chordwise_spacing>
+
+			<vehicle_x>0</vehicle_x>
+			<vehicle_y>0</vehicle_y>
+			<vehicle_z>0</vehicle_z>
+
+			<panel>
+				<spanwise_elements>15</spanwise_elements>
+				<spanwise_spacing>NORMAL</spanwise_spacing>
+				<strip_airfoil>NACA2412</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>0</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.395</chord>
+					<twist>4.5</twist>
+				</section>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>3.14</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.395</chord>
+					<twist>4.5</twist>
+				</section>	
+			</panel>
+		</wing>
+	</vehicle>				
+</VAP>
+
+
+
+
