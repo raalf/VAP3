@@ -14,7 +14,7 @@ TRIM = [];
 %% Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-[FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
+[FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
 COND.valSTIFFSTEPS = inf;
 

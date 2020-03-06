@@ -12,7 +12,7 @@ if nargin == 2
     
     FLAG.PRINT = 1;
     FLAG.PLOT = 1;
-    FLAG.VISCOUS = 1;
+    FLAG.VISCOUS = 0;
     FLAG.CIRCPLOT = 0;
     FLAG.GIF = 0;
     FLAG.PREVIEW = 0;
@@ -28,7 +28,74 @@ if nargin == 2
     [WAKE, OUTP, INPU, SURF] = fcnINITIALIZE(COND, INPU, SURF);
     
     if FLAG.PRINT == 1
-        disp('
+        disp('============================================================================');
+        disp('                  /$$    /$$  /$$$$$$  /$$$$$$$         /$$$$$$     /$$$$$$$')
+        disp('+---------------+| $$   | $$ /$$__  $$| $$__  $$       /$$__  $$   | $$____/') ;
+        disp('| RYERSON       || $$   | $$| $$  \ $$| $$  \ $$      |__/  \ $$   | $$      ');
+        disp('| APPLIED       ||  $$ / $$/| $$$$$$$$| $$$$$$$/         /$$$$$/   | $$$$$$$ ');
+        disp('| AERODYNAMICS  | \  $$ $$/ | $$__  $$| $$____/         |___  $$   |_____  $$');
+        disp('| LABORATORY OF |  \  $$$/  | $$  | $$| $$             /$$  \ $$    /$$  \ $$');
+        disp('| FLIGHT        |   \  $/   | $$  | $$| $$            |  $$$$$$//$$|  $$$$$$/');
+        disp('+---------------+    \_/    |__/  |__/|__/             \______/|__/ \______/ ');
+        disp('============================================================================');
+        disp(' ');
+    end
+    
+    % Setting up timestep saving feature
+    if FLAG.SAVETIMESTEP == 1
+        if exist('timesteps/') ~= 7; mkdir('timesteps'); end
+        if isfield(VAP_IN,'TimestepName')
+            timestep_folder = strcat('timesteps/',VAP_IN.TimestepName,'/');
+        else
+            timestep_folder = ['timesteps/',regexprep(filename,{'inputs/', '.vap'}, ''), '_(', datestr(now, 'dd_mm_yyyy HH_MM_SS_FFF'),')/'];
+        end
+        mkdir(timestep_folder);
+    end
+    
+    % Check if the files required by the viscous calculations exist
+    [FLAG] = fcnVISCOUSFILECHECK(FLAG, VISC);
+    
+    %% Discretizing geometry into DVEs
+    % Adding collective pitch to the propeller/rotor
+    if ~isempty(COND.vecCOLLECTIVE)
+        INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) = INPU.matGEOM(:,5,INPU.vecPANELROTOR > 0) + repmat(reshape(COND.vecCOLLECTIVE(INPU.vecPANELROTOR(INPU.vecPANELROTOR > 0), 1),1,1,[]),2,1,1);
+    end
+    [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnGEOM2DVE(INPU, COND, VISC, VEHI, WAKE, OUTP, SURF);
+    
+    %% Advance Ratio
+    MISC.vecROTORJ = [];
+    for jj = 1:length(COND.vecROTORRPM)
+        MISC.vecROTORJ(jj) = (COND.vecVEHVINF(VEHI.vecROTORVEH(jj))*60)./(abs(COND.vecROTORRPM(jj)).*INPU.vecROTDIAM(jj));
+    end
+end
+
+%% Add boundary conditions to D-Matrix
+[matD] = fcnDWING(SURF, INPU);
+
+%% Add kinematic conditions to D-Matrix
+[SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
+[matD] = fcnKINCON(matD, SURF, INPU, FLAG);
+
+%% Preparing to timestep
+% Building wing resultant
+[vecR] = fcnRWING(0, SURF, WAKE, FLAG);
+
+% Solving for wing coefficients
+[SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+SURF.matNPDVE = SURF.matDVE;
+
+% Computing structure distributions if data exists
+try
+    [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
+    FLAG.STRUCTURE = 1; % Create flag if structure data exists
+catch
+    FLAG.STRUCTURE = 0;
+end
+
+n = 1;
+valGUSTTIME = 1;
+SURF.gust_vel_old = zeros(SURF.valNELE,1);
+
 %% Timestepping
 for valTIMESTEP = 1:COND.valMAXTIME
     %% Timestep to solution
@@ -93,11 +160,6 @@ for valTIMESTEP = 1:COND.valMAXTIME
         if valTIMESTEP >= COND.valSTARTFORCES
             [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP, FLAG] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
         end
-        
-        OUTP.total_vel(:,:,valTIMESTEP) = SURF.matUINF + SURF.wake_vel_time(:,:,valTIMESTEP);
-        OUTP.norm_vel(:,:,valTIMESTEP) = dot(SURF.matDVENORM,OUTP.total_vel(:,:,valTIMESTEP),2);
-        
-        OUTP.norm_percent(valTIMESTEP,1) = sum((OUTP.norm_vel(:,:,valTIMESTEP).*SURF.vecDVEAREA./INPU.vecAREA)*100,1);
         
         if FLAG.SAVETIMESTEP == 1
             save([timestep_folder, 'timestep_', num2str(valTIMESTEP), '.mat'], 'filename','valTIMESTEP','INPU','COND','MISC','WAKE','VEHI','SURF','OUTP');

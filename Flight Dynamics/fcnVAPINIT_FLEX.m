@@ -1,4 +1,4 @@
-function [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP)
+function [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP)
 
 %% Discretizing geometry into DVEs
 % Adding collective pitch to the propeller/rotor
