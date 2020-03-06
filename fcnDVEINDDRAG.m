@@ -1,4 +1,4 @@
-function [inddrag] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG)
+function [inddrag, tempUINF] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG)
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
 % non-dimensionalized to q.
 

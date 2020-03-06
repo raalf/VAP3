@@ -5,11 +5,9 @@ function [ matVEHUVW, matVEHROT, matVEHROTRATE, ...
 %   Inititalize velocites and rotation angles of vehicle
 
 vecVEHYAW = vecVEHTRK + vecVEHBETA;
-vecVEHPITCH = vecVEHFPA + vecVEHALPHA;
+vecVEHPITCH = vecVEHFPA + vecVEHALPHA(end);
 
 matVEHROT = deg2rad([vecVEHROLL, vecVEHPITCH, vecVEHYAW]);
-
-
 
 % [x,y,z] = sph2cart(deg2rad(vecVEHTRK),deg2rad(vecVEHFPA),vecVEHVINF);
 

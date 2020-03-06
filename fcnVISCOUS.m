@@ -1,4 +1,4 @@
-function [OUTP, matROTORDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, temp_visc)
+function [OUTP, SURF, matROTORDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, temp_visc)
 % temp_visc is a flag to determine whether to use the viscous function
 % within the timestepping procedure or at the end of the timestepping. 0
 % will only apply it at the end and 1 will apply it within the timestepping
@@ -22,10 +22,10 @@ if FLAG.VISCOUS == 1
                 fixed_lift = 0;
             end
             
-            [OUTP.vecCLv(valTIMESTEP,i), OUTP.vecCD(valTIMESTEP,i), OUTP.vecPREQ(valTIMESTEP,i), OUTP.vecLD(valTIMESTEP,i), OUTP.vecVINF(valTIMESTEP,i), OUTP.vecCMDIST, OUTP.vecCNDIST, OUTP.vecCDPDIST] = fcnVISCOUS_WING(OUTP.vecCL(valTIMESTEP), OUTP.vecCDI(valTIMESTEP), ...
+            [OUTP.vecCLv(valTIMESTEP,i), OUTP.vecCD(valTIMESTEP,i), OUTP.vecCM(valTIMESTEP,i), OUTP.vecPREQ(valTIMESTEP,i), OUTP.vecLD(valTIMESTEP,i), OUTP.vecVINF(valTIMESTEP,i), OUTP.vecCMDIST, OUTP.vecCNDIST, OUTP.vecCDPDIST, SURF.vecDPDIST] = fcnVISCOUS_WING(OUTP.vecCL(valTIMESTEP), OUTP.vecCDI(valTIMESTEP), ...
                 INPU.vecAREA, COND.valDENSITY, VISC.valKINV, SURF.vecDVENFREE, SURF.vecDVENIND, ...
                 SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE, SURF.vecDVESIND, SURF.vecDVEPANEL, SURF.vecDVELE, SURF.vecDVEWING.*uint8(idxvehwing), INPU.vecN, INPU.vecM, SURF.vecDVEAREA, ...
-                SURF.matCENTER, SURF.vecDVEHVCRD, VISC.cellAIRFOIL, FLAG.PRINT, INPU.vecSYM, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i));
+                SURF.matCENTER, SURF.vecDVEHVCRD, VISC.cellAIRFOIL, FLAG.PRINT, INPU.vecSYM, VISC.vecINTERF, SURF.vecDVEROLL, SURF.matUINF, matWUINF, SURF.matDVE, SURF.matVLST, COND.vecVEHVINF(i), fixed_lift, COND.vecVEHWEIGHT(i), INPU.vecCMAC);
                  
         if FLAG.NACELLE == 1 && any(idxvehrotor) && any(idxvehwing)
             [OUTP] = fcnVISCOUS_NACELLE(valTIMESTEP, COND, SURF, WAKE, INPU, FLAG, VISC, OUTP);

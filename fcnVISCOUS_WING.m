@@ -1,7 +1,7 @@
-function [valCL, valCD, valPREQ, valLD, valVINF, vecCMDIST, temp_CN, vecCDPDIST] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
+function [valCL, valCD, valCM, valPREQ, valLD, valVINF, vecCMDIST, temp_CN, vecCDPDIST, temp_dist] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, ...
-    valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT)
+    valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, vecCMAC)
 
 warning off
 
@@ -218,6 +218,7 @@ for i = 1:max(vecDVEWING)
     
     % dimensionalize in terms of both Vinf and Vind
     dprofPerWing(i) = sum(vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing));
+    pitchmomPerWing(i) = sum(vecCMDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing)*vecCMAC);
     temp_CN = vecCNDIST;
 
 end
@@ -236,6 +237,7 @@ end
 
 % Multiply vecSYMIWING profile drag by 2
 dprofPerWing(vecSYMWING) = dprofPerWing(vecSYMWING)*2;
+pitchmomPerWing(vecSYMWING) = pitchmomPerWing(vecSYMWING)*2;
 LPerWing(vecSYMWING) = LPerWing(vecSYMWING)*2;
 
 valCL = sum(LPerWing)/(q_inf*valAREA);
@@ -252,6 +254,8 @@ dint = dtot*(valINTERF/100);
 dtot = dtot + dint;
 
 valCD = dtot/(q_inf*valAREA);
+
+valCM = sum(pitchmomPerWing)/(q_inf*valAREA*vecCMAC);
 
 % %% Adjusting CL for stall
 % valCL = sum(vecCNDIST.*vecAREADIST.*cos(vecDVEROLL(vecLEDVEDIST)))/valAREA*2;

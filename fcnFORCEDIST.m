@@ -1,4 +1,4 @@
-function [OUTP] = fcnFORCEDIST(SURF, COND, INPU, OUTP, valTIMESTEP)
+function [OUTP] = fcnFORCEDIST(SURF, COND, INPU, OUTP, FLAG, valTIMESTEP)
 
 % This function computes the dimensional force and moment distribution
 % across the wing, resolved to the shear center line. Moment is taken
@@ -18,47 +18,68 @@ function [OUTP] = fcnFORCEDIST(SURF, COND, INPU, OUTP, valTIMESTEP)
 % valVINF = sqrt(2*q_inf/COND.valDENSITY);
 q_inf = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF;
 
-[matROWS] = fcnDVEROW(SURF.vecLEDVES, SURF, INPU);
+[ledves, ~, ~] = find(SURF.vecDVELE(SURF.idxFLEX) > 0);
+
+lepanels = SURF.vecDVEPANEL(ledves);
+
+% Determine DVEs in each spanwise station
+for i = 1:length(find(FLAG.vecFLEXIBLE == 1))
+
+	idxdve = ledves(SURF.vecDVEWING(ledves) == i);
+	idxpanel = lepanels(SURF.vecDVEWING(ledves) == i);
+
+    m = INPU.vecM(idxpanel);
+    if any(m - m(1))
+        disp('Problem with wing chordwise elements.');
+        break
+    end
+    m = m(1);
+
+    tempm = repmat(INPU.vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel),1);
+    
+    matROWS{i} = repmat(idxdve,1,m) + double(tempm);
+
+end
 
 % ======================================================================= % 
 %                        Start Lift Calculation                           %
 % ======================================================================= %
 
 % Convert DVE force from force/density to force/unit length
-OUTP.vecLIFTDIST = ((sum(SURF.vecDVELFREE(matROWS),2) + sum(SURF.vecDVELIND(matROWS),2))*COND.valDENSITY)./(2*SURF.vecDVEHVSPN(SURF.vecLEDVES));
-
-% Interpolate lift distribution to find lift at DVE edges (i.e. Structural
-% grid points)
-tempSPANDIST = SURF.matCENTER(SURF.vecLEDVES,2); % Y coordinate of DVE midpoints
-
-% Some setup work to be able to perform linear interpolation without a
-% for loop
-tempSPANDIST = repmat(tempSPANDIST', size(tempSPANDIST,1),1);
-
-tempSPANDIST = triu(tempSPANDIST);
-
-OUTP.vecLIFTDIST = repmat(OUTP.vecLIFTDIST', size(OUTP.vecLIFTDIST,1),1);
-
-OUTP.vecLIFTDIST = triu(OUTP.vecLIFTDIST);
-
-OUTP.vecLIFTDIST = ((SURF.vecSPANDIST(2:(end-1))' - tempSPANDIST(1,1:(end-1)))./(tempSPANDIST(2,2:end)-...
-    tempSPANDIST(1,1:(end-1)))).*(OUTP.vecLIFTDIST(2,2:end)-OUTP.vecLIFTDIST(1,1:(end-1))) + OUTP.vecLIFTDIST(1,1:(end-1)); % Linear interpolation of lift
-
-OUTP.vecLIFTDIST = [OUTP.vecLIFTDIST(1), OUTP.vecLIFTDIST, 0]'; % Add zero lift to tip. Use the same lift at root as at the next neighbouring node. This doesn't really have any impact since the structure solver doesn't use this value
-
-OUTP.vecWRBM(valTIMESTEP,1) = sum(SURF.vecSPANDIST.*OUTP.vecLIFTDIST,1);
+% OUTP.vecLIFTDIST = ((sum(SURF.vecDVELFREE(matROWS{1}),2) + sum(SURF.vecDVELIND(matROWS{1}),2))*COND.valDENSITY)./(2*SURF.vecDVEHVSPN(ledves));
+% 
+% % Interpolate lift distribution to find lift at DVE edges (i.e. Structural
+% % grid points)
+% tempSPANDIST = SURF.matCENTER(ledves,2); % Y coordinate of DVE midpoints
+% 
+% % Some setup work to be able to perform linear interpolation without a
+% % for loop
+% tempSPANDIST = repmat(tempSPANDIST', size(tempSPANDIST,1),1);
+% 
+% tempSPANDIST = triu(tempSPANDIST);
+% 
+% OUTP.vecLIFTDIST = repmat(OUTP.vecLIFTDIST', size(OUTP.vecLIFTDIST,1),1);
+% 
+% OUTP.vecLIFTDIST = triu(OUTP.vecLIFTDIST);
+% 
+% OUTP.vecLIFTDIST = ((SURF.vecSPANDIST(2:(end-1)) - tempSPANDIST(1,1:(end-1)))./(tempSPANDIST(2,2:end)-...
+%     tempSPANDIST(1,1:(end-1)))).*(OUTP.vecLIFTDIST(2,2:end)-OUTP.vecLIFTDIST(1,1:(end-1))) + OUTP.vecLIFTDIST(1,1:(end-1)); % Linear interpolation of lift
+% 
+% OUTP.vecLIFTDIST = [OUTP.vecLIFTDIST(1), OUTP.vecLIFTDIST, 0]'; % Add zero lift to tip. Use the same lift at root as at the next neighbouring node. This doesn't really have any impact since the structure solver doesn't use this value
+% 
+% OUTP.vecWRBM(valTIMESTEP,1) = sum(SURF.vecSPANDIST.*OUTP.vecLIFTDIST,1);
 
 % ======================================================================= % 
 %                        Start Moment Calculation                         %
 % ======================================================================= %
-lift_chord = SURF.vecDVELFREE(matROWS) + SURF.vecDVELIND(matROWS); % Lift distribution along each chordwise location
+lift_chord = SURF.vecDVELFREE(matROWS{1}) + SURF.vecDVELIND(matROWS{1}); % Lift distribution along each chordwise location
 
 % Interpolate lift force at each chordwise station to use for moment
 % calculations. Also determine the LE coordinates of each chordwise DVE to
 % be used to calculate a moment arm between DVE and elastic axis
 for i = 1:INPU.vecM(1)
     
-    row_ledves(:,:,i) = [SURF.matNPVLST(SURF.matNPDVE(matROWS(:,i),1),:); SURF.matNPVLST(SURF.matNPDVE(matROWS(end,i),2),:)]; % LE coordinates of each set of chordwise DVEs
+    row_ledves(:,:,i) = [SURF.matNPVLST(SURF.matNPDVE(matROWS{1}(:,i),1),:); SURF.matNPVLST(SURF.matNPDVE(matROWS{1}(end,i),2),:)]; % LE coordinates of each set of chordwise DVEs
     
     temp_liftdist = repmat(lift_chord(:,i)', size(lift_chord,1),1);
 
@@ -74,7 +95,7 @@ for i = 1:INPU.vecM(1)
     % Lift force in X, Y, Z components to be used in cross product to
     % calculate moment about elastic axis. Each step into the 3rd dimension
     % is the lift distribution at each chordwise station
-    lift_moment(:,:,i) = [temp_lift.*SURF.matLIFTDIR(matROWS(:,i),:); zeros(1,3)]; 
+    lift_moment(:,:,i) = [temp_lift.*SURF.matLIFTDIR(matROWS{1}(:,i),:); zeros(1,3)]; 
     
 end
 

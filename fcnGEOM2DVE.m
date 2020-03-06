@@ -118,12 +118,13 @@ VEHI.vecROTORVEH = VEHI.vecSURFACEVEHICLE(MISC.matSURFACETYPE(:,2)~=0);
     SURF.vecDVETE, SURF.vecDVEROTORBLADE, SURF.vecDVESYM, INPU.matROTORAXIS, SURF.matNTVLST, ...
     INPU.vecM, INPU.vecN, INPU.vecPANELROTOR, VISC.cellAIRFOIL);
 
+VEHI.vecBFRAME = [-1;0;0]; % Unit vector for vehicle body frame direction
+
 [ VEHI.matVEHUVW, VEHI.matVEHROT, VEHI.matVEHROTRATE, MISC.matCIRORIG] = fcnINITVEHICLE( COND.vecVEHVINF, INPU.matVEHORIG, COND.vecVEHALPHA, COND.vecVEHBETA, COND.vecVEHFPA, COND.vecVEHROLL, COND.vecVEHTRK, VEHI.vecVEHRADIUS );
-[SURF.matVLST, SURF.matCENTER, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNTVLST] = fcnROTVEHICLE( SURF.matDVE, SURF.matVLST, SURF.matCENTER, INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, VEHI.matVEHROT, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH, SURF.matNTVLST);
+[SURF.matVLST, SURF.matCENTER, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNPVLST, VEHI.vecBFRAME] = fcnROTVEHICLE( SURF.matDVE, SURF.matVLST, SURF.matCENTER, INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, VEHI.matVEHROT, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH, SURF.matNTVLST, VEHI.vecBFRAME);
 
 [ SURF.matUINF ] = fcnINITUINF( SURF.matCENTER, VEHI.matVEHUVW, VEHI.matVEHROT, SURF.vecDVEVEHICLE, ...
     SURF.vecDVEROTOR, VEHI.vecROTORVEH, INPU.matVEHORIG, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, COND.vecROTORRPM );
-
 
 % update DVE params after vehicle rotation
 [ SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
@@ -137,6 +138,56 @@ SURF.vecQARM = zeros(SURF.valNELE,3);
 if max(SURF.vecDVEROTOR)>0
     SURF.vecQARM(SURF.vecDVEROTOR>0,:) = SURF.matCENTER(SURF.vecDVEROTOR>0,:) - INPU.matROTORHUB(SURF.vecDVEROTOR(SURF.vecDVEROTOR>0),:);    
     SURF.vecQARM = sqrt(sum(SURF.vecQARM.^2,2));
+end
+
+% Compute pitch arm for tail if it exists
+if any(SURF.vecWINGTYPE == 2)
+    SURF.vecPITCHARM = [];
+
+    for j = unique(SURF.vecWINGTYPE,'stable')'
+
+        [ledves, ~, ~] = find(SURF.vecDVELE > 0);
+        lepanels = SURF.vecDVEPANEL(ledves);
+
+        isCurWing = SURF.vecWINGTYPE(ledves) == j;
+
+        idxdve = uint16(ledves(isCurWing));
+        idxpanel = lepanels(isCurWing);
+
+
+        m = INPU.vecM(idxpanel);
+        if any(m - m(1))
+            disp('Problem with wing chordwise elements.');
+            break
+        end
+
+        m = m(1);
+
+        % Matrix of how much we need to add to an index to get the next chordwise element
+        % It is done this way because n can be different for each panel. Unlike in the wake,
+        % we can't just add a constant value to get to the same spanwise location in the next
+        % row of elements
+        tempm = repmat(INPU.vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel~=0),1);
+
+        rows = repmat(idxdve,1,m) + uint16(tempm);
+
+        vecAREADIST(isCurWing) = sum(SURF.vecDVEAREA(rows),2);
+
+        vecCRDDIST(isCurWing,1) = sum(2*SURF.vecDVEHVCRD(rows),2);
+
+        % Find LE mid-pt location in xyz of each DVE
+        temp = fcnGLOBSTAR(SURF.matCENTER(ledves(isCurWing),:), SURF.vecDVEROLL(ledves(isCurWing)), SURF.vecDVEPITCH(ledves(isCurWing)), SURF.vecDVEYAW(ledves(isCurWing)));
+        SURF.matDVEQTRCRD = fcnSTARGLOB([temp(:,1)-SURF.vecDVEHVCRD(ledves(isCurWing)) + 0.25*vecCRDDIST(isCurWing,1),temp(:,2),temp(:,3)], SURF.vecDVEROLL(ledves(isCurWing)), SURF.vecDVEPITCH(ledves(isCurWing)), SURF.vecDVEYAW(ledves(isCurWing)));
+        
+        SURF.vecPITCHARM = [SURF.vecPITCHARM; (INPU.vecVEHCG(1,1) - SURF.matDVEQTRCRD(:,1)).*cos(pi*COND.vecVEHALPHA(1)/180)...
+            + (INPU.vecVEHCG(1,3) - SURF.matDVEQTRCRD(:,3)).*sin(pi*COND.vecVEHALPHA(1)/180)];
+        
+        SURF.matLEMIDPT = (SURF.matVLST(SURF.matDVE(rows,1),:) + SURF.matVLST(SURF.matDVE(rows,2),:))./2;
+
+        % Compute pitch moment arm from CG to DVE LE midpoint
+%         SURF.vecPITCHARM = [SURF.vecPITCHARM; (INPU.vecVEHCG(1,1) - SURF.matLEMIDPT(:,1)).*cos(pi*COND.vecVEHALPHA/180)...
+%                 + (INPU.vecVEHCG(1,3) - SURF.matLEMIDPT(:,3)).*sin(pi*COND.vecVEHALPHA/180)];
+    end
 end
 
 end

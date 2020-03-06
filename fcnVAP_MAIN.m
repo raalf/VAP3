@@ -12,7 +12,7 @@ if nargin == 2
     
     FLAG.PRINT = 1;
     FLAG.PLOT = 1;
-    FLAG.VISCOUS = 0;
+    FLAG.VISCOUS = 1;
     FLAG.CIRCPLOT = 0;
     FLAG.GIF = 0;
     FLAG.PREVIEW = 0;
@@ -144,7 +144,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         %% Rebuilding and solving wing resultant
         [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
-        
+
         %% Creating and solving WD-Matrix
         [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
         [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
@@ -160,6 +160,11 @@ for valTIMESTEP = 1:COND.valMAXTIME
         if valTIMESTEP >= COND.valSTARTFORCES
             [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
         end
+        
+        OUTP.total_vel(:,:,valTIMESTEP) = SURF.matUINF + SURF.wake_vel_time(:,:,valTIMESTEP);
+        OUTP.norm_vel(:,:,valTIMESTEP) = dot(SURF.matDVENORM,OUTP.total_vel(:,:,valTIMESTEP),2);
+        
+        OUTP.norm_percent(valTIMESTEP,1) = sum((OUTP.norm_vel(:,:,valTIMESTEP).*SURF.vecDVEAREA./INPU.vecAREA)*100,1);
         
         if FLAG.SAVETIMESTEP == 1
             save([timestep_folder, 'timestep_', num2str(valTIMESTEP), '.mat'], 'filename','valTIMESTEP','INPU','COND','MISC','WAKE','VEHI','SURF','OUTP');

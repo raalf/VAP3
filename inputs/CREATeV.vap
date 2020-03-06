@@ -4,12 +4,12 @@
 	<settings>
 		<relax>FALSE</relax>
 		<steady>FALSE</steady>
-		<maxtime>300</maxtime>
+		<maxtime>30</maxtime>
 		<delta_time>0.008</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>TRUE</stiff_wing>
 		<fixed_lift>1</fixed_lift>
-		<gust_mode>2</gust_mode>
+		<gust_mode>0</gust_mode>
 	</settings>
 
 	<conditions>
@@ -29,7 +29,7 @@
 		<weight>119</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>10</alpha>
+		<alpha>5</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>

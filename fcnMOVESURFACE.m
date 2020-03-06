@@ -42,8 +42,8 @@ MISC.matNEWWAKE(:,:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
 MISC.matNEWWAKE(:,:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate WAKE.matWADJE)
-MISC.matNPNEWWAKE(:,:,4) = SURF.matNTVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,3) = SURF.matNTVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,4) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,3) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
 
 % Translate Vehicles
 SURF.matVLST = SURF.matVLST + SURF.matVLSTTRANS;

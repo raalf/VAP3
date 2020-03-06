@@ -131,6 +131,8 @@ for i = 1:INPU.valVEHICLES
     try vecSTRUCTURE(i,1) = max(size(veh.structure)); catch; vecSTRUCTURE(i,1) = 0; end
     try vecROTORS(i,1) = max(size(veh.rotor)); catch; vecROTORS(i,1) = 0; end
     try vecFUSELAGES(i,1) = max(size(veh.fuselage)); catch; vecFUSELAGES(i,1) = 0; end
+    try vecPAYLOADS(i,1) = max(size(veh.payload)); catch; vecPAYLOADS(i,1) = 0; end
+    try vecPROPS(i,1) = max(size(veh.propeller)); catch; vecPROPS(i,1) = 0; end
     
     INPU.vecAREA(i) = str2double(veh.ref_area.Text);
     INPU.vecSPAN(i) = str2double(veh.ref_span.Text);
@@ -151,7 +153,7 @@ for i = 1:INPU.valVEHICLES
         
         vecWINGINCID(k) = str2double(win.incidence.Text);
         if strcmpi(win.trimable.Text, 'true') FLAG.vecTRIMABLE(j,i) = 1; else FLAG.vecTRIMABLE(j,i) = 0; end
-        try if strcmpi(win.flexible.Text, 'true') FLAG.vecFLEXIBLE(j,i) = 1; else FLAG.vecFLEXIBLE(j,i) = 0; end; catch; FLAG.vecFLEXIBLE(j,i) = 0; end
+        try if strcmpi(win.flexible.Text, 'true') FLAG.vecFLEXIBLE(k,i) = 1; else FLAG.vecFLEXIBLE(k,i) = 0; end; catch; FLAG.vecFLEXIBLE(k,i) = 0; end
         
         vecWINGM(k,1) = str2double(win.chordwise_elements.Text);
         
@@ -160,6 +162,12 @@ for i = 1:INPU.valVEHICLES
         
         try SURF.matTRIMORIG(k,:) = [str2double(win.trimorigin.x.Text) str2double(win.trimorigin.y.Text) str2double(win.trimorigin.z.Text)];
         catch; SURF.matTRIMORIG(k,:) = [0 0 0]; end
+        
+        try VEHI.vecWINGMASS(k,:) = str2double(win.mass.Text);
+        catch; VEHI.vecWINGMASS(k,:) = 0; end
+        
+        try VEHI.vecWINGCG(k,:) = [str2double(win.CG.x.Text) str2double(win.CG.y.Text) str2double(win.CG.z.Text)];
+        catch; VEHI.vecWINGCG(k,:) = [0 0 0]; end
         
         vecPANELS(k,1) = max(size(win.panel));
         
@@ -234,6 +242,48 @@ for i = 1:INPU.valVEHICLES
         INPU.vecLMCOEFF(1) = str2double(struct.properties.mass.A_vecLM.Text);
         INPU.vecLMCOEFF(2) = str2double(struct.properties.mass.B_vecLM.Text);
         INPU.vecLMCOEFF(3) = str2double(struct.properties.mass.C_vecLM.Text);
+        
+    end
+    
+    %% Loading Vehicle Fuselage
+    
+    for j = 1:vecFUSELAGES(i)
+        
+        try fuse = VAP.vehicle.fuselage{1,i}; catch; fuse = VAP.vehicle.fuselage; end
+        
+        try VEHI.vecFUSEMASS(j,:) = str2double(fuse.mass.Text);
+        catch; VEHI.vecFUSEMASS(j,:) = 0; end
+        
+        try VEHI.vecFUSECG(j,:) = [str2double(fuse.CG.x.Text) str2double(fuse.CG.y.Text) str2double(fuse.CG.z.Text)];
+        catch; VEHI.vecFUSECG(j,:) = [0 0 0]; end
+        
+    end
+    
+    %% Loading Vehicle Payload
+    
+    for j = 1:vecPAYLOADS(i)
+        
+        try payl = VAP.vehicle.payload{1,i}; catch; payl = VAP.vehicle.payload; end
+        
+        try VEHI.vecPAYLMASS(j,:) = str2double(payl.mass.Text);
+        catch; VEHI.vecPAYLMASS(j,:) = 0; end
+        
+        try VEHI.vecPAYLCG(j,:) = [str2double(payl.CG.x.Text) str2double(payl.CG.y.Text) str2double(payl.CG.z.Text)];
+        catch; VEHI.vecPAYLCG(j,:) = [0 0 0]; end
+        
+    end
+    
+    %% Loading Propeller (if not being modelled in the aerodynamic model)
+    
+    for j = 1:vecPROPS(i)
+        
+        try prop = VAP.vehicle.propeller{1,i}; catch; prop = VAP.vehicle.propeller; end
+        
+        try VEHI.vecPROPLOC(j,:) = [str2double(prop.location.x.Text) str2double(prop.location.y.Text) str2double(prop.location.z.Text)];
+        catch; VEHI.vecPROPLOC(j,:) = []; end
+        
+        try VEHI.vecPROPDIR(j,:) = [str2double(prop.direction.x.Text) str2double(prop.direction.y.Text) str2double(prop.direction.z.Text)];
+        catch; VEHI.vecPROPDIR(j,:) = []; end
         
     end
     

@@ -1,4 +1,4 @@
-function [en, nfree,nind,liftfree,liftind,sidefree,sideind,el,gamma_old,dGammadt] = fcnDVENFORCE(valTIMESTEP, COND, SURF, WAKE, VEHI, FLAG, INPU)
+function [en, nfree,nind,liftfree,liftind,sidefree,sideind,el,gamma_old,dGammadt,wake_vel_time] = fcnDVENFORCE(valTIMESTEP, COND, SURF, WAKE, VEHI, FLAG, INPU)
 %DVE element normal forces
 
 % //computes lift and side force/density acting on surface DVE's. The local
@@ -117,12 +117,12 @@ C(idx2 ==0) = (SURF.matCOEFF(idx2==0,3)-SURF.matCOEFF(idxf,3));
 
 nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 
-% Unsteady lift term with apparent mass
+%% Unsteady lift term with apparent mass
 lambda = 0.5; % Relaxation factor for dGammadt term
 
-GammaInt = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'))'; % Integrated circulation across DVE
+GammaInt = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)).*SURF.vecDVEHVCRD; % Integrated circulation across DVE
 
-if valTIMESTEP > 2 && FLAG.STEADY == 0
+if valTIMESTEP > 1 && FLAG.STEADY == 0
     
     dGammadt = lambda.*(GammaInt - SURF.gamma_old)./COND.valDELTIME + (1-lambda).*SURF.dGammadt; % Time rate of change of circulation
     
@@ -134,7 +134,7 @@ end
 
 if valTIMESTEP > 1 && FLAG.STEADY == 0
     
-    nfree = nfree + dGammadt.*SURF.vecDVEHVCRD.*2; % Add apparent mass term to freestream normal force
+    nfree = nfree + dGammadt; % Add apparent mass term to freestream normal force
     
 end
 
@@ -211,6 +211,7 @@ if any(idx1 ==0)
     w(idx1 ==0,:,:) = (w_center(idx1 ==0,:,:)+w_center(idxf,:,:))./2;
 end
 
+wake_vel_time(:,:,valTIMESTEP) = 0;
 % perform integration
 tempd = cross(w,repmat(s,[1,1,3]),2);
 gamma(:,1) = A - B.*eta8' + C.*eta8'.*eta8';

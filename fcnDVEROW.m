@@ -1,4 +1,4 @@
-function [matROWS] = fcnDVEROW(ledves, SURF, INPU)
+function [matROWS] = fcnDVEROW(ledves, SURF, INPU, wing_types)
 
 % This functions determines what DVEs are in which row or column across the
 % span of the wing. matROWS will be a matrix that is NELE x INPU.vecM.
@@ -6,7 +6,7 @@ function [matROWS] = fcnDVEROW(ledves, SURF, INPU)
 lepanels = SURF.vecDVEPANEL(ledves);
 
 % Determine DVEs in each spanwise station
-for i = 1:max(SURF.vecDVEWING)
+for i = 1:max(wing_types)
 
 	idxdve = ledves(SURF.vecDVEWING(ledves) == i);
 	idxpanel = lepanels(SURF.vecDVEWING(ledves) == i);

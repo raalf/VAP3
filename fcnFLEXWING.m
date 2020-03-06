@@ -18,7 +18,7 @@ if valGUSTTIME > 1
 % Runs structure code until static aeroleastic convergence
 else
     
-    n = 5000;
+    n = 10000;
     
     for tempTIME = 1:n
         

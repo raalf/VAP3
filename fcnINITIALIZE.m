@@ -25,8 +25,6 @@ OUTP.ROTOR.vecTORQUEDIST = [];
 
 INPU.vecPANELROTOR = uint16(INPU.vecPANELROTOR);
 INPU.vecPANELWING = uint16(INPU.vecPANELWING);
-INPU.vecN = uint8(INPU.vecN);
-INPU.vecM = uint8(INPU.vecM);
 
 % Initializing wake parameters
 WAKE.matWAKEGEOM = [];

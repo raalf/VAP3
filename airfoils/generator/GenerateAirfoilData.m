@@ -10,18 +10,19 @@
 
 
 
-airfoilFilename = 'MH117';
+airfoilFilename = 'RAALF-B8';
 
 % determines if the airfoilFilename is a .mat or .dat
 % if it is a .mat, load the coordinates matrix
-load ('MH117');
+% load ('RAALF-B8');
 % if it is a .dat, import the coordinates to a MATLAB matrix
+airfoil_name = 'NACA0003';
+coord = dlmread([airfoil_name, '.dat'],'',1,0);
 
 
 
 
-
-AlphaRange = -25:0.25:25;
+AlphaRange = -10:0.5:20;
 % if not specified, default values are [-10:0.5:20];
 
 ReRange    = 150000:150000:5e6;
