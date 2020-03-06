@@ -1,4 +1,4 @@
-function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP)
+function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP, FLAG] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP)
 %% Forces package
 %place any force functions in here and add a description.
 
@@ -36,6 +36,11 @@ end
 % If there's an h-stab, compute pitch moment
 if any(SURF.vecWINGTYPE == 2)
 [SURF, OUTP] = fcnPITCHMOMENT(FLAG, SURF, OUTP, INPU, COND, VEHI);
+end
+
+%% Perform longitudinal trim routine
+if valTIMESTEP == COND.valMAXTIME && any(FLAG.vecTRIMABLE == 1) == 1 && FLAG.TRIM == 1
+    [OUTP, SURF, FLAG] = fcnLONGTRIM(SURF, INPU, OUTP, FLAG, COND);
 end
 
 %% Rotor Forces

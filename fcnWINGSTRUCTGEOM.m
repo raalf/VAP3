@@ -15,7 +15,7 @@ function [SURF] = fcnWINGSTRUCTGEOM(SURF, INPU)
 
 SURF.vecSPNWSECRD = [];
 SURF.vecSPNWSEAREA = [];
-[ledves, ~, ~] = find(SURF.vecDVELE > 0);
+[ledves, ~, ~] = find(SURF.vecDVELE(SURF.idxFLEX) > 0);
 
 [matROWS] = fcnDVEROW(ledves, SURF, INPU);
 

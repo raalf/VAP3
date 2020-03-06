@@ -149,8 +149,8 @@ end
 %% Move wing and generate new wake elements
 
 % Old trailing edge vertices
-MISC.matNEWWAKE(:,:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
-MISC.matNEWWAKE(:,:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
+MISC.matNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
+MISC.matNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate matWADJE)
 MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,4) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);

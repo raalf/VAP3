@@ -63,6 +63,7 @@ try COND.valGUSTSTART = str2double(VAP.conditions.gust_start.Text); catch; COND.
 INPU.valVEHICLES = max(size(VAP.vehicle));
 
 INPU.matVEHORIG = nan(INPU.valVEHICLES,3);
+INPU.vecVEHCG = nan(INPU.valVEHICLES,3);
 COND.vecVEHVINF = nan(INPU.valVEHICLES,1);
 COND.vecVEHALPHA = nan(INPU.valVEHICLES,1);
 COND.vecVEHBETA = nan(INPU.valVEHICLES,1);
@@ -89,9 +90,9 @@ COND.vecCOLLECTIVE = [];
 VISC.vecINTERF = 0;
 
 vecWINGINCID = [];
-vecTRIMABLE = [];
+FLAG.vecTRIMABLE = [];
 vecWINGM = [];
-matWINGORIG = [];
+SURF.matWINGORIG = [];
 vecPANELS = [];
 cellAIRFOILtemp = {};
 VISC.cellAIRFOIL = {};
