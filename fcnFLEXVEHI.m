@@ -10,14 +10,20 @@ SURF.matCENTER_old = SURF.matCENTER;
 if valTIMESTEP > COND.valSTIFFSTEPS + 1 || (valTIMESTEP >= COND.valSTIFFSTEPS && FLAG.FLIGHTDYN == 1)
     
     for tempTIME = 1:COND.valSTAGGERSTEPS
-        [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, valTIMESTEP, tempTIME);
+        [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, VEHI, valTIMESTEP, tempTIME);
     end
 
     OUTP.matDEF_old = OUTP.matDEF(end-1:end,:);
     OUTP.matTWIST_old = OUTP.matTWIST(end-1:end,:);
     
+    OUTP.dyn_iter = OUTP.dyn_iter + 1;
+    
 % Runs structure code until static aeroleastic convergence
 else
+    
+    if OUTP.aero_iter == 1
+        OUTP.valSTRUCTITER = COND.valSTIFFSTEPS;
+    end
     
     n = 30000;
     tempTIME = 1;
@@ -28,7 +34,7 @@ else
 %     OUTP.matDEF = zeros(n,INPU.valNSELE+4);
 %     OUTP.matTWIST = zeros(n,INPU.valNSELE+4);
     
-    while max(abs(tol)) > 0.000001
+    while max(abs(tol)) > 1e-7
 %     for tempTIME = 1:n
         
         [OUTP] = fcnELASTICWING_STAGGER(OUTP, INPU, SURF, COND, VEHI, valTIMESTEP, tempTIME);
@@ -62,6 +68,7 @@ else
         tempTIME = tempTIME + 1;
     end
     
+    OUTP.valSTRUCTITER = tempTIME;
     OUTP.matDEF_old = OUTP.matDEF;
     OUTP.matTWIST_old = OUTP.matTWIST;
     
@@ -79,6 +86,23 @@ if OUTP.aero_iter > 1 && FLAG.FLIGHTDYN == 0
     lambda = 0.5;
     OUTP.matDEF(end-1:end,:) = repmat(lambda*(OUTP.matDEF_RELAX(OUTP.aero_iter,:)) + (1-lambda)*(OUTP.matDEF_RELAX(OUTP.aero_iter-1,:)),2,1);
     OUTP.matTWIST(end-1:end,:) = repmat(lambda*(OUTP.matTWIST_RELAX(OUTP.aero_iter,:)) + (1-lambda)*OUTP.matTWIST_RELAX(OUTP.aero_iter-1,:),2,1);
+
+    OUTP.matDEFGLOB(valTIMESTEP,:) = lambda*(OUTP.matDEFGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matDEFGLOB(valTIMESTEP-1,:);
+    OUTP.matTWISTGLOB(valTIMESTEP,:) = lambda*(OUTP.matTWISTGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matTWISTGLOB(valTIMESTEP-1,:);
+    
+    for i = 2:length(SURF.vecSPANLOC)
+        OUTP.matSLOPE(valTIMESTEP,i) = asin((OUTP.matDEFGLOB(valTIMESTEP,i)-OUTP.matDEFGLOB(valTIMESTEP,i-1))/(SURF.vecSPANLOC(i)-SURF.vecSPANLOC(i-1)));
+    end
+
+end
+
+if FLAG.FLIGHTDYN == 1 && OUTP.dyn_iter == 1
+OUTP.matDEF_RELAXDYN(OUTP.dyn_iter,:) = OUTP.matDEF(end,:);
+OUTP.matTWIST_RELAXDYN(OUTP.dyn_iter,:) = OUTP.matTWIST(end,:);
+elseif OUTP.dyn_iter > 1 && FLAG.FLIGHTDYN == 1
+    lambda = 0.5;
+    OUTP.matDEF(end-1:end,:) = repmat(lambda*(OUTP.matDEF_RELAXDYN(OUTP.dyn_iter,:)) + (1-lambda)*(OUTP.matDEF_RELAXDYN(OUTP.dyn_iter-1,:)),2,1);
+    OUTP.matTWIST(end-1:end,:) = repmat(lambda*(OUTP.matTWIST_RELAXDYN(OUTP.dyn_iter,:)) + (1-lambda)*OUTP.matTWIST_RELAXDYN(OUTP.dyn_iter-1,:),2,1);
 
     OUTP.matDEFGLOB(valTIMESTEP,:) = lambda*(OUTP.matDEFGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matDEFGLOB(valTIMESTEP-1,:);
     OUTP.matTWISTGLOB(valTIMESTEP,:) = lambda*(OUTP.matTWISTGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matTWISTGLOB(valTIMESTEP-1,:);
@@ -118,8 +142,6 @@ MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,2) = SURF.m
 
 if valTIMESTEP > COND.valSTIFFSTEPS + 1 || (valTIMESTEP >= COND.valSTIFFSTEPS && FLAG.FLIGHTDYN == 1)
     [SURF.matUINF] = fcnFLEXUINF(SURF.matCENTER_old, SURF.matCENTER, COND.valDELTIME, COND.valSTAGGERSTEPS);
-else
-%     [SURF.matUINF] = fcnFLEXUINF_STATIC(SURF.matCENTER_old, SURF.matCENTER, COND.valSDELTIME, SURF.matUINF, n);
 end
 
 % Determine % relative change between aeroelastic timesteps
@@ -134,14 +156,11 @@ if (FLAG.FLIGHTDYN == 1 && valTIMESTEP > COND.valSTIFFSTEPS + 1)  || COND.valGUS
     FLAG.STATICAERO = 1;
     
     if COND.valGUSTTIME == 1
-%         fprintf('\nStatic convergence reached. Beginning gust profile.\n\n')
-%         COND.valGUSTSTART = valTIMESTEP+5; % Start gust 5 time steps after convergence has been reached
         COND.valDELTIME_old = COND.valDELTIME;
     end
     
     if COND.valGUSTTIME <= 1
         
-%         [SURF.matUINF] = fcnFLEXUINF(SURF.matCENTER_old, SURF.matCENTER, COND.valDELTIME, 1);
         [SURF.matUINF] = fcnFLEXUINF(SURF.matCENTER_old, SURF.matCENTER, COND.valDELTIME, COND.valSTAGGERSTEPS);
         COND.valDELTIME = COND.valSTAGGERSTEPS*COND.valSDELTIME;
         [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME_old,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old);

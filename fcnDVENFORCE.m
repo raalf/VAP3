@@ -114,6 +114,10 @@ A(idx2 ==0) = (SURF.matCOEFF(idx2==0,1)-SURF.matCOEFF(idxf,1));
 B(idx2 ==0) = (SURF.matCOEFF(idx2==0,2)-SURF.matCOEFF(idxf,2));
 C(idx2 ==0) = (SURF.matCOEFF(idx2==0,3)-SURF.matCOEFF(idxf,3));
 
+% Store effective A, B, and C values for each DVE
+SURF.vecDVEA = A;
+SURF.vecDVEB = B;
+SURF.vecDVEC = C;
 
 nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 
@@ -124,7 +128,8 @@ GammaInt = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3
 
 if valTIMESTEP > 1 && FLAG.STEADY == 0
     
-    dGammadt = lambda.*(GammaInt - SURF.gamma_old)./COND.valDELTIME + (1-lambda).*SURF.dGammadt; % Time rate of change of circulation
+%     dGammadt = lambda.*(GammaInt - SURF.gamma_old)./COND.valDELTIME + (1-lambda).*SURF.dGammadt; % Time rate of change of circulation
+    dGammadt = zeros(size(SURF.vecDVEHVSPN,1),1); 
     
 else
     

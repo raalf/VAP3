@@ -27,7 +27,7 @@ while max(abs(tol)) > 1e-6
     end
     
     % Elevator properties
-    cf_c = 0.25; % Flap chord percentage (1 = All moving tail)
+    cf_c = 1; % Flap chord percentage (1 = All moving tail)
     thetaf = acos(2*cf_c - 1);
     TRIM.tau = 1 - (thetaf - sin(thetaf))/pi; % Flap effectiveness
     
@@ -51,7 +51,7 @@ while max(abs(tol)) > 1e-6
     SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:)*dcm;
     SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:) + repmat(INPU.matVEHORIG(1,:),1,1);
 
-    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
+    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
     

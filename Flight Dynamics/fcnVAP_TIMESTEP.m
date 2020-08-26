@@ -1,4 +1,4 @@
-function [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC)
+function [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, iter)
 
 WAKE.matWAKEGEOM = [];
 WAKE.matNPWAKEGEOM = [];
@@ -72,33 +72,75 @@ for valTIMESTEP = 1:COND.valMAXTIME
     
     %% Moving the vehicles
     
-    if FLAG.FLIGHTDYN == 1 && valTIMESTEP >= COND.valSTIFFSTEPS
-%         [TRIM, VEHI] = fcnSTABDERIV(COND, INPU, SURF, TRIM, VEHI, valTIMESTEP);
-        X(valTIMESTEP,1) = -0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCD(end);
-        Z(valTIMESTEP,1) = -0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCL(end);
-        M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM(end);
+    if FLAG.FLIGHTDYN == 1 && valTIMESTEP > COND.valSTIFFSTEPS
+        
+        SURF.matUINFdir = SURF.matUINF./sqrt(sum(abs(SURF.matUINF.^2),2));
+%         SURF.matUINFdir = VEHI.matVEHUVW./sqrt(sum(abs(VEHI.matVEHUVW.^2),2));
+        for i = 1:size(SURF.matUINFdir,1)
+            ddir(i,:) = ([1 0 0; 0 1 0; 0 0 1]*SURF.matUINFdir(i,:)')';
+            ldir(i,:) = ([0 0 -1; 0 1 0; 1 0 0]*ddir(i,:)')';
+        end
+        lift = COND.valDENSITY*(SURF.vecDVELFREE+SURF.vecDVELIND).*ldir;
+        drag = COND.valDENSITY*SURF.vecDVEDIND.*ddir;
+        GlobForce = 2*sum(lift + drag,1) - 0*0.5*COND.valDENSITY*10*10*INPU.vecAREA*TRIM.valCDI.*ddir(1,:);
+
+        COND.vecVEHVINF = sqrt(sum(VEHI.matVEHUVW.^2));
+        COND.valDELTIME = 0.5/COND.vecVEHVINF;
+        OUTP.dt(valTIMESTEP,1) = COND.valDELTIME;
+        OUTP.sim_time = cumsum(OUTP.dt,1); % Store updated simulation time based on new dt
+%         vdir = VEHI.matGLOBUVW./sqrt(sum(abs(VEHI.matGLOBUVW.^2))); % Global velocity direction vector
+%         ddir = ([-1 0 0; 0 1 0; 0 0 -1]*vdir')'; % Drag force direction vector
+%         ldir = ([0 0 -1; 0 1 0; 1 0 0]*ddir')'; % Lift force direction vector
+%         drag = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*(OUTP.vecCDI(valTIMESTEP-1)).*ddir - 0.5*COND.valDENSITY*10*10*INPU.vecAREA*TRIM.valCDI.*ddir; % Drag force vector in global frame
+%         lift = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCL(valTIMESTEP-1)*ldir; % Lift force vector in global frame
+        
+        VEHI.matROTMAT = [cos(pi-TRIM.perturb(valTIMESTEP-1,4)) 0 -sin(pi-TRIM.perturb(valTIMESTEP-1,4));...
+                  0   1   0;...
+                  sin(pi-TRIM.perturb(valTIMESTEP-1,4)) 0 cos(pi-TRIM.perturb(valTIMESTEP-1,4))]; % Rotation matrix from body frame to earth frame
+        
+%         BForce(valTIMESTEP,:) = (VEHI.matROTMAT'*drag' + VEHI.matROTMAT'*lift')'; % Aerodynamic force vector in the vehicle body frame
+        OUTP.BForce(valTIMESTEP,:) = (VEHI.matROTMAT'*GlobForce')'; % Aerodynamic force vector in the vehicle body frame
+%         OUTP.BForce(valTIMESTEP,:) = (VEHI.matROTMAT*GlobForce')'; % Aerodynamic force vector in the vehicle body frame
+%         OUTP.BForce(valTIMESTEP,:) = GlobForce; % Aerodynamic force vector in the vehicle body frame
+                              
+        M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM;
         g = 9.81;
         m = COND.vecVEHWEIGHT/g;
-        [t,y] = ode45(@(t,y) fcnLONGDYNAMICS(t,y,X(end),Z(end),M(end),m,g,VEHI.vecIYY),[(valTIMESTEP-1)*COND.valDELTIME valTIMESTEP*COND.valDELTIME],[-VEHI.matVEHUVW(1) -VEHI.matVEHUVW(3) TRIM.perturb(valTIMESTEP-1,3) TRIM.perturb(valTIMESTEP-1,4)]);
+        [t,y] = ode45(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,g,VEHI.vecIYY),[0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) TRIM.perturb(valTIMESTEP-1,3) TRIM.perturb(valTIMESTEP-1,4)]);
         TRIM.perturb(valTIMESTEP,:) = y(end,:);
-        VEHI.matVEHUVW(1) = -TRIM.perturb(end,1);
-        VEHI.matVEHUVW(3) = -TRIM.perturb(end,2);
+        
+        % Vehicle velocity in the body-fixed frame
+        VEHI.matVEHUVW(1) = TRIM.perturb(valTIMESTEP,1);
+        VEHI.matVEHUVW(3) = TRIM.perturb(valTIMESTEP,2);
+        
+        VEHI.matROTMAT = [cos(pi-TRIM.perturb(valTIMESTEP,4)) 0 -sin(pi-TRIM.perturb(valTIMESTEP,4));...
+                          0   1   0;...
+                          sin(pi-TRIM.perturb(valTIMESTEP,4)) 0 -cos(pi-TRIM.perturb(valTIMESTEP,4))]; % Rotation matrix from body frame to earth frame
+        VEHI.matGLOBUVW = (VEHI.matROTMAT*VEHI.matVEHUVW')'; % Vehicle velocity in the earth frame
+        OUTP.matGLOBUVW(valTIMESTEP,:) = VEHI.matGLOBUVW;
     else
         TRIM.perturb(valTIMESTEP,1:4) = 0;
     end
     
     % Bend wing if applicable, else move wing normally
     if FLAG.STRUCTURE == 1
+        [INPU, SURF, VEHI] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
         [SURF, INPU, COND, MISC, VISC, OUTP, FLAG, TRIM, VEHI, n] = fcnMOVESTRUCTURE(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, TRIM, valTIMESTEP, n);
         [INPU, SURF, VEHI] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
+        OUTP.vecCGLOC(valTIMESTEP,:) = INPU.vecVEHCG;
+        
+        % Specific kinetic, potential and total vehicle energy
+        OUTP.vecVEHENERGY(valTIMESTEP,1) = 0.5*COND.vecVEHVINF*COND.vecVEHVINF;
+        OUTP.vecVEHENERGY(valTIMESTEP,2) = 9.81*(OUTP.vecCGLOC(valTIMESTEP,3)-OUTP.vecCGLOC(1,3));
+        OUTP.vecVEHENERGY(valTIMESTEP,3) = OUTP.vecVEHENERGY(valTIMESTEP,1) + OUTP.vecVEHENERGY(valTIMESTEP,2);
     else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
     end
     
     % Add in gust velocity if applicable
-%     if FLAG.GUSTMODE > 0
-%         [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old);
-%     end
+    if FLAG.GUSTMODE > 0
+        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old);
+    end   
     
     if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
         matD = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG);
@@ -116,51 +158,64 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWSIZE]', temp_WADJE, WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end), WAKE.vecWDVESYM(end-WAKE.valWSIZE+1:end), WAKE.vecWDVETIP(end-WAKE.valWSIZE+1:end), WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), INPU.vecN);
         [WAKE.matWCOEFF(end-WAKE.valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWSIZE, WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end));
         
-        %% Rebuilding and solving wing resultant
-        tol = 1;
-        count = 0;
-        
-        % Iterating to converge wake and wing coefficients
-%         while ~isnan(tol) && tol > 0.005
-%             count = 0;
-%             delt = 1;
-%             while ~isnan(delt) && delt >= 0.005
-%                 int_circ1 = fcnINTCIRC2(matPLEX, matCOEFF, matDVEGRID);
-%                 vecR = fcnRWING(valDLEN, valTIMESTEP, matUINF, valWNELE, matWCOEFF, matWPLEX, valWSIZE, matWROTANG, matWCENTER, matCENTER, matKINCON_DVE, matDVECT, vecWDVESYM);
-%                 matCOEFF = fcnSOLVED(matD, vecR, valNELE);
-%                 [vecVMU, vecEMU] = fcnVEMU(matVLST, matVATT, matCENTER, matROTANG, matCOEFF, matELST, matEATT, vecTE);
-%                 matCOEFF = fcnADJCOEFF(vecVMU, vecEMU, matVLST, matCENTER, matROTANG, matDVE, matCOEFF, matELST, matEIDX, valNELE);
+%         %% Rebuilding and solving wing resultant        
+%         [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
+%         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
 % 
-%                 % Update wake coefficients
-%                 [vecWVMU, vecWEMU] = fcnWAKEMU(strATYPE, vecWLE, matWVGRID, matWEGRID, matWE2GRID, vecWVMU, vecWEMU, matWELST, matWVLST, vecTEDVE, matCOEFF, matCENTER, matROTANG, vecWOTE);
-%                 matWCOEFF = fcnADJCOEFF(vecWVMU, vecWEMU, matWVLST, matWCENTER, matWROTANG, matWDVE, matWCOEFF, matWELST, matWEIDX, valWNELE);
-%                 int_circ2 = fcnINTCIRC2(matPLEX, matCOEFF, matDVEGRID);
-%                 delt = abs((int_circ2 - int_circ1)./int_circ1);
-%                 count = count + 1;
-%             end
-%             vecTSITER(valTIMESTEP) = count;
-%             intcirc1 = fcnINTCIRC(SURF);
+%         %% Creating and solving WD-Matrix
+%         [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+%         [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+            
+        %% Iteration Block #1
+        if iter == true
+            delt = 1;
+            while delt >= 0.000001
+                matCOEFF1 = SURF.matCOEFF;
+                
+                [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
+                [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+                
+                WAKE.vecWKGAM = fcnWKGAM(FLAG.STEADY, WAKE.vecWKGAM, SURF.matCOEFF, SURF.vecDVETE, SURF.vecDVEHVSPN(SURF.vecDVETE > 0), WAKE.valWNELE, WAKE.valWSIZE);
+                
+                [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+                [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+                
+                delt = max(max(abs(SURF.matCOEFF - matCOEFF1)));
+%                 disp(delt)
+            end
+        else
             [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
             [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
             
-%             WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end,1) = [SURF.matCOEFF(SURF.vecDVETE>0,1) + ((WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end).^2)./3).*SURF.matCOEFF(SURF.vecDVETE>0,3)];
-
-            %% Creating and solving WD-Matrix
             [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
             [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
-            
-%             intcirc2 = fcnINTCIRC(SURF);
-%             
-%             tol = abs((intcirc2-intcirc1)./intcirc1);
-%             count = count + 1;
-%         end
-%         OUTP.vecTSITER(valTIMESTEP,1) = count;
+        end
         
         %% Relaxing wake
         if valTIMESTEP > 2 && FLAG.RELAX == 1
             old_span = WAKE.vecWDVEHVSPN;
             WAKE = fcnRELAXWAKE(valTIMESTEP, SURF, WAKE, COND, FLAG, INPU);
             WAKE.matWCOEFF(:,2:3) = WAKE.matWCOEFF(:,2:3).*[old_span./WAKE.vecWDVEHVSPN (old_span./WAKE.vecWDVEHVSPN).^2];
+            
+            %% Iteration Block #2
+            if iter == true
+                delt = 1;
+                while delt >= 0.000001
+                    matCOEFF1 = SURF.matCOEFF;
+                    
+                    [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
+                    [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+                    
+                    WAKE.vecWKGAM = fcnWKGAM(FLAG.STEADY, WAKE.vecWKGAM, SURF.matCOEFF, SURF.vecDVETE, SURF.vecDVEHVSPN(SURF.vecDVETE > 0), WAKE.valWNELE, WAKE.valWSIZE);
+                    
+                    [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+                    [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+                    
+                    delt = max(max(abs(SURF.matCOEFF - matCOEFF1)));
+%                     disp(delt)
+                end
+            end
+            
         end
         
         %% Forces

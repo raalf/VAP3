@@ -8,7 +8,7 @@ ledves = find(SURF.vecDVELE == 1);
 
 matROWS = cellfun(@transpose, matROWS, 'UniformOutput', false); % Matrix of DVE numbers and their location on the wing (vecN x vecM large)
 
-for i = 1:max(SURF.vecDVEWING)
+for i = 1:1
     
     liftfree_edge = [];
     
@@ -58,32 +58,54 @@ for i = 1:max(SURF.vecDVEWING)
     
     % Loop through each element and get lift at several spanwise points based
     % on local A, B and C
-    nspnele = 1; % Number of local spanwise elements to use for force distribution
+    SURF.nspnele = 10; % Number of local spanwise elements to use for force distribution
+    SURF.span_glob = [];
+    int = [];
+    matROWSt = matROWS{i}';
     for j = min(min(matROWS{i})):max(max(matROWS{i}))
-        span_loc = linspace(-SURF.vecDVEHVSPN(j),SURF.vecDVEHVSPN(j),nspnele)';
+        span_loc = linspace(-SURF.vecDVEHVSPN(j)*0.95,SURF.vecDVEHVSPN(j)*0.95,SURF.nspnele)'; % Span location on DVE in local coordinates. Excluding DVE edges to avoid overlapping points
+        span_loc_temp = span_loc + SURF.vecDVEHVSPN(j);
+        span_glob = fcnSTARGLOB([zeros(length(span_loc),1),span_loc_temp,zeros(length(span_loc),1)], SURF.vecDVEROLL(j), SURF.vecDVEPITCH(j), SURF.vecDVEYAW(j));
+%         SURF.span_glob = [SURF.span_glob; linspace(SURF.matVLST(SURF.matDVE(matROWSt(j),1),2),SURF.matVLST(SURF.matDVE(matROWSt(j),2),2),SURF.nspnele)'];
+        SURF.span_glob = [SURF.span_glob; SURF.matVLST(SURF.matDVE(matROWSt(j),1),:)+span_glob];
         SURF.Gamma(:,j,valTIMESTEP) = A(j) + B(j).*span_loc + C(j).*span_loc.*span_loc;
-        nfree(:,j-min(min(matROWS{i}))+1) = (2*A(j).*SURF.vecDVEHVSPN(j) + (2/3)*C(j).*SURF.vecDVEHVSPN(j).*SURF.vecDVEHVSPN(j).*SURF.vecDVEHVSPN(j)).*uxs(j);
+        nfree(:,j-min(min(matROWS{i}))+1) = (A(j) + B(j).*span_loc + C(j).*span_loc.*span_loc).*repmat(uxs(j),SURF.nspnele,1).*(span_loc(end)-span_loc(1))/(SURF.nspnele-1);
+%         nfree(:,j-min(min(matROWS{i}))+1) = (2*A(j).*SURF.vecDVEHVSPN(j) + (2/3)*C(j).*SURF.vecDVEHVSPN(j).*SURF.vecDVEHVSPN(j).*SURF.vecDVEHVSPN(j)).*uxs(j);
         
         if valTIMESTEP > 1
             
-            nfree(:,j-min(min(matROWS{i}))+1) = nfree(:,j-min(min(matROWS{i}))+1) + 0*2*SURF.vecDVEHVCRD(j).*(SURF.Gamma(:,j,valTIMESTEP) - SURF.Gamma(:,j,valTIMESTEP-1))./COND.valDELTIME;
+%             nfree(:,j-min(min(matROWS{i}))+1) = nfree(:,j-min(min(matROWS{i}))+1) + 0*2*SURF.vecDVEHVCRD(j).*(SURF.Gamma(:,j,valTIMESTEP) - SURF.Gamma(:,j,valTIMESTEP-1))./COND.valDELTIME;
             
         end
         
-        en_loc = repmat(en(j-min(min(matROWS{i}))+1,:),nspnele,1); % Make local normal direction that is nspnele long to match the nspnele points for the force dist.
-        liftfree(:,j) = nfree(:,j-min(min(matROWS{i}))+1).*sqrt(en_loc(:,1).*en_loc(:,1) + en_loc(:,3).*en_loc(:,3)); %does this work with beta?
-        liftfree(en_loc(1:nspnele,3)<0) = -liftfree(en_loc(1:nspnele,3)<0);
+%         en_loc = repmat(en(j-min(min(matROWS{i}))+1,:),nspnele,1); % Make local normal direction that is nspnele long to match the nspnele points for the force dist.
+%         liftfree(:,j) = nfree(:,j-min(min(matROWS{i}))+1).*sqrt(en_loc(:,1).*en_loc(:,1) + en_loc(:,3).*en_loc(:,3)); %does this work with beta?
+%         liftfree(en_loc(1:nspnele,3)<0) = -liftfree(en_loc(1:nspnele,3)<0);
     end
     
+    SURF.span_glob = uniquetol(SURF.span_glob(:,2),1e-3);
     % Rearrange lift distribution to 3D matrix
     for k = 1:size(matROWS{i},1)
-        temp_lift(:,k,:) = liftfree(:,matROWS{i}(k,:));
+%         temp_lift(:,k,:) = liftfree(:,matROWS{i}(k,:));
     end
     
-    liftfree = reshape(sum(temp_lift,2),[nspnele*size(matROWS{i},2) 1]);
+%     liftfree = reshape(sum(temp_lift,2),[nspnele*size(matROWS{i},2) 1]);
 
 %     OUTP.vecLIFTDIST{i}(:,valTIMESTEP) = liftfree.*COND.valDENSITY; % Sum lift contribution at each lifting line
 %     SURF.vecLIFTDISTCOORD{i} = linspace(0,SURF.matVLST(SURF.matDVE(matROWS{i}(1,end),2),2),nspnele*size(matROWS{i},2))';
+
+    % Calculate normal force distribution at each chordwise lifting line
+    SURF.ndist_chord{i} = [];
+    for k = 1:size(matROWS{i},1)
+        SURF.ndist_chord{i} = [SURF.ndist_chord{i}; reshape(nfree(:,matROWS{i}(k,:)),[1 size(nfree(:,matROWS{i}(k,:)),1)*size(nfree(:,matROWS{i}(k,:)),2)])];
+    end
+    
+    SURF.ndist{i} = sum(SURF.ndist_chord{i},1);
+    
+%     SURF.ndist{i} = flip(uniquetol(SURF.ndist{i},1e-8));
+%     SURF.span_glob = unique(SURF.span_glob);
+    
+    nfree = reshape(nfree,[SURF.nspnele*max(max(matROWS{i})),1]);
     SURF.vecLIFTDISTCOORD{i} = SURF.matCENTER(matROWS{i}(1,1:end),2);
 %     SURF.vecLIFTDISTCOORD{i} = linspace(SURF.vecDVEHVSPN(1),INPU.vecSPAN/2,nspnele*size(matROWS{i},2))';
     

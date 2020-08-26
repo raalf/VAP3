@@ -40,20 +40,20 @@ WAKE.vecWDVETESWP = [];
 WAKE.vecWDVEAREA = [];
 WAKE.matWDVENORM = [];
 WAKE.matWVLST = [];
-WAKE.matWDVE = uint32([]);
+WAKE.matWDVE = [];
 WAKE.valWNELE = 0;
 WAKE.matWCENTER = [];
 WAKE.matWCOEFF = [];
 WAKE.vecWK = [];
-WAKE.matWADJE = uint32([]);
-WAKE.vecWDVEPANEL = uint16([]);
+WAKE.matWADJE = [];
+WAKE.vecWDVEPANEL = [];
 WAKE.valLENWADJE = 0;
 WAKE.vecWKGAM = [];
-WAKE.vecWDVESYM = uint8([]);
-WAKE.vecWDVETIP = uint8([]);
-WAKE.vecWDVESURFACE = uint8([]);
+WAKE.vecWDVESYM = [];
+WAKE.vecWDVETIP = [];
+WAKE.vecWDVESURFACE = [];
 WAKE.vecWDVETRI = [];
-WAKE.vecWPLOTSURF = uint8([]);
+WAKE.vecWPLOTSURF = [];
 
 % Initializing structure parameters
 OUTP.matDEFGLOB = [];

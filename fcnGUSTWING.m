@@ -26,7 +26,7 @@ gust_vel = zeros(size(fpg,1),1);
 
 % Create gust velocity for sine wave gust
 if flagGUSTMODE == 1
-
+    
     if any(idx3 > 0)
         tau = delx(idx3_1,1)./valUINF;
         gust_vel(idx3_1) = 0.5*valGUSTAMP*(1 - cos((2*pi*tau/(0.5*valGUSTL/valUINF))));

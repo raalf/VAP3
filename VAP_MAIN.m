@@ -3,7 +3,7 @@ clear
 warning off
 
 % filename = 'inputs/X57_Cruise.vap';
-filename = 'inputs/CREATeV.vap';
+filename = 'inputs/vap_test.vap';
 % filename = 'inputs/TMotor.vap';
 % alpha_seq = -12:2:8;
 

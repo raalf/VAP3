@@ -9,7 +9,7 @@ SURF.matCENTER_old = SURF.matCENTER;
 if COND.valGUSTTIME > 1
         
     for tempTIME = 1:COND.valSTAGGERSTEPS
-        [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, valTIMESTEP, tempTIME);
+        [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, VEHI, valTIMESTEP, tempTIME);
     end
 
     OUTP.matDEF_old = OUTP.matDEF(end-1:end,:);

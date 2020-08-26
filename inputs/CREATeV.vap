@@ -2,10 +2,10 @@
 
 <VAP>
 	<settings>
-		<relax>FALSE</relax>
-		<steady>FALSE</steady>
-		<maxtime>30</maxtime>
-		<delta_time>0.008</delta_time>
+		<relax>TRUE</relax>
+		<steady>TRUE</steady>
+		<maxtime>40</maxtime>
+		<delta_time>0.016</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>TRUE</stiff_wing>
 		<fixed_lift>1</fixed_lift>
@@ -29,7 +29,7 @@
 		<weight>119</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>5</alpha>
+		<alpha>10</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -64,13 +64,46 @@
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
-					<wing_x>0</wing_x>
+					<wing_x>0.145</wing_x>
 					<wing_y>3.14</wing_y>
-					<wing_z>0</wing_z>
-					<chord>0.395</chord>
+					<wing_z>0.5</wing_z>
+					<chord>0.25</chord>
 					<twist>0</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>	
+			</panel>
+		</wing>
+
+		<wing>
+			<symmetry>TRUE</symmetry>
+			<incidence>0</incidence>
+			<trimable>FALSE</trimable>
+
+			<chordwise_elements>3</chordwise_elements>
+
+			<vehicle_x>2.5</vehicle_x>
+			<vehicle_y>0</vehicle_y>
+			<vehicle_z>0.5</vehicle_z>
+
+			<panel>
+				<strip_airfoil>NACA0012</strip_airfoil>
+				<symmetry>1</symmetry>
+				<spanwise_elements>10</spanwise_elements>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>0</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.25</chord>
+					<twist>0</twist>
+					<camber_airfoil>RAALF-B8</camber_airfoil>
+				</section>	
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>0.5</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.25</chord>
+					<twist>0</twist>
+				</section>
 			</panel>
 		</wing>
 

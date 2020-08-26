@@ -93,8 +93,8 @@ valSTRUCTTIME = tempTIME + 2;
 % end
 
 if tempTIME == 1
-    OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((end-1):end,:);
-    OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((end-1):end,:);
+    OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);
+    OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);
 end
 
 OUTP.vecDEF(3) = 0; % Zero deflection at root BC
@@ -103,7 +103,7 @@ OUTP.vecTWIST(3) = 0; % Zero twist at root BC
 
 % Assemble load matrix
 matLOAD = [OUTP.vecLIFTDIST_STRUCT - INPU.vecLM.*9.81, OUTP.vecMOMDIST_STRUCT + SURF.vecLSM.*INPU.vecLM.*9.81];
-% matLOAD(end,:) = [0,0];
+matLOAD(end,:) = [0,0];
 
 for yy = 4:(INPU.valNSELE+2)
 

@@ -2,7 +2,7 @@ function [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF,
 
 % Do the following need updating?
 % VEHI.matVEHROT
-INPU.valVEHICLES = length(VEHI.matVEHUVW(:,1));
+INPU.valVEHICLES = length(VEHI.matGLOBUVW(:,1));
 
 % pre-calculate rad per timestep of rotors
 vecROTORRADPS = COND.vecROTORRPM.*2.*pi./60;
@@ -10,9 +10,9 @@ vecROTORDEL = vecROTORRADPS.*COND.valDELTIME;
 % TODO: insert warning if vecROTORRAD>2*pi
 
 % update INPU.matVEHORIG positions
-INPU.matVEHORIG = INPU.matVEHORIG + VEHI.matVEHUVW.*COND.valDELTIME;
+INPU.matVEHORIG = INPU.matVEHORIG + VEHI.matGLOBUVW.*COND.valDELTIME;
 
-% SURF.matTRIMORIG = SURF.matTRIMORIG + VEHI.matVEHUVW.*COND.valDELTIME;
+% SURF.matTRIMORIG = SURF.matTRIMORIG + VEHI.matGLOBUVW.*COND.valDELTIME;
 
 % crate vecVLSTVEH which is a lookup vector for vertice to vehicle ID
 vecVLSTVEH = unique([reshape(SURF.matDVE,[],1), repmat(SURF.vecDVEVEHICLE,4,1)],'rows');
@@ -24,16 +24,16 @@ if length(vecVLSTVEH(:,1)) ~= length(SURF.matVLST(:,1))
 end
 
 % translation matrix for the vertice list
-SURF.matVLSTTRANS = COND.valDELTIME.*VEHI.matVEHUVW(vecVLSTVEH,:);
+SURF.matVLSTTRANS = COND.valDELTIME.*VEHI.matGLOBUVW(vecVLSTVEH,:);
 SURF.matNTVLSTTRANS = repmat(SURF.matVLSTTRANS(1,:),size(SURF.matNTVLST,1),1);
 SURF.matNPVLSTTRANS = repmat(SURF.matVLSTTRANS(1,:),size(SURF.matNPVLST,1),1);
 % translation matrix for the dve list
-SURF.matDVETRANS  = COND.valDELTIME.*VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);
+SURF.matDVETRANS  = COND.valDELTIME.*VEHI.matGLOBUVW(SURF.vecDVEVEHICLE,:);
 % [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,~, ~, ~, ~, SURF.matDVENORM, ~, ~, ~, ~] = fcnDVECORNER2PARAM(SURF.matCENTER, SURF.matVLST(SURF.matDVE(:,1),:), SURF.matVLST(SURF.matDVE(:,2),:), SURF.matVLST(SURF.matDVE(:,3),:), SURF.matVLST(SURF.matDVE(:,4),:) );
 
 % SURF.matDVETRANS holds UINF of each DVE due to tranlsation of vehicle
 % hence excluding the effect of rotating rotors
-SURF.matUINFVEH = -VEHI.matVEHUVW(SURF.vecDVEVEHICLE,:);
+SURF.matUINFVEH = -VEHI.matGLOBUVW(SURF.vecDVEVEHICLE,:);
 SURF.matUINFROT = SURF.matUINFVEH.*0;
 SURF.matUINFTE = SURF.matUINFVEH.*0;
 
@@ -42,8 +42,8 @@ MISC.matNEWWAKE(:,:,4) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,4),:);
 MISC.matNEWWAKE(:,:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate WAKE.matWADJE)
-MISC.matNPNEWWAKE(:,:,4) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
-MISC.matNPNEWWAKE(:,:,3) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
+MISC.matNPNEWWAKE(:,:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,4),:);
+MISC.matNPNEWWAKE(:,:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE>0,3),:);
 
 % Translate Vehicles
 SURF.matVLST = SURF.matVLST + SURF.matVLSTTRANS;

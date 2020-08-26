@@ -4,14 +4,17 @@ function [SURF] = fcnTAILTRIM(SURF, FLAG, COND, deltaEPS, i)
 idxtail = SURF.vecDVEWING == 2; % DVEs that are on the tail
 
 tempVLST = SURF.matVLST(unique(SURF.matDVE(idxtail,:)),:) - repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matVLST(unique(SURF.matDVE(idxtail,:)),1)),1);
+tempNPVLST = SURF.matVLST(unique(SURF.matNPDVE(idxtail,:)),:) - repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matNPVLST(unique(SURF.matNPDVE(idxtail,:)),1)),1);
 tempCENTER = SURF.matCENTER(idxtail,:) - repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matCENTER(idxtail,1)),1);
 
 ROT = [cos(deltaEPS) 0 sin(deltaEPS); 0 1 0; -sin(deltaEPS) 0 cos(deltaEPS)];
 
 vlst2 = (ROT*tempVLST')' + repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matVLST(unique(SURF.matDVE(idxtail,:)),1)),1) ;
+npvlst2 = (ROT*tempNPVLST')' + repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matNPVLST(unique(SURF.matNPDVE(idxtail,:)),1)),1) ;
 center2 = (ROT*tempCENTER')' + repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matCENTER(idxtail,1)),1);
 
 SURF.matVLST(unique(SURF.matDVE(idxtail,:)),:) = vlst2;
+SURF.matNPVLST(unique(SURF.matNPDVE(idxtail,:)),:) = npvlst2;
 SURF.matCENTER(idxtail,:) = center2;
 
 % Store old tail pitch

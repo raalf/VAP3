@@ -20,7 +20,9 @@ end
 txtout = ['\t', sprintf('%4d',valTIMESTEP)];
 
 for j = 1:valVEHICLES
-    txtout = [txtout, sprintf('\t%0.4f',vecCL(valTIMESTEP,j,i)), sprintf('\t\t%0.4f',vecCDI(valTIMESTEP,j,i)), sprintf('\t\t%0.4f',matDEFGLOB(valTIMESTEP,end)), sprintf('\t\t\t\t%0.4f',vecCG(3)), sprintf('\t\t\t\t%0.4f', (180/pi)*perturb(valTIMESTEP,4))];
+%     txtout = [txtout, sprintf('\t%0.4f',vecCL(valTIMESTEP,j,i)), sprintf('\t\t%0.4f',vecCDI(valTIMESTEP,j,i)), sprintf('\t\t%0.4f',matDEFGLOB(valTIMESTEP,end)), sprintf('\t\t\t\t%0.4f',vecCG(3)), sprintf('\t\t\t\t%0.4f', (180/pi)*perturb(valTIMESTEP,4))];
+
+    txtout = [txtout, sprintf('\t%0.4f',vecCL(valTIMESTEP,j,i)), sprintf('\t\t%0.4f',vecCDI(valTIMESTEP,j,i)), sprintf('\t\t%0.4f',0), sprintf('\t\t\t\t%0.4f',vecCG(3)), sprintf('\t\t\t\t%0.4f', (180/pi)*perturb(valTIMESTEP,4))];
 
 end
 

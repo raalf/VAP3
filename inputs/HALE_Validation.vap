@@ -35,7 +35,7 @@
 		<weight>739.674</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>7.75</alpha>
+		<alpha>0</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -66,9 +66,8 @@
 				<z>0</z>
 			</CG>
 
-
 			<panel>
-				<spanwise_elements>40</spanwise_elements>
+				<spanwise_elements>22</spanwise_elements>
 				<strip_airfoil>NACA0012</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
@@ -92,7 +91,7 @@
 		<wing>
 			<type>HSTAB</type>
 			<symmetry>TRUE</symmetry>
-			<incidence>-2.70</incidence>
+			<incidence>0</incidence>
 			<trimable>TRUE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
 			<mass>0.4</mass>
@@ -183,7 +182,7 @@
 			<mass>1</mass>
 
 			<CG>
-				<x>5</x>
+				<x>5.5</x>
 				<y>0</y>
 				<z>0</z>
 			</CG>

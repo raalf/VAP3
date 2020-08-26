@@ -1,4 +1,4 @@
-function [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, valTIMESTEP, tempTIME)
+function [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, VEHI, valTIMESTEP, tempTIME)
 % This function computes the spanwise deflection and twist using an
 % explicit finite difference method given a loading and structural
 % distribution.
@@ -58,10 +58,14 @@ valSTRUCTDELTIME = COND.valSDELTIME;
 % [SURF.vecLSM] = interp1(SURF.vecSPANDIST,SURF.vecLSM',temp_y);
 
 if tempTIME == 1
-    [OUTP.vecLIFTDIST_STRUCT] = interp1(SURF.vecLIFTDISTCOORD{1},OUTP.vecLIFTDIST{1}(:,valTIMESTEP-1),temp_y);
-    [OUTP.vecMOMDIST_STRUCT] = OUTP.vecMOMDIST(:,2);
-    OUTP.vecLIFTDIST_STRUCT(2:end,1) = OUTP.vecLIFTDIST_STRUCT(2:end)./valDY;
-    OUTP.vecMOMDIST_STRUCT(2:end,1) = OUTP.vecMOMDIST_STRUCT(2:end)./valDY;
+    [SURF, OUTP, COND, INPU] = fcnFORCEINTERP(SURF, OUTP, COND, INPU, VEHI, valDY, temp_y);
+%     [OUTP.vecLIFTDIST_STRUCT] = interp1(SURF.vecLIFTDISTCOORD{1},(OUTP.vecLIFTDIST(:,3)),temp_y,'linear','extrap');
+%     [OUTP.vecMOMDIST_STRUCT] = OUTP.vecMOMDIST(:,2);
+    OUTP.vecLIFTDIST_STRUCT = OUTP.vecLIFTDIST./valDY;
+%     OUTP.vecLIFTDIST_STRUCT = 10*ones(1,INPU.valNSELE);
+%     OUTP.vecMOMDIST_STRUCT(2:end,1) = OUTP.vecMOMDIST_STRUCT(2:end)./valDY;
+%     OUTP.vecMOMDIST_STRUCT = OUTP.vecLIFTDIST_STRUCT.*SURF.vecLSAC;
+    OUTP.vecMOMDIST_STRUCT = OUTP.vecMOMDIST_NEW./valDY;
 end
 
 % INPU.matEIx = matEIx_interp;
@@ -79,8 +83,8 @@ if tempTIME == 1 && valTIMESTEP > COND.valSTIFFSTEPS + 2
     OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((COND.valSTAGGERSTEPS-1):COND.valSTAGGERSTEPS,:);
     OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((COND.valSTAGGERSTEPS-1):COND.valSTAGGERSTEPS,:);
 elseif tempTIME == 1 && valTIMESTEP <= COND.valSTIFFSTEPS + 2
-    OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((end-1):end,:);
-    OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((end-1):end,:);  
+    OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);
+    OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);  
 end
 
 OUTP.vecDEF(3) = 0; % Zero deflection at root BC

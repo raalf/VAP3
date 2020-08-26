@@ -4,8 +4,8 @@ function [matUINF] = fcnFLEXUINF(matCENTER_old, matCENTER, valDELTIME, n)
 
 matUINF = ((matCENTER_old - matCENTER)./valDELTIME);
 
-yvel = (matCENTER_old(:,2) - matCENTER(:,2))./(n*valDELTIME);
-zvel = (matCENTER_old(:,3) - matCENTER(:,3))./(n*valDELTIME);
+yvel = (matCENTER_old(:,2) - matCENTER(:,2))./(valDELTIME);
+zvel = (matCENTER_old(:,3) - matCENTER(:,3))./(valDELTIME);
 
 matUINF(:,2) = yvel;
 matUINF(:,3) = zvel;

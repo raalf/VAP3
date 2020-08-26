@@ -15,6 +15,7 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP, FLAG] = fcnFORCES(valT
 SURF.nfree(:,valTIMESTEP) = SURF.vecDVENFREE;
 SURF.gammaold(:,valTIMESTEP) = SURF.gamma_old;
 SURF.en_t(:,:,valTIMESTEP) = en;
+SURF.matNORMDIR = en;
 
 %% Induced Drag force
 [inddrag, tempUINF] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG);

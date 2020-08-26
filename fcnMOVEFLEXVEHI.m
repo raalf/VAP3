@@ -46,17 +46,20 @@ for i = 1:size(SURF.idx_struct,2)
 
         rotCG(i-1,:) = cg2 - SURF.vecWINGCG(i-1,:);
         
-        SURF.vecWINGCG(i-1,3) = SURF.vecWINGCG(i-1,3) + VEHI.matVEHUVW(:,3).*COND.valDELTIME + (cpt_def(valTIMESTEP,i-1) - cpt_def(valTIMESTEP-1,i-1)) + rotCG(i-1,3);
-        SURF.vecWINGCG(i-1,1) = SURF.vecWINGCG(i-1,1) + VEHI.matVEHUVW(:,1).*COND.valDELTIME + rotCG(i-1,1);
+        SURF.vecWINGCG(i-1,3) = SURF.vecWINGCG(i-1,3) + VEHI.matGLOBUVW(:,3).*COND.valDELTIME + (cpt_def(valTIMESTEP,i-1) - cpt_def(valTIMESTEP-1,i-1)) + rotCG(i-1,3);
+        SURF.vecWINGCG(i-1,1) = SURF.vecWINGCG(i-1,1) + VEHI.matGLOBUVW(:,1).*COND.valDELTIME + rotCG(i-1,1);
     end
     
+    elastic_translation(SURF.idx_struct(:,i),:) = [zeros(size(SURF.idx_struct(:,i),1),2),repmat((OUTP.matDEFGLOB(valTIMESTEP,i) - OUTP.matDEFGLOB(valTIMESTEP-1,i)),size(SURF.idx_struct(:,i),1),1)] + rotNPVLST(SURF.idx_struct(:,i),:);
+    elastic_translation = fcnSTARGLOB(elastic_translation, deg2rad(COND.vecVEHROLL*ones(size(elastic_translation,1),1)), deg2rad(COND.vecVEHALPHA*ones(size(elastic_translation,1),1)), deg2rad(COND.vecVEHBETA*ones(size(elastic_translation,1),1)));
+
     % Move DVE pts and elastic axis in x and z direction based on wing
     % bending and twist
-    SURF.matNPVLST(SURF.idx_struct(:,i),3) = SURF.matNPVLST(SURF.idx_struct(:,i),3) + VEHI.matVEHUVW(:,3).*COND.valDELTIME + (OUTP.matDEFGLOB(valTIMESTEP,i) - OUTP.matDEFGLOB(valTIMESTEP-1,i)) + rotNPVLST(SURF.idx_struct(:,i),3);
-    SURF.matNPVLST(SURF.idx_struct(:,i),1) = SURF.matNPVLST(SURF.idx_struct(:,i),1) + VEHI.matVEHUVW(:,1).*COND.valDELTIME + rotNPVLST(SURF.idx_struct(:,i),1);
+    SURF.matNPVLST(SURF.idx_struct(:,i),3) = SURF.matNPVLST(SURF.idx_struct(:,i),3) + VEHI.matGLOBUVW(:,3).*COND.valDELTIME + elastic_translation(SURF.idx_struct(:,i),3);
+    SURF.matNPVLST(SURF.idx_struct(:,i),1) = SURF.matNPVLST(SURF.idx_struct(:,i),1) + VEHI.matGLOBUVW(:,1).*COND.valDELTIME + elastic_translation(SURF.idx_struct(:,i),1);
     
-    SURF.matEALST(SURF.idx_struct(:,i),3) = SURF.matEALST(SURF.idx_struct(:,i),3) + VEHI.matVEHUVW(:,3).*COND.valDELTIME + (OUTP.matDEFGLOB(valTIMESTEP,i) - OUTP.matDEFGLOB(valTIMESTEP-1,i));
-    SURF.matEALST(SURF.idx_struct(:,i),1) = SURF.matEALST(SURF.idx_struct(:,i),1) + VEHI.matVEHUVW(:,1).*COND.valDELTIME;
+    SURF.matEALST(SURF.idx_struct(:,i),3) = SURF.matEALST(SURF.idx_struct(:,i),3) + VEHI.matGLOBUVW(:,3).*COND.valDELTIME + elastic_translation(SURF.idx_struct(:,i),3);
+    SURF.matEALST(SURF.idx_struct(:,i),1) = SURF.matEALST(SURF.idx_struct(:,i),1) + VEHI.matGLOBUVW(:,1).*COND.valDELTIME + elastic_translation(SURF.idx_struct(:,i),1);
 
     % Move DVE pts and elastic axis in y direction based on wing bending
     if i > 1
@@ -69,13 +72,13 @@ for i = 1:size(SURF.idx_struct,2)
         SURF.vecWINGCG(i-1,2) = (SURF.matEALST(SURF.idx_struct(1,i),2)+SURF.matEALST(SURF.idx_struct(1,i-1),2))/2;
     end
     
-    translateNPVLST(SURF.idx_struct(:,i),1) = VEHI.matVEHUVW(:,1).*COND.valDELTIME;
+    translateNPVLST(SURF.idx_struct(:,i),1) = VEHI.matGLOBUVW(:,1).*COND.valDELTIME;
 
 end
 
 if isempty(VEHI.vecPROPLOC) == 0
-    VEHI.vecPROPLOC(:,3) = VEHI.vecPROPLOC(:,3) + VEHI.matVEHUVW(:,3).*COND.valDELTIME + (prop_def(valTIMESTEP) - prop_def(valTIMESTEP-1));
-    VEHI.vecPROPLOC(:,1) = VEHI.vecPROPLOC(:,1) + VEHI.matVEHUVW(:,1).*COND.valDELTIME;
+    VEHI.vecPROPLOC(:,3) = VEHI.vecPROPLOC(:,3) + VEHI.matGLOBUVW(:,3).*COND.valDELTIME + (prop_def(valTIMESTEP) - prop_def(valTIMESTEP-1));
+    VEHI.vecPROPLOC(:,1) = VEHI.vecPROPLOC(:,1) + VEHI.matGLOBUVW(:,1).*COND.valDELTIME;
     
     deltaEPSPROP = (prop_twist(valTIMESTEP)-prop_twist(valTIMESTEP-1));
     ROTPROP = [cos(-deltaEPSPROP) 0 sin(-deltaEPSPROP); 0 1 0; -sin(-deltaEPSPROP) 0 cos(-deltaEPSPROP)];
@@ -84,36 +87,28 @@ if isempty(VEHI.vecPROPLOC) == 0
 end
 
 % Move tail pts and vehicle CG based on flight speed
-SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matVEHUVW,size(SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:),1),1);
-
-INPU.vecVEHCG = INPU.vecVEHCG + VEHI.matVEHUVW.*COND.valDELTIME;
+SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matGLOBUVW,size(SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:),1),1);
 
 % Rotate vehicle about CG based on flight-dynamics
 if FLAG.FLIGHTDYN == 1
-%     tempNPVLST = SURF.matNPVLST - INPU.vecVEHCG;
-%     deltaEPS = (TRIM.perturb(end,4)-TRIM.perturb(end-1,4));
-%     ROT = [cos(deltaEPS) 0 sin(deltaEPS); 0 1 0; -sin(deltaEPS) 0 cos(deltaEPS)];
-% 
-%     vlst2 = (ROT*tempNPVLST')' + INPU.vecVEHCG;
-% 
-%     rotNPVLST2 = vlst2 - SURF.matNPVLST;
     [rotNPVLST2, ~] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),SURF.matNPVLST,INPU.vecVEHCG);
     [~, VEHI.vecPAYLCG] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),VEHI.vecPAYLCG,INPU.vecVEHCG);
     [~, VEHI.vecFUSECG] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),VEHI.vecFUSECG,INPU.vecVEHCG);
+    [~, SURF.vecWINGCG] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),SURF.vecWINGCG,INPU.vecVEHCG);
     [~, VEHI.vecWINGCG(2,:)] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),VEHI.vecWINGCG(2,:),INPU.vecVEHCG);
 else
     rotNPVLST2 = zeros(size(SURF.matNPVLST,1),3);
 end
 
-VEHI.vecPAYLCG = VEHI.vecPAYLCG + VEHI.matVEHUVW.*COND.valDELTIME;
-VEHI.vecFUSECG = VEHI.vecFUSECG + VEHI.matVEHUVW.*COND.valDELTIME;
-VEHI.vecWINGCG(2,:) = VEHI.vecWINGCG(2,:) + VEHI.matVEHUVW.*COND.valDELTIME;
+INPU.vecVEHCG = INPU.vecVEHCG + VEHI.matGLOBUVW.*COND.valDELTIME;
+
+VEHI.vecPAYLCG = VEHI.vecPAYLCG + VEHI.matGLOBUVW.*COND.valDELTIME;
+VEHI.vecFUSECG = VEHI.vecFUSECG + VEHI.matGLOBUVW.*COND.valDELTIME;
+VEHI.vecWINGCG(2,:) = VEHI.vecWINGCG(2,:) + VEHI.matGLOBUVW.*COND.valDELTIME;
 SURF.matNPVLST = SURF.matNPVLST + rotNPVLST2;
 
 % update INPU.matVEHORIG positions
-INPU.matVEHORIG = INPU.matVEHORIG + VEHI.matVEHUVW.*COND.valDELTIME;
-
-% moveNPVLST = moveNPVLST + rotNPVLST2;
+INPU.matVEHORIG = INPU.matVEHORIG + VEHI.matGLOBUVW.*COND.valDELTIME;
 
 %% Move wing and generate new wake elements
 
@@ -133,19 +128,7 @@ MISC.matNPNEWWAKE(length(find(SURF.vecDVETE(SURF.idxFLEX) == 3))+1:end,:,3) = SU
 
 if any(FLAG.vecTRIMABLE == 1) == 1
     
-    SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) = SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) + VEHI.matVEHUVW*COND.valDELTIME;
+    SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) = SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) + VEHI.matGLOBUVW*COND.valDELTIME;
     
 end
-
-% INPU.vecVEHCG = INPU.vecVEHCG + VEHI.matVEHUVW*COND.valDELTIME;
-
-% if any(FLAG.vecFLEXIBLE == 1) == 1
-%    
-%     SURF.matEALST = SURF.matEALST + VEHI.matVEHUVW*COND.valDELTIME;
-%     
-% end
-
-% Move stiff tail if it exists
-% SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matVEHUVW,size(SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:),1),1);
-% SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matVEHUVW,size(SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:),1),1);
 
