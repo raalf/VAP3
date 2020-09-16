@@ -100,7 +100,7 @@ matSECTIONS = [];
 vecSECTIONPANEL = [];
 
 COND.vecSURFTRI = [];
-
+SURF = [];
 k = 1;
 kk = 1;
 kkk = 1;
