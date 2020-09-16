@@ -34,4 +34,4 @@ box on
 hold off
 
 %% Create input
-fcnXMLPANEL(-1*le_R*rotor_radius,r_R*rotor_radius,(zeros(size(r_R,1),1)),c_R*rotor_radius,beta,airfoil_name,output_filename);
+fcnXMLPANEL(-1*le_R*rotor_radius,r_R*rotor_radius,(zeros(size(r_R,1),1)),c_R*rotor_radius,beta,airfoil_name,output_filename,1);
