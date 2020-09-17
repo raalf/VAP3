@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<VAP>
+	<settings>
+		<relax>FALSE</relax>
+		<steady>TRUE</steady>
+		<maxtime>20</maxtime>
+		<delta_time>0.001</delta_time>
+		<start_forces>0</start_forces>
+		<stiff_wing>1</stiff_wing>
+		<fixed_lift>0</fixed_lift>
+		<gust_mode>0</gust_mode>
+	</settings>
+
+	<conditions>
+		<density>1.225</density>
+		<kin_viscosity>1.46e-05</kin_viscosity>
+		<gust_amplitude>0</gust_amplitude>
+		<gust_length>0</gust_length>
+		<gust_start>0</gust_start>
+	</conditions>
+
+	<vehicle>
+		<global_x>0</global_x>
+		<global_y>0</global_y>
+		<global_z>0</global_z>
+
+		<speed>10</speed>
+		<weight>nan</weight>
+		<interference_drag>0</interference_drag>
+
+		<alpha>0</alpha>
+		<beta>0</beta>
+		<roll>0</roll>
+		<fpa>0</fpa>
+		<track>0</track>
+		<radius>nan</radius>
+
+		<ref_area>1</ref_area>
+		<ref_span>1</ref_span>
+		<ref_cmac>1</ref_cmac>
+
+		<rotor>
+			<symmetry>FALSE</symmetry>
+			<rpm>4000</rpm>
+			<collective>0</collective>
+			
+			<ref_diam>0.4572</ref_diam>
+
+			<veh_x_hub>0</veh_x_hub>
+			<veh_y_hub>0</veh_y_hub>
+			<veh_z_hub>0</veh_z_hub>
+
+			<veh_x_axis>0</veh_x_axis>
+			<veh_y_axis>0</veh_y_axis>
+			<veh_z_axis>1</veh_z_axis>
+
+			<blades>2</blades>
+
+			<chordwise_elements>1</chordwise_elements>
+
+			<panel>
+			   <strip_airfoil>Matrice_Airfoil</strip_airfoil>
+			   <spanwise_elements>1</spanwise_elements>
+			   <section>
+			      <rotor_x>-0.014685</rotor_x>
+			      <rotor_y>0.024063</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.035697</chord>
+			      <twist>14.876</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.015679</rotor_x>
+			      <rotor_y>0.036095</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.042711</chord>
+			      <twist>17.616</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.016311</rotor_x>
+			      <rotor_y>0.048126</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.047236</chord>
+			      <twist>18.539</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.015801</rotor_x>
+			      <rotor_y>0.060158</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.046003</chord>
+			      <twist>17.718</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.014308</rotor_x>
+			      <rotor_y>0.072189</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.040789</chord>
+			      <twist>15.009</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.01296</rotor_x>
+			      <rotor_y>0.084221</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.03627</chord>
+			      <twist>13.983</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.011887</rotor_x>
+			      <rotor_y>0.096253</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.032882</chord>
+			      <twist>12.796</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.011014</rotor_x>
+			      <rotor_y>0.10828</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.030054</chord>
+			      <twist>11.795</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.0102</rotor_x>
+			      <rotor_y>0.12032</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.027682</chord>
+			      <twist>10.913</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.009571</rotor_x>
+			      <rotor_y>0.13235</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.025733</chord>
+			      <twist>10.195</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.008874</rotor_x>
+			      <rotor_y>0.14438</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.024006</chord>
+			      <twist>9.6</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.008308</rotor_x>
+			      <rotor_y>0.15641</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.022286</chord>
+			      <twist>8.962</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.007779</rotor_x>
+			      <rotor_y>0.16844</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.021026</chord>
+			      <twist>8.559</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.0072</rotor_x>
+			      <rotor_y>0.18047</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.019624</chord>
+			      <twist>8.101</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.006733</rotor_x>
+			      <rotor_y>0.19251</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.018411</chord>
+			      <twist>7.68</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.006289</rotor_x>
+			      <rotor_y>0.20454</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.017203</chord>
+			      <twist>7.454</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.005782</rotor_x>
+			      <rotor_y>0.21657</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.016304</chord>
+			      <twist>7.076</twist>
+			   </section>
+			   <section>
+			      <rotor_x>-0.0025</rotor_x>
+			      <rotor_y>0.2286</rotor_y>
+			      <rotor_z>0</rotor_z>
+			      <chord>0.012573</chord>
+			      <twist>6.852</twist>
+			   </section>
+			</panel>
+		</rotor>
+
+	</vehicle>				
+
+</VAP>
+
+
+
+
