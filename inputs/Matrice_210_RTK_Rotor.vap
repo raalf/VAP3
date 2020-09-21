@@ -42,8 +42,8 @@
 
 		<rotor>
 			<symmetry>FALSE</symmetry>
-			<rpm>4000</rpm>
-			<collective>0</collective>
+			<rpm>4500</rpm>
+			<collective>3.15</collective>
 			
 			<ref_diam>0.4572</ref_diam>
 
