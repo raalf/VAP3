@@ -10,8 +10,7 @@ end
 %% Run fcnVAP over a series of advance ratios and angles
 angles = [-90,-75,-60,-45,-30,-15,0,15,30,45,60,75,90];
 rpm = [2000 3000 4000 5000 6000];
-
-J = 0:0.1:1;
+J = 0.1:0.1:1;
 
 filename = 'inputs/Matrice_210_RTK_Rotor.vap';
 CT = nan(length(J),length(angles),length(rpm));
@@ -22,13 +21,16 @@ CMy = nan(length(J),length(angles),length(rpm));
 CNx = nan(length(J),length(angles),length(rpm));
 CNy = nan(length(J),length(angles),length(rpm));
 
-parfor i = 1:length(angles)
+leni = length(angles);
+lenj = length(J);
+lenk = length(rpm);
+for i = 1:leni
     AOA_OI = angles(i);
     
-    for j = 1:length(J)
+    for j = 1:lenj
         adv_r = J(j);
         
-        for k = 1:length(rpm)
+        for k = 1:lenk
             VAP_IN = [];
             VAP_IN.RELAX = false;
             VAP_IN.valMAXTIME = 160;
