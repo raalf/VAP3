@@ -1,66 +1,21 @@
-function [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, iter)
+function [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP_RESTART(filename,valMAXTIME)
 
-WAKE.matWAKEGEOM = [];
-WAKE.matNPWAKEGEOM = [];
-WAKE.vecWDVEHVSPN = [];
-WAKE.vecWDVEHVCRD = [];
-WAKE.vecWDVEROLL = [];
-WAKE.vecWDVEPITCH = [];
-WAKE.vecWDVEYAW = [];
-WAKE.vecWDVELESWP = [];
-WAKE.vecWDVEMCSWP = [];
-WAKE.vecWDVETESWP = [];
-WAKE.vecWDVEAREA = [];
-WAKE.matWDVENORM = [];
-WAKE.matWVLST = [];
-WAKE.matWDVE = uint32([]);
-WAKE.valWNELE = 0;
-WAKE.matWCENTER = [];
-WAKE.matWCOEFF = [];
-WAKE.vecWK = [];
-WAKE.matWADJE = uint32([]);
-WAKE.vecWDVEPANEL = uint16([]);
-WAKE.valLENWADJE = 0;
-WAKE.vecWKGAM = [];
-WAKE.vecWDVESYM = uint8([]);
-WAKE.vecWDVETIP = uint8([]);
-WAKE.vecWDVESURFACE = uint8([]);
-WAKE.vecWDVETRI = [];
-WAKE.vecWPLOTSURF = uint8([]);
-timestep_folder = 'timestep_data\';
-
-%% Add boundary conditions to D-Matrix
+load(filename);
+COND.valMAXTIME = valMAXTIME;
+n = 1;
+timestep_folder = 'timestep_data_1\';
 [matD] = fcnDWING(SURF, INPU);
-
-%% Add kinematic conditions to D-Matrix
-[SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
 [matD, SURF.matCOLLPTS] = fcnKINCON(matD, SURF, INPU, FLAG);
 
-%% Preparing to timestep
 % Building wing resultant
-[vecR,w_wake] = fcnRWING(0, SURF, WAKE, FLAG);
+[vecR,w_wake] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
 
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
-
-% Computing structure distributions if data exists
-try 
-%     [INPU, SURF] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG);
-%     [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF, FLAG); 
-    FLAG.STRUCTURE = 1; % Create flag if structure data exists
-catch
-    FLAG.STRUCTURE = 0; 
-end
-
-n = 1;
-COND.valGUSTTIME = 1;
-SURF.gust_vel_old = zeros(SURF.valNELE,1);
-
-VEHI.matVEHUVW = [COND.vecVEHVINF*cosd(COND.vecVEHALPHA),0,COND.vecVEHVINF*sind(COND.vecVEHALPHA)];
-SURF.GammaInt = [];
-
 %% Timestepping
-for valTIMESTEP = 1:COND.valMAXTIME
+while valTIMESTEP <= COND.valMAXTIME
+    
+    valTIMESTEP = valTIMESTEP + 1;
     %% Timestep to solution
     %   Move wing
     %   Generate new wake elements
@@ -75,16 +30,14 @@ for valTIMESTEP = 1:COND.valMAXTIME
     %   Calculate viscous effects
     
     %% Moving the vehicles
-    SURF.matCENTER_t(:,:,valTIMESTEP) = SURF.matCENTER;
+%     SURF.matUINFdir = VEHI.matGLOBUVW./sqrt(sum(abs(VEHI.matGLOBUVW.^2),2));
     SURF.matUINFdir = -SURF.matUINF./sqrt(sum(SURF.matUINF.^2,2));
     for i = 1:size(SURF.matUINFdir,1)
         VEHI.ddir(i,:) = ([-1 0 0; 0 1 0; 0 0 -1]*SURF.matUINFdir(i,:)')'; % Drag direction is parallel to Uinf
         VEHI.ldir(i,:) = ([0 0 -1; 0 1 0; 1 0 0]*VEHI.ddir(i,:)')'; % Lift direction is perpendicular to Uinf
     end
-        
-    if FLAG.FLIGHTDYN == 1 && valTIMESTEP > 2
-        
-        iter = 0;
+    
+    if FLAG.FLIGHTDYN == 1 && valTIMESTEP > COND.valSTIFFSTEPS
         
         % Determine aerodynamic force directions and vehicle flight path
         % AoA and flight path angle
@@ -92,39 +45,30 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.vecVEHALPHA(valTIMESTEP,1) = COND.vecVEHALPHA;
         COND.vecVEHFPA = -atand(VEHI.matGLOBUVW(3)/VEHI.matGLOBUVW(1));
         OUTP.vecVEHFPA(valTIMESTEP,1) = COND.vecVEHFPA;
-%         COND.valDELTIME = INPU.vecCMAC/INPU.vecM(1)/COND.vecVEHVINF;
-                         
+    
+        COND.vecVEHVINF = sqrt(sum(VEHI.matVEHUVW.^2)); % Vehicle Uinf magnitude
+        COND.valDELTIME = (1/3)/COND.vecVEHVINF;
+        OUTP.dt(valTIMESTEP,1) = COND.valDELTIME;
+        OUTP.sim_time = cumsum(OUTP.dt,1); % Store updated simulation time based on new dt
+              
         [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce, 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
         
         M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM;
-        
         g = 9.81;
         m = COND.vecVEHWEIGHT/g;
-        [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,g,VEHI.vecIYY),[0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
+        [t,y] = ode45(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,g,VEHI.vecIYY),[0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
         VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:);
-              
+        
         % Vehicle velocity in the body-fixed frame
         VEHI.matVEHUVW(1) = VEHI.vecVEHDYN(valTIMESTEP,1);
         VEHI.matVEHUVW(3) = VEHI.vecVEHDYN(valTIMESTEP,2);
         
         [VEHI.matGLOBUVW] = fcnSTARGLOB(VEHI.matVEHUVW, 0, pi+VEHI.vecVEHDYN(valTIMESTEP,4), 0); % Rotation of velocity in body frame to earth frame
-        
         OUTP.matGLOBUVW(valTIMESTEP,:) = VEHI.matGLOBUVW;
-        
-        if valTIMESTEP > 3
-            SURF.matBEAMACC(valTIMESTEP,:) = (OUTP.matGLOBUVW(valTIMESTEP,:) - OUTP.matGLOBUVW(valTIMESTEP-1,:))./COND.valDELTIME;
-        end
-        
-        COND.vecVEHVINF = sqrt(sum(VEHI.matVEHUVW.^2)); % Vehicle Uinf magnitude
     else
-        VEHI.vecVEHDYN(valTIMESTEP,1) = VEHI.matVEHUVW(1);
-        VEHI.vecVEHDYN(valTIMESTEP,2) = VEHI.matVEHUVW(3);
-        VEHI.vecVEHDYN(valTIMESTEP,3) = 0;
+        VEHI.vecVEHDYN(valTIMESTEP,1:3) = 0;
         VEHI.vecVEHDYN(valTIMESTEP,4) = deg2rad(COND.vecVEHPITCH);
     end
-    
-    OUTP.dt(valTIMESTEP,1) = COND.valDELTIME;
-    OUTP.sim_time = cumsum(OUTP.dt,1); % Store updated simulation time based on new dt
     
     % Bend wing if applicable, else move wing normally
     if FLAG.STRUCTURE == 1
@@ -137,18 +81,17 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.vecVEHENERGY(valTIMESTEP,1) = 0.5*COND.vecVEHVINF*COND.vecVEHVINF;
         OUTP.vecVEHENERGY(valTIMESTEP,2) = 9.81*(OUTP.vecCGLOC(valTIMESTEP,3)-OUTP.vecCGLOC(1,3));
         OUTP.vecVEHENERGY(valTIMESTEP,3) = OUTP.vecVEHENERGY(valTIMESTEP,1) + OUTP.vecVEHENERGY(valTIMESTEP,2);
-        OUTP.vecTIPPITCH(valTIMESTEP,1) = SURF.vecDVEPITCH(INPU.vecN(1));
     else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
     end
     
     % Add in gust velocity if applicable
-%     if FLAG.GUSTMODE > 0
-%         [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
-%     end   
+    if FLAG.GUSTMODE > 0
+        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
+    end   
     
     if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
-        [matD, SURF.matCOLLPTS] = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG);
+        matD = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG);
     end
     
     %% Generating new wake elements
@@ -175,7 +118,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.DEBUG.vecWKGAM(:,valTIMESTEP) = WAKE.vecWKGAM;
         OUTP.DEBUG.vecR(:,valTIMESTEP) = vecR;
         OUTP.DEBUG.matDVENORM(:,:,valTIMESTEP) = SURF.matDVENORM;
-        OUTP.DEBUG.w_wake(:,:,valTIMESTEP) = w_wake;
+%         OUTP.DEBUG.w_wake(:,:,valTIMESTEP) = w_wake;
         OUTP.DEBUG.matUINF(:,:,valTIMESTEP) = SURF.matUINF;
         
 %         %% Rebuilding and solving wing resultant        
@@ -252,11 +195,13 @@ for valTIMESTEP = 1:COND.valMAXTIME
             [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
             OUTP.GlobForce = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG,1);
             OUTP.matUINF_t(:,:,valTIMESTEP) = SURF.matUINF;
-%             SURF.matBEAMLOC(:,:,valTIMESTEP) = SURF.matEALST(1:INPU.valNSELE,:);
+            OUTP.DEBUG.vecDVENFORCE(:,valTIMESTEP) = SURF.vecDVENFREE;
+            OUTP.DEBUG.vecDVENIND(:,valTIMESTEP) = SURF.vecDVENIND;
+            OUTP.DEBUG.vecDVEINDDRAG(:,valTIMESTEP) = SURF.vecDVEDIND;
         end
         
         if FLAG.SAVETIMESTEP == 1
-            save([timestep_folder, 'timestep_', num2str(valTIMESTEP), '.mat'],'valTIMESTEP','INPU','COND','MISC','WAKE','VEHI','SURF','OUTP','VISC','TRIM','FLAG','iter');
+            save([timestep_folder, 'timestep_', num2str(valTIMESTEP), '.mat'], 'filename','valTIMESTEP','INPU','COND','MISC','WAKE','VEHI','SURF','OUTP','VISC','TRIM');
         end
     end
     

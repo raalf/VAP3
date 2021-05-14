@@ -10,6 +10,7 @@
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
 		<gust_mode>2</gust_mode>
+		<gliding>FALSE</gliding>
 	</settings>
 
 	<conditions>
@@ -17,7 +18,7 @@
 		<kin_viscosity>1.46e-05</kin_viscosity>
 		<gust_amplitude>0.01</gust_amplitude>
 		<gust_length>7.3152</gust_length>
-		<gust_start>5</gust_start>
+		<gust_start>4</gust_start>
 	</conditions>
 
 	<vehicle>

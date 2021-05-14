@@ -1,10 +1,10 @@
-function [matUINF, gust_vel] = fcnGUSTWING(matUINF,valGUSTAMP,valGUSTL,flagGUSTMODE,valDELTIME,valUINF,valGUSTSTART,fpg,gust_vel_old)
+function [matUINF, gust_vel, gust_vel_old] = fcnGUSTWING(matUINF,valGUSTAMP,valGUSTL,flagGUSTMODE,valDELTIME,valUINF,valGUSTSTART,fpg,gust_vel_old, start_loc)
 
 % This function modifies matUINF to model a sinusoidal gust.
 
 % 2017/06/04 - I-80W, Omaha, NE
 
-start_loc = repmat([-valGUSTSTART*valDELTIME*valUINF,0,0],size(fpg,1),1, size(fpg,3)); % Location (in meters) in global frame where gust starts
+% start_loc = repmat([-valGUSTSTART*valDELTIME*valUINF,0,0],size(fpg,1),1, size(fpg,3)); % Location (in meters) in global frame where gust starts
 
 delx = start_loc - fpg; % Distance between DVE points and gust starting point
 

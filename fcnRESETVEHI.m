@@ -6,11 +6,13 @@ trans = INPU.matVEHORIG - [0,0,0]; % Vector of how much to translate all points
 
 
 SURF.matEALST = SURF.matEALST - trans;
+SURF.matCGLST = SURF.matCGLST - trans;
 SURF.vecWINGCG = SURF.vecWINGCG - trans;
 VEHI.vecFUSECG = VEHI.vecFUSECG - trans;
 VEHI.vecWINGCG = VEHI.vecWINGCG - trans;
 VEHI.vecPAYLCG = VEHI.vecPAYLCG - trans;
 VEHI.vecPROPLOC = VEHI.vecPROPLOC - trans;
+SURF.matAEROCNTR = SURF.matAEROCNTR - trans;
 
 SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) = SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) - trans;
 

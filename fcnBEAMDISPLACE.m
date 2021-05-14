@@ -1,4 +1,4 @@
-function [OUTP] = fcnELASTICWING_STAGGER2(OUTP, INPU, SURF, COND, VEHI, valTIMESTEP, tempTIME)
+function [OUTP] = fcnBEAMDISPLACE(OUTP, INPU, SURF, COND, VEHI, FLAG, valTIMESTEP, tempTIME)
 % This function computes the spanwise deflection and twist using an
 % explicit finite difference method given a loading and structural
 % distribution.
@@ -45,24 +45,11 @@ temp_y = (0:valDY:0.5*INPU.vecSPAN)';
 valSTRUCTDELTIME = COND.valSDELTIME;
 
 %% Interpolate values at structural grid points
-
-% [matEIx_interp(:,1)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,1)',temp_y);
-% [matEIx_interp(:,2)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,2)',temp_y);
-% [matEIx_interp(:,3)] = interp1(SURF.vecSPANDIST,INPU.matEIx(:,3)',temp_y);
-% [matGJt_interp(:,1)] = interp1(SURF.vecSPANDIST,INPU.matGJt(:,1)',temp_y);
-% [matGJt_interp(:,2)] = interp1(SURF.vecSPANDIST,INPU.matGJt(:,2)',temp_y);
-% [INPU.vecLM] = interp1(SURF.vecSPANDIST,INPU.vecLM',temp_y);
-% [INPU.vecJT] = interp1(SURF.vecSPANDIST,INPU.vecJT',temp_y);
-% [SURF.vecLSM] = interp1(SURF.vecSPANDIST,SURF.vecLSM',temp_y);
-
 if tempTIME == 1
-    [SURF, OUTP, COND, INPU] = fcnBEAMFORCE(SURF, OUTP, COND, INPU, VEHI, valDY, temp_y);
-    OUTP.vecLIFTDIST_STRUCT = OUTP.vecLIFTDIST./valDY;
-    OUTP.vecMOMDIST_STRUCT = OUTP.vecMOMDIST_NEW./valDY;
+    [SURF, OUTP, COND, INPU] = fcnBEAMFORCE(SURF, OUTP, COND, INPU, VEHI, FLAG, valDY, temp_y, valTIMESTEP);
+%     OUTP.vecLIFTDIST_STRUCT = OUTP.vecLIFTDIST./valDY;
+%     OUTP.vecMOMDIST_STRUCT = OUTP.vecMOMDIST_NEW./valDY;
 end
-
-% INPU.matEIx = matEIx_interp;
-% INPU.matGJt = matGJt_interp;
 
 OUTP.vecDEF = zeros(1,INPU.valNSELE+4);
 OUTP.vecTWIST = zeros(1,INPU.valNSELE+4);
@@ -70,21 +57,16 @@ OUTP.vecTWIST = zeros(1,INPU.valNSELE+4);
 valSTRUCTTIME = tempTIME + 2;
 
 %% Beam boundary conditions
+% if tempTIME == 1
+%     OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);
+%     OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);
+% end
 
-if tempTIME == 1 && valTIMESTEP > COND.valSTIFFSTEPS + 2
-    OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((COND.valSTAGGERSTEPS-1):COND.valSTAGGERSTEPS,:);
-    OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((COND.valSTAGGERSTEPS-1):COND.valSTAGGERSTEPS,:);
-elseif tempTIME == 1 && valTIMESTEP <= COND.valSTIFFSTEPS + 2
-    OUTP.matDEF(1:valSTRUCTTIME-1,:) = OUTP.matDEF((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);
-    OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);  
-end
-
-OUTP.vecDEF(3) = 0; % Zero deflection at root BC
-OUTP.vecTWIST(3) = 0; % Zero twist at root BC
+OUTP.vecDEF(3) = SURF.matBEAMLOC(1,3,valTIMESTEP-1); % Zero deflection at root BC
+OUTP.vecTWIST(3) = COND.vecVEHPITCH; % Zero twist at root BC
 
 % Assemble load matrix
-matLOAD = [OUTP.vecLIFTDIST_STRUCT - INPU.vecLM.*9.81, OUTP.vecMOMDIST_STRUCT + SURF.vecLSM.*INPU.vecLM.*9.81];
-matLOAD(end,:) = [0,0];
+matLOAD = [OUTP.vecBEAMFORCE, OUTP.vecBEAMMOM];
 
 for yy = 4:(INPU.valNSELE+2)
 
@@ -131,7 +113,6 @@ for yy = 4:(INPU.valNSELE+2)
     OUTP.vecDEF(yy) = tempTWISTBEND(1,:);
     OUTP.vecTWIST(yy) = tempTWISTBEND(2,:);
 
-
 end
 
 OUTP.vecDEF(INPU.valNSELE+3) = 2*OUTP.vecDEF(INPU.valNSELE+2)...
@@ -158,5 +139,6 @@ OUTP.matTWISTGLOB(valTIMESTEP,:) = interp1(temp_y,OUTP.matTWIST(valSTRUCTTIME,3:
 for i = 2:length(SURF.vecSPANLOC)
     OUTP.matSLOPE(valTIMESTEP,i) = asin((OUTP.matDEFGLOB(valTIMESTEP,i)-OUTP.matDEFGLOB(valTIMESTEP,i-1))/(SURF.vecSPANLOC(i)-SURF.vecSPANLOC(i-1)));
 end
+
 
 end

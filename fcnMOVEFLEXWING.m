@@ -26,7 +26,7 @@ del_twist = ((OUTP.matTWISTGLOB(valTIMESTEP,:) - OUTP.matTWISTGLOB(valTIMESTEP-1
 omega = ((OUTP.matTWISTGLOB(valTIMESTEP,:) - OUTP.matTWISTGLOB(valTIMESTEP-1,:)))./COND.valDELTIME;
 vecXVEL = matUINF_edge(:,1);
 vecYVEL = matUINF_edge(:,2) + [0, (OUTP.matDEFGLOB(valTIMESTEP,2:end)-OUTP.matDEFGLOB(valTIMESTEP-1,2:end))./...
-    (COND.valDELTIME.*tan(repmat(pi/2,1,size(OUTP.matSLOPE,2))-(OUTP.matSLOPE(valTIMESTEP,:)-OUTP.matSLOPE(valTIMESTEP-1,:))./2))]';
+    (COND.valDELTIME.*tan(repmat(pi/2,1,size(OUTP.matSLOPE,2)-1)-(OUTP.matSLOPE(valTIMESTEP,2:end)-OUTP.matSLOPE(valTIMESTEP-1,2:end))./2))]';
 vecZVEL = matUINF_edge(:,3) + ((OUTP.matDEFGLOB(valTIMESTEP,:) - OUTP.matDEFGLOB(valTIMESTEP-1,:))./COND.valDELTIME)';
 
 % Determine DVEs in each spanwise station
@@ -46,7 +46,7 @@ tempENDWING = max(max(SURF.matNPDVE(SURF.idxFLEX,:))); % Index for last row in m
 tempENDTAIL = max(max(SURF.matNPDVE(SURF.idxTAIL,:)));
 
 % Allocate space for translation matrices
-translateNTVLST = zeros(size(SURF.matNPVLST(1:tempENDWING),1),3);
+translateNPVLST = zeros(size(SURF.matNPVLST(1:tempENDWING),1),3);
 temp_translate = zeros(size(SURF.matNPVLST(1:tempENDWING),1),3);
 
 temp_r = [sqrt(sum(SURF.matSCLST.^2,2)), zeros(length(SURF.matSCLST),2)]; % Distance between vertex and shear center
@@ -99,9 +99,9 @@ test(temp_leftV,1) = v_rot.*sin(OUTP.matTWISTGLOB(valTIMESTEP,move_row)+vecEDGEP
 test(temp_leftV,3) = v_rot.*cos(OUTP.matTWISTGLOB(valTIMESTEP,move_row)+vecEDGEPITCH(move_row))'.*COND.valDELTIME;
 
 % Translate left edge vertices due to freestream and bending
-translateNTVLST(temp_leftV,1) = COND.valDELTIME.*vecXVEL(move_row);
-translateNTVLST(temp_leftV,2) = COND.valDELTIME.*vecYVEL(move_row);
-translateNTVLST(temp_leftV,3) = -1*COND.valDELTIME.*vecZVEL(move_row);
+translateNPVLST(temp_leftV,1) = COND.valDELTIME.*vecXVEL(move_row);
+translateNPVLST(temp_leftV,2) = COND.valDELTIME.*vecYVEL(move_row);
+translateNPVLST(temp_leftV,3) = -1*COND.valDELTIME.*vecZVEL(move_row);
 
 % ======================== Right Edge Displacements =======================
 % All right LE and TE points to move
@@ -136,9 +136,9 @@ temp_translate(:,3) = xz_sign.*temp_translate(:,3);
 % ======================================================================= %
 
 % Translate right edge vertices due to freestream and bending
-translateNTVLST(temp_rightV,1) = COND.valDELTIME.*vecXVEL(move_row+1);
-translateNTVLST(temp_rightV,2) = COND.valDELTIME.*vecYVEL(move_row+1);
-translateNTVLST(temp_rightV,3) = -1*COND.valDELTIME.*vecZVEL(move_row+1);
+translateNPVLST(temp_rightV,1) = COND.valDELTIME.*vecXVEL(move_row+1);
+translateNPVLST(temp_rightV,2) = COND.valDELTIME.*vecYVEL(move_row+1);
+translateNPVLST(temp_rightV,3) = -1*COND.valDELTIME.*vecZVEL(move_row+1);
 
 if any(FLAG.vecTRIMABLE == 1) == 1
     
@@ -153,20 +153,20 @@ MISC.matNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,4) = SURF.mat
 MISC.matNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,3) = SURF.matVLST(SURF.matDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
 
 % Old non-planar trailing edge vertices (used to calculate matWADJE)
-MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,4) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
-MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,3) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
 
-MISC.matNPNEWWAKE(length(find(SURF.vecDVETE(SURF.idxFLEX) == 3))+1:end,:,4) = SURF.matNTVLST(SURF.matNPDVE(SURF.idxTAIL(SURF.vecDVETE(SURF.idxTAIL)>0),4),:);
-MISC.matNPNEWWAKE(length(find(SURF.vecDVETE(SURF.idxFLEX) == 3))+1:end,:,3) = SURF.matNTVLST(SURF.matNPDVE(SURF.idxTAIL(SURF.vecDVETE(SURF.idxTAIL)>0),3),:);
+MISC.matNPNEWWAKE(length(find(SURF.vecDVETE(SURF.idxFLEX) == 3))+1:end,:,4) = SURF.matNPVLST(SURF.matNPDVE(SURF.idxTAIL(SURF.vecDVETE(SURF.idxTAIL)>0),4),:);
+MISC.matNPNEWWAKE(length(find(SURF.vecDVETE(SURF.idxFLEX) == 3))+1:end,:,3) = SURF.matNPVLST(SURF.matNPDVE(SURF.idxTAIL(SURF.vecDVETE(SURF.idxTAIL)>0),3),:);
 
 % Update SURF.matVLST and SURF.matNTVLST
-SURF.matNTVLST(1:tempENDWING,:) = SURF.matNTVLST(1:tempENDWING,:) - (translateNTVLST - temp_translate);
+SURF.matNPVLST(1:tempENDWING,:) = SURF.matNPVLST(1:tempENDWING,:) - (translateNPVLST - temp_translate);
 
 % Move stiff tail if it exists
 SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matVEHUVW,size(SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:),1),1);
 SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:) + COND.valDELTIME.*repmat(VEHI.matVEHUVW,size(SURF.matNTVLST(tempENDWING+1:tempENDTAIL,:),1),1);
 
 % New non-planar trailing edge vertices (used to calculate matWADJE)
-MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,1) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
-MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,2) = SURF.matNTVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,1) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
+MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,2) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
 

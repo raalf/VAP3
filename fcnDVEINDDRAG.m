@@ -1,4 +1,4 @@
-function [inddrag, tempUINF] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG)
+function [inddrag, tempUINF, finddrag] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG)
 % Induced dve drag. Function finds induced drag values on each te element. Outputs are not
 % non-dimensionalized to q.
 
@@ -220,5 +220,8 @@ R(:,:) = R(:,:)+((7.*tempr(:,:,1)-8.*tempr(:,:,2)+7.*tempr(:,:,3)).*repmat(SURF.
 % inddrag(:,1) = dot(R,repmat(SURF.matUINF,size(R,1),1),2);
 inddrag = zeros(SURF.valNELE,1);
 inddrag(idte,1) = dot(R,tempUINF,2);
+
+finddrag = zeros(SURF.valNELE,3);
+finddrag(idte,:) = R;
 
 end %end function

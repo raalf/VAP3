@@ -10,15 +10,18 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP, FLAG] = fcnFORCES(valT
 % valE - Span Efficiency
 
 %% Element normal forces, lift forces and side forces (freestream and induced)
-[en, SURF.vecDVENFREE, SURF.vecDVENIND, SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE, SURF.vecDVESIND, SURF.matLIFTDIR, SURF.gamma_old, SURF.dGammadt, SURF.wake_vel_time] = fcnDVENFORCE(valTIMESTEP, COND, SURF, WAKE, VEHI, FLAG, INPU);
+[en, SURF.vecDVENFREE, SURF.vecDVENIND, SURF.vecDVELFREE, SURF.vecDVELIND, SURF.vecDVESFREE,...
+    SURF.vecDVESIND, SURF.matLIFTDIR, SURF.gamma_old, SURF.dGammadt, SURF.wake_vel_time, SURF.matDVEIFORCE,...
+    SURF.vecDVEA(:,valTIMESTEP),SURF.vecDVEB(:,valTIMESTEP),SURF.vecDVEC(:,valTIMESTEP),SURF.GammaInt] = fcnDVENFORCE(valTIMESTEP, COND, SURF, WAKE, VEHI, FLAG, INPU);
 
 SURF.nfree(:,valTIMESTEP) = SURF.vecDVENFREE;
-SURF.gammaold(:,valTIMESTEP) = SURF.gamma_old;
+SURF.nind(:,valTIMESTEP) = SURF.vecDVENIND;
+% SURF.gammaold(:,valTIMESTEP) = SURF.gamma_old;
 SURF.en_t(:,:,valTIMESTEP) = en;
 SURF.matNORMDIR = en;
 
 %% Induced Drag force
-[inddrag, tempUINF] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG);
+[inddrag, tempUINF, SURF.matDVEINDDRAG] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG);
 
 SURF.vecDVEDIND = inddrag;
 SURF.matDRAGDIR = tempUINF;

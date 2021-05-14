@@ -1,7 +1,7 @@
 function [hFig2] = fcnPLOTBODY(verbose, valNELE, matDVE, matVLST, matCENTER, sym)
 
 hFig2 = figure(3);
-clf(3);
+% clf(3);
 
 patch('Faces',matDVE,'Vertices',matVLST,'FaceColor',[255 90 90]./255)
 if sym == true
@@ -30,7 +30,7 @@ hold off
 box on
 grid on
 axis equal
-axis tight
+% axis tight
 
 xlabel('X-Dir','FontSize',15);
 ylabel('Y-Dir','FontSize',15);

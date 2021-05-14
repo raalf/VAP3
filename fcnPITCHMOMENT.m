@@ -53,14 +53,15 @@ deltaM_drag = [];
 %         SURF.vecPITCHARM = [];
 % 
 %         vecCRDDIST(isCurWing,1) = sum(2*SURF.vecDVEHVCRD(rows),2);
-% 
-%         % Find quarter-chord location in xyz across wing span
-%         temp = fcnGLOBSTAR(SURF.matCENTER(ledves(isCurWing),:), SURF.vecDVEROLL(ledves(isCurWing)), SURF.vecDVEPITCH(ledves(isCurWing)), SURF.vecDVEYAW(ledves(isCurWing)));
-%         SURF.matDVEQTRCRD = fcnSTARGLOB([temp(:,1)-SURF.vecDVEHVCRD(ledves(isCurWing)) + 0.25*vecCRDDIST(isCurWing,1),temp(:,2),temp(:,3)], SURF.vecDVEROLL(ledves(isCurWing)), SURF.vecDVEPITCH(ledves(isCurWing)), SURF.vecDVEYAW(ledves(isCurWing)));
+%         
+%         lemidpt = (SURF.matVLST(SURF.matDVE(rows(:,1),1),:) + SURF.matVLST(SURF.matDVE(rows(:,1),2),:))./2;
+%         lemidpt = fcnGLOBSTAR(lemidpt,SURF.vecDVEROLL(SURF.vecWINGTYPE(rows(:,1)) == j),SURF.vecDVEPITCH(SURF.vecWINGTYPE(rows(:,1)) == j),SURF.vecDVEYAW(SURF.vecWINGTYPE(rows(:,1)) == j));
+%         lemidpt(:,1) = lemidpt(:,1) + 0.25*vecCRDDIST(isCurWing);
+%         vecQTRCRD = fcnSTARGLOB(lemidpt,SURF.vecDVEROLL(SURF.vecWINGTYPE(rows(:,1)) == j),SURF.vecDVEPITCH(SURF.vecWINGTYPE(rows(:,1)) == j),SURF.vecDVEYAW(SURF.vecWINGTYPE(rows(:,1)) == j));
 % 
 %         matLIFTDIR = [matLIFTDIR; SURF.matLIFTDIR(ledves(isCurWing),:)];
 %         matDRAGDIR = [matDRAGDIR; SURF.matDRAGDIR(isCurWing,:)];
-%         SURF.vecPITCHARM = SURF.matDVEQTRCRD - INPU.vecVEHCG; % Pitch arm to CG
+%         SURF.vecPITCHARM = vecQTRCRD - INPU.vecVEHCG; % Pitch arm to CG
 % %         SURF.vecPITCHARM = SURF.matDVEQTRCRD - SURF.matEALST(1,:); % Pitch arm to wing elastic axis
 %         
 %         % Convert pitch arm to body frame
@@ -77,23 +78,12 @@ deltaM_drag = [];
 %             OUTP.vecCMDIST = zeros(length(isCurWing),1);
 %         end
 %         
-%         if isempty(VEHI.vecPROPLOC) == 0 && j > 10
-%             thrust = sum(sum(SURF.vecDVEDIND(tedves,:).*matDRAGDIR + dpdist.*matDRAGDIR,1),2).*VEHI.vecPROPDIR;
-%             deltaM_prop = cross(VEHI.vecPROPLOC - INPU.vecVEHCG, 0*thrust);
-%         else
-%             deltaM_prop = [0 0 0];
-%         end
-%         
 %         % Compute total force vector and pitching moment due to it. Moment
 %         % is per density
-%         tot_force = (sum(SURF.vecDVENFREE(rows),2) + sum(SURF.vecDVENIND(rows),2)).*SURF.matDVENORM(ledves(isCurWing),:) + SURF.vecDVEDIND(tedves(isCurWing),:).*matDRAGDIR(isCurWing,:) + 0*dpdist(isCurWing).*matDRAGDIR(isCurWing,:);
+%         tot_force = (sum(SURF.vecDVENFREE(rows),2) + sum(SURF.vecDVENIND(rows),2)).*SURF.matDVENORM(ledves(isCurWing),:) + SURF.vecDVEDIND(tedves(isCurWing),:).*matDRAGDIR(isCurWing,:);
 %         deltaM = cross(SURF.vecPITCHARM,tot_force);
 %         deltaM = sum(deltaM(:,2),1);
 %         
-%         % Moment due to point masses. Only used if not computing moment
-%         % about CG
-%         deltaM_mass = cross(VEHI.vecFUSECG-SURF.matEALST(1,:),[0,0,-VEHI.vecFUSEMASS*9.81]) + sum(cross(VEHI.vecWINGCG(2:end,:)-SURF.matEALST(1,:),[zeros(size(VEHI.vecWINGMASS(2:end),1),2),-VEHI.vecWINGMASS(2:end)*9.81]),1); % Pitching moment due to masses of wing, fuse, tail, etc.      
-% 
 %         if j == 2
 %             OUTP.vecCMDIST(isCurWing) = OUTP.vecCMDIST(isCurWing)*0;
 %         end
@@ -111,7 +101,7 @@ deltaM_drag = [];
 %     
 %     end
 %     
-%     OUTP.vecVEHPITCHMOM = sum(OUTP.vecVEHPITCHMOM(i,:),2).*COND.valDENSITY + 2*deltaM_prop(:,2).*COND.valDENSITY + 0*deltaM_mass(:,2);
+%     OUTP.vecVEHPITCHMOM = sum(OUTP.vecVEHPITCHMOM(i,:),2).*COND.valDENSITY;
 %     
 %     % Non-dimensionalize
 %     OUTP.vecVEHCM(i) = OUTP.vecVEHPITCHMOM/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA(i)*INPU.vecCMAC(i));
@@ -157,7 +147,7 @@ for i = 1:INPU.valVEHICLES
         vecAREADIST(isCurWing) = sum(SURF.vecDVEAREA(rows),2);
         
         % Compute pitch arm for tail if it exists
-    if any(SURF.vecWINGTYPE == 2)
+%     if any(SURF.vecWINGTYPE == 2)
         SURF.vecPITCHARM = [];
 
         vecCRDDIST(isCurWing,1) = sum(2*SURF.vecDVEHVCRD(rows),2);
@@ -179,7 +169,7 @@ for i = 1:INPU.valVEHICLES
 %         temp_pitcharm = fcnGLOBSTAR(temp_pitcharm, deg2rad(COND.vecVEHROLL*ones(size(temp_pitcharm,1),1)), deg2rad(COND.vecVEHALPHA*ones(size(temp_pitcharm,1),1)), deg2rad(COND.vecVEHBETA*ones(size(temp_pitcharm,1),1)));
         pitcharm = [pitcharm; temp_pitcharm];
                 
-    end
+%     end
 
         % Compute pitch moment from lifting lines
         if FLAG.VISCOUS == 1
@@ -190,18 +180,17 @@ for i = 1:INPU.valVEHICLES
             OUTP.vecCMDIST = zeros(length(isCurWing),1);
         end
         
-        if isempty(VEHI.vecPROPLOC) == 0 && j > 10
-            thrust = sum(sum(SURF.vecDVEDIND(tedves,:).*matDRAGDIR + dpdist.*matDRAGDIR,1),2).*VEHI.vecPROPDIR;
-            deltaM_prop = cross(VEHI.vecPROPLOC - INPU.vecVEHCG, 0*thrust);
-        else
-            deltaM_prop = [0 0 0];
-        end
-        
         % Moment due to normal force and drag
-        norm = (SURF.vecDVENFREE(SURF.vecWINGTYPE == j) + SURF.vecDVENIND(SURF.vecWINGTYPE == j)).*SURF.matNORMDIR(SURF.vecWINGTYPE == j,:);
+%         norm = (SURF.vecDVENFREE(SURF.vecWINGTYPE == j) + SURF.vecDVENIND(SURF.vecWINGTYPE == j)).*SURF.matNORMDIR(SURF.vecWINGTYPE == j,:);
+%         drag = (SURF.vecDVEDIND(tedves(isCurWing))).*SURF.matDRAGDIR(isCurWing,:);
+
+%         lift = dot(SURF.matDVEIFORCE,repmat(VEHI.ldir,size(SURF.matDVEIFORCE,1),1),2).*VEHI.ldir;
+%         drag = (SURF.vecDVEDIND(tedves(isCurWing))).*SURF.matDRAGDIR(isCurWing,:);
+        lift = dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir;
         drag = (SURF.vecDVEDIND(tedves(isCurWing))).*SURF.matDRAGDIR(isCurWing,:);
         
-        deltaM_norm = cross(pitcharm((SURF.vecWINGTYPE == j),:),norm);
+%         deltaM_norm = cross(pitcharm((SURF.vecWINGTYPE == j),:),norm);
+        deltaM_norm = cross(pitcharm((SURF.vecWINGTYPE == j),:),lift(SURF.vecWINGTYPE == j,:));
         deltaM_drag = cross(pitcharm(tedves(isCurWing),:),drag);
         
         % Total vehicle pitch moment (Moment/density)
@@ -209,7 +198,7 @@ for i = 1:INPU.valVEHICLES
         
          % Moment due to point masses. Only used if not computing moment
          % about CG
-        deltaM_mass = cross(VEHI.vecFUSECG-SURF.matEALST(1,:),[0,0,-VEHI.vecFUSEMASS*9.81]) + sum(cross(VEHI.vecWINGCG(2:end,:)-SURF.matEALST(1,:),[zeros(size(VEHI.vecWINGMASS(2:end),1),2),-VEHI.vecWINGMASS(2:end)*9.81]),1); % Pitching moment due to masses of wing, fuse, tail, etc.      
+%         deltaM_mass = cross(VEHI.vecFUSECG-SURF.matEALST(1,:),[0,0,-VEHI.vecFUSEMASS*9.81]) + sum(cross(VEHI.vecWINGCG(2:end,:)-SURF.matEALST(1,:),[zeros(size(VEHI.vecWINGMASS(2:end),1),2),-VEHI.vecWINGMASS(2:end)*9.81]),1); % Pitching moment due to masses of wing, fuse, tail, etc.      
         
         if j == 2
             OUTP.vecCMDIST(isCurWing) = OUTP.vecCMDIST(isCurWing)*0;
@@ -228,7 +217,7 @@ for i = 1:INPU.valVEHICLES
     
     end
     
-    OUTP.vecVEHPITCHMOM = sum(OUTP.vecVEHPITCHMOM(i,:),2).*COND.valDENSITY + 2*deltaM_prop(:,2).*COND.valDENSITY + 0*deltaM_mass(:,2);
+    OUTP.vecVEHPITCHMOM = sum(OUTP.vecVEHPITCHMOM(i,:),2).*COND.valDENSITY;
     
     % Non-dimensionalize
     OUTP.vecVEHCM(i) = OUTP.vecVEHPITCHMOM/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA(i)*INPU.vecCMAC(i));

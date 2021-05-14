@@ -1,4 +1,4 @@
-function [en, nfree,nind,liftfree,liftind,sidefree,sideind,el,gamma_old,dGammadt,wake_vel_time] = fcnDVENFORCE(valTIMESTEP, COND, SURF, WAKE, VEHI, FLAG, INPU)
+function [en, nfree,nind,liftfree,liftind,sidefree,sideind,el,gamma_old,dGammadt,wake_vel_time,inertforce,vecDVEA,vecDVEB,vecDVEC,GammaInt] = fcnDVENFORCE(valTIMESTEP, COND, SURF, WAKE, VEHI, FLAG, INPU)
 %DVE element normal forces
 
 % //computes lift and side force/density acting on surface DVE's. The local
@@ -115,35 +115,45 @@ B(idx2 ==0) = (SURF.matCOEFF(idx2==0,2)-SURF.matCOEFF(idxf,2));
 C(idx2 ==0) = (SURF.matCOEFF(idx2==0,3)-SURF.matCOEFF(idxf,3));
 
 % Store effective A, B, and C values for each DVE
-SURF.vecDVEA = A;
-SURF.vecDVEB = B;
-SURF.vecDVEC = C;
+vecDVEA = A;
+vecDVEB = B;
+vecDVEC = C;
 
 nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 
+
 %% Unsteady lift term with apparent mass
-lambda = 0.5; % Relaxation factor for dGammadt term
+lambda = 1; % Relaxation factor for dGammadt term
 
-GammaInt = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)).*(2*SURF.vecDVEHVCRD); % Integrated circulation across DVE
+GammaInt = SURF.GammaInt;
+dGammadt = SURF.dGammadt;
+GammaInt(:,valTIMESTEP) = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)); % Integrated circulation across DVE
+% GammaInt = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)).*(2*SURF.vecDVEHVCRD); % Integrated circulation across DVE
+% GammaInt(:,valTIMESTEP) = ((A' .*2 .* SURF.vecDVEHVSPN +  C'./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)); % Integrated circulation across DVE
 
-if valTIMESTEP > 1 && FLAG.STEADY == 0
+if valTIMESTEP > 2 && FLAG.STEADY == 0
     
+    dGammadt(:,valTIMESTEP) = lambda.*(GammaInt(:,valTIMESTEP) - GammaInt(:,valTIMESTEP-1))./COND.valDELTIME + (1-lambda).*SURF.dGammadt(:,valTIMESTEP-1); % Time rate of change of circulation
 %     dGammadt = lambda.*(GammaInt - SURF.gamma_old)./COND.valDELTIME + (1-lambda).*SURF.dGammadt; % Time rate of change of circulation
-    dGammadt = zeros(size(SURF.vecDVEHVSPN,1),1); 
+%     dGammadt(:,valTIMESTEP) = lambda.*(3*GammaInt(:,valTIMESTEP) - 4*GammaInt(:,valTIMESTEP-1)+GammaInt(:,valTIMESTEP-2))./(2*COND.valDELTIME) + (1-lambda).*SURF.dGammadt(:,valTIMESTEP-1); % Time rate of change of circulation
+%     dGammadt = zeros(size(SURF.vecDVEHVSPN,1),1); 
     
 else
     
-    dGammadt = zeros(size(SURF.vecDVEHVSPN,1),1); 
+    dGammadt(:,valTIMESTEP) = zeros(size(SURF.vecDVEHVSPN,1),1); 
     
 end
 
 if valTIMESTEP > 1 && FLAG.STEADY == 0
     
-    nfree = nfree + dGammadt; % Add apparent mass term to freestream normal force
+    nfree = nfree + dGammadt(:,valTIMESTEP).*(2*SURF.vecDVEHVCRD); % Add apparent mass term to freestream normal force
     
 end
 
-gamma_old = GammaInt; % Store integrated circulation for current timestep to use on next timestep calc
+ffree = nfree.*en;
+
+% gamma_old = GammaInt; % Store integrated circulation for current timestep to use on next timestep calc
+gamma_old = [];
 
 %% induced force
 % for triangluar elements we compute velocities directly at LE. idx1 = 1
@@ -234,6 +244,9 @@ r = r + ((7.*tempr(:,:,1) - 8.*tempr(:,:,2) + 7.*tempr(:,:,3)).*repmat((SURF.vec
 
 % induced normal force
 nind = dot(r,en,2);  %induced normal force
+findu = r;
+
+inertforce = ffree + findu; % Force in the inertial frame
 
 %lift and side force
 liftfree = nfree.*sqrt(en(:,1).*en(:,1) + en(:,3).*en(:,3)); %does this work with beta?

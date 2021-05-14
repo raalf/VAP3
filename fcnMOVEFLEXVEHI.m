@@ -7,14 +7,6 @@ tempENDTAIL = max(max(SURF.matNPDVE(SURF.idxTAIL,:)));
 cpt_def(valTIMESTEP,:) = interp1(SURF.vecSPANLOC,OUTP.matDEFGLOB(valTIMESTEP,:),SURF.center_dist);
 cpt_twist(valTIMESTEP,:) = interp1(SURF.vecSPANLOC,OUTP.matTWISTGLOB(valTIMESTEP,:),SURF.center_dist);
 
-% Compute deflection at propeller spanwise location if it exists
-if isempty(VEHI.vecPROPLOC) == 0
-    prop_def(valTIMESTEP,:) = interp1(SURF.vecSPANLOC,OUTP.matDEFGLOB(valTIMESTEP,:),VEHI.vecPROPLOC_START(:,2));
-    prop_twist(valTIMESTEP,:) = interp1(SURF.vecSPANLOC,OUTP.matTWISTGLOB(valTIMESTEP,:),VEHI.vecPROPLOC_START(:,2));
-    prop_def(valTIMESTEP-1,:) = interp1(SURF.vecSPANLOC,OUTP.matDEFGLOB(valTIMESTEP-1,:),VEHI.vecPROPLOC_START(:,2));
-    prop_twist(valTIMESTEP-1,:) = interp1(SURF.vecSPANLOC,OUTP.matTWISTGLOB(valTIMESTEP-1,:),VEHI.vecPROPLOC_START(:,2));
-end
-
 cpt_def(valTIMESTEP-1,:) = interp1(SURF.vecSPANLOC,OUTP.matDEFGLOB(valTIMESTEP-1,:),SURF.center_dist);
 cpt_twist(valTIMESTEP-1,:) = interp1(SURF.vecSPANLOC,OUTP.matTWISTGLOB(valTIMESTEP-1,:),SURF.center_dist);
 
@@ -49,7 +41,7 @@ for i = 1:size(SURF.idx_struct,2)
         SURF.vecWINGCG(i-1,3) = SURF.vecWINGCG(i-1,3) + VEHI.matGLOBUVW(:,3).*COND.valDELTIME + (cpt_def(valTIMESTEP,i-1) - cpt_def(valTIMESTEP-1,i-1)) + rotCG(i-1,3);
         SURF.vecWINGCG(i-1,1) = SURF.vecWINGCG(i-1,1) + VEHI.matGLOBUVW(:,1).*COND.valDELTIME + rotCG(i-1,1);
     end
-    
+       
     elastic_translation(SURF.idx_struct(:,i),:) = [zeros(size(SURF.idx_struct(:,i),1),2),repmat((OUTP.matDEFGLOB(valTIMESTEP,i) - OUTP.matDEFGLOB(valTIMESTEP-1,i)),size(SURF.idx_struct(:,i),1),1)] + rotNPVLST(SURF.idx_struct(:,i),:);
     elastic_translation = fcnSTARGLOB(elastic_translation, deg2rad(COND.vecVEHROLL*ones(size(elastic_translation,1),1)), deg2rad(COND.vecVEHALPHA*ones(size(elastic_translation,1),1)), deg2rad(COND.vecVEHBETA*ones(size(elastic_translation,1),1)));
 
@@ -91,11 +83,11 @@ SURF.matNPVLST(tempENDWING+1:tempENDTAIL,:) = SURF.matNPVLST(tempENDWING+1:tempE
 
 % Rotate vehicle about CG based on flight-dynamics
 if FLAG.FLIGHTDYN == 1
-    [rotNPVLST2, ~] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),SURF.matNPVLST,INPU.vecVEHCG);
-    [~, VEHI.vecPAYLCG] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),VEHI.vecPAYLCG,INPU.vecVEHCG);
-    [~, VEHI.vecFUSECG] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),VEHI.vecFUSECG,INPU.vecVEHCG);
-    [~, SURF.vecWINGCG] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),SURF.vecWINGCG,INPU.vecVEHCG);
-    [~, VEHI.vecWINGCG(2,:)] = fcnYROT(TRIM.perturb(end,4)-TRIM.perturb(end-1,4),VEHI.vecWINGCG(2,:),INPU.vecVEHCG);
+    [rotNPVLST2, ~] = fcnYROT(VEHI.vecVEHDYN(end,4)-VEHI.vecVEHDYN(end-1,4),SURF.matNPVLST,INPU.vecVEHCG);
+    [~, VEHI.vecPAYLCG] = fcnYROT(VEHI.vecVEHDYN(end,4)-VEHI.vecVEHDYN(end-1,4),VEHI.vecPAYLCG,INPU.vecVEHCG);
+    [~, VEHI.vecFUSECG] = fcnYROT(VEHI.vecVEHDYN(end,4)-VEHI.vecVEHDYN(end-1,4),VEHI.vecFUSECG,INPU.vecVEHCG);
+    [~, SURF.vecWINGCG] = fcnYROT(VEHI.vecVEHDYN(end,4)-VEHI.vecVEHDYN(end-1,4),SURF.vecWINGCG,INPU.vecVEHCG);
+    [~, VEHI.vecWINGCG(2,:)] = fcnYROT(VEHI.vecVEHDYN(end,4)-VEHI.vecVEHDYN(end-1,4),VEHI.vecWINGCG(2,:),INPU.vecVEHCG);
 else
     rotNPVLST2 = zeros(size(SURF.matNPVLST,1),3);
 end

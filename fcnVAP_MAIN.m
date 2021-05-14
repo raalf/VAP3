@@ -6,12 +6,14 @@ if nargin == 0
     return
 end
 
+iter = 0;
+
 if nargin == 2
     %% Reading in geometry
     [FLAG, COND, VISC, INPU, VEHI, SURF] = fcnXMLREAD(filename, VAP_IN);
     
     FLAG.PRINT = 1;
-    FLAG.PLOT = 1;
+    FLAG.PLOT = 0;
     FLAG.VISCOUS = 0;
     FLAG.CIRCPLOT = 0;
     FLAG.GIF = 0;
@@ -78,7 +80,7 @@ end
 
 %% Preparing to timestep
 % Building wing resultant
-[vecR] = fcnRWING(0, SURF, WAKE, FLAG);
+[vecR,~] = fcnRWING(0, SURF, WAKE, FLAG);
 
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
@@ -95,6 +97,7 @@ end
 n = 1;
 valGUSTTIME = 1;
 SURF.gust_vel_old = zeros(SURF.valNELE,1);
+SURF.GammaInt = [];
 
 %% Timestepping
 for valTIMESTEP = 1:COND.valMAXTIME
@@ -122,7 +125,8 @@ for valTIMESTEP = 1:COND.valMAXTIME
     
     % Add in gust velocity if applicable
     if FLAG.GUSTMODE > 0
-        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old);
+        COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
     end
     
     if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
@@ -142,12 +146,36 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [WAKE.matWCOEFF(end-WAKE.valWSIZE+1:end,:)] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWSIZE, WAKE.vecWKGAM(end-WAKE.valWSIZE+1:end), WAKE.vecWDVEHVSPN(end-WAKE.valWSIZE+1:end));
         
         %% Rebuilding and solving wing resultant
-        [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
-        [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
-
-        %% Creating and solving WD-Matrix
-        [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
-        [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+%         [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
+%         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+% 
+%         %% Creating and solving WD-Matrix
+%         [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+%         [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+        %% Iteration Block #1
+        if iter == true
+            delt = 1;
+            while delt >= 0.000001
+                matCOEFF1 = SURF.matCOEFF;
+                
+                [vecR,~] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
+                [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+                
+                WAKE.vecWKGAM = fcnWKGAM(FLAG.STEADY, WAKE.vecWKGAM, SURF.matCOEFF, SURF.vecDVETE, SURF.vecDVEHVSPN(SURF.vecDVETE > 0), WAKE.valWNELE, WAKE.valWSIZE);
+                
+                [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+                [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+                
+                delt = max(max(abs(SURF.matCOEFF - matCOEFF1)));
+%                 disp(delt)
+            end
+        else
+            [vecR,~] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
+            [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
+            
+            [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
+            [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
+        end
         
         %% Relaxing wake
         if valTIMESTEP > 2 && FLAG.RELAX == 1

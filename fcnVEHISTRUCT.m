@@ -50,9 +50,9 @@ idx_vlst = find(idx_vlst == 0);
 SURF.idx_struct = [];
 j = 1;
 
-% Find indexing vector for matNTVLST. Columns idx_struct corresponds what index in
+% Find indexing vector for matNPVLST. Columns idx_struct corresponds what index in
 % the structural deflection vector should be used to move the corresponding
-% indices in matNTVLST
+% indices in matNPVLST
 for i = 1:length(SURF.vecSPANLOC)
     temp = SURF.matNPVLST(idx_vlst,2) - SURF.vecSPANLOC(i);
     temp2 = find(temp == 0);
@@ -147,7 +147,7 @@ SURF.vecLSAC = sqrt(sum(matLSAC.^2,2));
 
 SURF.vecLSM = -1.*sign(matLSM(:,1)).*sqrt(sum(matLSM.^2,2)); % If +ve --> EA is ahead of CG; If -ve --> EA is behind CG
 
-SURF.valTBOOM = abs(SURF.matAEROCNTR(1,1) - SURF.matTRIMORIG(2,1)); % Tail boom length from wing elastic axis to tail qtr crd
+% SURF.valTBOOM = abs(SURF.matAEROCNTR(1,1) - SURF.matTRIMORIG(2,1)); % Tail boom length from wing elastic axis to tail qtr crd
 
 % Compute wing mass and CG location in aeordynamic coordinate system
 SURF.vecVEHMASS = interp1(SURF.vecSTRUCTSPNDIST,INPU.vecLM,SURF.matCENTER(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1,2)).*(2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)); % Wing mass values at each DVE control point y-location
@@ -157,16 +157,23 @@ SURF.vecWINGCG = interp1(SURF.vecSTRUCTSPNDIST,SURF.matCG,SURF.matCENTER(SURF.ve
 
 % -------------------------------------------------------------------------
 temp_vecEA = INPU.vecEACOEFF(1).*SURF.vecSPANLOC.^2 + INPU.vecEACOEFF(2).*SURF.vecSPANLOC + INPU.vecEACOEFF(3);
+temp_vecCG = INPU.vecCGCOEFF(1).*SURF.vecSPANLOC.^2 + INPU.vecCGCOEFF(2).*SURF.vecSPANLOC + INPU.vecCGCOEFF(3);
 
 tempEA = [temp_vecEA.*tempDVEEDGECRD(:,1), zeros(length(temp_vecEA),2)]; % Distance to EA from LE in local coordinates
+tempCG = [temp_vecCG.*tempDVEEDGECRD(:,1), zeros(length(temp_vecCG),2)]; % Distance to EA from LE in local coordinates
 
 temp_matEA = fcnSTARGLOB(tempEA,interp1(SURF.vecSPANDIST,SURF.vecDVEROLL(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...
+    interp1(SURF.vecSPANDIST,SURF.vecDVEPITCH(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...
+    interp1(SURF.vecSPANDIST,SURF.vecDVEYAW(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap')); % Transform to global coordinates
+
+temp_matCG = fcnSTARGLOB(tempCG,interp1(SURF.vecSPANDIST,SURF.vecDVEROLL(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...
     interp1(SURF.vecSPANDIST,SURF.vecDVEPITCH(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...
     interp1(SURF.vecSPANDIST,SURF.vecDVEYAW(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap')); % Transform to global coordinates
 
 tempLE = [SURF.matVLST(SURF.matDVE(ledves,1),:); SURF.matVLST(SURF.matDVE(ledves(end),2),:)]; 
 
 temp_matEA = tempLE + temp_matEA; % Add LE coordinates to have absolute location
+temp_matCG = tempLE + temp_matCG; % Add LE coordinates to have absolute location
 
 % Determine distance of each vertex to SC (to be used for twist velocity
 % later)
@@ -187,52 +194,16 @@ tempSCLST(temp_rightV,:) = temp_matEA(move_row+1,:);
 
 SURF.matEALST = tempSCLST;
 
-SURF.matSCLST = SURF.matEALST - SURF.matVLST; % Matrix of vectors between shear center and vertex
+tempCGLST = zeros(size(SURF.matVLST,1),3);
 
+tempCGLST(temp_leftV,:) = temp_matCG(move_row,:);
 
-% SURF.vecPITCHARM = [];
-% 
-% for j = unique(SURF.vecWINGTYPE,'stable')'
-% 
-%     [ledves, ~, ~] = find(SURF.vecDVELE > 0);
-%     lepanels = SURF.vecDVEPANEL(ledves);
-% 
-%     isCurWing = SURF.vecWINGTYPE(ledves) == j;
-% 
-%     idxdve = uint16(ledves(isCurWing));
-%     idxpanel = lepanels(isCurWing);
-% 
-% 
-%     m = INPU.vecM(idxpanel);
-%     if any(m - m(1))
-%         disp('Problem with wing chordwise elements.');
-%         break
-%     end
-% 
-%     m = m(1);
-% 
-%     % Matrix of how much we need to add to an index to get the next chordwise element
-%     % It is done this way because n can be different for each panel. Unlike in the wake,
-%     % we can't just add a constant value to get to the same spanwise location in the next
-%     % row of elements
-%     tempm = repmat(INPU.vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel~=0),1);
-% 
-%     rows = repmat(idxdve,1,m) + uint16(tempm);
-% 
-%     vecAREADIST(isCurWing) = sum(SURF.vecDVEAREA(rows),2);
-% 
-%     vecCRDDIST(isCurWing,1) = sum(2*SURF.vecDVEHVCRD(rows),2);
-% 
-%     % Find quarter chord location in xyz
-%     temp = SURF.matCENTER(ledves(isCurWing),:)-SURF.vecDVEHVCRD(ledves(isCurWing));
-%     temp = fcnGLOBSTAR(SURF.matCENTER(ledves(isCurWing),:)-SURF.vecDVEHVCRD(ledves(isCurWing)), SURF.vecDVEROLL(ledves(isCurWing)), SURF.vecDVEPITCH(ledves(isCurWing)), SURF.vecDVEYAW(ledves(isCurWing)));
-%     SURF.matDVEQTRCRD = fcnSTARGLOB([temp(:,1) + 0.25*vecCRDDIST(isCurWing,1),temp(:,2),temp(:,3)], SURF.vecDVEROLL(ledves(isCurWing)), SURF.vecDVEPITCH(ledves(isCurWing)), SURF.vecDVEYAW(ledves(isCurWing)));
-%     SURF.matDVEQTRCRD = [temp(:,1) + 0.25*vecCRDDIST(isCurWing,1),temp(:,2),temp(:,3)];
-%     % Compute pitch moment arm from CG to DVE LE midpoint
-%     SURF.vecPITCHARM = [SURF.vecPITCHARM; (INPU.vecVEHCG(1,1) - SURF.matDVEQTRCRD(:,1)).*cos(pi*COND.vecVEHALPHA/180)...
-%             + (INPU.vecVEHCG(1,3) - SURF.matDVEQTRCRD(:,3)).*sin(pi*COND.vecVEHALPHA/180)];
-% end
+temp_rightV = [SURF.matDVE(matROWS{1},2), SURF.matDVE(matROWS{1},3)];
+temp_rightV = reshape(temp_rightV,sum(INPU.vecN(1:max(SURF.vecDVEPANEL(SURF.vecWINGTYPE == 1))),1),[]);
 
+[move_row,~] = find(temp_rightV); % Vector corresponding to which shear center coordinate to use
+tempCGLST(temp_rightV,:) = temp_matCG(move_row+1,:);
 
+SURF.matCGLST = tempCGLST;
 
 end

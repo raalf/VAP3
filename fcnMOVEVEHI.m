@@ -6,7 +6,7 @@ function [SURF, MISC, COND, INPU] = fcnMOVEVEHI(COND, SURF, OUTP, INPU, MISC, FL
 % tempNPVLST = SURF.matNPVLST - INPU.vecVEHCG;
 % 
 % if FLAG.FLIGHTDYN == 1
-%     deltaEPS = (TRIM.perturb(end,4)-TRIM.perturb(end-1,4));
+%     deltaEPS = (VEHI.vecVEHDYN(end,4)-VEHI.vecVEHDYN(end-1,4));
 %     ROT = [cos(deltaEPS) 0 sin(deltaEPS); 0 1 0; -sin(deltaEPS) 0 cos(deltaEPS)];
 % 
 %     vlst2 = (ROT*tempNPVLST')' + INPU.vecVEHCG;
@@ -23,7 +23,7 @@ matCENTER = SURF.matCENTER - repmat(INPU.vecVEHCG,size(SURF.matCENTER,1),1);
 
 % rotate
 %     dcm = angle2dcm(matVEHROT(n,1), matVEHROT(n,2), matVEHROT(n,3), 'XYZ');
-matVEHROT = [0, (TRIM.perturb(end,4)-TRIM.perturb(end-1,4)), 0];
+matVEHROT = [0, (VEHI.vecVEHDYN(end,4)-VEHI.vecVEHDYN(end-1,4)), 0];
 dcm = angle2dcm(matVEHROT(3), matVEHROT(1), matVEHROT(2), 'ZXY');
 matNPVLST = matNPVLST*dcm;
 matVLST = matVLST*dcm;

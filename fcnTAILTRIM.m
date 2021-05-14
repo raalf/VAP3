@@ -4,7 +4,7 @@ function [SURF] = fcnTAILTRIM(SURF, FLAG, COND, deltaEPS, i)
 idxtail = SURF.vecDVEWING == 2; % DVEs that are on the tail
 
 tempVLST = SURF.matVLST(unique(SURF.matDVE(idxtail,:)),:) - repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matVLST(unique(SURF.matDVE(idxtail,:)),1)),1);
-tempNPVLST = SURF.matVLST(unique(SURF.matNPDVE(idxtail,:)),:) - repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matNPVLST(unique(SURF.matNPDVE(idxtail,:)),1)),1);
+tempNPVLST = SURF.matNPVLST(unique(SURF.matNPDVE(idxtail,:)),:) - repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matNPVLST(unique(SURF.matNPDVE(idxtail,:)),1)),1);
 tempCENTER = SURF.matCENTER(idxtail,:) - repmat(SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:), length(SURF.matCENTER(idxtail,1)),1);
 
 ROT = [cos(deltaEPS) 0 sin(deltaEPS); 0 1 0; -sin(deltaEPS) 0 cos(deltaEPS)];

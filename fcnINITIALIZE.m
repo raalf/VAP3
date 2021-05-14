@@ -60,7 +60,7 @@ OUTP.matDEFGLOB = [];
 OUTP.matTWISTGLOB = [];
 OUTP.vecWRBM = [];
 try OUTP.matDEF = zeros(COND.valSTIFFSTEPS,INPU.valNSELE+4); catch; end
-try OUTP.matTWIST = zeros(COND.valSTIFFSTEPS,INPU.valNSELE+4); catch; end
+try OUTP.matTWIST = zeros(COND.valSTIFFSTEPS,INPU.valNSELE+3); catch; end
 
 % Initiliazing unsteady aero terms
 SURF.dGammadt = [];

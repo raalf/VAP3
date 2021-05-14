@@ -1,4 +1,4 @@
-function [matD] = fcnKINCON(matD, SURF, INPU, FLAG)
+function [matD, collpts] = fcnKINCON(matD, SURF, INPU, FLAG)
 
 % Flow tangency is to be enforced at all control points on the surface HDVEs
 % In the D-Matrix, dot (a,b,c) of our influencing HDVE with the normal of the point we are influencing on
@@ -7,6 +7,17 @@ function [matD] = fcnKINCON(matD, SURF, INPU, FLAG)
 
 % Points we are influencing:
 fpg = SURF.matCENTER;
+
+% Move trailing edge element collocation point from matCENTER location to
+% the TE
+% fpg_te = SURF.matCENTER(SURF.vecDVETE == 3,:);
+% fpg_te = fcnGLOBSTAR(fpg_te, SURF.vecDVEROLL(SURF.vecDVETE == 3), SURF.vecDVEPITCH(SURF.vecDVETE == 3), SURF.vecDVEYAW(SURF.vecDVETE == 3));
+% 
+% lambda = 0.9;
+% fpg_te = fpg_te + [lambda*SURF.vecDVEHVCRD(SURF.vecDVETE == 3),zeros(length(find(SURF.vecDVETE == 3)),2)];
+% fpg_te = fcnSTARGLOB(fpg_te, SURF.vecDVEROLL(SURF.vecDVETE == 3), SURF.vecDVEPITCH(SURF.vecDVETE == 3), SURF.vecDVEYAW(SURF.vecDVETE == 3));
+% fpg(SURF.vecDVETE == 3,:) = fpg_te;
+collpts = fpg; % Save new collocation points to output
 
 % List of DVEs we are influencing from (each one for each of the above fieldpoints)
 len = length(fpg(:,1));
