@@ -116,6 +116,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         end
         
         COND.vecVEHVINF = sqrt(sum(VEHI.matVEHUVW.^2)); % Vehicle Uinf magnitude
+        OUTP.vecVEHVINF(valTIMESTEP,1) = COND.vecVEHVINF;
     else
         VEHI.vecVEHDYN(valTIMESTEP,1) = VEHI.matVEHUVW(1);
         VEHI.vecVEHDYN(valTIMESTEP,2) = VEHI.matVEHUVW(3);
@@ -137,6 +138,12 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.vecVEHENERGY(valTIMESTEP,1) = 0.5*COND.vecVEHVINF*COND.vecVEHVINF;
         OUTP.vecVEHENERGY(valTIMESTEP,2) = 9.81*(OUTP.vecCGLOC(valTIMESTEP,3)-OUTP.vecCGLOC(1,3));
         OUTP.vecVEHENERGY(valTIMESTEP,3) = OUTP.vecVEHENERGY(valTIMESTEP,1) + OUTP.vecVEHENERGY(valTIMESTEP,2);
+        
+        % Calculate vehicle energy altitude throughout gust
+        if valTIMESTEP >= COND.valGUSTSTART
+            OUTP.vecZE(valTIMESTEP,1) = (1/(2*g))*(COND.vecVEHVINF^2 - OUTP.vecVEHVINF(COND.valGUSTSTART,1)^2) + (OUTP.vecCGLOC(valTIMESTEP,3) - OUTP.vecCGLOC(COND.valGUSTSTART,3));
+        end
+        
         OUTP.vecTIPPITCH(valTIMESTEP,1) = SURF.vecDVEPITCH(INPU.vecN(1));
     else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);

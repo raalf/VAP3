@@ -183,12 +183,9 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-dE = OUTP.vecVEHENERGY(COND.valGUSTSTART:end,3) - OUTP.vecVEHENERGY(COND.valGUSTSTART,3);
-elapsed_time = OUTP.sim_time(end)-OUTP.sim_time(COND.valGUSTSTART);
+energy_alt = OUTP.vecZE(end,1);
 
-mean_energy = (1/elapsed_time)*trapz(OUTP.sim_time(COND.valGUSTSTART:end)-OUTP.sim_time(COND.valGUSTSTART),dE);
-
-out = 1/mean_energy;
+out = 1/energy_alt;
 
 if nargin ~= 0
     fp2 = fopen('Optimization/opthistory.txt','at');
