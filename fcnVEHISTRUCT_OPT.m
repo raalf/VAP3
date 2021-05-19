@@ -1,4 +1,4 @@
-function [INPU, SURF] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG)
+function [INPU, SURF] = fcnVEHISTRUCT_OPT(COND, INPU, SURF, FLAG)
 %% Geometric Properties
 
 valDY = 0.5*INPU.vecSPAN/(INPU.valNSELE-1);
@@ -106,7 +106,7 @@ SURF.vecMAC = (2/3)*tempDVEEDGECRD(idx1,1).*(1 + taper_ratio + taper_ratio.^2)./
 
 % Spanwise bending stiffness distribution. Cols 2 and 3 are the first and
 % second derivatives
-INPU.matEIx(:,1) = (INPU.vecEIxCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEIxCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEIxCOEFF(3))';
+% INPU.matEIx(:,1) = (INPU.vecEIxCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEIxCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEIxCOEFF(3))';
 
 % First derivative
 INPU.matEIx(2:end-1,2) = (INPU.matEIx(1:end-2,1)-INPU.matEIx(3:end,1))./(valDY);
@@ -121,7 +121,7 @@ INPU.matEIx(1,3) = (2*INPU.matEIx(1,1) - 5*INPU.matEIx(2,1) + 4*INPU.matEIx(3,1)
 INPU.matEIx(end,3) = (2*INPU.matEIx(end,1) - 5*INPU.matEIx(end-1,1) + 4*INPU.matEIx(end-2,1) - INPU.matEIx(end-3,1))./(valDY*valDY*valDY);
 
 % Spanwise torsional stiffness distribution. Col 2 is the first derivative
-INPU.matGJt(:,1) = (INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecGJtCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(3))';
+% INPU.matGJt(:,1) = (INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecGJtCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(3))';
 % INPU.matGJt(:,2) = (2*INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(2))';
 
 % First derivative
@@ -129,8 +129,8 @@ INPU.matGJt(2:end-1,2) = (INPU.matGJt(1:end-2,1)-INPU.matGJt(3:end,1))./(valDY);
 INPU.matGJt(1,2) = (-3*INPU.matGJt(1,1) + 4*INPU.matGJt(2,1) - INPU.matGJt(3,1))./(2*valDY);
 INPU.matGJt(end,2) = (3*INPU.matGJt(end,1) - 4*INPU.matGJt(end-1,1) + INPU.matGJt(end-2,1))./(2*valDY);
 
-INPU.vecEA = INPU.vecEACOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEACOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEACOEFF(3);
-INPU.vecCG = INPU.vecCGCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecCGCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecCGCOEFF(3);
+% INPU.vecEA = INPU.vecEACOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEACOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEACOEFF(3);
+% INPU.vecCG = INPU.vecCGCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecCGCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecCGCOEFF(3);
 INPU.vecJT = INPU.vecJTCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecJTCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecJTCOEFF(3);
 INPU.vecLM = INPU.vecLMCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecLMCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecLMCOEFF(3);
 

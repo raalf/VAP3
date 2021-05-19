@@ -39,7 +39,7 @@ else
         [OUTP] = fcnELASTICWING_STAGGER(OUTP, INPU, SURF, COND, VEHI, FLAG, valTIMESTEP, tempTIME);
                 
         % Error checking for unstable solution
-        if any(isnan(OUTP.vecDEF) == 1)
+        if any(isnan(OUTP.vecDEF) == 1) || any(OUTP.vecDEF > 1e3)
             fprintf('\nUnstable structure solution. Reducing time step size.\n\n')
             COND.valSDELTIME = COND.valSDELTIME*0.5;
             tempTIME = 0;

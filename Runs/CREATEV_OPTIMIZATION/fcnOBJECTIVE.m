@@ -1,10 +1,21 @@
-clc
-clear
-warning off
+function [out] = fcnOBJECTIVE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
 
-addpath('Flight Dynamics')
+cd(home_dir)
+cd '../../'
 
-filename = 'inputs/HALE_new.vap';
+% Write design variable history to file
+fp2 = fopen('Optimization/dvhistory.txt','at');
+fprintf(fp2,'%g ', design_var);
+fprintf(fp2,'\n');
+fclose(fp2);
+
+
+structure.matEIx(:,1) = design_var(1:N_bendstiff);
+structure.matGJt(:,1) = design_var(N_bendstiff+1:N_bendstiff+N_torstiff);
+structure.vecEA(:,1) = design_var(N_bendstiff+N_torstiff+1:N_bendstiff+N_torstiff+N_elasticaxis);
+structure.vecCG(:,1) = design_var(N_bendstiff+N_torstiff+N_elasticaxis+1:N_bendstiff+N_torstiff+N_elasticaxis+N_massaxis);
+
+baseline_file = 'inputs/CREATeV_Opt.vap';
 
 trim_iter = 1;
 
@@ -12,9 +23,14 @@ VAP_IN = [];
 TRIM = [];
 
 % Initialize variables and read in geometry
-[FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
+[FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(baseline_file,VAP_IN);
 
-FLAG.OPT = 0; 
+FLAG.OPT = 1; 
+
+INPU.matEIx = structure.matEIx;
+INPU.matGJt = structure.matGJt;
+INPU.vecEA = structure.vecEA;
+INPU.vecCG = structure.vecCG;
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -67,8 +83,6 @@ VEHI.vecPROPLOC_START = VEHI.vecPROPLOC;
 
 % tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
-
-save('HALE_Validation_10ms_Rigid.mat')
 
 FLAG.TRIM = 0;
 FLAG.STATICAERO = 1;
@@ -139,21 +153,19 @@ while max(abs(tol)) > 0.01
 end
 
 OUTP.aero_iter = 0;
-tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
+% tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
-save('HALE_Validation_10ms_Sigma3_Trim.mat')
 
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
-% load('HALE_Validation_10ms_Sigma3_Trim.mat')
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
-COND.valGUSTL = 75;
+COND.valGUSTL = 50;
 COND.valGUSTSTART = 15;
 FLAG.STIFFWING = 0;
 
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-COND.valMAXTIME = 600;
+COND.valMAXTIME = ceil((2*COND.valGUSTL)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
 COND.valSTIFFSTEPS = 15;
 COND.valSTARTFORCES = 1;
 FLAG.FLIGHTDYN = 1;
@@ -161,7 +173,7 @@ FLAG.STATICAERO = 0;
 FLAG.STEADY = 0;
 FLAG.RELAX = 0;
 FLAG.GUSTMODE = 2;
-FLAG.SAVETIMESTEP = 1;
+FLAG.SAVETIMESTEP = 0;
 
 VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
 
@@ -171,4 +183,20 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-save('G:\My Drive\PhD\Validation\Gust Simulation\Sigma = 3\25EA\HALE_Validation_75mGust_Flexible_25EA.mat')
+dE = OUTP.vecVEHENERGY(COND.valGUSTSTART:end,3) - OUTP.vecVEHENERGY(COND.valGUSTSTART,3);
+elapsed_time = OUTP.sim_time(end)-OUTP.sim_time(COND.valGUSTSTART);
+
+mean_energy = (1/elapsed_time)*trapz(OUTP.sim_time(COND.valGUSTSTART:end)-OUTP.sim_time(COND.valGUSTSTART),dE);
+
+out = 1/mean_energy;
+
+if nargin ~= 0
+    fp2 = fopen('Optimization/opthistory.txt','at');
+    fprintf(fp2,'%g ', [out, design_var]);
+    fprintf(fp2,'\n');
+    fclose(fp2);
+end
+
+cd(home_dir)
+
+

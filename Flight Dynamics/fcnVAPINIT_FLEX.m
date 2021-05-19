@@ -29,10 +29,14 @@ end
 
 SURF.matNPDVE = SURF.matDVE;
 % Computing structure distributions if data exists
-try 
-    [INPU, SURF] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG);
-%     [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF, FLAG); 
-    FLAG.STRUCTURE = 1; % Create flag if structure data exists
+try
+    if FLAG.OPT == 1
+        [INPU, SURF] = fcnVEHISTRUCT_OPT(COND, INPU, SURF, FLAG);
+        FLAG.STRUCTURE = 1; % Create flag if structure data exists
+    else
+        [INPU, SURF] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG);
+        FLAG.STRUCTURE = 1; % Create flag if structure data exists
+    end
 catch
     FLAG.STRUCTURE = 0; 
 end

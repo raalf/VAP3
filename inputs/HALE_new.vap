@@ -149,21 +149,21 @@
 				<stiffness>	
 					<A_vecEIx>0</A_vecEIx>
 					<B_vecEIx>0</B_vecEIx>
-					<C_vecEIx>60000</C_vecEIx>
+					<C_vecEIx>736564</C_vecEIx>
 
 					<A_vecGJt>0</A_vecGJt>
 					<B_vecGJt>0</B_vecGJt>
-					<C_vecGJt>30000</C_vecGJt>
+					<C_vecGJt>558369</C_vecGJt>
 				</stiffness>
 
 				<geometry>
 					<A_vecEA>0</A_vecEA>
 					<B_vecEA>0</B_vecEA>
-					<C_vecEA>0.25</C_vecEA>
+					<C_vecEA>0.75</C_vecEA>
 					
 					<A_vecCG>0</A_vecCG>
 					<B_vecCG>0</B_vecCG>
-					<C_vecCG>0.25</C_vecCG>
+					<C_vecCG>0.44</C_vecCG>
 				</geometry>
 
 				<mass>
