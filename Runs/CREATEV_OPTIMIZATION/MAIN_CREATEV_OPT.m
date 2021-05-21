@@ -1,7 +1,7 @@
 clc
 clear
 
-cores = 4;
+cores = 32;
 parpool(cores,'IdleTimeout',800)
 
 delete ../../Optimization/opthistory.txt
