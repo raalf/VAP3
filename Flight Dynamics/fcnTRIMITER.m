@@ -17,13 +17,13 @@ new_alpha(iter,1) = COND.vecVEHALPHA;
 new_fpa(iter,1) = COND.vecVEHFPA;
 new_pitch(iter,1) = COND.vecVEHPITCH;
 
-while max(abs(tol)) > 1e-6
+while max(abs(tol)) > 1e-3
       
     if iter > 2
         TRIM.Cmalpha = (CM(iter)-CM(iter-1))/deg2rad((new_alpha(iter)-new_alpha(iter-1)));
     end
     
-    iter = iter + 1;
+    iter = iter + 1;   
             
     if iter > 2
 %         new_alpha(iter,1) = COND.vecVEHALPHA + (COND.CLtrim-OUTP.vecCL(end))/((CL(iter-1)-CL(iter-2))/(new_alpha(iter-1)-new_alpha(iter-2)));
@@ -86,7 +86,8 @@ while max(abs(tol)) > 1e-6
     CX(iter,1) = OUTP.GlobForce(1)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
     
 %     tol = [(COND.CLtrim - OUTP.vecCL(end))*(COND.CLtrim - OUTP.vecCL(end)); OUTP.vecVEHCM(end)*OUTP.vecVEHCM(end)];
-    tol = [(CZtrim - CZ(iter,1))*(CZtrim - CZ(iter,1)); OUTP.vecVEHCM(end)*OUTP.vecVEHCM(end)];
+%     tol = [(CZtrim - CZ(iter,1))*(CZtrim - CZ(iter,1)); OUTP.vecVEHCM(end)*OUTP.vecVEHCM(end)];
+    tol = [(CZtrim - CZ(iter,1))/(CZtrim); OUTP.vecVEHCM(end)];
     
     SURF.vecELEVANGLE = new_tail(iter);
     
@@ -94,7 +95,7 @@ end
 
 else
 
-while max(abs(tol)) > 1e-6
+while max(abs(tol)) > 1e-3
       
     if iter > 2
         TRIM.Cmalpha = (CM(iter)-CM(iter-1))/deg2rad((new_alpha(iter)-new_alpha(iter-1)));

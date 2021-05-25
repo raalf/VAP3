@@ -150,6 +150,12 @@ while max(abs(tol)) > 0.01
     tol = [tol1; tol2; tol3];
 
     trim_iter = trim_iter + 1;
+    
+    % Break out of function if stuck in trim loop
+    if trim_iter > 50
+        out = Inf;
+        return
+    end
 end
 
 OUTP.aero_iter = 0;

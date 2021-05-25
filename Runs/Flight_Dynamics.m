@@ -14,7 +14,15 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-FLAG.OPT = 0; 
+FLAG.OPT = 1;
+
+load('C:/Users/Michael/Desktop/dvhistory.txt')
+
+des = 192;
+INPU.matEIx(:,1) = dvhistory(des,1:15);
+INPU.matGJt(:,1) = dvhistory(des,16:30);
+INPU.vecEA(:,1) = dvhistory(des,31:45);
+INPU.vecCG(:,1) = dvhistory(des,46:60);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
