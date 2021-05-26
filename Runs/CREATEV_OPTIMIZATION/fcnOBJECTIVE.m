@@ -152,7 +152,7 @@ while max(abs(tol)) > 0.01
     trim_iter = trim_iter + 1;
     
     % Break out of function if stuck in trim loop
-    if trim_iter > 50
+    if trim_iter > 50 || OUTP.TRIMFAIL == 1
         out = Inf;
         return
     end

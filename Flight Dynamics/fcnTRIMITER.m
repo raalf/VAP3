@@ -91,6 +91,14 @@ while max(abs(tol)) > 1e-3
     
     SURF.vecELEVANGLE = new_tail(iter);
     
+    % Error handling if trim routine gets stuck for some reason
+    if iter > 50
+        OUTP.TRIMFAIL = 1;
+        return
+    else
+        OUTP.TRIMFAIL = 0;
+    end
+    
 end
 
 else
