@@ -48,6 +48,9 @@ tol2 = 100;
 tol3 = 100;
 tol = 100;
 
+OUTP.TRIMFAIL = 0;
+COND.valMAXTRIMITER = 50;
+
 % Initial trim iteration
 % Find trimmed conditions for rigid aircraft. These loads are used to
 % compute the static aeroelastic deflections
@@ -91,114 +94,122 @@ OUTP.aero_iter = 1;
 %% Trim iteration loop 
 % Update aeroelastic deflection based on trim conditions and then update
 % trim conditions
-while max(abs(tol)) > 0.01
-    COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
-    
-%     COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
-%     COND.valSTARTFORCES = COND.valMAXTIME; % Compute forces for last two timesteps
-    
-%     COND.valSTARTFORCES = 1;
-    
-    tol_aero = 100;
-    tol_aero2 = 100;
-    tol_aero1 = 100;
-    SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
-    
-    %% Aeroelastic convergence loop
-    % Compute static aeroelastic configuration based on trimmed aircraft loads
-    while max(abs(tol_aero)) > 1e-3
-        
-        [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
+if OUTP.TRIMFAIL == 0
+    while max(abs(tol)) > 0.01
+        COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
 
-        [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
-        
-        % Compute tolerance for solution convergence. Tip deflection and
-        % tip twist are compared to their previous iterations solution
-        temp_def(OUTP.aero_iter,1) = OUTP.matDEFGLOB(end,end);
-        temp_twist(OUTP.aero_iter,1) = OUTP.matTWISTGLOB(end,end);
-        
-        if OUTP.aero_iter > 1
-            tol_aero1 = (temp_def(OUTP.aero_iter,1)-temp_def(OUTP.aero_iter-1,1))/temp_def(OUTP.aero_iter-1,1);
-            tol_aero2 = (temp_twist(OUTP.aero_iter,1)-temp_twist(OUTP.aero_iter-1,1))/temp_twist(OUTP.aero_iter-1,1);
+    %     COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
+    %     COND.valSTARTFORCES = COND.valMAXTIME; % Compute forces for last two timesteps
+
+    %     COND.valSTARTFORCES = 1;
+
+        tol_aero = 100;
+        tol_aero2 = 100;
+        tol_aero1 = 100;
+        SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+
+        %% Aeroelastic convergence loop
+        % Compute static aeroelastic configuration based on trimmed aircraft loads
+        while max(abs(tol_aero)) > 1e-3
+
+            [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
+
+            [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
+
+            % Compute tolerance for solution convergence. Tip deflection and
+            % tip twist are compared to their previous iterations solution
+            temp_def(OUTP.aero_iter,1) = OUTP.matDEFGLOB(end,end);
+            temp_twist(OUTP.aero_iter,1) = OUTP.matTWISTGLOB(end,end);
+
+            if OUTP.aero_iter > 1
+                tol_aero1 = (temp_def(OUTP.aero_iter,1)-temp_def(OUTP.aero_iter-1,1))/temp_def(OUTP.aero_iter-1,1);
+                tol_aero2 = (temp_twist(OUTP.aero_iter,1)-temp_twist(OUTP.aero_iter-1,1))/temp_twist(OUTP.aero_iter-1,1);
+            end
+
+            tol_aero = [tol_aero1; tol_aero2];
+
+            OUTP.aero_iter = OUTP.aero_iter + 1;
+
+        if OUTP.aero_iter > COND.valMAXTRIMITER
+            OUTP.TRIMFAIL = 1;
+            break;
         end
-        
-        tol_aero = [tol_aero1; tol_aero2];
-        
-        OUTP.aero_iter = OUTP.aero_iter + 1;
-        
-    if OUTP.aero_iter > 50
-        out = Inf;
-        return
-    end
-    
-    end    
-    
-    %% Trim new deformed configuration
-    COND.valSTIFFSTEPS = COND.valMAXTIME + 1;
-    COND.valSTARTFORCES = COND.valMAXTIME;
-    
-    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
-    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnTRIMITER(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
-    
-    % Compute tolerance for trim solution convergence. Trim angle of
-    % attack and wing tip deflection are compared to their previous
-    % iteration
-    trim_def(trim_iter,1) = OUTP.matDEFGLOB(end,end);
-    trim_twist(trim_iter,1) = OUTP.matTWISTGLOB(end,end);
-    trim_alpha(trim_iter,1) = COND.vecVEHALPHA;
 
-    if trim_iter > 1
-        tol1 = (trim_alpha(trim_iter,1)-trim_alpha(trim_iter-1,1))/trim_alpha(trim_iter-1,1);
-        tol2 = (trim_def(trim_iter,1)-trim_def(trim_iter-1,1))/trim_def(trim_iter-1,1);
-        tol3 = (trim_twist(trim_iter,1)-trim_twist(trim_iter-1,1))/trim_twist(trim_iter-1,1);
-    end
-    
-    tol = [tol1; tol2; tol3];
+        end
 
-    trim_iter = trim_iter + 1;
-    
-    % Break out of function if stuck in trim loop
-    if trim_iter > 50 || OUTP.TRIMFAIL == 1
-        out = Inf;
-        return
+        if OUTP.TRIMFAIL == 0
+            %% Trim new deformed configuration
+            COND.valSTIFFSTEPS = COND.valMAXTIME + 1;
+            COND.valSTARTFORCES = COND.valMAXTIME;
+
+            [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
+            [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnTRIMITER(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
+
+            % Compute tolerance for trim solution convergence. Trim angle of
+            % attack and wing tip deflection are compared to their previous
+            % iteration
+            trim_def(trim_iter,1) = OUTP.matDEFGLOB(end,end);
+            trim_twist(trim_iter,1) = OUTP.matTWISTGLOB(end,end);
+            trim_alpha(trim_iter,1) = COND.vecVEHALPHA;
+
+            if trim_iter > 1
+                tol1 = (trim_alpha(trim_iter,1)-trim_alpha(trim_iter-1,1))/trim_alpha(trim_iter-1,1);
+                tol2 = (trim_def(trim_iter,1)-trim_def(trim_iter-1,1))/trim_def(trim_iter-1,1);
+                tol3 = (trim_twist(trim_iter,1)-trim_twist(trim_iter-1,1))/trim_twist(trim_iter-1,1);
+            end
+
+            tol = [tol1; tol2; tol3];
+
+            trim_iter = trim_iter + 1;
+        end
+        % Break out of function if stuck in trim loop
+        if trim_iter > COND.valMAXTRIMITER || OUTP.TRIMFAIL == 1
+            OUTP.TRIMFAIL = 1;
+            break;
+        end
     end
 end
 
-OUTP.aero_iter = 0;
-% tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
-fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
+if OUTP.TRIMFAIL == 0
+    OUTP.aero_iter = 0;
+    % tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
+    fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 
-%% Perform full flight-dynamic simulation on trimmed/deformed aircraft
-SURF.matBEAMACC = [];
-COND.valGUSTAMP = 1;
-COND.valGUSTL = 50;
-COND.valGUSTSTART = 15;
-FLAG.STIFFWING = 0;
+    %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
+    SURF.matBEAMACC = [];
+    COND.valGUSTAMP = 1;
+    COND.valGUSTL = 50;
+    COND.valGUSTSTART = 15;
+    FLAG.STIFFWING = 0;
 
-SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+    SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
-COND.valMAXTIME = ceil((COND.valGUSTL + valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-COND.valSTIFFSTEPS = 15;
-COND.valSTARTFORCES = 1;
-FLAG.FLIGHTDYN = 1;
-FLAG.STATICAERO = 0;
-FLAG.STEADY = 0;
-FLAG.RELAX = 0;
-FLAG.GUSTMODE = 2;
-FLAG.SAVETIMESTEP = 0;
+    valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
+    COND.valMAXTIME = ceil((COND.valGUSTL + valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+    COND.valSTIFFSTEPS = 15;
+    COND.valSTARTFORCES = 1;
+    FLAG.FLIGHTDYN = 1;
+    FLAG.STATICAERO = 0;
+    FLAG.STEADY = 0;
+    FLAG.RELAX = 0;
+    FLAG.GUSTMODE = 2;
+    FLAG.SAVETIMESTEP = 0;
 
-VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+    VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
 
-[VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+    [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
 
-COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+    COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
 
-[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-energy_alt = OUTP.vecZE(end,1);
+    energy_alt = OUTP.vecZE(end,1);
 
-out = 1/energy_alt;
+    out = -energy_alt;
+else
+    out = Inf;
+end
+    
 
 if nargin ~= 0
     fp2 = fopen('Optimization/opthistory.txt','at');
