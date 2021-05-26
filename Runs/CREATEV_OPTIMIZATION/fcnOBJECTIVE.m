@@ -125,6 +125,12 @@ while max(abs(tol)) > 0.01
         tol_aero = [tol_aero1; tol_aero2];
         
         OUTP.aero_iter = OUTP.aero_iter + 1;
+        
+    if OUTP.aero_iter > 50
+        out = Inf;
+        return
+    end
+    
     end    
     
     %% Trim new deformed configuration
