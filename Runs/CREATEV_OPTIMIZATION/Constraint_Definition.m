@@ -103,8 +103,8 @@ b_elasticaxis1 = zeros(N_elasticaxis,1);
 
 A_elasticaxis1(end,end) = 0;
 
-% Elastic axis must be between 0.25c and 0.75c
-lb_elasticaxis = 0.25*ones(N_elasticaxis,1);
+% Elastic axis must be between 0.20c and 0.75c
+lb_elasticaxis = 0.20*ones(N_elasticaxis,1);
 ub_elasticaxis = 0.75*ones(N_elasticaxis,1);
 
 lb = [lb; lb_elasticaxis];
@@ -138,8 +138,8 @@ b_massaxis1 = zeros(N_massaxis,1);
 
 A_massaxis1(end,end) = 0;
 
-% Mass axis must be between 0.25c and 0.75c
-lb_massaxis = 0.25*ones(N_massaxis,1);
+% Mass axis must be between 0.20c and 0.75c
+lb_massaxis = 0.20*ones(N_massaxis,1);
 ub_massaxis = 0.75*ones(N_massaxis,1);
 
 lb = [lb; lb_massaxis];
@@ -150,13 +150,13 @@ b = [b; b_massaxis1];
 
 %% Constraints between mass and elastic axis
 % Constrain mass axis to be in front of elastic axis
-A_masselastic = diag(-1*ones(N_elasticaxis,1),0);
-A_masselastic = [A_masselastic,diag(ones(N_massaxis,1),0)];
-
-b_masselastic = zeros(N_elasticaxis,1);
-
-A = [A; padarray(A_masselastic, [0 N_bendstiff+N_torstiff], 0, 'pre')];
-b = [b; b_masselastic];
+% A_masselastic = diag(-1*ones(N_elasticaxis,1),0);
+% A_masselastic = [A_masselastic,diag(ones(N_massaxis,1),0)];
+% 
+% b_masselastic = zeros(N_elasticaxis,1);
+% 
+% A = [A; padarray(A_masselastic, [0 N_bendstiff+N_torstiff], 0, 'pre')];
+% b = [b; b_masselastic];
 
 % Constrain mass axis and elastic axis to be within 0.3c of each other
 A_masselastic1 = diag(ones(N_elasticaxis,1),0);

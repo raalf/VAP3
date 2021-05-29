@@ -14,15 +14,16 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-FLAG.OPT = 1;
+FLAG.OPT = 0;
+COND.valMAXTRIMITER = 50;
 
-load('C:/Users/Michael/Desktop/dvhistory.txt')
-
-des = 192;
-INPU.matEIx(:,1) = dvhistory(des,1:15);
-INPU.matGJt(:,1) = dvhistory(des,16:30);
-INPU.vecEA(:,1) = dvhistory(des,31:45);
-INPU.vecCG(:,1) = dvhistory(des,46:60);
+% load('C:/Users/Michael/Desktop/dvhistory.txt')
+% 
+% des = 192;
+% INPU.matEIx(:,1) = dvhistory(des,1:15);
+% INPU.matGJt(:,1) = dvhistory(des,16:30);
+% INPU.vecEA(:,1) = dvhistory(des,31:45);
+% INPU.vecCG(:,1) = dvhistory(des,46:60);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -149,19 +150,20 @@ end
 OUTP.aero_iter = 0;
 tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
-save('HALE_Validation_10ms_Sigma3_Trim.mat')
+% save('HALE_Validation_10ms_Sigma3_Trim.mat')
 
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
 % load('HALE_Validation_10ms_Sigma3_Trim.mat')
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
-COND.valGUSTL = 75;
+COND.valGUSTL = 50;
 COND.valGUSTSTART = 15;
 FLAG.STIFFWING = 0;
 
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-COND.valMAXTIME = 600;
+valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
+COND.valMAXTIME = ceil((COND.valGUSTL + valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
 COND.valSTIFFSTEPS = 15;
 COND.valSTARTFORCES = 1;
 FLAG.FLIGHTDYN = 1;
@@ -169,7 +171,7 @@ FLAG.STATICAERO = 0;
 FLAG.STEADY = 0;
 FLAG.RELAX = 0;
 FLAG.GUSTMODE = 2;
-FLAG.SAVETIMESTEP = 1;
+FLAG.SAVETIMESTEP = 0;
 
 VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
 
@@ -179,4 +181,4 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-save('G:\My Drive\PhD\Validation\Gust Simulation\Sigma = 3\25EA\HALE_Validation_75mGust_Flexible_25EA.mat')
+% save('G:\My Drive\PhD\Validation\Gust Simulation\Sigma = 3\25EA\HALE_Validation_75mGust_Flexible_25EA.mat')

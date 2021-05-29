@@ -106,11 +106,14 @@ if OUTP.TRIMFAIL == 0
         tol_aero = 100;
         tol_aero2 = 100;
         tol_aero1 = 100;
+        OUTP.aero_iter = 1;
+        temp_def = [];
+        temp_twist = [];
         SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
         %% Aeroelastic convergence loop
         % Compute static aeroelastic configuration based on trimmed aircraft loads
-        while max(abs(tol_aero)) > 1e-3
+        while max(abs(tol_aero)) > 0.005
 
             [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
 
@@ -170,6 +173,7 @@ if OUTP.TRIMFAIL == 0
     end
 end
 
+try
 if OUTP.TRIMFAIL == 0
     OUTP.aero_iter = 0;
     % tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
@@ -207,6 +211,9 @@ if OUTP.TRIMFAIL == 0
 
     out = -energy_alt;
 else
+    out = Inf;
+end
+catch
     out = Inf;
 end
     

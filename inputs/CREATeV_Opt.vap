@@ -32,8 +32,8 @@
 			<z>0.0</z>
 		</vehicle_CG>
 
-		<speed>10</speed>
-		<weight>767.6325</weight>
+		<speed>12</speed>
+		<weight>119</weight>
 		<interference_drag>0</interference_drag>
 
 		<alpha>3.5</alpha>
@@ -43,13 +43,13 @@
 		<track>0</track>
 		<radius>nan</radius>
 
-		<ref_area>32</ref_area>
-		<ref_span>32</ref_span>
-		<ref_cmac>1</ref_cmac>
+		<ref_area>2.482</ref_area>
+		<ref_span>6.28</ref_span>
+		<ref_cmac>0.395</ref_cmac>
 
 		<wing>
 			<symmetry>TRUE</symmetry>
-			<incidence>0</incidence>
+			<incidence>5.5</incidence>
 			<trimable>FALSE</trimable>
 			<flexible>TRUE</flexible>
 			<triangular_elements>FALSE</triangular_elements>
@@ -69,22 +69,22 @@
 
 			<panel>
 				<spanwise_elements>14</spanwise_elements>
-				<strip_airfoil>NACA0012</strip_airfoil>
+				<strip_airfoil>RAALF-B8</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
-					<chord>1</chord>
-					<twist>0</twist>
-					<camber_airfoil>NACA0012</camber_airfoil>
+					<chord>0.395</chord>
+					<twist>-4.53</twist>
+					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
 					<wing_x>0</wing_x>
-					<wing_y>16</wing_y>
+					<wing_y>3.14</wing_y>
 					<wing_z>0</wing_z>
-					<chord>1</chord>
-					<twist>0</twist>
-					<camber_airfoil>NACA0012</camber_airfoil>
+					<chord>0.395</chord>
+					<twist>-4.53</twist>
+					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>	
 			</panel>
 		</wing>
@@ -95,43 +95,43 @@
 			<incidence>0</incidence>
 			<trimable>TRUE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
-			<mass>2.25</mass>
+			<mass>0.419</mass>
 
 			<chordwise_elements>3</chordwise_elements>
 			<chordwise_spacing>NORMAL</chordwise_spacing>
 
-			<vehicle_x>10</vehicle_x>
+			<vehicle_x>1.76</vehicle_x>
 			<vehicle_y>0</vehicle_y>
-			<vehicle_z>2.5</vehicle_z>
+			<vehicle_z>0.02</vehicle_z>
 
 			<CG>
-				<x>10.125</x>
+				<x>1.82125</x>
 				<y>0</y>
-				<z>2.0833</z>
+				<z>0.0925</z>
 			</CG>	
 
 			<trimorigin>
-				<x>10</x>
+				<x>1.76</x>
 				<y>0</y>
-				<z>2.5</z>
+				<z>0.02</z>
 			</trimorigin>
 
 			<panel>
 				<spanwise_elements>5</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
-				<strip_airfoil>NACA0012</strip_airfoil>
+				<strip_airfoil>HT14</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.5</chord>
+					<chord>0.245</chord>
 					<twist>0</twist>
 				</section>	
 				<section>
 					<wing_x>0</wing_x>
-					<wing_y>2.5</wing_y>
+					<wing_y>0.5</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.5</chord>
+					<chord>0.245</chord>
 					<twist>0</twist>
 				</section>	
 			</panel>
@@ -179,17 +179,17 @@
 		</structure>
 
 		<fuselage>
-			<mass>2</mass>
+			<mass>2.34</mass>
 
 			<CG>
-				<x>5.25</x>
+				<x>-0.3056</x>
 				<y>0</y>
 				<z>0</z>
 			</CG>
 		</fuselage>
 
 		<payload>
-			<mass>50</mass>
+			<mass>0</mass>
 
 			<CG>
 				<x>0.25</x>
