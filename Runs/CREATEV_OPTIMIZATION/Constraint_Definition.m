@@ -34,7 +34,7 @@ b_bendstiff1 = zeros(N_bendstiff,1);
 A_bendstiff1(end,end) = 0;
 
 % Bending stiffness must be greater than 5000 Nm2
-lb_bendstiff = 5000*ones(N_bendstiff,1);
+lb_bendstiff = 15000*ones(N_bendstiff,1);
 ub_bendstiff = Inf*ones(N_bendstiff,1);
 
 lb = [lb; lb_bendstiff];
@@ -69,7 +69,7 @@ b_torstiff1 = zeros(N_torstiff,1);
 A_torstiff1(end,end) = 0;
 
 % Torsional stiffness must be greater than 5000 Nm2
-lb_torstiff = 5000*ones(N_torstiff,1);
+lb_torstiff = 15000*ones(N_torstiff,1);
 ub_torstiff = Inf*ones(N_torstiff,1);
 
 lb = [lb; lb_torstiff];
@@ -150,13 +150,13 @@ b = [b; b_massaxis1];
 
 %% Constraints between mass and elastic axis
 % Constrain mass axis to be in front of elastic axis
-% A_masselastic = diag(-1*ones(N_elasticaxis,1),0);
-% A_masselastic = [A_masselastic,diag(ones(N_massaxis,1),0)];
-% 
-% b_masselastic = zeros(N_elasticaxis,1);
-% 
-% A = [A; padarray(A_masselastic, [0 N_bendstiff+N_torstiff], 0, 'pre')];
-% b = [b; b_masselastic];
+A_masselastic = diag(-1*ones(N_elasticaxis,1),0);
+A_masselastic = [A_masselastic,diag(ones(N_massaxis,1),0)];
+
+b_masselastic = zeros(N_elasticaxis,1);
+
+A = [A; padarray(A_masselastic, [0 N_bendstiff+N_torstiff], 0, 'pre')];
+b = [b; b_masselastic];
 
 % Constrain mass axis and elastic axis to be within 0.3c of each other
 A_masselastic1 = diag(ones(N_elasticaxis,1),0);

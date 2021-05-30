@@ -11,6 +11,6 @@
 
 # Choose a version of MATLAB by loading a module:
 module load nixpkgs/16.09
-module load matlab/2018a
+module load matlab/2020b
 # Remove -singleCompThread below if you are using parallel commands:
 srun matlab -nodisplay -r "MAIN_CREATEV_OPT"

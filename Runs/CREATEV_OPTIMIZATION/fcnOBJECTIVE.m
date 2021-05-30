@@ -15,7 +15,7 @@ structure.matGJt(:,1) = design_var(N_bendstiff+1:N_bendstiff+N_torstiff);
 structure.vecEA(:,1) = design_var(N_bendstiff+N_torstiff+1:N_bendstiff+N_torstiff+N_elasticaxis);
 structure.vecCG(:,1) = design_var(N_bendstiff+N_torstiff+N_elasticaxis+1:N_bendstiff+N_torstiff+N_elasticaxis+N_massaxis);
 
-baseline_file = 'inputs/CREATeV_Opt.vap';
+baseline_file = 'inputs/HALE_new.vap';
 
 trim_iter = 1;
 
