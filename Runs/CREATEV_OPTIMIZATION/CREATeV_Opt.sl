@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --job-name=CREATeV_Opt
 #SBATCH --account=def-brami # adjust this to match the accounting group you are using to submit jobs
-#SBATCH --time=7-0:00:00         # adjust this to match the walltime of your job
+#SBATCH --time=6-23:00:00         # adjust this to match the walltime of your job
 #SBATCH --nodes=1      
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32      # adjust this if you are using parallel commands
@@ -11,6 +11,7 @@
 
 # Choose a version of MATLAB by loading a module:
 module load nixpkgs/16.09
+module load StdEnv/2020
 module load matlab/2020b
 # Remove -singleCompThread below if you are using parallel commands:
 srun matlab -nodisplay -r "MAIN_CREATEV_OPT"
