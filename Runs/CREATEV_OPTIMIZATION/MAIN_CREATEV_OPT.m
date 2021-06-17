@@ -1,11 +1,11 @@
 clc
 clear
 
-% cores = 8;
-% parpool(cores,'IdleTimeout',800)
+cores = 32;
+parpool(cores,'IdleTimeout',800)
 
-% delete ../../Optimization/opthistory.txt
-% delete ../../Optimization/dvhistory.txt
+delete ../../Optimization/opthistory.txt
+delete ../../Optimization/dvhistory.txt
 
 warning off
 

@@ -1,4 +1,4 @@
-function [out] = fcnOBJECTIVE(design_var)
+function [out] = fcnOBJECTIVE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
 
 N_bendstiff = 15;
 N_torstiff = 15;
