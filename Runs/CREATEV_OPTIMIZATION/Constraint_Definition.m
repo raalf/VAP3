@@ -173,32 +173,32 @@ b = [b; b_masselastic1];
 % than 2.5% of the previous value
 
 % Setting up upper bound of relative change constraints
-tempLM1 = diag(-1.025*ones(N_lmass,1),0);
-tempLM2 = diag(ones(N_lmass-1,1),1);
-
-A_lmass = tempLM1 + tempLM2;
-b_lmass = zeros(N_lmass,1);
-
-A_lmass(end,end) = 0;
-
-A = [padarray(A, [0 N_lmass], 0, 'post'); padarray(A_lmass,[0 N_elasticaxis+N_torstiff+N_bendstiff+N_massaxis], 0, 'pre')];
-b = [b; b_massaxis];
-
-% Setting up lower bound of relative change constraints
-tempLM1 = diag(0.975*ones(N_massaxis,1),0);
-tempLM2 = diag(-1*ones(N_massaxis-1,1),1);
-
-A_lmass1 = tempLM1 + tempLM2;
-b_lmass1 = zeros(N_lmass,1);
-
-A_lmass1(end,end) = 0;
-
-% Mass axis must be between 0.20c and 0.75c
-lb_lmass = 0.30*ones(N_lmass,1);
-ub_lmass = 2.5*ones(N_lmass,1);
-
-lb = [lb; lb_lmass];
-ub = [ub; ub_lmass];
-
-A = [A; padarray(A_lmass1, [0 N_bendstiff+N_torstiff+N_elasticaxis+N_massaxis], 0, 'pre')];
-b = [b; b_lmass1];
+% tempLM1 = diag(-1.025*ones(N_lmass,1),0);
+% tempLM2 = diag(ones(N_lmass-1,1),1);
+% 
+% A_lmass = tempLM1 + tempLM2;
+% b_lmass = zeros(N_lmass,1);
+% 
+% A_lmass(end,end) = 0;
+% 
+% A = [padarray(A, [0 N_lmass], 0, 'post'); padarray(A_lmass,[0 N_elasticaxis+N_torstiff+N_bendstiff+N_massaxis], 0, 'pre')];
+% b = [b; b_massaxis];
+% 
+% % Setting up lower bound of relative change constraints
+% tempLM1 = diag(0.975*ones(N_massaxis,1),0);
+% tempLM2 = diag(-1*ones(N_massaxis-1,1),1);
+% 
+% A_lmass1 = tempLM1 + tempLM2;
+% b_lmass1 = zeros(N_lmass,1);
+% 
+% A_lmass1(end,end) = 0;
+% 
+% % Mass axis must be between 0.20c and 0.75c
+% lb_lmass = 0.30*ones(N_lmass,1);
+% ub_lmass = 2.5*ones(N_lmass,1);
+% 
+% lb = [lb; lb_lmass];
+% ub = [ub; ub_lmass];
+% 
+% A = [A; padarray(A_lmass1, [0 N_bendstiff+N_torstiff+N_elasticaxis+N_massaxis], 0, 'pre')];
+% b = [b; b_lmass1];
