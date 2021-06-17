@@ -4,11 +4,13 @@ valDY = 0.5*INPU.vecSPAN/(INPU.valNSELE-1);
 
 temp_y = (0:valDY:0.5*INPU.vecSPAN)';
 
-[SURF, OUTP, INPU] = fcnBEAMFORCE(SURF, OUTP, COND, INPU, VEHI, FLAG, valDY, temp_y, valTIMESTEP);
+[SURF, OUTP, INPU] = fcnBEAMFORCE(SURF, OUTP, COND, INPU, FLAG, valTIMESTEP);
 
 % n = 15;
 % L = 16;
 % valDY = L/(n-1);
+OUTP.vecBEAMFORCE = 5*ones(INPU.valNSELE,1);
+OUTP.vecBEAMMOM = zeros(INPU.valNSELE,1);
 
 % INPU.matEIx = [60000*ones(n,1),zeros(n,2)];
 % INPU.matGJt = [30000*ones(n,1),zeros(n,1)];

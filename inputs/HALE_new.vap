@@ -159,7 +159,7 @@
 				<geometry>
 					<A_vecEA>0</A_vecEA>
 					<B_vecEA>0</B_vecEA>
-					<C_vecEA>0.2</C_vecEA>
+					<C_vecEA>0.55</C_vecEA>
 					
 					<A_vecCG>0</A_vecCG>
 					<B_vecCG>0</B_vecCG>

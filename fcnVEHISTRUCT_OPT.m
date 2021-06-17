@@ -1,10 +1,6 @@
 function [INPU, SURF] = fcnVEHISTRUCT_OPT(COND, INPU, SURF, FLAG)
 %% Geometric Properties
 
-valDY = 0.5*INPU.vecSPAN/(INPU.valNSELE-1);
-
-SURF.vecSTRUCTSPNDIST = (0:valDY:0.5*INPU.vecSPAN)';
-
 % Find indices for flexible wing(s)
 SURF.idxFLEX = find(SURF.vecDVEWING == find(FLAG.vecFLEXIBLE == 1));
 SURF.idxTAIL = find(SURF.vecDVEWING == 2);
@@ -41,6 +37,10 @@ SURF.vecSPANDIST = SURF.matCENTER(matROWS{1}(:,1),2);
 
 SURF.vecSPANLOC = [0; SURF.matNPVLST(SURF.matNPDVE(matROWS{1}(:,1),2),2)];
 
+SURF.vecSTRUCTSPNDIST = SURF.vecSPANLOC;
+INPU.valDY = SURF.vecSPANLOC(2:end)-SURF.vecSPANLOC(1:end-1);
+INPU.valNSELE = length(SURF.vecSTRUCTSPNDIST);
+
 SURF.idxNPVLST_tail = unique(SURF.matNPDVE(SURF.vecWINGTYPE == 2,:)); % Rows in VLST corresponding to tail coordinates
 
 idx_vlst = (1:size(SURF.matNPVLST,1))~=SURF.idxNPVLST_tail;
@@ -66,8 +66,13 @@ for i = 1:length(SURF.vecSPANLOC)
     j = j + 1;
 end
 
-idx = find(isnan(SURF.idx_struct) == 1);
-SURF.idx_struct(idx) = SURF.idx_struct(idx-1);
+for i = 1:length(SURF.vecSPANLOC)
+    idx = find(isnan(SURF.idx_struct(:,i)) | SURF.idx_struct(:,i) == 0);
+
+    if ~isempty(idx)
+        SURF.idx_struct(idx,i) = SURF.idx_struct(idx(1)-1,i);
+    end
+end
 
 struct_edgecrd = interp1(SURF.vecSPANDIST,SURF.vecCRDDIST,SURF.vecSTRUCTSPNDIST,'linear','extrap'); % Chord dist. at structural nodes
 
@@ -109,25 +114,25 @@ SURF.vecMAC = (2/3)*tempDVEEDGECRD(idx1,1).*(1 + taper_ratio + taper_ratio.^2)./
 % INPU.matEIx(:,1) = (INPU.vecEIxCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEIxCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEIxCOEFF(3))';
 
 % First derivative
-INPU.matEIx(2:end-1,2) = (INPU.matEIx(1:end-2,1)-INPU.matEIx(3:end,1))./(valDY);
-INPU.matEIx(1,2) = (-3*INPU.matEIx(1,1) + 4*INPU.matEIx(2,1) - INPU.matEIx(3,1))./(2*valDY);
-INPU.matEIx(end,2) = (3*INPU.matEIx(end,1) - 4*INPU.matEIx(end-1,1) + INPU.matEIx(end-2,1))./(2*valDY);
+INPU.matEIx(2:end-1,2) = (INPU.matEIx(1:end-2,1)-INPU.matEIx(3:end,1))./(INPU.valDY(2:end));
+INPU.matEIx(1,2) = (-3*INPU.matEIx(1,1) + 4*INPU.matEIx(2,1) - INPU.matEIx(3,1))./(2*INPU.valDY(1));
+INPU.matEIx(end,2) = (3*INPU.matEIx(end,1) - 4*INPU.matEIx(end-1,1) + INPU.matEIx(end-2,1))./(2*INPU.valDY(end));
 % INPU.matEIx(:,2) = (2*INPU.vecEIxCOEFF(1).*SURF.vecSTRUCTSPNDIST + INPU.vecEIxCOEFF(2))';
 % INPU.matEIx(:,3) = (repmat(2*INPU.vecEIxCOEFF(1),1,size(SURF.vecSTRUCTSPNDIST)))';
 
 % Second derivative
-INPU.matEIx(2:end-1,3) = (INPU.matEIx(1:end-2,1) - 2*INPU.matEIx(2:end-1,1) + INPU.matEIx(3:end,1))./(valDY*valDY);
-INPU.matEIx(1,3) = (2*INPU.matEIx(1,1) - 5*INPU.matEIx(2,1) + 4*INPU.matEIx(3,1) - INPU.matEIx(4,1))./(valDY*valDY*valDY);
-INPU.matEIx(end,3) = (2*INPU.matEIx(end,1) - 5*INPU.matEIx(end-1,1) + 4*INPU.matEIx(end-2,1) - INPU.matEIx(end-3,1))./(valDY*valDY*valDY);
+INPU.matEIx(2:end-1,3) = (INPU.matEIx(1:end-2,1) - 2*INPU.matEIx(2:end-1,1) + INPU.matEIx(3:end,1))./(INPU.valDY(2:end).*INPU.valDY(2:end));
+INPU.matEIx(1,3) = (2*INPU.matEIx(1,1) - 5*INPU.matEIx(2,1) + 4*INPU.matEIx(3,1) - INPU.matEIx(4,1))./(INPU.valDY(1)*INPU.valDY(1)*INPU.valDY(1));
+INPU.matEIx(end,3) = (2*INPU.matEIx(end,1) - 5*INPU.matEIx(end-1,1) + 4*INPU.matEIx(end-2,1) - INPU.matEIx(end-3,1))./(INPU.valDY(end)*INPU.valDY(end)*INPU.valDY(end));
 
 % Spanwise torsional stiffness distribution. Col 2 is the first derivative
-% INPU.matGJt(:,1) = (INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecGJtCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(3))';
+INPU.matGJt(:,1) = (INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecGJtCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(3))';
 % INPU.matGJt(:,2) = (2*INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(2))';
 
 % First derivative
-INPU.matGJt(2:end-1,2) = (INPU.matGJt(1:end-2,1)-INPU.matGJt(3:end,1))./(valDY);
-INPU.matGJt(1,2) = (-3*INPU.matGJt(1,1) + 4*INPU.matGJt(2,1) - INPU.matGJt(3,1))./(2*valDY);
-INPU.matGJt(end,2) = (3*INPU.matGJt(end,1) - 4*INPU.matGJt(end-1,1) + INPU.matGJt(end-2,1))./(2*valDY);
+INPU.matGJt(2:end-1,2) = (INPU.matGJt(1:end-2,1)-INPU.matGJt(3:end,1))./(INPU.valDY(2:end));
+INPU.matGJt(1,2) = (-3*INPU.matGJt(1,1) + 4*INPU.matGJt(2,1) - INPU.matGJt(3,1))./(2*INPU.valDY(1));
+INPU.matGJt(end,2) = (3*INPU.matGJt(end,1) - 4*INPU.matGJt(end-1,1) + INPU.matGJt(end-2,1))./(2*INPU.valDY(end));
 
 % INPU.vecEA = INPU.vecEACOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEACOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEACOEFF(3);
 % INPU.vecCG = INPU.vecCGCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecCGCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecCGCOEFF(3);

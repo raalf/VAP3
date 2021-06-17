@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --job-name=CREATeV_Opt
+#SBATCH --job-name=CREATeV_Opt_Surrogate
 #SBATCH --account=def-brami # adjust this to match the accounting group you are using to submit jobs
 #SBATCH --time=6-23:00:00         # adjust this to match the walltime of your job
 #SBATCH --nodes=1      

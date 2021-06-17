@@ -189,7 +189,12 @@ for i = 1:INPU.valVEHICLES
             vecSECTIONS(kk,1) = max(size(pan.section));
             
             for n = 1:vecSECTIONS(kk,1)
-                sec = pan.section{1,n};
+                                
+                if vecSECTIONS(kk,1) > 1
+                    sec = pan.section{1,n};
+                else
+                    sec = pan.section(1,n);
+                end
                 
                 matSECTIONS(kkk,:) = [str2double(sec.wing_x.Text) + matWINGORIG(k,1) str2double(sec.wing_y.Text) + matWINGORIG(k,2) str2double(sec.wing_z.Text) + matWINGORIG(k,3) str2double(sec.chord.Text) vecWINGINCID(k)+str2double(sec.twist.Text) i];
                 try cellCAIRFOIL{kkk,:} = sec.camber_airfoil.Text; catch cellCAIRFOIL{kkk,:} = nan; end

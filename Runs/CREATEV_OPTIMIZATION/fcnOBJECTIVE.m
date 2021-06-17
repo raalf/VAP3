@@ -1,4 +1,10 @@
-function [out] = fcnOBJECTIVE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
+function [out] = fcnOBJECTIVE(design_var)
+
+N_bendstiff = 15;
+N_torstiff = 15;
+N_elasticaxis = 15;
+N_massaxis = 15;
+home_dir = pwd;
 
 cd(home_dir)
 cd '../../'
@@ -207,9 +213,9 @@ if OUTP.TRIMFAIL == 0
 
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-    energy_alt = OUTP.vecZE(end,1);
+    energy_alt_gain = OUTP.vecZE(end,2) - OUTP.vecZE(COND.valGUSTSTART,2);
 
-    out = -energy_alt;
+    out = -energy_alt_gain;
 else
     out = Inf;
 end

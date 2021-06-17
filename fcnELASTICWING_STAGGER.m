@@ -36,9 +36,9 @@ function [OUTP] = fcnELASTICWING_STAGGER(OUTP, INPU, SURF, COND, VEHI, FLAG, val
 % INPU.valNSELE - Number of spanwise elements
 %
 
-valDY = 0.5*INPU.vecSPAN/(INPU.valNSELE-1);
+% valDY = 0.5*INPU.vecSPAN/(INPU.valNSELE-1);
 
-temp_y = (0:valDY:0.5*INPU.vecSPAN)';
+% temp_y = (0:valDY:0.5*INPU.vecSPAN)';
 
 valSTRUCTDELTIME = COND.valSDELTIME;
 
@@ -60,58 +60,118 @@ valSTRUCTTIME = tempTIME + 2;
 %     OUTP.matTWIST(1:valSTRUCTTIME-1,:) = OUTP.matTWIST((OUTP.valSTRUCTITER-1):OUTP.valSTRUCTITER,:);
 % end
 
-OUTP.vecDEF(3) = 0; % Zero deflection at root BC
-OUTP.vecTWIST(3) = 0; % Zero twist at root BC
 
-% Assemble load matrix
-matLOAD = [OUTP.vecBEAMFORCE, OUTP.vecBEAMMOM];
+% if FLAG.FLIGHTDYN == 0
+    OUTP.vecDEF(3) = 0; % Zero deflection at root BC
+    OUTP.vecTWIST(3) = 0; % Zero twist at root BC
+    
+%     OUTP.vecBEAMFORCE = 5*ones(length(OUTP.vecBEAMFORCE),1);
+    
+    % Assemble load matrix
+%     matLOAD = [10*ones(length(OUTP.vecBEAMFORCE),1), 0*OUTP.vecBEAMMOM];
+    matLOAD = [OUTP.vecBEAMFORCE, OUTP.vecBEAMMOM];
 
-for yy = 4:(INPU.valNSELE+2)
+    for yy = 4:(INPU.valNSELE+2)
 
-    %% Geometric property assembly
+        %% Geometric property assembly
 
-    % Assemble mass matrix
-    matMASS = [INPU.vecLM(yy-2), -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2); -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2), INPU.vecJT(yy-2)];
+        % Assemble mass matrix
+        matMASS = [INPU.vecLM(yy-2), -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2); -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2), INPU.vecJT(yy-2)];
 
-    % Assemble stiffness matrices
-    matK_1 = [INPU.matEIx(yy-2,3), 0; 0, 0];
-    matK_2 = [INPU.matEIx(yy-2,2), 0; 0, -INPU.matGJt(yy-2,2)];
-    matK_3 = [INPU.matEIx(yy-2,1), 0; 0, -INPU.matGJt(yy-2,1)];
-    matB = [SURF.matB(1) 0; 0 SURF.matB(2)];
+        % Assemble stiffness matrices
+        matK_1 = [INPU.matEIx(yy-2,3), 0; 0, 0];
+        matK_2 = [INPU.matEIx(yy-2,2), 0; 0, -INPU.matGJt(yy-2,2)];
+        matK_3 = [INPU.matEIx(yy-2,1), 0; 0, -INPU.matGJt(yy-2,1)];
+        matB = [SURF.matB(1) 0; 0 SURF.matB(2)];
 
-    %% Finite difference relations for partial derivatives
+        %% Finite difference relations for partial derivatives
 
-    % Finite difference relations for partial derivatives w.r.t
-    % time
-    valUDOT = (OUTP.matDEF(valSTRUCTTIME-1,yy) - OUTP.matDEF(valSTRUCTTIME - 2, yy))./valSTRUCTDELTIME;
-    valTDOT = (OUTP.matTWIST(valSTRUCTTIME-1,yy) - OUTP.matTWIST(valSTRUCTTIME - 2,yy))./valSTRUCTDELTIME;
+        % Finite difference relations for partial derivatives w.r.t
+        % time
+        valUDOT = (OUTP.matDEF(valSTRUCTTIME-1,yy) - OUTP.matDEF(valSTRUCTTIME - 2, yy))./valSTRUCTDELTIME;
+        valTDOT = (OUTP.matTWIST(valSTRUCTTIME-1,yy) - OUTP.matTWIST(valSTRUCTTIME - 2,yy))./valSTRUCTDELTIME;
 
-    % Finite difference relations for partial derivative of deflection w.r.t Y
-    valU_yy = (OUTP.matDEF(valSTRUCTTIME-1,yy+1) - 2*OUTP.matDEF(valSTRUCTTIME-1,yy) + OUTP.matDEF(valSTRUCTTIME-1,yy-1))/(valDY)^2;
-    valU_yyy = (OUTP.matDEF(valSTRUCTTIME-1,yy+2) - 3*OUTP.matDEF(valSTRUCTTIME-1,yy+1) + 3*OUTP.matDEF(valSTRUCTTIME-1,yy)- ...
-        OUTP.matDEF(valSTRUCTTIME-1,yy-1))/(valDY)^3;
-    valU_yyyy = (OUTP.matDEF(valSTRUCTTIME-1,yy+2) - 4*OUTP.matDEF(valSTRUCTTIME-1,yy+1) + 6*OUTP.matDEF(valSTRUCTTIME-1,yy) - ...
-        4*OUTP.matDEF(valSTRUCTTIME-1,yy-1) + OUTP.matDEF(valSTRUCTTIME-1,yy-2))/(valDY)^4;
+        % Finite difference relations for partial derivative of deflection w.r.t Y
+        valU_yy = (OUTP.matDEF(valSTRUCTTIME-1,yy+1) - 2*OUTP.matDEF(valSTRUCTTIME-1,yy) + OUTP.matDEF(valSTRUCTTIME-1,yy-1))/(INPU.valDY(yy-3))^2;
+        valU_yyy = (OUTP.matDEF(valSTRUCTTIME-1,yy+2) - 3*OUTP.matDEF(valSTRUCTTIME-1,yy+1) + 3*OUTP.matDEF(valSTRUCTTIME-1,yy)- ...
+            OUTP.matDEF(valSTRUCTTIME-1,yy-1))/(INPU.valDY(yy-3))^3;
+        valU_yyyy = (OUTP.matDEF(valSTRUCTTIME-1,yy+2) - 4*OUTP.matDEF(valSTRUCTTIME-1,yy+1) + 6*OUTP.matDEF(valSTRUCTTIME-1,yy) - ...
+            4*OUTP.matDEF(valSTRUCTTIME-1,yy-1) + OUTP.matDEF(valSTRUCTTIME-1,yy-2))/(INPU.valDY(yy-3))^4;
 
-    % Finite difference relations for partial derivative of twist w.r.t Y
-    valTHETA_y = (OUTP.matTWIST(valSTRUCTTIME-1,yy+1) - OUTP.matTWIST(valSTRUCTTIME-1,yy-1))/(2*valDY);
-    valTHETA_yy = (OUTP.matTWIST(valSTRUCTTIME-1,yy+1) - 2*OUTP.matTWIST(valSTRUCTTIME-1,yy) + OUTP.matTWIST(valSTRUCTTIME-1,yy-1))/(valDY^2);
+        % Finite difference relations for partial derivative of twist w.r.t Y
+        valTHETA_y = (OUTP.matTWIST(valSTRUCTTIME-1,yy+1) - OUTP.matTWIST(valSTRUCTTIME-1,yy-1))/(2*INPU.valDY(yy-3));
+        valTHETA_yy = (OUTP.matTWIST(valSTRUCTTIME-1,yy+1) - 2*OUTP.matTWIST(valSTRUCTTIME-1,yy) + OUTP.matTWIST(valSTRUCTTIME-1,yy-1))/(INPU.valDY(yy-3)^2);
 
-    %% Solve matrix equation
+        %% Solve matrix equation
 
-    % Temp variable with the wing deflection and twist stored as a matrix. The
-    % first row is the deflection, w/ each column as a spanwise station. The
-    % second row is the twist, w/ each column as a spanwise station.
+        % Temp variable with the wing deflection and twist stored as a matrix. The
+        % first row is the deflection, w/ each column as a spanwise station. The
+        % second row is the twist, w/ each column as a spanwise station.
 
-    tempTWISTBEND = 2.*[OUTP.matDEF(valSTRUCTTIME-1,yy); OUTP.matTWIST(valSTRUCTTIME-1,yy)] - [OUTP.matDEF(valSTRUCTTIME-2,yy); OUTP.matTWIST(valSTRUCTTIME-2,yy)] ...
-        + (valSTRUCTDELTIME^2).*inv(matMASS)*([matLOAD(yy-2,1); matLOAD(yy-2,2)] - matK_1*[valU_yy; 0] - matK_2*[valU_yyy; valTHETA_y] -...
-        matK_3*[valU_yyyy; valTHETA_yy] - matB*[valUDOT; valTDOT]);
+        tempTWISTBEND = 2.*[OUTP.matDEF(valSTRUCTTIME-1,yy); OUTP.matTWIST(valSTRUCTTIME-1,yy)] - [OUTP.matDEF(valSTRUCTTIME-2,yy); OUTP.matTWIST(valSTRUCTTIME-2,yy)] ...
+            + (valSTRUCTDELTIME^2).*inv(matMASS)*([matLOAD(yy-2,1); matLOAD(yy-2,2)] - matK_1*[valU_yy; 0] - matK_2*[valU_yyy; valTHETA_y] -...
+            matK_3*[valU_yyyy; valTHETA_yy] - matB*[valUDOT; valTDOT]);
 
-    % Output result of deflection and twist to separate vectors
-    OUTP.vecDEF(yy) = tempTWISTBEND(1,:);
-    OUTP.vecTWIST(yy) = tempTWISTBEND(2,:);
+        % Output result of deflection and twist to separate vectors
+        OUTP.vecDEF(yy) = tempTWISTBEND(1,:);
+        OUTP.vecTWIST(yy) = tempTWISTBEND(2,:);
+        
+        OUTP.valUDOT(yy-2,valTIMESTEP) = valUDOT;
 
-end
+    end
+% else
+%     % Assemble load matrix
+%     matLOAD = [OUTP.vecBEAMFORCE, OUTP.vecBEAMMOM];
+%     INPU.valDY = [INPU.valDY(1); INPU.valDY];
+% 
+%     for yy = 3:(INPU.valNSELE+2)
+% 
+%         %% Geometric property assembly
+% 
+%         % Assemble mass matrix
+%         matMASS = [INPU.vecLM(yy-2), -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2); -INPU.vecLM(yy-2).*SURF.vecLSM(yy-2), INPU.vecJT(yy-2)];
+% 
+%         % Assemble stiffness matrices
+%         matK_1 = [INPU.matEIx(yy-2,3), 0; 0, 0];
+%         matK_2 = [INPU.matEIx(yy-2,2), 0; 0, -INPU.matGJt(yy-2,2)];
+%         matK_3 = [INPU.matEIx(yy-2,1), 0; 0, -INPU.matGJt(yy-2,1)];
+%         matB = [SURF.matB(1) 0; 0 SURF.matB(2)];
+% 
+%         %% Finite difference relations for partial derivatives
+% 
+%         % Finite difference relations for partial derivatives w.r.t
+%         % time
+%         valUDOT = (OUTP.matDEF(valSTRUCTTIME-1,yy) - OUTP.matDEF(valSTRUCTTIME - 2, yy))./valSTRUCTDELTIME;
+%         valTDOT = (OUTP.matTWIST(valSTRUCTTIME-1,yy) - OUTP.matTWIST(valSTRUCTTIME - 2,yy))./valSTRUCTDELTIME;
+% 
+%         % Finite difference relations for partial derivative of deflection w.r.t Y
+%         valU_yy = (OUTP.matDEF(valSTRUCTTIME-1,yy+1) - 2*OUTP.matDEF(valSTRUCTTIME-1,yy) + OUTP.matDEF(valSTRUCTTIME-1,yy-1))/(INPU.valDY(yy-2))^2;
+%         valU_yyy = (OUTP.matDEF(valSTRUCTTIME-1,yy+2) - 3*OUTP.matDEF(valSTRUCTTIME-1,yy+1) + 3*OUTP.matDEF(valSTRUCTTIME-1,yy)- ...
+%             OUTP.matDEF(valSTRUCTTIME-1,yy-1))/(INPU.valDY(yy-2))^3;
+%         valU_yyyy = (OUTP.matDEF(valSTRUCTTIME-1,yy+2) - 4*OUTP.matDEF(valSTRUCTTIME-1,yy+1) + 6*OUTP.matDEF(valSTRUCTTIME-1,yy) - ...
+%             4*OUTP.matDEF(valSTRUCTTIME-1,yy-1) + OUTP.matDEF(valSTRUCTTIME-1,yy-2))/(INPU.valDY(yy-2))^4;
+% 
+%         % Finite difference relations for partial derivative of twist w.r.t Y
+%         valTHETA_y = (OUTP.matTWIST(valSTRUCTTIME-1,yy+1) - OUTP.matTWIST(valSTRUCTTIME-1,yy-1))/(2*INPU.valDY(yy-2));
+%         valTHETA_yy = (OUTP.matTWIST(valSTRUCTTIME-1,yy+1) - 2*OUTP.matTWIST(valSTRUCTTIME-1,yy) + OUTP.matTWIST(valSTRUCTTIME-1,yy-1))/(INPU.valDY(yy-2)^2);
+% 
+%         %% Solve matrix equation
+% 
+%         % Temp variable with the wing deflection and twist stored as a matrix. The
+%         % first row is the deflection, w/ each column as a spanwise station. The
+%         % second row is the twist, w/ each column as a spanwise station.
+% 
+%         tempTWISTBEND = 2.*[OUTP.matDEF(valSTRUCTTIME-1,yy); OUTP.matTWIST(valSTRUCTTIME-1,yy)] - [OUTP.matDEF(valSTRUCTTIME-2,yy); OUTP.matTWIST(valSTRUCTTIME-2,yy)] ...
+%             + (valSTRUCTDELTIME^2).*inv(matMASS)*([matLOAD(yy-2,1); matLOAD(yy-2,2)] - matK_1*[valU_yy; 0] - matK_2*[valU_yyy; valTHETA_y] -...
+%             matK_3*[valU_yyyy; valTHETA_yy] - matB*[valUDOT; valTDOT]);
+% 
+%         % Output result of deflection and twist to separate vectors
+%         OUTP.vecDEF(yy) = tempTWISTBEND(1,:);
+%         OUTP.vecTWIST(yy) = tempTWISTBEND(2,:);
+% 
+%     end
+% end
+    
 
 OUTP.vecDEF(INPU.valNSELE+3) = 2*OUTP.vecDEF(INPU.valNSELE+2)...
     -OUTP.vecDEF(INPU.valNSELE+1); % BC for deflection one element beyond wing (positive span direction)
@@ -131,8 +191,8 @@ OUTP.vecDEF = OUTP.matDEF(end,:);
 OUTP.vecTWIST = OUTP.matTWIST(end,:);
 
 % Spanwise deflection and twist wrt to global timestep
-OUTP.matDEFGLOB(valTIMESTEP,:) = interp1(temp_y,OUTP.matDEF(valSTRUCTTIME,3:end-2),SURF.vecSPANLOC);
-OUTP.matTWISTGLOB(valTIMESTEP,:) = interp1(temp_y,OUTP.matTWIST(valSTRUCTTIME,3:end-1),SURF.vecSPANLOC);
+OUTP.matDEFGLOB(valTIMESTEP,:) = interp1(SURF.vecSTRUCTSPNDIST,OUTP.matDEF(valSTRUCTTIME,3:end-2),SURF.vecSPANLOC);
+OUTP.matTWISTGLOB(valTIMESTEP,:) = interp1(SURF.vecSTRUCTSPNDIST,OUTP.matTWIST(valSTRUCTTIME,3:end-1),SURF.vecSPANLOC);
 
 for i = 2:length(SURF.vecSPANLOC)
     OUTP.matSLOPE(valTIMESTEP,i) = asin((OUTP.matDEFGLOB(valTIMESTEP,i)-OUTP.matDEFGLOB(valTIMESTEP,i-1))/(SURF.vecSPANLOC(i)-SURF.vecSPANLOC(i-1)));

@@ -91,7 +91,8 @@ force_loc = SURF.matVLST(SURF.matDVE(rows,1),:);
 delta = SURF.matAEROCNTR - SURF.matBEAMLOC(:,:,valTIMESTEP-1);
 OUTP.DEBUG.delta(:,:,valTIMESTEP) = delta;
 % % % % delta = force_loc(1:end-INPU.vecM(1),:) - repmat(SURF.matBEAMLOC(1:end-1,:,valTIMESTEP-1),INPU.vecM(1),1);
-mom_aero = cross(delta(1:end-1,:),dot(f_aero(1:end-1,:),SURF.matDVENORM(ledves(isCurWing),:),2).*SURF.matDVENORM(ledves(isCurWing),:)); % Couple moment from moving force to DVE edge
+mom_aero = cross(delta(1:end-1,:),dot(f_aero(1:end-1,:),SURF.matDVENORM(ledves(isCurWing),:),2).*SURF.matDVENORM(ledves(isCurWing),:))...
+    + [zeros(length(delta)-1,1) 0.5.*COND.valDENSITY.*COND.vecVEHVINF.*COND.vecVEHVINF.*SURF.vecMAC.*SURF.vecMAC.*OUTP.vecCMDIST(1:length(delta)-1)' zeros(length(delta)-1,1)];
 % mom_aero = fcnGLOBSTAR(mom_aero,SURF.vecDVEROLL(ledves(isCurWing)),SURF.vecDVEPITCH(ledves(isCurWing)),SURF.vecDVEYAW(ledves(isCurWing)));
 % % % % mom_couple = cross(delta,liftperspan);
 
@@ -142,6 +143,9 @@ else
 end
 
 OUTP.vecBEAMFORCE = f_aero(1:end-1,:) + f_inertial;
+
+bendmom_delta = SURF.matBEAMLOC(end,:,valTIMESTEP-1) - SURF.matAEROCNTR(1:end-1,:);
+OUTP.vecBEAMBENDMOM = cross(bendmom_delta,OUTP.vecBEAMFORCE);
 OUTP.vecBEAMFORCE = [dot(OUTP.vecBEAMFORCE,SURF.matDVENORM(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2); 0];
 
 OUTP.vecBEAMMOM = [dot(mom_aero + mom_inertial,s(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2); 0];

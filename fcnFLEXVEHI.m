@@ -1,7 +1,4 @@
 function [COND, INPU, OUTP, MISC, SURF, FLAG, TRIM, VEHI] = fcnFLEXVEHI(INPU, COND, SURF, OUTP, FLAG, MISC, VEHI, TRIM, valTIMESTEP)
-
-% [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF);
-
 % Applies gust after aeroelastic convergence
 % Michael A. D. Melville, Denver, CO, 80218
 

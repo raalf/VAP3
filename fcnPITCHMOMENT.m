@@ -1,5 +1,4 @@
 function [SURF, OUTP] = fcnPITCHMOMENT(FLAG, SURF, OUTP, INPU, COND, VEHI)
-% #tbt to this function. It's baaaccccccckkkkkkkkkk
 % Computing the total pitching moment for the vehicle
 
 OUTP.vecVEHPITCHMOM = [];
@@ -177,7 +176,7 @@ for i = 1:INPU.valVEHICLES
             dpdist = [dp_wing; dp_tail]; % Visocus drag force distribution
         else
             dpdist = zeros(size(SURF.vecDVEDIND(tedves,:),1),1);
-            OUTP.vecCMDIST = zeros(length(isCurWing),1);
+%             OUTP.vecCMDIST = zeros(length(isCurWing),1);
         end
         
         % Moment due to normal force and drag
@@ -201,7 +200,13 @@ for i = 1:INPU.valVEHICLES
 %         deltaM_mass = cross(VEHI.vecFUSECG-SURF.matEALST(1,:),[0,0,-VEHI.vecFUSEMASS*9.81]) + sum(cross(VEHI.vecWINGCG(2:end,:)-SURF.matEALST(1,:),[zeros(size(VEHI.vecWINGMASS(2:end),1),2),-VEHI.vecWINGMASS(2:end)*9.81]),1); % Pitching moment due to masses of wing, fuse, tail, etc.      
         
         if j == 2
-            OUTP.vecCMDIST(isCurWing) = OUTP.vecCMDIST(isCurWing)*0;
+%             OUTP.vecCMDIST(isCurWing) = -0.025;
+            OUTP.vecCMDIST(isCurWing) = 0;
+        end
+        
+        if j == 1
+%             OUTP.vecCMDIST(isCurWing) = -0.08;
+            OUTP.vecCMDIST(isCurWing) = 0;
         end
         
         if any(isnan(OUTP.vecCMDIST)) == 1
@@ -210,7 +215,7 @@ for i = 1:INPU.valVEHICLES
         
         % Double vehicle pitch moment for symmetry
         if any(INPU.vecSYM == 1) == 1
-            OUTP.vecVEHPITCHMOM(i,j) = 2*(deltaM + sum(OUTP.vecCMDIST(isCurWing).*(0.5*COND.vecVEHVINF*COND.vecVEHVINF*vecAREADIST(isCurWing)'*INPU.vecCMAC(i)),1));
+            OUTP.vecVEHPITCHMOM(i,j) = 2*(deltaM + sum(OUTP.vecCMDIST(isCurWing)'.*(0.5*COND.vecVEHVINF*COND.vecVEHVINF*vecAREADIST(isCurWing)'*INPU.vecCMAC(i)),1));
         else
             OUTP.vecVEHPITCHMOM(i,j) = sum(deltaM,1);
         end

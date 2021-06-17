@@ -7,8 +7,8 @@ iter = 1;
 CL(iter,1) = OUTP.vecCL(end);
 CM(iter,1) = OUTP.vecVEHCM(end);
 
-CZ(iter,1) = OUTP.GlobForce(3)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
-CX(iter,1) = OUTP.GlobForce(1)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
+CZ(iter,1) = OUTP.GlobForce(end,3)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
+CX(iter,1) = OUTP.GlobForce(end,1)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
 CZtrim = COND.vecVEHWEIGHT/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
 
 if max(max(SURF.vecDVEWING)) > 1
@@ -82,8 +82,8 @@ while max(abs(tol)) > 1e-3
     CL(iter,1) = OUTP.vecCL(end);
     CM(iter,1) = OUTP.vecVEHCM(end);
 
-    CZ(iter,1) = OUTP.GlobForce(3)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
-    CX(iter,1) = OUTP.GlobForce(1)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
+    CZ(iter,1) = OUTP.GlobForce(end,3)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
+    CX(iter,1) = OUTP.GlobForce(end,1)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
     
 %     tol = [(COND.CLtrim - OUTP.vecCL(end))*(COND.CLtrim - OUTP.vecCL(end)); OUTP.vecVEHCM(end)*OUTP.vecVEHCM(end)];
 %     tol = [(CZtrim - CZ(iter,1))*(CZtrim - CZ(iter,1)); OUTP.vecVEHCM(end)*OUTP.vecVEHCM(end)];

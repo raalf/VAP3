@@ -77,8 +77,11 @@ VEHI.vecPROPLOC_START = VEHI.vecPROPLOC;
 % tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 
-save('HALE_Validation_10ms_Rigid.mat')
+% save('HALE_Validation_10ms_Rigid.mat')
+FLAG.STIFFWING = 0;
 
+OUTP.aero_iter = 1;
+if FLAG.STIFFWING == 0
 FLAG.TRIM = 0;
 FLAG.STATICAERO = 1;
 OUTP.aero_iter = 1;
@@ -150,15 +153,14 @@ end
 OUTP.aero_iter = 0;
 tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
-% save('HALE_Validation_10ms_Sigma3_Trim.mat')
-
+save('HALE_Trim.mat')
+end
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
-% load('HALE_Validation_10ms_Sigma3_Trim.mat')
+load('HALE_Trim.mat')
 SURF.matBEAMACC = [];
-COND.valGUSTAMP = 1;
+COND.valGUSTAMP = 2;
 COND.valGUSTL = 50;
 COND.valGUSTSTART = 15;
-FLAG.STIFFWING = 0;
 
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
@@ -173,12 +175,16 @@ FLAG.RELAX = 0;
 FLAG.GUSTMODE = 2;
 FLAG.SAVETIMESTEP = 0;
 
+
 VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
 
 [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
 
 COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
 
+% OUTP.vecFUSEREACTION = sum(OUTP.vecBEAMFORCE(2:end).*INPU.valDY,1);
+
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
 % save('G:\My Drive\PhD\Validation\Gust Simulation\Sigma = 3\25EA\HALE_Validation_75mGust_Flexible_25EA.mat')
+save('C:\Users\Michael\Desktop\Discus_Flexible.mat')

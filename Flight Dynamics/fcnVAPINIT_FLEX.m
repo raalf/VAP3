@@ -41,6 +41,8 @@ catch
     FLAG.STRUCTURE = 0; 
 end
 
+[INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
+
 n = 1;
 COND.valGUSTTIME = 1;
 SURF.gust_vel_old = zeros(SURF.valNELE,1);

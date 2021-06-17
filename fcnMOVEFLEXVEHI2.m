@@ -59,12 +59,14 @@ end
         end
 
     end
-
-    SURF.matBEAMROLL(:,valTIMESTEP) = SURF.vecDVEROLL(1:INPU.valNSELE-1);
-    dRy = repmat(cumsum(ry)',size(SURF.idx_struct(:,i),1),1) - SURF.matNPVLST(1:tempENDWING,2);
-    dRy2 = repmat(cumsum(ry2)',size(SURF.idx_struct(:,i),1),1) - SURF.matNPVLST(1:tempENDWING,2);
-    dRy = dRy - dRy2;
-    dRz = repmat(rz',size(SURF.idx_struct(:,i),1),1);
+    
+    for i = 1:size(SURF.idx_struct,2)
+        SURF.matBEAMROLL(:,valTIMESTEP) = SURF.vecDVEROLL(1:INPU.valNSELE-1);
+        dRy(unique(SURF.idx_struct(:,i)),1) = repmat(cumsum(ry(i))',size(unique(SURF.idx_struct(:,i)),1),1) - SURF.matNPVLST(unique(SURF.idx_struct(:,i)),2);
+        dRy2(unique(SURF.idx_struct(:,i)),1) = repmat(cumsum(ry2(i))',size(unique(SURF.idx_struct(:,i)),1),1) - SURF.matNPVLST(unique(SURF.idx_struct(:,i)),2);
+        dRy(unique(SURF.idx_struct(:,i)),1) = dRy(unique(SURF.idx_struct(:,i)),1) - dRy2(unique(SURF.idx_struct(:,i)),1);
+        dRz(unique(SURF.idx_struct(:,i)),1) = repmat(rz(i)',size(unique(SURF.idx_struct(:,i)),1),1);
+    end
     
     % Span vector of the beam
 %     s = repmat([0 -1 0; -(SURF.matBEAMLOC(2:end,:,valTIMESTEP-1) - SURF.matBEAMLOC(1:end-1,:,valTIMESTEP-1))./rij],INPU.vecM(1)+1,1);
@@ -78,10 +80,9 @@ end
     
     SURF.matEALST(1:tempENDWING,:) = SURF.matEALST(1:tempENDWING,:) + VEHI.matGLOBUVW.*COND.valDELTIME + elastic_translation;
     SURF.matCGLST(1:tempENDWING,:) = SURF.matCGLST(1:tempENDWING,:) + VEHI.matGLOBUVW.*COND.valDELTIME + elastic_translation;
-    SURF.matAEROCNTR = SURF.matAEROCNTR + VEHI.matGLOBUVW.*COND.valDELTIME + elastic_translation(1:INPU.vecN(1)+1,:);
+    SURF.matAEROCNTR = SURF.matAEROCNTR + VEHI.matGLOBUVW.*COND.valDELTIME + elastic_translation(1:sum(INPU.vecN(INPU.vecPANELWING == 1),1)+1,:);
     
-    SURF.matBEAMOMEGA(:,:,valTIMESTEP) = [(3*SURF.matBEAMROLL(:,valTIMESTEP) - 4*SURF.matBEAMROLL(:,valTIMESTEP-1) + SURF.matBEAMROLL(:,valTIMESTEP-2))./(2*COND.valDELTIME),zeros(INPU.valNSELE-1,2)];
-    
+    SURF.matBEAMOMEGA(:,:,valTIMESTEP) = [(3*SURF.matBEAMROLL(:,valTIMESTEP) - 4*SURF.matBEAMROLL(:,valTIMESTEP-1) + SURF.matBEAMROLL(:,valTIMESTEP-2))./(2*COND.valDELTIME),zeros(INPU.valNSELE-1,2)];    
     
     % Average y-location of elastic axis to find y-location of wing CG
     SURF.vecWINGCG(:,2) = (SURF.matEALST(2:SURF.idx_struct(1,end),2)+SURF.matEALST(1:SURF.idx_struct(1,end)-1,2))./2;
