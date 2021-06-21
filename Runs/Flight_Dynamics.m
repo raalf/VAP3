@@ -17,13 +17,13 @@ addpath('Flight Dynamics')
 % FLAG.OPT = 0;
 % COND.valMAXTRIMITER = 50;
 % 
-% % load('C:/Users/Michael/Desktop/dvhistory.txt')
+% % load('C:/Users/Michael/Desktop/opthistory.txt')
 % % 
-% % des = 192;
-% % INPU.matEIx(:,1) = dvhistory(des,1:15);
-% % INPU.matGJt(:,1) = dvhistory(des,16:30);
-% % INPU.vecEA(:,1) = dvhistory(des,31:45);
-% % INPU.vecCG(:,1) = dvhistory(des,46:60);
+% % des = 7;
+% % INPU.matEIx(:,1) = opthistory(des,2:16);
+% % INPU.matGJt(:,1) = opthistory(des,17:31);
+% % INPU.vecEA(:,1) = opthistory(des,32:46);
+% % INPU.vecCG(:,1) = opthistory(des,47:61);
 % 
 % [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 % 
@@ -159,14 +159,14 @@ addpath('Flight Dynamics')
 load('HALE_Trim.mat')
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
-COND.valGUSTL = 75;
-COND.valGUSTSTART = 15;
+COND.valGUSTL = 50;
+COND.valGUSTSTART = 50;
 
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
 valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
 COND.valMAXTIME = ceil((COND.valGUSTL + valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-COND.valSTIFFSTEPS = 15;
+COND.valSTIFFSTEPS = 3;
 COND.valSTARTFORCES = 1;
 FLAG.FLIGHTDYN = 1;
 FLAG.STATICAERO = 0;

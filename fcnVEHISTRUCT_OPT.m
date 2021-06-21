@@ -114,7 +114,7 @@ SURF.vecMAC = (2/3)*tempDVEEDGECRD(idx1,1).*(1 + taper_ratio + taper_ratio.^2)./
 % INPU.matEIx(:,1) = (INPU.vecEIxCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEIxCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEIxCOEFF(3))';
 
 % First derivative
-INPU.matEIx(2:end-1,2) = (INPU.matEIx(1:end-2,1)-INPU.matEIx(3:end,1))./(INPU.valDY(2:end));
+INPU.matEIx(2:end-1,2) = (INPU.matEIx(3:end,1)-INPU.matEIx(1:end-2,1))./(2*INPU.valDY(2:end));
 INPU.matEIx(1,2) = (-3*INPU.matEIx(1,1) + 4*INPU.matEIx(2,1) - INPU.matEIx(3,1))./(2*INPU.valDY(1));
 INPU.matEIx(end,2) = (3*INPU.matEIx(end,1) - 4*INPU.matEIx(end-1,1) + INPU.matEIx(end-2,1))./(2*INPU.valDY(end));
 % INPU.matEIx(:,2) = (2*INPU.vecEIxCOEFF(1).*SURF.vecSTRUCTSPNDIST + INPU.vecEIxCOEFF(2))';
@@ -130,7 +130,7 @@ INPU.matGJt(:,1) = (INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecGJtC
 % INPU.matGJt(:,2) = (2*INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(2))';
 
 % First derivative
-INPU.matGJt(2:end-1,2) = (INPU.matGJt(1:end-2,1)-INPU.matGJt(3:end,1))./(INPU.valDY(2:end));
+INPU.matGJt(2:end-1,2) = (INPU.matGJt(3:end,1)-INPU.matGJt(1:end-2,1))./(2*INPU.valDY(2:end));
 INPU.matGJt(1,2) = (-3*INPU.matGJt(1,1) + 4*INPU.matGJt(2,1) - INPU.matGJt(3,1))./(2*INPU.valDY(1));
 INPU.matGJt(end,2) = (3*INPU.matGJt(end,1) - 4*INPU.matGJt(end-1,1) + INPU.matGJt(end-2,1))./(2*INPU.valDY(end));
 

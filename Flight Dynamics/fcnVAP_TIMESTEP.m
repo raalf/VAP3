@@ -110,7 +110,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
             
             [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
             
-            Mstruct = 2*sum(OUTP.vecBEAMMOM.*[INPU.valDY; INPU.valDY(end)],1) + 2*OUTP.vecFUSEV(valTIMESTEP-1,1)*(INPU.vecVEHCG(1) - SURF.matBEAMLOC(1,1,valTIMESTEP-1));
+            Mstruct = 2*OUTP.vecFUSEM(valTIMESTEP-1,1) + 2*OUTP.vecFUSEV(valTIMESTEP-1,1)*(INPU.vecVEHCG(1) - SURF.matBEAMLOC(1,1,valTIMESTEP-1));
             [OUTP] = fcnTAILMOM(SURF, VEHI, OUTP, INPU, COND, FLAG);
             M = Mstruct + OUTP.vecVEHPITCHMOM;
 %             M = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM;
