@@ -114,7 +114,7 @@ for k = 1:length(uniqueAirfoil)
         
         F = scatteredInterpolant(Re,Alpha,Cdp,'linear','nearest');
         
-        if sum(idxSTALL) > 1
+        if any(idxSTALL)
             if flagPRINT == 1
                 disp('Airfoil sections have stalled.')
             end
