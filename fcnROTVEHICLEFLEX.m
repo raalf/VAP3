@@ -1,7 +1,7 @@
 function [matVLST, matCENTER,...
-    matROTORHUBGLOB, matROTORAXIS, matNTVLST, vecVEHCG, matEALST, vecWINGCG, vecPAYLCG, vecFUSECG, vecTAILCG, vecBFRAME, matAEROCNTR] = fcnROTVEHICLEFLEX( matDVE, matNPDVE, matVLST, ...
+    matROTORHUBGLOB, matROTORAXIS, matNTVLST, vecVEHCG, matEALST, vecWINGCG, vecPAYLCG, vecFUSEMASSLOC, vecTAILCG, vecBFRAME, matAEROCNTR] = fcnROTVEHICLEFLEX( matDVE, matNPDVE, matVLST, ...
     matCENTER, valVEHICLES, vecDVEVEHICLE, matVEHORIG, ...
-    matVEHROT, matROTORHUB, matROTORAXIS, vecROTORVEH, matNTVLST, vecVEHCG, matEALST, vecWINGCG, vecPAYLCG, vecFUSECG, vecTAILCG, vecBFRAME, matAEROCNTR)
+    matVEHROT, matROTORHUB, matROTORAXIS, vecROTORVEH, matNTVLST, vecVEHCG, matEALST, vecWINGCG, vecPAYLCG, vecFUSEMASSLOC, vecTAILCG, vecBFRAME, matAEROCNTR)
 %FCNROTVEHICLE Summary of this function goes here
 %   using for loop to rotate each vehicle with respect with their origin
 %   position in global coordinates
@@ -31,7 +31,7 @@ for n = 1:valVEHICLES
     matAEROCNTR = matAEROCNTR - repmat(matVEHORIG(n,:),size(matAEROCNTR,1),1);
     vecWINGCG = vecWINGCG - repmat(matVEHORIG(n,:),valCGLOC,1);
     vecPAYLCG = vecPAYLCG - matVEHORIG(n,:);
-    vecFUSECG = vecFUSECG - matVEHORIG(n,:);
+    vecFUSEMASSLOC = vecFUSEMASSLOC - matVEHORIG(n,:);
     vecTAILCG = vecTAILCG - matVEHORIG(n,:);
     
     % rotate
@@ -45,7 +45,7 @@ for n = 1:valVEHICLES
     matAEROCNTR = matAEROCNTR*dcm;
     vecWINGCG = vecWINGCG*dcm;
     vecPAYLCG = vecPAYLCG*dcm;
-    vecFUSECG = vecFUSECG*dcm;
+    vecFUSEMASSLOC = vecFUSEMASSLOC*dcm;
     vecTAILCG = vecTAILCG*dcm;
     
     dcm = angle2dcm(matVEHROT(n,3), matVEHROT(n,1), -matVEHROT(n,2), 'ZXY');
@@ -65,7 +65,7 @@ for n = 1:valVEHICLES
     matAEROCNTR = matAEROCNTR + repmat(matVEHORIG(n,:),size(matAEROCNTR,1),1);
     vecWINGCG = vecWINGCG + repmat(matVEHORIG(n,:),valCGLOC,1);
     vecPAYLCG = vecPAYLCG + matVEHORIG(n,:);
-    vecFUSECG = vecFUSECG + matVEHORIG(n,:);
+    vecFUSEMASSLOC = vecFUSEMASSLOC + matVEHORIG(n,:);
     vecTAILCG = vecTAILCG + matVEHORIG(n,:);
 end
 

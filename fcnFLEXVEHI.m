@@ -74,19 +74,19 @@ else
 end
 
 %% Relaxation of deformations
-if OUTP.aero_iter > 1 && FLAG.FLIGHTDYN == 0
-    lambda = 0.25;
-    OUTP.matDEF(end-1:end,:) = repmat(lambda*(OUTP.matDEF_RELAX(OUTP.aero_iter,:)) + (1-lambda)*(OUTP.matDEF_RELAX(OUTP.aero_iter-1,:)),2,1);
-    OUTP.matTWIST(end-1:end,:) = repmat(lambda*(OUTP.matTWIST_RELAX(OUTP.aero_iter,:)) + (1-lambda)*OUTP.matTWIST_RELAX(OUTP.aero_iter-1,:),2,1);
-
-    OUTP.matDEFGLOB(valTIMESTEP,:) = lambda*(OUTP.matDEFGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matDEFGLOB(valTIMESTEP-1,:);
-    OUTP.matTWISTGLOB(valTIMESTEP,:) = lambda*(OUTP.matTWISTGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matTWISTGLOB(valTIMESTEP-1,:);
-    
-    for i = 2:length(SURF.vecSPANLOC)
-        OUTP.matSLOPE(valTIMESTEP,i) = asin((OUTP.matDEFGLOB(valTIMESTEP,i)-OUTP.matDEFGLOB(valTIMESTEP,i-1))/(SURF.vecSPANLOC(i)-SURF.vecSPANLOC(i-1)));
-    end
-
-end
+% if OUTP.aero_iter > 1 && FLAG.FLIGHTDYN == 0
+%     lambda = 0.25;
+%     OUTP.matDEF(end-1:end,:) = repmat(lambda*(OUTP.matDEF_RELAX(OUTP.aero_iter,:)) + (1-lambda)*(OUTP.matDEF_RELAX(OUTP.aero_iter-1,:)),2,1);
+%     OUTP.matTWIST(end-1:end,:) = repmat(lambda*(OUTP.matTWIST_RELAX(OUTP.aero_iter,:)) + (1-lambda)*OUTP.matTWIST_RELAX(OUTP.aero_iter-1,:),2,1);
+% 
+%     OUTP.matDEFGLOB(valTIMESTEP,:) = lambda*(OUTP.matDEFGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matDEFGLOB(valTIMESTEP-1,:);
+%     OUTP.matTWISTGLOB(valTIMESTEP,:) = lambda*(OUTP.matTWISTGLOB(valTIMESTEP,:)) + (1-lambda)*OUTP.matTWISTGLOB(valTIMESTEP-1,:);
+%     
+%     for i = 2:length(SURF.vecSPANLOC)
+%         OUTP.matSLOPE(valTIMESTEP,i) = asin((OUTP.matDEFGLOB(valTIMESTEP,i)-OUTP.matDEFGLOB(valTIMESTEP,i-1))/(SURF.vecSPANLOC(i)-SURF.vecSPANLOC(i-1)));
+%     end
+% 
+% end
 
 % Move wing based on elastic deformations and flight dynamics. Rebuild DVE
 % properties

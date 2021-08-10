@@ -213,7 +213,7 @@ if OUTP.TRIMFAIL == 0
 
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-    energy_alt_gain = OUTP.vecZE(end,2) - OUTP.vecZE(COND.valGUSTSTART,2);
+    energy_alt_gain = OUTP.vecZE_old(end,1) - OUTP.vecZE_old(COND.valGUSTSTART,1);
 
     out = -energy_alt_gain;
 else

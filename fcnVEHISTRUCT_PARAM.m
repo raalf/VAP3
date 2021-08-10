@@ -1,4 +1,4 @@
-function [INPU, SURF, VEHI] = fcnVEHISTRUCT_OPT(COND, INPU, SURF, FLAG, VEHI)
+function [INPU, SURF, VEHI] = fcnVEHISTRUCT_PARAM(COND, INPU, SURF, FLAG, VEHI)
 %% Geometric Properties
 
 % Find indices for flexible wing(s)
@@ -112,6 +112,13 @@ SURF.vecMAC = (2/3)*tempDVEEDGECRD(idx1,1).*(1 + taper_ratio + taper_ratio.^2)./
 % Spanwise bending stiffness distribution. Cols 2 and 3 are the first and
 % second derivatives
 % INPU.matEIx(:,1) = (INPU.vecEIxCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEIxCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEIxCOEFF(3))';
+INPU.matEIx(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.matEIx_param(1),INPU.matEIx_param(2),ceil(INPU.valNSELE/2));
+
+if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
+    INPU.matEIx(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matEIx_param(2),INPU.matEIx_param(3),ceil(INPU.valNSELE/2));
+else
+    INPU.matEIx(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matEIx_param(2),INPU.matEIx_param(3),ceil(INPU.valNSELE/2)-1);
+end
 
 % First derivative
 INPU.matEIx(2:end-1,2) = (INPU.matEIx(3:end,1)-INPU.matEIx(1:end-2,1))./(2*INPU.valDY(2:end));
@@ -128,11 +135,34 @@ INPU.matEIx(end,3) = (2*INPU.matEIx(end,1) - 5*INPU.matEIx(end-1,1) + 4*INPU.mat
 % Spanwise torsional stiffness distribution. Col 2 is the first derivative
 % INPU.matGJt(:,1) = (INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecGJtCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(3))';
 % INPU.matGJt(:,2) = (2*INPU.vecGJtCOEFF(1).*SURF.vecSTRUCTSPNDIST + INPU.vecGJtCOEFF(2))';
+INPU.matGJt(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.matGJt_param(1),INPU.matGJt_param(2),ceil(INPU.valNSELE/2));
+
+if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
+    INPU.matGJt(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matGJt_param(2),INPU.matGJt_param(3),ceil(INPU.valNSELE/2));
+else
+    INPU.matGJt(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matGJt_param(2),INPU.matGJt_param(3),ceil(INPU.valNSELE/2)-1);
+end
 
 % First derivative
 INPU.matGJt(2:end-1,2) = (INPU.matGJt(3:end,1)-INPU.matGJt(1:end-2,1))./(2*INPU.valDY(2:end));
 INPU.matGJt(1,2) = (-3*INPU.matGJt(1,1) + 4*INPU.matGJt(2,1) - INPU.matGJt(3,1))./(2*INPU.valDY(1));
 INPU.matGJt(end,2) = (3*INPU.matGJt(end,1) - 4*INPU.matGJt(end-1,1) + INPU.matGJt(end-2,1))./(2*INPU.valDY(end));
+
+INPU.vecEA(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.vecEA_param(1),INPU.vecEA_param(2),ceil(INPU.valNSELE/2));
+
+if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
+    INPU.vecEA(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecEA_param(2),INPU.vecEA_param(3),ceil(INPU.valNSELE/2));
+else
+    INPU.vecEA(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecEA_param(2),INPU.vecEA_param(3),ceil(INPU.valNSELE/2)-1);
+end
+
+INPU.vecCG(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.vecCG_param(1),INPU.vecCG_param(2),ceil(INPU.valNSELE/2));
+
+if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
+    INPU.vecCG(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecCG_param(2),INPU.vecCG_param(3),ceil(INPU.valNSELE/2));
+else
+    INPU.vecCG(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecCG_param(2),INPU.vecCG_param(3),ceil(INPU.valNSELE/2)-1);
+end
 
 % INPU.vecEA = INPU.vecEACOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEACOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEACOEFF(3);
 % INPU.vecCG = INPU.vecCGCOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecCGCOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecCGCOEFF(3);
@@ -176,12 +206,12 @@ SURF.vecWINGCG = interp1(SURF.vecSTRUCTSPNDIST,SURF.matCG,SURF.matCENTER(SURF.ve
 
 
 % -------------------------------------------------------------------------
+% temp_vecEA = INPU.vecEACOEFF(1).*SURF.vecSPANLOC.^2 + INPU.vecEACOEFF(2).*SURF.vecSPANLOC + INPU.vecEACOEFF(3);
+% temp_vecCG = INPU.vecCGCOEFF(1).*SURF.vecSPANLOC.^2 + INPU.vecCGCOEFF(2).*SURF.vecSPANLOC + INPU.vecCGCOEFF(3);
+
 tempEA = [INPU.vecEA.*struct_edgecrd(:,1), zeros(length(INPU.vecEA),2)]; % Distance to EA from LE in local coordinates
 
 tempCG = [INPU.vecCG.*struct_edgecrd(:,1), zeros(length(INPU.vecCG),2)]; % Distance to CG from LE in local coordinates
-
-% tempEA = [temp_vecEA.*tempDVEEDGECRD(:,1), zeros(length(temp_vecEA),2)]; % Distance to EA from LE in local coordinates
-% tempCG = [temp_vecCG.*tempDVEEDGECRD(:,1), zeros(length(temp_vecCG),2)]; % Distance to EA from LE in local coordinates
 
 temp_matEA = fcnSTARGLOB(tempEA,interp1(SURF.vecSPANDIST,SURF.vecDVEROLL(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...
     interp1(SURF.vecSPANDIST,SURF.vecDVEPITCH(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...

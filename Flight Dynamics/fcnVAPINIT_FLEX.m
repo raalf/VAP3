@@ -31,16 +31,20 @@ SURF.matNPDVE = SURF.matDVE;
 % Computing structure distributions if data exists
 try
     if FLAG.OPT == 1
-        [INPU, SURF] = fcnVEHISTRUCT_OPT(COND, INPU, SURF, FLAG);
+        [INPU, SURF, VEHI] = fcnVEHISTRUCT_OPT(COND, INPU, SURF, FLAG, VEHI);
+        FLAG.STRUCTURE = 1; % Create flag if structure data exists
+    elseif FLAG.OPT == 2
+        [INPU, SURF, VEHI] = fcnVEHISTRUCT_PARAM(COND, INPU, SURF, FLAG, VEHI);
         FLAG.STRUCTURE = 1; % Create flag if structure data exists
     else
-        [INPU, SURF] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG);
+        [INPU, SURF, VEHI] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG, VEHI);
         FLAG.STRUCTURE = 1; % Create flag if structure data exists
     end
 catch
     FLAG.STRUCTURE = 0; 
 end
 
+SURF.valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
 [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
 
 n = 1;

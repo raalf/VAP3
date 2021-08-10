@@ -1,5 +1,5 @@
 function [OUTP] = fcnVEHENERGY(INPU, COND, SURF, OUTP, VEHI, FLAG, valTIMESTEP)
-tot_mass = (sum(2*SURF.vecVEHMASS,1) + VEHI.vecFUSEMASS + VEHI.vecWINGMASS(2) + VEHI.vecPAYLMASS);
+tot_mass = (sum(2*SURF.vecVEHMASS,1) + sum(VEHI.vecFUSEMASS,1) + VEHI.vecWINGMASS(2) + VEHI.vecPAYLMASS);
 % Index of leading edge DVEs on beam
 idx = SURF.vecDVELE(SURF.idxFLEX)==1;
 idx1 = find(idx == 1);
@@ -23,12 +23,12 @@ end
 OUTP.ele_kinen_temp(:,valTIMESTEP) = 0.5.*[0; SURF.vecVEHMASS].*ele_vel.*ele_vel;
 OUTP.ele_kinen(valTIMESTEP,1) = sum(OUTP.ele_kinen_temp(:,valTIMESTEP),1);
 % OUTP.ele_kinen(valTIMESTEP,1) = trapz(SURF.matCENTER(idx1,2),OUTP.ele_kinen_temp(:,valTIMESTEP));
-OUTP.fuse_kinen(valTIMESTEP,1) = 0.5.*VEHI.vecFUSEMASS.*fuse_vel.*fuse_vel;
+% OUTP.fuse_kinen(valTIMESTEP,1) = 0.5.*VEHI.vecFUSEMASS.*fuse_vel.*fuse_vel;
 
 % Gravitational potential energy of wing elements and fuselage/tail system
 OUTP.ele_poten_temp(:,valTIMESTEP) = SURF.vecVEHMASS.*9.81.*SURF.vecWINGCG(:,3);
 OUTP.ele_poten(valTIMESTEP,1) = sum(OUTP.ele_poten_temp(:,valTIMESTEP),1);
-OUTP.fuse_poten(valTIMESTEP,1) = VEHI.vecFUSEMASS.*9.81.*VEHI.vecFUSECG(:,3);
+% OUTP.fuse_poten(valTIMESTEP,1) = VEHI.vecFUSEMASS.*9.81.*VEHI.vecFUSECG(:,3);
 
 %% Calculate curvature of deflected wing
 Ixx = SURF.vecVEHMASS.*SURF.matCENTER(idx1,2).*SURF.matCENTER(idx1,2); % Mass moment of inertia about fuselage axis
@@ -68,7 +68,7 @@ OUTP.ele_U(valTIMESTEP,1) = sum(OUTP.ele_U_temp(:,valTIMESTEP),1);
 % OUTP.work(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMFORCE.*(OUTP.matDEFGLOB(valTIMESTEP,:)-OUTP.matDEFGLOB(valTIMESTEP-1,:))');
 
 %% Compute total energy (element approach)
-OUTP.tot_en(valTIMESTEP,1) = 2*OUTP.ele_U(valTIMESTEP,1) + 2*OUTP.ele_poten(valTIMESTEP,1) + 2*OUTP.ele_kinen(valTIMESTEP,1) + OUTP.fuse_kinen(valTIMESTEP,1) + OUTP.fuse_poten(valTIMESTEP,1); % Total energy
+OUTP.tot_en(valTIMESTEP,1) = 2*OUTP.ele_U(valTIMESTEP,1) + 2*OUTP.ele_poten(valTIMESTEP,1) + 2*OUTP.ele_kinen(valTIMESTEP,1); % Total energy
 
 OUTP.vecZE(valTIMESTEP,1) = OUTP.tot_en(valTIMESTEP,1)./(tot_mass*9.81); % Energy altitude
 

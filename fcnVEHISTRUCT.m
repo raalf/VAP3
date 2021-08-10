@@ -1,4 +1,4 @@
-function [INPU, SURF] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG)
+function [INPU, SURF, VEHI] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG, VEHI)
 %% Geometric Properties
 
 % Find indices for flexible wing(s)
@@ -225,5 +225,21 @@ temp_rightV = reshape(temp_rightV,sum(INPU.vecN(1:max(SURF.vecDVEPANEL(SURF.vecW
 tempCGLST(temp_rightV,:) = temp_matCG(move_row+1,:);
 
 SURF.matCGLST = tempCGLST;
+
+%% Fuselage
+VEHI.vecFUSELM = VEHI.vecFUSEMASS/VEHI.valNFELE;
+VEHI.valFUSEDX = VEHI.vecFUSEL/(VEHI.valNFELE-1);
+tempdx = [[0; cumsum(repmat(VEHI.valFUSEDX,VEHI.valNFELE-1,1))],zeros(VEHI.valNFELE,1),zeros(VEHI.valNFELE,1);];
+VEHI.vecFUSEBEAM = repmat(VEHI.vecFUSELOC,VEHI.valNFELE,1) + tempdx;
+
+VEHI.vecFUSEMASSLOC = (VEHI.vecFUSEBEAM(2:end,:) + VEHI.vecFUSEBEAM(1:end-1,:))./2;
+tempFUSELM = interp1(VEHI.vecFUSEBEAM(:,1),repmat(VEHI.vecFUSELM,VEHI.valNFELE,1),VEHI.vecFUSEMASSLOC(:,1));
+VEHI.vecFUSEMASS = tempFUSELM.*VEHI.valFUSEDX;
+
+VEHI.vecFUSEBEAM = fcnGLOBSTAR(VEHI.vecFUSEBEAM, zeros(VEHI.valNFELE,1), repmat(deg2rad(-COND.vecVEHPITCH),VEHI.valNFELE,1), zeros(VEHI.valNFELE,1));
+VEHI.vecFUSEMASSLOC = fcnGLOBSTAR(VEHI.vecFUSEMASSLOC, zeros(VEHI.valNFELE-1,1), repmat(deg2rad(-COND.vecVEHPITCH),VEHI.valNFELE-1,1), zeros(VEHI.valNFELE-1,1));
+
+
+
 
 end

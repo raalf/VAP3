@@ -5,7 +5,7 @@
 		<relax>FALSE</relax>
 		<steady>TRUE</steady>
 		<maxtime>35</maxtime>
-		<delta_time>0.03333</delta_time>
+		<delta_time>0.03333333</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
@@ -105,7 +105,7 @@
 			<vehicle_z>2.5</vehicle_z>
 
 			<CG>
-				<x>10.125</x>
+				<x>10.25</x>
 				<y>0</y>
 				<z>2.0833</z>
 			</CG>	
@@ -159,7 +159,7 @@
 				<geometry>
 					<A_vecEA>0</A_vecEA>
 					<B_vecEA>0</B_vecEA>
-					<C_vecEA>0.55</C_vecEA>
+					<C_vecEA>0.25</C_vecEA>
 					
 					<A_vecCG>0</A_vecCG>
 					<B_vecCG>0</B_vecCG>
@@ -180,12 +180,13 @@
 
 		<fuselage>
 			<mass>2</mass>
-
-			<CG>
-				<x>5.25</x>
+			<length>10</length>
+			<valNFELE>10</valNFELE>
+			<start_loc>
+				<x>0.25</x>
 				<y>0</y>
 				<z>0</z>
-			</CG>
+			</start_loc>
 		</fuselage>
 
 		<payload>
