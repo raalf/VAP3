@@ -117,7 +117,8 @@ INPU.matEIx(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.matEIx_param(1),INPU.matE
 if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
     INPU.matEIx(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matEIx_param(2),INPU.matEIx_param(3),ceil(INPU.valNSELE/2));
 else
-    INPU.matEIx(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matEIx_param(2),INPU.matEIx_param(3),ceil(INPU.valNSELE/2)-1);
+    tempEIx = linspace(INPU.matEIx_param(2),INPU.matEIx_param(3),ceil(INPU.valNSELE/2));
+    INPU.matEIx(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = tempEIx(2:end); 
 end
 
 % First derivative
@@ -140,7 +141,8 @@ INPU.matGJt(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.matGJt_param(1),INPU.matG
 if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
     INPU.matGJt(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matGJt_param(2),INPU.matGJt_param(3),ceil(INPU.valNSELE/2));
 else
-    INPU.matGJt(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.matGJt_param(2),INPU.matGJt_param(3),ceil(INPU.valNSELE/2)-1);
+    tempGJt = linspace(INPU.matGJt_param(2),INPU.matGJt_param(3),ceil(INPU.valNSELE/2));
+    INPU.matGJt(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = tempGJt(2:end);
 end
 
 % First derivative
@@ -153,7 +155,8 @@ INPU.vecEA(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.vecEA_param(1),INPU.vecEA_
 if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
     INPU.vecEA(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecEA_param(2),INPU.vecEA_param(3),ceil(INPU.valNSELE/2));
 else
-    INPU.vecEA(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecEA_param(2),INPU.vecEA_param(3),ceil(INPU.valNSELE/2)-1);
+    tempEA = linspace(INPU.vecEA_param(2),INPU.vecEA_param(3),ceil(INPU.valNSELE/2));
+    INPU.vecEA(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = tempEA(2:end);
 end
 
 INPU.vecCG(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.vecCG_param(1),INPU.vecCG_param(2),ceil(INPU.valNSELE/2));
@@ -161,7 +164,8 @@ INPU.vecCG(1:ceil(INPU.valNSELE/2),1) = linspace(INPU.vecCG_param(1),INPU.vecCG_
 if ceil(INPU.valNSELE/2) == INPU.valNSELE/2
     INPU.vecCG(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecCG_param(2),INPU.vecCG_param(3),ceil(INPU.valNSELE/2));
 else
-    INPU.vecCG(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = linspace(INPU.vecCG_param(2),INPU.vecCG_param(3),ceil(INPU.valNSELE/2)-1);
+    tempCG = linspace(INPU.vecCG_param(2),INPU.vecCG_param(3),ceil(INPU.valNSELE/2));
+    INPU.vecCG(ceil(INPU.valNSELE/2)+1:INPU.valNSELE,1) = tempCG(2:end);
 end
 
 % INPU.vecEA = INPU.vecEACOEFF(1).*SURF.vecSTRUCTSPNDIST.^2 + INPU.vecEACOEFF(2).*SURF.vecSTRUCTSPNDIST + INPU.vecEACOEFF(3);

@@ -17,10 +17,10 @@ TRIM = [];
 FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [25000; 50000; 60000];
-INPU.matGJt_param = [15000; 25000; 30000];
-INPU.vecEA_param = [0.25; 0.25; 0.25];
-INPU.vecCG_param = [0.25; 0.25; 0.25];
+INPU.matEIx_param = [30000; 50000; 150000];
+INPU.matGJt_param = [70000; 20000; 66000];
+INPU.vecEA_param = [0.25; 0.20; 0.25];
+INPU.vecCG_param = [0.25; 0.20; 0.25];
 
 % load('C:/Users/Michael/Desktop/opthistory.txt')
 % 
