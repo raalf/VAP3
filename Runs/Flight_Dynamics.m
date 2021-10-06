@@ -14,11 +14,11 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-FLAG.OPT = 2;
+FLAG.OPT = 0;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [30000; 50000; 150000];
-INPU.matGJt_param = [70000; 20000; 66000];
+INPU.matEIx_param = [100000; 125000; 150000];
+INPU.matGJt_param = [100000; 120000; 166000];
 INPU.vecEA_param = [0.25; 0.20; 0.25];
 INPU.vecCG_param = [0.25; 0.20; 0.25];
 
@@ -59,14 +59,14 @@ FLAG.GUSTMODE = 0;
 % aircraft
 COND.valSTIFFSTEPS = COND.valMAXTIME + 1;
 
-COND.valSTARTFORCES = COND.valMAXTIME; % Only compute forces on last timestep
+COND.valSTARTFORCES = 1; % Only compute forces on last timestep
 
 SURF.vecELEVANGLE = 0;
 
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
 
 % Initial trim iteration loop for rigid aircraft
-[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
 
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);

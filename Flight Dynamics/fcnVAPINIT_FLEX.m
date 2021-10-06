@@ -18,7 +18,7 @@ end
 
 %% Add kinematic conditions to D-Matrix
 [SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
-[matD] = fcnKINCON(matD, SURF, INPU, FLAG);
+[matD] = fcnKINCON(matD, SURF, INPU, FLAG, 0);
 
 %% Preparing to timestep
 % Building wing resultant

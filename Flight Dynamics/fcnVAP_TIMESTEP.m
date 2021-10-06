@@ -34,7 +34,7 @@ timestep_folder = 'timestep_data\';
 
 %% Add kinematic conditions to D-Matrix
 [SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
-[matD, SURF.matCOLLPTS] = fcnKINCON(matD, SURF, INPU, FLAG);
+[matD, SURF.matCOLLPTS] = fcnKINCON(matD, SURF, INPU, FLAG, 0);
 
 %% Preparing to timestep
 % Building wing resultant
@@ -194,9 +194,9 @@ for valTIMESTEP = 1:COND.valMAXTIME
 %         [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
 %     end   
     
-    if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
-        [matD, SURF.matCOLLPTS] = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG);
-    end
+%     if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
+        [matD, SURF.matCOLLPTS] = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG, valTIMESTEP);
+%     end
     
     %% Generating new wake elements
     [INPU, COND, MISC, VISC, WAKE, VEHI, SURF] = fcnCREATEWAKEROW(FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF);

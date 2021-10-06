@@ -17,4 +17,5 @@ w_wake = fcnWDVEVEL(fpg, valTIMESTEP, WAKE, SURF, FLAG);
 
 % add
 w_total = w_surf + w_wake;
+% w_total = w_surf;
 

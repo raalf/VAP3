@@ -216,17 +216,24 @@ if OUTP.TRIMFAIL == 0
     energy_alt_gain = OUTP.vecZE_old(end,1) - OUTP.vecZE_old(COND.valGUSTSTART,1);
 
     out = -energy_alt_gain;
+    [~,idxMAXdef] = max(OUTP.matDEFGLOB(:,end));
+    [~,idxMAXtwist] = max(OUTP.matTWISTGLOB(:,end));
+    [~,idxMINdef] = min(OUTP.matDEFGLOB(:,end));
+    [~,idxMINtwist] = min(OUTP.matTWISTGLOB(:,end));
+    struct = [OUTP.matDEFGLOB(idxMAXdef,:), OUTP.matDEFGLOB(idxMINdef,:), OUTP.matTWISTGLOB(idxMAXtwist,:), OUTP.matTWISTGLOB(idxMINtwist,:)];
 else
     out = Inf;
+    struct = Inf;
 end
 catch
     out = Inf;
+    struct = Inf;
 end
     
 
 if nargin ~= 0
     fp2 = fopen('Optimization/opthistory.txt','at');
-    fprintf(fp2,'%g ', [out, design_var]);
+    fprintf(fp2,'%g ', [out, design_var, struct]);
     fprintf(fp2,'\n');
     fclose(fp2);
 end

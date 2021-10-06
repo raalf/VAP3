@@ -17,16 +17,17 @@ if FLAG.STEADY == 1
     % Newest row of wake DVEs have a filament at the leading edge
     newest_row = [((WAKE.valWNELE-WAKE.valWSIZE)+1):1:WAKE.valWNELE]';
 
-    dvetype(ismember(dvenum, newest_row)) = 2;
+%     dvetype(ismember(dvenum, newest_row)) = 2; # GB change
+    dvetype(ismember(dvenum, newest_row)) = 1;
 
     % Oldest row of wake DVEs are semi-infinite
     oldest_row = [1:WAKE.valWSIZE]';
 
-    if valTIMESTEP == 1
-        dvetype(ismember(dvenum, oldest_row)) = -3;
-    elseif valTIMESTEP > 0
+%     if valTIMESTEP == 1 # GB change
+%         dvetype(ismember(dvenum, oldest_row)) = -3; # GB change
+%     elseif valTIMESTEP > 0 # GB change
         dvetype(ismember(dvenum, oldest_row)) = 3;
-    end
+%     end # GB change
 
 elseif FLAG.STEADY == 0 || 2
     % DVE type 1 is a regular wake DVE

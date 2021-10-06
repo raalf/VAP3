@@ -3,13 +3,13 @@
 <VAP>
 	<settings>
 		<relax>FALSE</relax>
-		<steady>FALSE</steady>
-		<maxtime>50</maxtime>
+		<steady>TRUE</steady>
+		<maxtime>30</maxtime>
 		<delta_time>0.03048</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>2</gust_mode>
+		<gust_mode>0</gust_mode>
 		<gliding>FALSE</gliding>
 	</settings>
 
@@ -30,7 +30,7 @@
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>0</alpha>
+		<alpha>10</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -48,7 +48,7 @@
 			<trimable>FALSE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
 
-			<chordwise_elements>10</chordwise_elements>
+			<chordwise_elements>5</chordwise_elements>
 			<chordwise_spacing>NORMAL</chordwise_spacing>
 
 			<vehicle_x>0</vehicle_x>

@@ -88,7 +88,7 @@ end
 % Implemented on a vehicle-by-vehicle basis - TDK 2017-07-10
 el = cross(nUINF,spandir,2);
 
-for i = 1:length(el)
+for i = 1:size(el,1)
 ed(i,:) = [0 0 1; 0 1 0; -1 0 0]*el(i,:)';
 end
 

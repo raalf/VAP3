@@ -76,7 +76,7 @@ end
 
 %% Add kinematic conditions to D-Matrix
 [SURF.vecK] = fcnSINGFCT(SURF.valNELE, SURF.vecDVESURFACE, SURF.vecDVETIP, SURF.vecDVEHVSPN);
-[matD] = fcnKINCON(matD, SURF, INPU, FLAG);
+[matD] = fcnKINCON(matD, SURF, INPU, FLAG, 0);
 
 %% Preparing to timestep
 % Building wing resultant
@@ -130,7 +130,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     end
     
     if max(SURF.vecDVEROTOR) > 0 || FLAG.STRUCTURE == 1
-        matD = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG);
+        matD = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG, valTIMESTEP);
     end
        
     %% Generating new wake elements
