@@ -9,7 +9,7 @@
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>2</gust_mode>
+		<gust_mode>1</gust_mode>
 		<gliding>TRUE</gliding>
 	</settings>
 

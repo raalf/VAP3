@@ -1,8 +1,8 @@
-N_bendstiff = 15;
-N_torstiff = 15;
-N_elasticaxis = 15;
-N_massaxis = 15;
-N_lmass = 15;
+N_bendstiff = 19;
+N_torstiff = 19;
+N_elasticaxis = 19;
+N_massaxis = 19;
+N_lmass = 19;
 
 A = [];
 b = [];

@@ -227,7 +227,7 @@ tempCGLST(temp_rightV,:) = temp_matCG(move_row+1,:);
 SURF.matCGLST = tempCGLST;
 
 %% Fuselage
-VEHI.vecFUSELM = VEHI.vecFUSEMASS/VEHI.valNFELE;
+VEHI.vecFUSELM = VEHI.vecFUSEMASS/VEHI.vecFUSEL;
 VEHI.valFUSEDX = VEHI.vecFUSEL/(VEHI.valNFELE-1);
 tempdx = [[0; cumsum(repmat(VEHI.valFUSEDX,VEHI.valNFELE-1,1))],zeros(VEHI.valNFELE,1),zeros(VEHI.valNFELE,1);];
 VEHI.vecFUSEBEAM = repmat(VEHI.vecFUSELOC,VEHI.valNFELE,1) + tempdx;

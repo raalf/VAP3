@@ -1,9 +1,9 @@
 function [out] = fcnOBJECTIVE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
 
-N_bendstiff = 15;
-N_torstiff = 15;
-N_elasticaxis = 15;
-N_massaxis = 15;
+N_bendstiff = 19;
+N_torstiff = 19;
+N_elasticaxis = 19;
+N_massaxis = 19;
 home_dir = pwd;
 
 cd(home_dir)
@@ -21,7 +21,7 @@ structure.matGJt(:,1) = design_var(N_bendstiff+1:N_bendstiff+N_torstiff);
 structure.vecEA(:,1) = design_var(N_bendstiff+N_torstiff+1:N_bendstiff+N_torstiff+N_elasticaxis);
 structure.vecCG(:,1) = design_var(N_bendstiff+N_torstiff+N_elasticaxis+1:N_bendstiff+N_torstiff+N_elasticaxis+N_massaxis);
 
-baseline_file = 'inputs/HALE_new.vap';
+baseline_file = 'inputs/Discus2c.vap';
 
 trim_iter = 1;
 
@@ -179,6 +179,8 @@ if OUTP.TRIMFAIL == 0
     end
 end
 
+save('temp_Flex_Trim.mat')
+
 try
 if OUTP.TRIMFAIL == 0
     OUTP.aero_iter = 0;
@@ -202,7 +204,7 @@ if OUTP.TRIMFAIL == 0
     FLAG.STATICAERO = 0;
     FLAG.STEADY = 0;
     FLAG.RELAX = 0;
-    FLAG.GUSTMODE = 2;
+    FLAG.GUSTMODE = 1;
     FLAG.SAVETIMESTEP = 0;
 
     VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -214,13 +216,45 @@ if OUTP.TRIMFAIL == 0
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
     energy_alt_gain = OUTP.vecZE_old(end,1) - OUTP.vecZE_old(COND.valGUSTSTART,1);
-
-    out = -energy_alt_gain;
+    temp_gain = energy_alt_gain;
+    
     [~,idxMAXdef] = max(OUTP.matDEFGLOB(:,end));
     [~,idxMAXtwist] = max(OUTP.matTWISTGLOB(:,end));
     [~,idxMINdef] = min(OUTP.matDEFGLOB(:,end));
     [~,idxMINtwist] = min(OUTP.matTWISTGLOB(:,end));
     struct = [OUTP.matDEFGLOB(idxMAXdef,:), OUTP.matDEFGLOB(idxMINdef,:), OUTP.matTWISTGLOB(idxMAXtwist,:), OUTP.matTWISTGLOB(idxMINtwist,:)];
+    
+    clearvars -except temp_gain struct
+    load('temp_Flex_Trim.mat')
+    SURF.matBEAMACC = [];
+    COND.valGUSTAMP = 1;
+    COND.valGUSTL = 50;
+    COND.valGUSTSTART = 40;
+
+    SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+
+    COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+    COND.valSTIFFSTEPS = 15;
+    COND.valSTARTFORCES = 1;
+    FLAG.FLIGHTDYN = 1;
+    FLAG.STATICAERO = 0;
+    FLAG.STEADY = 0;
+    FLAG.RELAX = 0;
+    FLAG.GUSTMODE = 0;
+    FLAG.SAVETIMESTEP = 0;
+    FLAG.STIFFWING = 1;
+
+    VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+
+    [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+
+    COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+
+
+    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+    energy_alt_gain = OUTP.vecZE_old(end,1) - OUTP.vecZE_old(COND.valGUSTSTART,1);
+
+    out = -(temp_gain - energy_alt_gain);
 else
     out = Inf;
     struct = Inf;
@@ -237,6 +271,8 @@ if nargin ~= 0
     fprintf(fp2,'\n');
     fclose(fp2);
 end
+
+delete temp_Flex_Trim.mat;
 
 cd(home_dir)
 

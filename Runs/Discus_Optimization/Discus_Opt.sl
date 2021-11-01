@@ -14,4 +14,4 @@ module load nixpkgs/16.09
 module load StdEnv/2020
 module load matlab/2020b
 # Remove -singleCompThread below if you are using parallel commands:
-srun matlab -nodisplay -r "MAIN_CREATEV_OPT"
+srun matlab -nodisplay -r "MAIN_DISCUS_OPT"
