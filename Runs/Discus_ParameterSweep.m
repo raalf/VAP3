@@ -2,9 +2,13 @@ clc
 clear
 warning off
 
+cd '..'
+
 addpath('Flight Dynamics')
 
 filename = 'inputs/Discus2c.vap';
+
+delete Optimization/paramhistory.txt
 
 matEIx = [100000 500000 1500000];
 matGJt = [100000 500000 1500000];
@@ -59,7 +63,7 @@ FLAG.GUSTMODE = 0;
 % aircraft
 COND.valSTIFFSTEPS = COND.valMAXTIME + 1;
 
-COND.valSTARTFORCES = 1; % Only compute forces on last timestep
+COND.valSTARTFORCES = COND.valMAXTIME; % Only compute forces on last timestep
 
 SURF.vecELEVANGLE = 0;
 
@@ -97,7 +101,7 @@ OUTP.aero_iter = 1;
 while max(abs(tol)) > 0.01
     COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
     
-%     COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
+    COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
 %     COND.valSTARTFORCES = COND.valMAXTIME; % Compute forces for last two timesteps
     
 %     COND.valSTARTFORCES = 1;
@@ -220,7 +224,12 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-gain(kk,1) = temp_gain - OUTP.vecZE_old(end);
+gain(kk,1) = temp_gain - (-0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCDI(COND.valGUSTSTART-1)*COND.valGUSTL/COND.vecVEHWEIGHT);
+
+fp2 = fopen('Optimization/paramhistory.txt','at');
+fprintf(fp2,'%g ', [gain, param_sweep(1:4,kk)']);
+fprintf(fp2,'\n');
+fclose(fp2);
 
 delete temp_Flex_Trim.mat;
 
