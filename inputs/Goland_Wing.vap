@@ -2,7 +2,7 @@
 
 <VAP>
 	<settings>
-		<relax>FALSE</relax>
+		<relax>TRUE</relax>
 		<steady>TRUE</steady>
 		<maxtime>30</maxtime>
 		<delta_time>0.03048</delta_time>

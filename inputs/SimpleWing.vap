@@ -2,14 +2,14 @@
 
 <VAP>
 	<settings>
-		<relax>FALSE</relax>
-		<steady>FALSE</steady>
-		<maxtime>50</maxtime>
+		<relax>TRUE</relax>
+		<steady>TRUE</steady>
+		<maxtime>20</maxtime>
 		<delta_time>0.1</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>3</gust_mode>
+		<gust_mode>0</gust_mode>
 	</settings>
 
 	<conditions>
@@ -36,9 +36,9 @@
 		<track>0</track>
 		<radius>nan</radius>
 
-		<ref_area>40</ref_area>
-		<ref_span>40</ref_span>
-		<ref_cmac>1</ref_cmac>
+		<ref_area>15</ref_area>
+		<ref_span>20</ref_span>
+		<ref_cmac>0.75</ref_cmac>
 
 		<wing>
 			<type>MAIN WING</type>
@@ -60,6 +60,14 @@
 				<strip_airfoil>nan</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
+					<wing_y>-10</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.5</chord>
+					<twist>0</twist>
+					<camber_airfoil>NACA 0012</camber_airfoil>
+				</section>
+				<section>
+					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
 					<chord>1</chord>
@@ -68,12 +76,12 @@
 				</section>
 				<section>
 					<wing_x>0</wing_x>
-					<wing_y>20</wing_y>
+					<wing_y>10</wing_y>
 					<wing_z>0</wing_z>
-					<chord>1</chord>
+					<chord>0.5</chord>
 					<twist>0</twist>
 					<camber_airfoil>NACA 0012</camber_airfoil>
-				</section>	
+				</section>		
 			</panel>
 		</wing>
 	</vehicle>				

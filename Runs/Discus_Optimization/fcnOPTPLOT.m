@@ -2,21 +2,21 @@ function [] = fcnOPTPLOT(filename)
 
 data = importdata(filename);
 
-% idx = find(data(:,1) >= -2.37);
-% data(idx,:) = [];
+idx = find(data(:,1) >= -0.62);
+data(idx,:) = [];
 
 color = jet(1000);
 
-EI = [mean(data(:,2:6),2), mean(data(:,7:11),2), mean(data(:,12:65),2)];
-GJ = [mean(data(:,17:21),2), mean(data(:,22:26),2), mean(data(:,27:31),2)];
-ea = [mean(data(:,32:36),2), mean(data(:,37:41),2), mean(data(:,42:46),2)];
-cg = [mean(data(:,47:51),2), mean(data(:,52:56),2), mean(data(:,57:61),2)];
-bending = [data(:,76), data(:,91)]; % [max,min] tip deflections
-torsion = (180/pi).*[data(:,106), data(:,121)]; % [max,min] tip torsion
+EI = [mean(data(:,2:7),2), mean(data(:,8:13),2), mean(data(:,14:20),2)];
+GJ = [mean(data(:,21:26),2), mean(data(:,27:32),2), mean(data(:,33:39),2)];
+ea = [mean(data(:,40:45),2), mean(data(:,46:51),2), mean(data(:,52:58),2)];
+cg = [mean(data(:,59:64),2), mean(data(:,65:70),2), mean(data(:,71:77),2)];
+bending = [data(:,96), data(:,115)]; % [max,min] tip deflections
+torsion = (180/pi).*[data(:,134), data(:,153)]; % [max,min] tip torsion
 
 % Wing is split into 3 different, equal-sized, sections
 % Plot results for average of design variables in root section
-figure(10)
+figure(11)
 subplot(3,2,1)
 scatter3(EI(:,1),GJ(:,1),data(:,1),50*ones(length(data),1),data(:,1),'filled','markeredgecolor','k')
 colormap(color)
@@ -97,7 +97,7 @@ c.Label.String = '-Energy Altitude (m)';
 xlim([0.25 0.75])
 
 % Plot results for maximum bending and torsion deflections at wing tip
-figure(16)
+figure(17)
 scatter3(bending(:,1),torsion(:,1),data(:,1),50*ones(length(data),1),data(:,1),'filled','markeredgecolor','k')
 colormap(color)
 c = colorbar;

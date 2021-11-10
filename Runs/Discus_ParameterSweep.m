@@ -6,6 +6,14 @@ addpath('Flight Dynamics')
 
 filename = 'inputs/Discus2c.vap';
 
+matEIx = [100000 500000 1500000];
+matGJt = [100000 500000 1500000];
+EA = [0.25 0.45 0.65];
+CG = [0.25 0.45 0.65];
+
+param_sweep = combvec(matEIx, matGJt, EA, CG);
+
+for kk = 1:size(param_sweep,2)
 trim_iter = 1;
 
 VAP_IN = [];
@@ -14,21 +22,13 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-FLAG.OPT = 0;
+FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [100000; 125000; 150000];
-INPU.matGJt_param = [100000; 120000; 166000];
-INPU.vecEA_param = [0.25; 0.20; 0.25];
-INPU.vecCG_param = [0.25; 0.20; 0.25];
-
-% opthistory = importdata('C:/Users/Michael/Desktop/opthistory.txt');
-
-% des = 32;
-% INPU.matEIx(:,1) = opthistory(des,2:16);
-% INPU.matGJt(:,1) = opthistory(des,17:31);
-% INPU.vecEA(:,1) = opthistory(des,32:46);
-% INPU.vecCG(:,1) = opthistory(des,47:61);
+INPU.matEIx_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(1,kk)];
+INPU.matGJt_param = [param_sweep(2,kk); param_sweep(2,kk); param_sweep(2,kk)];
+INPU.vecEA_param = [param_sweep(3,kk); param_sweep(3,kk); param_sweep(3,kk)];
+INPU.vecCG_param = [param_sweep(4,kk); param_sweep(4,kk); param_sweep(4,kk)];
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -59,7 +59,7 @@ FLAG.GUSTMODE = 0;
 % aircraft
 COND.valSTIFFSTEPS = COND.valMAXTIME + 1;
 
-COND.valSTARTFORCES = COND.valMAXTIME; % Only compute forces on last timestep
+COND.valSTARTFORCES = 1; % Only compute forces on last timestep
 
 SURF.vecELEVANGLE = 0;
 
@@ -97,7 +97,7 @@ OUTP.aero_iter = 1;
 while max(abs(tol)) > 0.01
     COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
     
-    COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
+%     COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
 %     COND.valSTARTFORCES = COND.valMAXTIME; % Compute forces for last two timesteps
     
 %     COND.valSTARTFORCES = 1;
@@ -179,7 +179,7 @@ FLAG.FLIGHTDYN = 1;
 FLAG.STATICAERO = 0;
 FLAG.STEADY = 0;
 FLAG.RELAX = 0;
-FLAG.GUSTMODE = 2;
+FLAG.GUSTMODE = 1;
 FLAG.SAVETIMESTEP = 0;
 
 VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -194,14 +194,11 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 temp_gain = OUTP.vecZE_old(end);
 
-clearvars -except temp_gain
 load('temp_Flex_Trim.mat')
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
 COND.valGUSTL = 50;
 COND.valGUSTSTART = 40;
-
-SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
 COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
 COND.valSTIFFSTEPS = 15;
@@ -223,6 +220,8 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-gain = temp_gain - OUTP.vecZE_old(end);
+gain(kk,1) = temp_gain - OUTP.vecZE_old(end);
 
 delete temp_Flex_Trim.mat;
+
+end
