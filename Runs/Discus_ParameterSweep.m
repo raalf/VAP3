@@ -227,7 +227,7 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 gain(kk,1) = temp_gain - (-0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCDI(COND.valGUSTSTART-1)*COND.valGUSTL/COND.vecVEHWEIGHT);
 
 fp2 = fopen('Optimization/paramhistory.txt','at');
-fprintf(fp2,'%g ', [gain, param_sweep(1:4,kk)']);
+fprintf(fp2,'%g ', [gain(kk,1), param_sweep(1:4,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
 
