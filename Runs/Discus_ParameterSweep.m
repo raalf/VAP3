@@ -2,6 +2,9 @@ clc
 clear
 warning off
 
+cores = 32;
+parpool(cores,'IdleTimeout',800)
+
 cd '..'
 
 addpath('Flight Dynamics')
@@ -15,9 +18,15 @@ matGJt = [100000 500000 1500000];
 EA = [0.25 0.45 0.65];
 CG = [0.25 0.45 0.65];
 
-param_sweep = combvec(matEIx, matGJt, EA, CG);
+param_sweep = combvec(matEIx, matEIx, matGJt, matGJt, EA, CG);
 
-for kk = 1:size(param_sweep,2)
+parfor kk = 1:size(param_sweep,2)
+temp_def = [];
+temp_twist = [];
+trim_def = [];
+trim_twist = [];
+trim_alpha = [];
+temp = [];
 trim_iter = 1;
 
 VAP_IN = [];
@@ -29,10 +38,10 @@ TRIM = [];
 FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(1,kk)];
-INPU.matGJt_param = [param_sweep(2,kk); param_sweep(2,kk); param_sweep(2,kk)];
-INPU.vecEA_param = [param_sweep(3,kk); param_sweep(3,kk); param_sweep(3,kk)];
-INPU.vecCG_param = [param_sweep(4,kk); param_sweep(4,kk); param_sweep(4,kk)];
+INPU.matEIx_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(2,kk)];
+INPU.matGJt_param = [param_sweep(3,kk); param_sweep(3,kk); param_sweep(4,kk)];
+INPU.vecEA_param = [param_sweep(5,kk); param_sweep(5,kk); param_sweep(5,kk)];
+INPU.vecCG_param = [param_sweep(6,kk); param_sweep(6,kk); param_sweep(6,kk)];
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -164,7 +173,18 @@ tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPH
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 end
 % save('Discus_Rigid_Trim.mat')
-save('temp_Flex_Trim.mat')
+temp.OUTP = OUTP;
+temp.COND = COND;
+temp.INPU = INPU;
+temp.FLAG = FLAG;
+temp.MISC = MISC;
+temp.SURF = SURF;
+temp.TRIM = TRIM;
+temp.VEHI = VEHI;
+temp.VISC = VISC;
+temp.WAKE = WAKE;
+
+% save('temp_Flex_Trim.mat')
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
 % load('HALE_Flex_Trim.mat')
 SURF.matBEAMACC = [];
@@ -198,7 +218,19 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 temp_gain = OUTP.vecZE_old(end);
 
-load('temp_Flex_Trim.mat')
+% load('temp_Flex_Trim.mat')
+% -------------------------------------------------------------------------
+OUTP = temp.OUTP;
+COND = temp.COND;
+INPU = temp.INPU;
+FLAG = temp.FLAG;
+MISC = temp.MISC;
+SURF = temp.SURF;
+TRIM = temp.TRIM;
+VEHI = temp.VEHI;
+VISC = temp.VISC;
+WAKE = temp.WAKE;
+
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
 COND.valGUSTL = 50;
@@ -231,6 +263,6 @@ fprintf(fp2,'%g ', [gain(kk,1), param_sweep(1:4,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
 
-delete temp_Flex_Trim.mat;
+% delete temp_Flex_Trim.mat;
 
 end

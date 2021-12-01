@@ -34,9 +34,9 @@ b_bendstiff1 = zeros(N_bendstiff,1);
 
 A_bendstiff1(end,end) = 0;
 
-% Bending stiffness must be greater than 5000 Nm2
+% Bending stiffness must be greater than 20000 Nm2
 lb_bendstiff = 20000*ones(N_bendstiff,1);
-ub_bendstiff = Inf*ones(N_bendstiff,1);
+ub_bendstiff = 1e6*ones(N_bendstiff,1);
 
 lb = [lb; lb_bendstiff];
 ub = [ub; ub_bendstiff];
@@ -69,9 +69,9 @@ b_torstiff1 = zeros(N_torstiff,1);
 
 A_torstiff1(end,end) = 0;
 
-% Torsional stiffness must be greater than 5000 Nm2
+% Torsional stiffness must be greater than 20000 Nm2
 lb_torstiff = 20000*ones(N_torstiff,1);
-ub_torstiff = Inf*ones(N_torstiff,1);
+ub_torstiff = 1e6*ones(N_torstiff,1);
 
 lb = [lb; lb_torstiff];
 ub = [ub; ub_torstiff];

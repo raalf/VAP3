@@ -14,7 +14,7 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-FLAG.OPT = 0;
+FLAG.OPT = 1;
 COND.valMAXTRIMITER = 50;
 
 INPU.matEIx_param = [100000; 125000; 150000];
@@ -22,13 +22,13 @@ INPU.matGJt_param = [100000; 120000; 166000];
 INPU.vecEA_param = [0.25; 0.20; 0.25];
 INPU.vecCG_param = [0.25; 0.20; 0.25];
 
-% opthistory = importdata('C:/Users/Michael/Desktop/opthistory.txt');
+opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_cosine.txt');
 
-% des = 32;
-% INPU.matEIx(:,1) = opthistory(des,2:16);
-% INPU.matGJt(:,1) = opthistory(des,17:31);
-% INPU.vecEA(:,1) = opthistory(des,32:46);
-% INPU.vecCG(:,1) = opthistory(des,47:61);
+des = 15;
+INPU.matEIx(:,1) = opthistory(des,2:20);
+INPU.matGJt(:,1) = opthistory(des,21:39);
+INPU.vecEA(:,1) = opthistory(des,40:58);
+INPU.vecCG(:,1) = opthistory(des,59:77);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
