@@ -30,6 +30,7 @@ else
     tol = 100;
     tol1 = 100;
     tol2 = 100;
+    stability = 1;
     
     while max(abs(tol)) > 1e-7
         
@@ -44,6 +45,12 @@ else
             OUTP.matTWIST(isnan(OUTP.matDEF)) = 0;
             OUTP.matDEF = zeros(COND.valSTIFFSTEPS,INPU.valNSELE+4);
             OUTP.matTWIST = zeros(COND.valSTIFFSTEPS,INPU.valNSELE+3);
+            stability = stability + 1;
+        end
+        
+        if stability > 10
+            OUTP.TRIMFAIL = 1;
+            return;
         end
         
         % Store elastic deformation results to check for convergence

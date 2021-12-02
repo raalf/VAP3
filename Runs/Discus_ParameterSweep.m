@@ -2,8 +2,8 @@ clc
 clear
 warning off
 
-cores = 32;
-parpool(cores,'IdleTimeout',800)
+% cores = 32;
+% parpool(cores,'IdleTimeout',800)
 
 cd '..'
 
@@ -20,7 +20,7 @@ CG = [0.25 0.45 0.65];
 
 param_sweep = combvec(matEIx, matEIx, matGJt, matGJt, EA, CG);
 
-parfor kk = 1:size(param_sweep,2)
+for kk = 1:size(param_sweep,2)
 temp_def = [];
 temp_twist = [];
 trim_def = [];
@@ -31,6 +31,7 @@ trim_iter = 1;
 
 VAP_IN = [];
 TRIM = [];
+OUTP.TRIMFAIL = 0;
 
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
@@ -107,6 +108,7 @@ OUTP.aero_iter = 1;
 %% Trim iteration loop 
 % Update aeroelastic deflection based on trim conditions and then update
 % trim conditions
+if OUTP.TRIMFAIL == 0
 while max(abs(tol)) > 0.01
     COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
     
@@ -122,7 +124,7 @@ while max(abs(tol)) > 0.01
     
     %% Aeroelastic convergence loop
     % Compute static aeroelastic configuration based on trimmed aircraft loads
-    while max(abs(tol_aero)) > 1e-3
+    while max(abs(tol_aero)) > 1e-3 && OUTP.TRIMFAIL == 0
         
         [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
 
@@ -166,100 +168,117 @@ while max(abs(tol)) > 0.01
     tol = [tol1; tol2; tol3];
 
     trim_iter = trim_iter + 1;
+    
+    % Break out of function if stuck in trim loop
+    if trim_iter > COND.valMAXTRIMITER || OUTP.TRIMFAIL == 1
+        OUTP.TRIMFAIL = 1;
+        break;
+    end
+        
 end
 
 OUTP.aero_iter = 0;
 tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 end
-% save('Discus_Rigid_Trim.mat')
-temp.OUTP = OUTP;
-temp.COND = COND;
-temp.INPU = INPU;
-temp.FLAG = FLAG;
-temp.MISC = MISC;
-temp.SURF = SURF;
-temp.TRIM = TRIM;
-temp.VEHI = VEHI;
-temp.VISC = VISC;
-temp.WAKE = WAKE;
+end
 
-% save('temp_Flex_Trim.mat')
-%% Perform full flight-dynamic simulation on trimmed/deformed aircraft
-% load('HALE_Flex_Trim.mat')
-SURF.matBEAMACC = [];
-COND.valGUSTAMP = 1;
-COND.valGUSTL = 50;
-COND.valGUSTSTART = 40;
+try
+if FLAG.TRIMFAIL == 0
+    % save('Discus_Rigid_Trim.mat')
+    temp.OUTP = OUTP;
+    temp.COND = COND;
+    temp.INPU = INPU;
+    temp.FLAG = FLAG;
+    temp.MISC = MISC;
+    temp.SURF = SURF;
+    temp.TRIM = TRIM;
+    temp.VEHI = VEHI;
+    temp.VISC = VISC;
+    temp.WAKE = WAKE;
 
-SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+    % save('temp_Flex_Trim.mat')
+    %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
+    % load('HALE_Flex_Trim.mat')
+    SURF.matBEAMACC = [];
+    COND.valGUSTAMP = 1;
+    COND.valGUSTL = 50;
+    COND.valGUSTSTART = 40;
 
-% valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
-COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-% COND.valMAXTIME = 465;
-COND.valSTIFFSTEPS = 15;
-COND.valSTARTFORCES = 1;
-FLAG.FLIGHTDYN = 1;
-FLAG.STATICAERO = 0;
-FLAG.STEADY = 0;
-FLAG.RELAX = 0;
-FLAG.GUSTMODE = 1;
-FLAG.SAVETIMESTEP = 0;
+    SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+    % valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
+    COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+    % COND.valMAXTIME = 465;
+    COND.valSTIFFSTEPS = 15;
+    COND.valSTARTFORCES = 1;
+    FLAG.FLIGHTDYN = 1;
+    FLAG.STATICAERO = 0;
+    FLAG.STEADY = 0;
+    FLAG.RELAX = 0;
+    FLAG.GUSTMODE = 1;
+    FLAG.SAVETIMESTEP = 0;
 
-[VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+    VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
 
-COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+    [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
 
-% OUTP.vecFUSEREACTION = sum(OUTP.vecBEAMFORCE(2:end).*INPU.valDY,1);
+    COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
 
-[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+    % OUTP.vecFUSEREACTION = sum(OUTP.vecBEAMFORCE(2:end).*INPU.valDY,1);
 
-temp_gain = OUTP.vecZE_old(end);
+    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-% load('temp_Flex_Trim.mat')
-% -------------------------------------------------------------------------
-OUTP = temp.OUTP;
-COND = temp.COND;
-INPU = temp.INPU;
-FLAG = temp.FLAG;
-MISC = temp.MISC;
-SURF = temp.SURF;
-TRIM = temp.TRIM;
-VEHI = temp.VEHI;
-VISC = temp.VISC;
-WAKE = temp.WAKE;
+    temp_gain = OUTP.vecZE_old(end);
 
-SURF.matBEAMACC = [];
-COND.valGUSTAMP = 1;
-COND.valGUSTL = 50;
-COND.valGUSTSTART = 40;
+    % load('temp_Flex_Trim.mat')
+    % -------------------------------------------------------------------------
+    OUTP = temp.OUTP;
+    COND = temp.COND;
+    INPU = temp.INPU;
+    FLAG = temp.FLAG;
+    MISC = temp.MISC;
+    SURF = temp.SURF;
+    TRIM = temp.TRIM;
+    VEHI = temp.VEHI;
+    VISC = temp.VISC;
+    WAKE = temp.WAKE;
 
-COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-COND.valSTIFFSTEPS = 15;
-COND.valSTARTFORCES = 1;
-FLAG.FLIGHTDYN = 1;
-FLAG.STATICAERO = 0;
-FLAG.STEADY = 0;
-FLAG.RELAX = 0;
-FLAG.GUSTMODE = 0;
-FLAG.SAVETIMESTEP = 0;
-FLAG.STIFFWING = 1;
+    SURF.matBEAMACC = [];
+    COND.valGUSTAMP = 1;
+    COND.valGUSTL = 50;
+    COND.valGUSTSTART = 40;
 
-VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+    COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+    COND.valSTIFFSTEPS = 15;
+    COND.valSTARTFORCES = 1;
+    FLAG.FLIGHTDYN = 1;
+    FLAG.STATICAERO = 0;
+    FLAG.STEADY = 0;
+    FLAG.RELAX = 0;
+    FLAG.GUSTMODE = 0;
+    FLAG.SAVETIMESTEP = 0;
+    FLAG.STIFFWING = 1;
 
-[VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+    VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
 
-COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+    [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+
+    COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
 
 
-[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-gain(kk,1) = temp_gain - (-0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCDI(COND.valGUSTSTART-1)*COND.valGUSTL/COND.vecVEHWEIGHT);
+    gain(kk,1) = temp_gain - (-0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCDI(COND.valGUSTSTART-1)*COND.valGUSTL/COND.vecVEHWEIGHT);
+else
+    gain(kk,1) = Inf;
+end
+catch
+    gain(kk,1) = Inf;
+end
 
 fp2 = fopen('Optimization/paramhistory.txt','at');
-fprintf(fp2,'%g ', [gain(kk,1), param_sweep(1:4,kk)']);
+fprintf(fp2,'%g ', [gain(kk,1), param_sweep(:,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
 
