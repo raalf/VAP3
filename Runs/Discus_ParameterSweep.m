@@ -2,8 +2,8 @@ clc
 clear
 warning off
 
-% cores = 32;
-% parpool(cores,'IdleTimeout',800)
+cores = 32;
+parpool(cores,'IdleTimeout',800)
 
 cd '..'
 
@@ -20,7 +20,13 @@ CG = [0.25 0.45 0.65];
 
 param_sweep = combvec(matEIx, matEIx, matGJt, matGJt, EA, CG);
 
-for kk = 1:size(param_sweep,2)
+parfor kk = 1:size(param_sweep,2)
+    
+fp3 = fopen('Optimization/dvparamhistory.txt','at');
+fprintf(fp3,'%g ', param_sweep(:,kk)');
+fprintf(fp3,'\n');
+fclose(fp3);
+
 temp_def = [];
 temp_twist = [];
 trim_def = [];
@@ -184,7 +190,7 @@ end
 end
 
 try
-if FLAG.TRIMFAIL == 0
+if OUTP.TRIMFAIL == 0
     % save('Discus_Rigid_Trim.mat')
     temp.OUTP = OUTP;
     temp.COND = COND;
