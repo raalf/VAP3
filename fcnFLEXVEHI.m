@@ -48,7 +48,7 @@ else
             stability = stability + 1;
         end
         
-        if stability > 10
+        if stability > 10 || tempTIME > 1e5
             OUTP.TRIMFAIL = 1;
             return;
         end

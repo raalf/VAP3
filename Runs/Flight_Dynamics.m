@@ -14,21 +14,21 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-FLAG.OPT = 1;
+FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [100000; 125000; 150000];
-INPU.matGJt_param = [100000; 120000; 166000];
-INPU.vecEA_param = [0.25; 0.20; 0.25];
-INPU.vecCG_param = [0.25; 0.20; 0.25];
+INPU.matEIx_param = [100000; 100000; 1500000];
+INPU.matGJt_param = [500000; 500000; 100000];
+INPU.vecEA_param = [0.65; 0.65; 0.65];
+INPU.vecCG_param = [0.25; 0.25; 0.25];
 
-opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_cosine.txt');
+% opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_cosine.txt');
 
-des = 15;
-INPU.matEIx(:,1) = opthistory(des,2:20);
-INPU.matGJt(:,1) = opthistory(des,21:39);
-INPU.vecEA(:,1) = opthistory(des,40:58);
-INPU.vecCG(:,1) = opthistory(des,59:77);
+% des = 15;
+% INPU.matEIx(:,1) = opthistory(des,2:20);
+% INPU.matGJt(:,1) = opthistory(des,21:39);
+% INPU.vecEA(:,1) = opthistory(des,40:58);
+% INPU.vecCG(:,1) = opthistory(des,59:77);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -191,6 +191,8 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 % OUTP.vecFUSEREACTION = sum(OUTP.vecBEAMFORCE(2:end).*INPU.valDY,1);
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+
+save('C:\Users\Michael\Desktop\Grid_Density4.mat');
 
 temp_gain = OUTP.vecZE_old(end);
 

@@ -267,11 +267,11 @@
 				<stiffness>	
 					<A_vecEIx>0</A_vecEIx>
 					<B_vecEIx>0</B_vecEIx>
-					<C_vecEIx>100000</C_vecEIx>
+					<C_vecEIx>500000</C_vecEIx>
 
 					<A_vecGJt>0</A_vecGJt>
 					<B_vecGJt>0</B_vecGJt>
-					<C_vecGJt>50000</C_vecGJt>
+					<C_vecGJt>500000</C_vecGJt>
 				</stiffness>
 
 				<geometry>
