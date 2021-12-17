@@ -160,7 +160,7 @@ tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPH
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 end
 % save('Discus_Rigid_Trim.mat')
-% save('temp_Flex_Trim.mat')
+save('temp_Flex_Trim.mat')
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
 % load('HALE_Flex_Trim.mat')
 SURF.matBEAMACC = [];
@@ -171,7 +171,7 @@ COND.valGUSTSTART = 40;
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
 % valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
-COND.valMAXTIME = ceil((3*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
 % COND.valMAXTIME = 465;
 COND.valSTIFFSTEPS = 15;
 COND.valSTARTFORCES = 1;

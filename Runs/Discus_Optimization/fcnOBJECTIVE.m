@@ -253,6 +253,7 @@ if OUTP.TRIMFAIL == 0
 
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
     energy_alt_gain = OUTP.vecZE_old(end,1) - OUTP.vecZE_old(COND.valGUSTSTART,1);
+    energy_alt_gain_flex = temp_gain;
 
     out = -(temp_gain - energy_alt_gain);
 else
@@ -267,7 +268,7 @@ end
 
 if nargin ~= 0
     fp2 = fopen('Optimization/opthistory.txt','at');
-    fprintf(fp2,'%g ', [out, temp_gain, energy_alt_gain, design_var, struct]);
+    fprintf(fp2,'%g ', [-out, energy_alt_gain_flex, energy_alt_gain, design_var, struct]);
     fprintf(fp2,'\n');
     fclose(fp2);
 end
