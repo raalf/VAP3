@@ -12,7 +12,7 @@ if FLAG.VISCOUS == 1
         
         idxvehwing = SURF.vecDVEWING > 0 & SURF.vecDVEVEHICLE == i; %(SURF.vecDVEWING.*SURF.vecDVEVEHICLE == i) > 0;
         idxvehrotor = SURF.vecDVEROTOR > 0 & SURF.vecDVEVEHICLE == i;
-        if (any(idxvehwing) && valTIMESTEP == COND.valMAXTIME) || (any(idxvehwing)&& temp_visc == 1) || (any(idxvehrotor) && any(idxvehwing) && valTIMESTEP > COND.valMAXTIME - abs(1/(min(COND.vecROTORRPM)*COND.valDELTIME/60)))
+        if (any(idxvehwing) && valTIMESTEP > 1) || (any(idxvehwing)&& temp_visc == 1) || (any(idxvehrotor) && any(idxvehwing) && valTIMESTEP > COND.valMAXTIME - abs(1/(min(COND.vecROTORRPM)*COND.valDELTIME/60)))
             % Compute induced velocity
             [matWUINF] = fcnINDVEL(SURF.matCENTER, valTIMESTEP, SURF, WAKE, INPU, FLAG);
             

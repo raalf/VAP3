@@ -13,6 +13,8 @@ filename = 'inputs/Discus2c.vap';
 
 delete Optimization/paramhistory.txt
 
+delete Optimization/dvparamhistory.txt
+
 matEIx = [100000 500000 1500000];
 matGJt = [100000 500000 1500000];
 EA = [0.25 0.45 0.65];

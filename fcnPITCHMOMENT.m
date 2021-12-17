@@ -200,12 +200,12 @@ for i = 1:INPU.valVEHICLES
 %         deltaM_mass = cross(VEHI.vecFUSECG-SURF.matEALST(1,:),[0,0,-VEHI.vecFUSEMASS*9.81]) + sum(cross(VEHI.vecWINGCG(2:end,:)-SURF.matEALST(1,:),[zeros(size(VEHI.vecWINGMASS(2:end),1),2),-VEHI.vecWINGMASS(2:end)*9.81]),1); % Pitching moment due to masses of wing, fuse, tail, etc.      
         
         if j == 2
-            OUTP.vecCMDIST(isCurWing) = -0.025;
+%             OUTP.vecCMDIST(isCurWing) = -0.025;
 %             OUTP.vecCMDIST(isCurWing) = 0;
         end
         
         if j == 1
-            OUTP.vecCMDIST(isCurWing) = -0.08;
+%             OUTP.vecCMDIST(isCurWing) = -0.08;
 %             OUTP.vecCMDIST(isCurWing) = 0;
         end
         
@@ -215,7 +215,7 @@ for i = 1:INPU.valVEHICLES
         
         % Double vehicle pitch moment for symmetry
         if any(INPU.vecSYM == 1) == 1
-            OUTP.vecVEHPITCHMOM(i,j) = 2*(deltaM + sum(OUTP.vecCMDIST(isCurWing)'.*(0.5*COND.vecVEHVINF*COND.vecVEHVINF*vecAREADIST(isCurWing)'*INPU.vecCMAC(i)),1));
+            OUTP.vecVEHPITCHMOM(i,j) = 2*(deltaM + sum(OUTP.vecCMDIST(isCurWing).*(0.5*COND.vecVEHVINF*COND.vecVEHVINF*vecAREADIST(isCurWing)'*INPU.vecCMAC(i)),1));
         else
             OUTP.vecVEHPITCHMOM(i,j) = sum(deltaM,1);
         end

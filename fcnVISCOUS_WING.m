@@ -161,11 +161,11 @@ for i = 1:max(vecDVEWING)
             
             % Compare Re data range to panel Re
             if (max(vecREDIST(isCurrentAirfoil)) > max(Re)) && flagPRINT == 1
-                fprintf('fcnVISCOUS_WING: Re higher than airfoil Re data. Re = %i, (%s)\n', max(vecREDIST(isCurrentAirfoil)), uniqueAirfoil{k})
+%                 fprintf('fcnVISCOUS_WING: Re higher than airfoil Re data. Re = %i, (%s)\n', max(vecREDIST(isCurrentAirfoil)), uniqueAirfoil{k})
             end
             
             if (min(vecREDIST(isCurrentAirfoil)) < min(Re)) && flagPRINT == 1
-                fprintf('fcnVISCOUS_WING: Re lower than airfoil Re data. Re = %i, (%s)\n',  min(vecREDIST(isCurrentAirfoil)), uniqueAirfoil{k})
+%                 fprintf('fcnVISCOUS_WING: Re lower than airfoil Re data. Re = %i, (%s)\n',  min(vecREDIST(isCurrentAirfoil)), uniqueAirfoil{k})
             end
             
             % find CLmax for each row of dves

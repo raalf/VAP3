@@ -40,12 +40,13 @@ try
         [INPU, SURF, VEHI] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG, VEHI);
         FLAG.STRUCTURE = 1; % Create flag if structure data exists
     end
+    
+    SURF.valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
+    [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
+    
 catch
     FLAG.STRUCTURE = 0; 
 end
-
-SURF.valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
-[INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
 
 n = 1;
 COND.valGUSTTIME = 1;

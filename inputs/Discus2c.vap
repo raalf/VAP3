@@ -69,13 +69,13 @@
 
 			<panel>
 				<spanwise_elements>1</spanwise_elements>
-				<strip_airfoil>RAALF-B8</strip_airfoil>
+				<strip_airfoil>HQ47</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
 					<chord>0.854</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
@@ -83,19 +83,19 @@
 					<wing_y>0.4</wing_y>
 					<wing_z>0</wing_z>
 					<chord>0.85</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 			</panel>
 			<panel>
 				<spanwise_elements>6</spanwise_elements>
-				<strip_airfoil>RAALF-B8</strip_airfoil>
+				<strip_airfoil>HQ47</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0.4</wing_y>
 					<wing_z>0</wing_z>
 					<chord>0.85</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
@@ -103,19 +103,19 @@
 					<wing_y>3.35</wing_y>
 					<wing_z>0.168</wing_z>
 					<chord>0.769</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 			</panel>
 			<panel>
 				<spanwise_elements>6</spanwise_elements>
-				<strip_airfoil>RAALF-B8</strip_airfoil>
+				<strip_airfoil>HQ47</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>3.35</wing_y>
 					<wing_z>0.168</wing_z>
 					<chord>0.769</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
@@ -123,19 +123,19 @@
 					<wing_y>6.05</wing_y>
 					<wing_z>0.406</wing_z>
 					<chord>0.538</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 			</panel>
 			<panel>
 				<spanwise_elements>3</spanwise_elements>
-				<strip_airfoil>RAALF-B8</strip_airfoil>
+				<strip_airfoil>HQ47</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>6.05</wing_y>
 					<wing_z>0.406</wing_z>
 					<chord>0.538</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
@@ -143,19 +143,19 @@
 					<wing_y>7.748</wing_y>
 					<wing_z>0.625</wing_z>
 					<chord>0.426</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 			</panel>
 			<panel>
 				<spanwise_elements>2</spanwise_elements>
-				<strip_airfoil>RAALF-B8</strip_airfoil>
+				<strip_airfoil>HQ47</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>7.748</wing_y>
 					<wing_z>0.625</wing_z>
 					<chord>0.426</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
@@ -163,7 +163,7 @@
 					<wing_y>8.84</wing_y>
 					<wing_z>0.903</wing_z>
 					<chord>0.228</chord>
-					<twist>-3.727</twist>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>			
 			</panel>
@@ -199,7 +199,7 @@
 			<panel>
 				<spanwise_elements>2</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
-				<strip_airfoil>HT14</strip_airfoil>
+				<strip_airfoil>DU92</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
@@ -218,7 +218,7 @@
 			<panel>
 				<spanwise_elements>2</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
-				<strip_airfoil>HT14</strip_airfoil>
+				<strip_airfoil>DU92</strip_airfoil>
 				<section>
 					<wing_x>0.075</wing_x>
 					<wing_y>0.685</wing_y>
@@ -237,7 +237,7 @@
 			<panel>
 				<spanwise_elements>1</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
-				<strip_airfoil>HT14</strip_airfoil>
+				<strip_airfoil>DU92</strip_airfoil>
 				<section>
 					<wing_x>0.168</wing_x>
 					<wing_y>1.152</wing_y>

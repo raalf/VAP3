@@ -45,7 +45,6 @@ M = -INPU.matEIx(:,1).*curv;
 % V = (M(3:end) - M(1:end-2))./(2.*INPU.valDY(2:end));
 % V = [V; (3*M(end) - 4*M(end-1) + M(end-2))./(2.*INPU.valDY(end))];
 % V = [(-3*M(1) + 4*M(2) - M(3))./(2*INPU.valDY(1)); V];
-
 OUTP.vecFUSEV(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMFORCE);
 OUTP.vecFUSEM(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMMOM);
 U = trapz(SURF.vecSTRUCTSPNDIST,(M.*M)./(2.*INPU.matEIx(:,1)));

@@ -4,12 +4,12 @@
 	<settings>
 		<relax>TRUE</relax>
 		<steady>TRUE</steady>
-		<maxtime>30</maxtime>
-		<delta_time>0.03048</delta_time>
+		<maxtime>82</maxtime>
+		<delta_time>0.036576</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>0</gust_mode>
+		<gust_mode>2</gust_mode>
 		<gliding>FALSE</gliding>
 	</settings>
 
@@ -30,7 +30,7 @@
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>10</alpha>
+		<alpha>0</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -56,7 +56,7 @@
 			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<spanwise_elements>10</spanwise_elements>
+				<spanwise_elements>7</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
 				<strip_airfoil>nan</strip_airfoil>
 				<section>

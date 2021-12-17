@@ -16,6 +16,8 @@ function [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP, FLAG] = fcnFORCES(valT
 
 SURF.nfree(:,valTIMESTEP) = SURF.vecDVENFREE;
 SURF.nind(:,valTIMESTEP) = SURF.vecDVENIND;
+SURF.lfree(:,valTIMESTEP) = SURF.vecDVELFREE;
+SURF.lind(:,valTIMESTEP) = SURF.vecDVELIND;
 % SURF.gammaold(:,valTIMESTEP) = SURF.gamma_old;
 SURF.en_t(:,:,valTIMESTEP) = en;
 SURF.matNORMDIR = en;
@@ -24,6 +26,7 @@ SURF.matNORMDIR = en;
 [inddrag, tempUINF, SURF.matDVEINDDRAG] = fcnDVEINDDRAG(valTIMESTEP, SURF, WAKE, FLAG);
 
 SURF.vecDVEDIND = inddrag;
+SURF.dind(:,valTIMESTEP) = SURF.vecDVEDIND;
 SURF.matDRAGDIR = tempUINF;
 
 %% Sum up element forces to generate total wing forces

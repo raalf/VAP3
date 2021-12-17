@@ -66,6 +66,8 @@ for i = 1:INPU.valVEHICLES
         
         AR(i) = (INPU.vecSPAN(i)*INPU.vecSPAN(i))/INPU.vecAREA(i);
         valE(i) = (valCL(i)*valCL(i))/ (pi*AR(i)*valCDI(i));
+        OUTP.vecCDI(valTIMESTEP,:) = valCDI;
+        OUTP.vecCL(valTIMESTEP,:) = valCL;
         
         try
             if FLAG.STIFFWING ~= 1

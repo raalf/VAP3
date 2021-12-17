@@ -14,7 +14,7 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 
-FLAG.OPT = 2;
+FLAG.OPT = 0;
 COND.valMAXTRIMITER = 50;
 
 INPU.matEIx_param = [100000; 100000; 1500000];
@@ -22,9 +22,9 @@ INPU.matGJt_param = [500000; 500000; 100000];
 INPU.vecEA_param = [0.65; 0.65; 0.65];
 INPU.vecCG_param = [0.25; 0.25; 0.25];
 
-% opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_cosine.txt');
+% opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_sine.txt');
 
-% des = 15;
+% des = 302;
 % INPU.matEIx(:,1) = opthistory(des,2:20);
 % INPU.matGJt(:,1) = opthistory(des,21:39);
 % INPU.vecEA(:,1) = opthistory(des,40:58);
@@ -51,7 +51,7 @@ tol = 100;
 % compute the static aeroelastic deflections
 
 FLAG.TRIM = 0;
-FLAG.VISCOUS = 0;
+FLAG.VISCOUS = 1;
 FLAG.GUSTMODE = 0;
 
 % Increase number of stiff steps (steps before computing structural
@@ -160,7 +160,7 @@ tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPH
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 end
 % save('Discus_Rigid_Trim.mat')
-save('temp_Flex_Trim.mat')
+% save('temp_Flex_Trim.mat')
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
 % load('HALE_Flex_Trim.mat')
 SURF.matBEAMACC = [];
@@ -171,7 +171,7 @@ COND.valGUSTSTART = 40;
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
 % valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
-COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+COND.valMAXTIME = ceil((3*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
 % COND.valMAXTIME = 465;
 COND.valSTIFFSTEPS = 15;
 COND.valSTARTFORCES = 1;
@@ -179,7 +179,7 @@ FLAG.FLIGHTDYN = 1;
 FLAG.STATICAERO = 0;
 FLAG.STEADY = 0;
 FLAG.RELAX = 0;
-FLAG.GUSTMODE = 2;
+FLAG.GUSTMODE = 1;
 FLAG.SAVETIMESTEP = 0;
 
 VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -188,13 +188,11 @@ VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
 
 COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
 
-% OUTP.vecFUSEREACTION = sum(OUTP.vecBEAMFORCE(2:end).*INPU.valDY,1);
-
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-save('C:\Users\Michael\Desktop\Grid_Density4.mat');
+save('G:\My Drive\PhD\Optimization\Sine_High_FlexSim.mat');
 
-temp_gain = OUTP.vecZE_old(end);
+temp_gain = OUTP.vecZE_old;
 
 clearvars -except temp_gain
 load('temp_Flex_Trim.mat')
@@ -206,7 +204,7 @@ COND.valGUSTSTART = 40;
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
 COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-COND.valSTIFFSTEPS = 15;
+COND.valSTIFFSTEPS = 40;
 COND.valSTARTFORCES = 1;
 FLAG.FLIGHTDYN = 1;
 FLAG.STATICAERO = 0;
@@ -225,6 +223,8 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-gain = temp_gain - OUTP.vecZE_old(end);
+gain = temp_gain(end) - OUTP.vecZE_old(end);
 
 delete temp_Flex_Trim.mat;
+
+save('G:\My Drive\PhD\Optimization\Sine_High_SLF.mat');

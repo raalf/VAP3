@@ -37,9 +37,9 @@ fpg = repmat(fpg,SURF.valNELE,1);
 dvetype = zeros(length(dvenum),1);
 
 % if valTIMESTEP < 1
-if FLAG.STEADY == 1
-    dvetype(tedvenum) = 2; % Trailing edge DVEs are type 2 (no filament at TE) --> GB change from 8/10/21; translated from C++ nonsense to a real language by MM
-end
+% if FLAG.STEADY == 1
+%     dvetype(tedvenum) = 2; % Trailing edge DVEs are type 2 (no filament at TE) --> GB change from 8/10/21; translated from C++ nonsense to a real language by MM
+% end
 % end
 
 %set singfct to zero temporarily. Why? Not gonna do this, we have NaN CL because of this. T.D.K 2017-04-26

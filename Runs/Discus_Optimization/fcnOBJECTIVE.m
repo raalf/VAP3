@@ -62,7 +62,7 @@ COND.valMAXTRIMITER = 50;
 % compute the static aeroelastic deflections
 
 FLAG.TRIM = 0;
-FLAG.VISCOUS = 0;
+FLAG.VISCOUS = 1;
 FLAG.GUSTMODE = 0;
 
 % Increase number of stiff steps (steps before computing structural
@@ -119,7 +119,7 @@ if OUTP.TRIMFAIL == 0
 
         %% Aeroelastic convergence loop
         % Compute static aeroelastic configuration based on trimmed aircraft loads
-        while max(abs(tol_aero)) > 0.005
+        while max(abs(tol_aero)) > 1e-3
 
             [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
 
@@ -191,7 +191,7 @@ if OUTP.TRIMFAIL == 0
     SURF.matBEAMACC = [];
     COND.valGUSTAMP = 1;
     COND.valGUSTL = 50;
-    COND.valGUSTSTART = 15;
+    COND.valGUSTSTART = 40;
     FLAG.STIFFWING = 0;
 
     SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
@@ -267,7 +267,7 @@ end
 
 if nargin ~= 0
     fp2 = fopen('Optimization/opthistory.txt','at');
-    fprintf(fp2,'%g ', [out, design_var, struct]);
+    fprintf(fp2,'%g ', [out, temp_gain, energy_alt_gain, design_var, struct]);
     fprintf(fp2,'\n');
     fclose(fp2);
 end
