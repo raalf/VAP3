@@ -259,10 +259,15 @@ if OUTP.TRIMFAIL == 0
 else
     out = Inf;
     struct = Inf;
+    energy_alt_gain_flex = Inf;
+    energy_alt_gain = Inf;
+    
 end
 catch
     out = Inf;
     struct = Inf;
+    energy_alt_gain_flex = Inf;
+    energy_alt_gain = Inf;
 end
     
 
