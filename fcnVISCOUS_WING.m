@@ -1,7 +1,7 @@
 function [valCL, valCD, valCM, valPREQ, valLD, valVINF, vecCMDIST, temp_CN, vecCDPDIST, temp_dist] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, ...
-    valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, vecCMAC)
+    valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, vecCMAC, valFUSEFPA)
 
 warning off
 
@@ -247,7 +247,7 @@ dprof = sum(dprofPerWing);
 
 %% Total Drag
 
-dtot = di + dprof;
+dtot = di + dprof + valFUSEFPA*q_inf;
 
 dint = dtot*(valINTERF/100);
 

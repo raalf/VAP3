@@ -77,7 +77,7 @@ SURF.vecELEVANGLE = 0;
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
 
 % Initial trim iteration loop for rigid aircraft
-[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
 
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
@@ -104,7 +104,7 @@ if OUTP.TRIMFAIL == 0
     while max(abs(tol)) > 0.01
         COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
 
-    %     COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
+         COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
     %     COND.valSTARTFORCES = COND.valMAXTIME; % Compute forces for last two timesteps
 
     %     COND.valSTARTFORCES = 1;
@@ -179,7 +179,9 @@ if OUTP.TRIMFAIL == 0
     end
 end
 
-save('temp_Flex_Trim.mat')
+tempName = tempname(pwd);
+tempFile = [tempName, '.mat'];
+save(tempFile)
 
 try
 if OUTP.TRIMFAIL == 0
@@ -224,8 +226,8 @@ if OUTP.TRIMFAIL == 0
     [~,idxMINtwist] = min(OUTP.matTWISTGLOB(:,end));
     struct = [OUTP.matDEFGLOB(idxMAXdef,:), OUTP.matDEFGLOB(idxMINdef,:), OUTP.matTWISTGLOB(idxMAXtwist,:), OUTP.matTWISTGLOB(idxMINtwist,:)];
     
-    clearvars -except temp_gain struct
-    load('temp_Flex_Trim.mat')
+    clearvars -except temp_gain struct design_var home_dir tempFile
+    load(tempFile)
     SURF.matBEAMACC = [];
     COND.valGUSTAMP = 1;
     COND.valGUSTL = 50;
@@ -278,7 +280,7 @@ if nargin ~= 0
     fclose(fp2);
 end
 
-delete temp_Flex_Trim.mat;
+delete(tempFile);
 
 cd(home_dir)
 

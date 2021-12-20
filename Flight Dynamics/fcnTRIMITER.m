@@ -27,13 +27,13 @@ while max(abs(tol)) > 1e-3
     if iter > 2
 %         new_alpha(iter,1) = COND.vecVEHALPHA + (COND.CLtrim-OUTP.vecCL(end))/((CL(iter-1)-CL(iter-2))/(new_alpha(iter-1)-new_alpha(iter-2)));
         new_alpha(iter,1) = COND.vecVEHALPHA + (CZtrim-CZ(iter-1,1))/((CZ(iter-1)-CZ(iter-2))/(new_alpha(iter-1)-new_alpha(iter-2)));
-%         new_fpa(iter,1) = COND.vecVEHFPA + (-CX(iter-1,1))/((CX(iter-1)-CX(iter-2))/(new_fpa(iter-1)-new_fpa(iter-2)));
+        new_fpa(iter,1) = COND.vecVEHFPA + (-CX(iter-1,1))/((CX(iter-1)-CX(iter-2))/(new_fpa(iter-1)-new_fpa(iter-2)));
         new_tail(iter,1) = SURF.vecELEVANGLE + (-OUTP.vecVEHCM(end))/((CM(iter-1)-CM(iter-2))/(new_tail(iter-1)-new_tail(iter-2)));
 %         new_pitch(iter,1) = new_alpha(iter,1) + new_fpa(iter,1);
     else
 %         new_alpha(iter,1) = COND.vecVEHALPHA + (COND.CLtrim-OUTP.vecCL(end))/(2*pi*pi/180);
         new_alpha(iter,1) = COND.vecVEHALPHA + (CZtrim-CZ(iter-1,1))/(2*pi*pi/180);
-%         new_fpa(iter,1) = -atand(1/(OUTP.vecCL(end)/OUTP.vecCD(end)));
+        new_fpa(iter,1) = -atand(1/(OUTP.vecCL(end)/OUTP.vecCD(end)));
         new_tail(iter,1) = SURF.vecELEVANGLE + 2;
 %         new_pitch(iter,1) = new_alpha(iter,1) + new_fpa(iter,1);
     end
@@ -50,12 +50,12 @@ while max(abs(tol)) > 1e-3
 
     COND.vecVEHALPHA = new_alpha(iter,1);
     if FLAG.GLIDING == 1
-        COND.vecVEHFPA = -atand(1/(OUTP.vecCL(end)/OUTP.vecCD(end)));
+%         COND.vecVEHFPA = -atand(1/(OUTP.vecCL(end)/OUTP.vecCD(end)));
 %         COND.vecVEHFPA = COND.vecVEHALPHA - COND.vecVEHPITCH;
     else
         COND.vecVEHFPA = 0;
     end
-%     COND.vecVEHFPA = new_fpa(iter,1);
+    COND.vecVEHFPA = new_fpa(iter,1);
 %     VEHI.vecVEHPITCH = new_pitch(iter,1);
 
     [ VEHI.matGLOBUVW, VEHI.matVEHROT, VEHI.matVEHROTRATE, MISC.matCIRORIG] = fcnINITVEHICLE( COND.vecVEHVINF, INPU.matVEHORIG, COND.vecVEHALPHA, COND.vecVEHBETA, COND.vecVEHFPA, COND.vecVEHROLL, COND.vecVEHTRK, VEHI.vecVEHRADIUS );

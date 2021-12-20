@@ -300,6 +300,7 @@
 			<mass>280.4158</mass>
 			<length>0.1</length>
 			<valNFELE>10</valNFELE>
+			<flat_plate_area>0.019</flat_plate_area>
 			<start_loc>
 				<x>0.2796</x>
 				<y>0</y>

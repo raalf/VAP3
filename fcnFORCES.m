@@ -30,14 +30,14 @@ SURF.dind(:,valTIMESTEP) = SURF.vecDVEDIND;
 SURF.matDRAGDIR = tempUINF;
 
 %% Sum up element forces to generate total wing forces
-[OUTP, SURF] = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP, FLAG, WAKE, VISC);
+[OUTP, SURF] = fcnWINGNFORCE(valTIMESTEP, inddrag, SURF, INPU, COND, OUTP, FLAG, WAKE, VISC, VEHI);
 
 if ~any(SURF.vecDVEROTOR)
     [OUTP, SURF] = fcnSURFACEDIST(COND, INPU, SURF, OUTP, FLAG, valTIMESTEP);
 end
 
 %% Viscous wrapper
-[OUTP, SURF, matROTORCDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, 0);
+[OUTP, SURF, matROTORCDP, vecDELNDIST] = fcnVISCOUS(valTIMESTEP, OUTP, COND, VISC, SURF, INPU, FLAG, WAKE, VEHI, 0);
 
 %% Moment calculations
 % If there's an h-stab, compute pitch moment

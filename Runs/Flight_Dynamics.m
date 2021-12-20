@@ -22,13 +22,13 @@ INPU.matGJt_param = [500000; 500000; 100000];
 INPU.vecEA_param = [0.65; 0.65; 0.65];
 INPU.vecCG_param = [0.25; 0.25; 0.25];
 
-% opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_sine.txt');
-
-% des = 302;
-% INPU.matEIx(:,1) = opthistory(des,2:20);
-% INPU.matGJt(:,1) = opthistory(des,21:39);
-% INPU.vecEA(:,1) = opthistory(des,40:58);
-% INPU.vecCG(:,1) = opthistory(des,59:77);
+% opthistory = importdata('C:\Users\Michael\Desktop\opthistory.txt');
+% 
+% des = 34;
+% INPU.matEIx(:,1) = opthistory(des,4:22);
+% INPU.matGJt(:,1) = opthistory(des,23:41);
+% INPU.vecEA(:,1) = opthistory(des,42:60);
+% INPU.vecCG(:,1) = opthistory(des,61:79);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -83,7 +83,7 @@ VEHI.vecPROPLOC_START = VEHI.vecPROPLOC;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 
 % save('HALE_Validation_10ms_Rigid.mat')
-FLAG.STIFFWING = 0;
+FLAG.STIFFWING = 1;
 
 OUTP.aero_iter = 1;
 if FLAG.STIFFWING == 0
@@ -160,42 +160,42 @@ tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPH
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 end
 % save('Discus_Rigid_Trim.mat')
-save('temp_Flex_Trim.mat')
+tempName = tempname(pwd);
+tempFile = [tempName, '.mat'];
+save(tempFile)
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
 % load('HALE_Flex_Trim.mat')
-SURF.matBEAMACC = [];
-COND.valGUSTAMP = 1;
-COND.valGUSTL = 50;
-COND.valGUSTSTART = 40;
-
-SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
-
-% valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
-COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-% COND.valMAXTIME = 465;
-COND.valSTIFFSTEPS = 15;
-COND.valSTARTFORCES = 1;
-FLAG.FLIGHTDYN = 1;
-FLAG.STATICAERO = 0;
-FLAG.STEADY = 0;
-FLAG.RELAX = 0;
-FLAG.GUSTMODE = 1;
-FLAG.SAVETIMESTEP = 0;
-
-VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
-
-[VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
-
-COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
-
-[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
-
-save('G:\My Drive\PhD\Optimization\Sine_High_FlexSim.mat');
-
-temp_gain = OUTP.vecZE_old;
-
-clearvars -except temp_gain
-load('temp_Flex_Trim.mat')
+% SURF.matBEAMACC = [];
+% COND.valGUSTAMP = 1;
+% COND.valGUSTL = 50;
+% COND.valGUSTSTART = 40;
+% 
+% SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+% 
+% COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+% COND.valSTIFFSTEPS = 15;
+% COND.valSTARTFORCES = 1;
+% FLAG.FLIGHTDYN = 1;
+% FLAG.STATICAERO = 0;
+% FLAG.STEADY = 0;
+% FLAG.RELAX = 0;
+% FLAG.GUSTMODE = 1;
+% FLAG.SAVETIMESTEP = 0;
+% 
+% VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+% 
+% [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+% 
+% COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+% 
+% [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+% 
+% save('G:\My Drive\PhD\Optimization\Sine_High_FlexSim.mat');
+% 
+% temp_gain = OUTP.vecZE_old;
+% 
+% clearvars -except temp_gain
+% load(tempFile)
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
 COND.valGUSTL = 50;
@@ -225,6 +225,6 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 gain = temp_gain(end) - OUTP.vecZE_old(end);
 
-delete temp_Flex_Trim.mat;
+delete(tempFile);
 
 save('G:\My Drive\PhD\Optimization\Sine_High_SLF.mat');

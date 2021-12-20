@@ -304,7 +304,8 @@ for valTIMESTEP = 1:COND.valMAXTIME
         %% Forces
         if valTIMESTEP >= COND.valSTARTFORCES
             [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
-            OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1) + 2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:);
+            OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1) +...
+                2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:) + (VEHI.valFUSEFPA*0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF).*VEHI.ddir(1,:);
             OUTP.GlobForceFuse(valTIMESTEP,:) = 2*COND.valDENSITY*(sum(dot(SURF.matDVEIFORCE(SURF.vecDVEWING == 2,:),VEHI.ldir(SURF.vecDVEWING == 2,:),2).*VEHI.ldir(SURF.vecDVEWING == 2,:),1)...
                 + sum(SURF.matDVEINDDRAG.*VEHI.ddir,1)) + 2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:);
             OUTP.matUINF_t(:,:,valTIMESTEP) = SURF.matUINF;
@@ -319,7 +320,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     %% Post-timestep outputs
     if FLAG.PRINT == 1
 %         fcnPRINTOUT(FLAG.PRINT, valTIMESTEP, INPU.valVEHICLES, OUTP.vecCL, OUTP.vecCDI, OUTP.vecCT, MISC.vecROTORJ, VEHI.vecROTORVEH, 1)
-        fcnFLIGHTDYNPRINTOUT(FLAG.PRINT, valTIMESTEP, INPU.valVEHICLES, OUTP.vecCL, OUTP.vecCDI, OUTP.matDEFGLOB, INPU.vecVEHCG, VEHI.vecVEHDYN, 1)
+        fcnFLIGHTDYNPRINTOUT(FLAG.PRINT, valTIMESTEP, INPU.valVEHICLES, OUTP.vecCL, OUTP.vecCD, OUTP.matDEFGLOB, INPU.vecVEHCG, VEHI.vecVEHDYN, 1)
     end
     
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)

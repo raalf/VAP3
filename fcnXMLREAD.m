@@ -266,6 +266,8 @@ for i = 1:INPU.valVEHICLES
         catch; VEHI.vecFUSEMASS(j,:) = 0; end
         try VEHI.valNFELE(j,:) = str2double(fuse.valNFELE.Text);
         catch; VEHI.valNFELE(j,:) = 0; end
+        try VEHI.valFUSEFPA(j,:) = str2double(fuse.flat_plate_area.Text);
+        catch; VEHI.valFUSEFPA(j,:) = 0; end
         
         try VEHI.vecFUSELOC(j,:) = [str2double(fuse.start_loc.x.Text) str2double(fuse.start_loc.y.Text) str2double(fuse.start_loc.z.Text)];
         catch; VEHI.vecFUSELOC(j,:) = [0 0 0]; end
