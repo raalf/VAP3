@@ -304,10 +304,14 @@ for valTIMESTEP = 1:COND.valMAXTIME
         %% Forces
         if valTIMESTEP >= COND.valSTARTFORCES
             [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
-            OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1) +...
-                2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:) + (VEHI.valFUSEFPA*0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF).*VEHI.ddir(1,:);
-            OUTP.GlobForceFuse(valTIMESTEP,:) = 2*COND.valDENSITY*(sum(dot(SURF.matDVEIFORCE(SURF.vecDVEWING == 2,:),VEHI.ldir(SURF.vecDVEWING == 2,:),2).*VEHI.ldir(SURF.vecDVEWING == 2,:),1)...
-                + sum(SURF.matDVEINDDRAG.*VEHI.ddir,1)) + 2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:);
+            if FLAG.VISCOUS == 1
+                OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1) +...
+                    2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:) + (VEHI.valFUSEFPA*0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF).*VEHI.ddir(1,:);
+            else
+                OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1);
+            end
+%             OUTP.GlobForceFuse(valTIMESTEP,:) = 2*COND.valDENSITY*(sum(dot(SURF.matDVEIFORCE(SURF.vecDVEWING == 2,:),VEHI.ldir(SURF.vecDVEWING == 2,:),2).*VEHI.ldir(SURF.vecDVEWING == 2,:),1)...
+%                 + sum(SURF.matDVEINDDRAG.*VEHI.ddir,1)) + 2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:);
             OUTP.matUINF_t(:,:,valTIMESTEP) = SURF.matUINF;
 %             SURF.matBEAMLOC(:,:,valTIMESTEP) = SURF.matEALST(1:INPU.valNSELE,:);
         end

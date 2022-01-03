@@ -1,4 +1,4 @@
-function [vecCL] = fcnUNSTEADYWRAPPER(vecDVENFREE,vecUINF,vecDVEHVCRD,valAREA,gamma_old,...
+function [vecDVENFREE] = fcnUNSTEADYWRAPPER(vecDVENFREE,vecUINF,vecDVEHVCRD,valAREA,gamma_old,...
     valMAXTIME,valGUSTSTART,valDELTIME,vecSYM,valBETA,en_t)
 % The unsteady wrapper, first derived on Embraer E175, AC7665, 33000 ft.
 % Implemented: Fishy AirBnB, Dallas, TX 75219
@@ -33,17 +33,17 @@ dGammadt(:,valGUSTSTART:valMAXTIME) = (gamma_old(:,valGUSTSTART+1:valMAXTIME+1) 
 dGammadt(:,valMAXTIME) = (3*gamma_old(:,valMAXTIME) - 4*gamma_old(:,valMAXTIME-1) + gamma_old(:,valMAXTIME-2))./(2*valDELTIME);
 dGammadt(:,valGUSTSTART) = (3*gamma_old(:,valGUSTSTART) - 4*gamma_old(:,valGUSTSTART-1) + gamma_old(:,valGUSTSTART-2))./(2*valDELTIME);
 
-vecDVENFREE = vecDVENFREE + dGammadt;
-vecDVENFREE = reshape(vecDVENFREE,[size(vecDVENFREE,1) 1 valMAXTIME]);
-liftfree = vecDVENFREE.*en_t(:,3,:);
-ntfree = sum(liftfree,1);
+vecDVENFREE = vecDVENFREE + dGammadt.*(2*vecDVEHVCRD);
+% vecDVENFREE = reshape(vecDVENFREE,[size(vecDVENFREE,1) 1 valMAXTIME]);
+% liftfree = vecDVENFREE.*en_t(:,3,:);
+% ntfree = sum(liftfree,1);
 
-if any(vecSYM) == 1 && valBETA ==0 %not sure why beta has to be zero 
-    ntfree = ntfree*2; %why dont we double the side force?
-end
-
-vecCL = (ntfree)./q;
-
-vecCL = reshape(vecCL,[valMAXTIME,1,1]);
+% if any(vecSYM) == 1 && valBETA ==0 %not sure why beta has to be zero 
+%     ntfree = ntfree*2; %why dont we double the side force?
+% end
+% 
+% vecCL = (ntfree)./q;
+% 
+% vecCL = reshape(vecCL,[valMAXTIME,1,1]);
 
 end

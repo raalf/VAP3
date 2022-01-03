@@ -25,10 +25,38 @@ filename = 'inputs/Kussner.vap';
 
 AR = INPU.vecSPAN*INPU.vecSPAN/INPU.vecAREA;
 
-% [OUTP.vecCL] = fcnUNSTEADYWRAPPER(SURF.nfree,[COND.vecVEHVINF,0,0],SURF.vecDVEHVCRD,INPU.vecAREA,SURF.gammaold,...
-%     COND.valMAXTIME,COND.valGUSTSTART,COND.valDELTIME,INPU.vecSYM,COND.vecVEHBETA,SURF.en_t);
+[ledves, ~, ~] = find(SURF.vecDVELE > 0 & SURF.vecDVEWING > 0);
+lepanels = SURF.vecDVEPANEL(ledves);
 
-OUTP.vecCL = OUTP.vecCL.*((AR+2)/AR);
+isCurWing = SURF.vecDVEWING(ledves) == 1;
+
+idxdve = uint16(ledves(isCurWing));
+idxpanel = lepanels(isCurWing);
+
+
+m = INPU.vecM(idxpanel);
+m = m(1);
+
+% Matrix of how much we need to add to an index to get the next chordwise element
+% It is done this way because n can be different for each panel. Unlike in the wake,
+% we can't just add a constant value to get to the same spanwise location in the next
+% row of elements
+tempm = repmat(INPU.vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel~=0),1);
+
+rows = repmat(idxdve,1,m) + uint16(tempm);
+
+nforce = (SURF.nfree(rows(1,:),:) + SURF.nind(rows(1,:),:));
+vecAREA = sum(sum(SURF.vecDVEAREA(rows(1,:)),2),1);
+qinf = 0.5*COND.vecVEHVINF*COND.vecVEHVINF;
+CL = sum(nforce,1)./(qinf*vecAREA);
+
+[SURF.nfree] = fcnUNSTEADYWRAPPER(SURF.nfree,[COND.vecVEHVINF,0,0],SURF.vecDVEHVCRD,INPU.vecAREA,SURF.GammaInt,...
+    COND.valMAXTIME,COND.valGUSTSTART,COND.valDELTIME,INPU.vecSYM,COND.vecVEHBETA,SURF.en_t);
+
+nforce_fwd = (SURF.nfree(rows(1,:),:) + SURF.nind(rows(1,:),:));
+CL_fwd = sum(nforce_fwd,1)./(qinf*vecAREA);
+
+% OUTP.vecCL = OUTP.vecCL.*((AR+2)/AR);
 
 % figure(420)
 % hold on
@@ -39,15 +67,17 @@ OUTP.vecCL = OUTP.vecCL.*((AR+2)/AR);
 
 figure(6969)
 hold on
-plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,OUTP.vecCL(COND.valGUSTSTART:end),'-k','linewidth',1.5)
+plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL(COND.valGUSTSTART:end),'-.b','linewidth',1.5)
+% plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL_fwd(COND.valGUSTSTART:end),'-.r','linewidth',1.5)
+% plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,OUTP.vecCL(COND.valGUSTSTART:end),'-k','linewidth',1.5)
 % plot((1:COND.valMAXTIME).*COND.valDELTIME,OUTP.vecCL,'-b','linewidth',1.5)
 box on
 grid on
 ylabel('C_l')
 xlabel('Time (s)')
 
-Kussner_Function
+% Kussner_Function
 
-plot(t,Cl,'--r','linewidth',1.5)
+% plot(t,Cl,'-k','linewidth',1.5)
 
-save('Sharp_Edge_m10.mat')
+save('Sharp_Edge_m30.mat')

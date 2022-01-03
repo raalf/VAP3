@@ -15,9 +15,9 @@
 
 	<conditions>
 		<density>1.225</density>
-		<kin_viscosity>1.6e-04</kin_viscosity>
+		<kin_viscosity>1.46e-05</kin_viscosity>
 		<gust_amplitude>1</gust_amplitude>
-		<gust_length>57</gust_length>
+		<gust_length>25</gust_length>
 		<gust_start>38</gust_start>
 	</conditions>
 
@@ -267,11 +267,11 @@
 				<stiffness>	
 					<A_vecEIx>0</A_vecEIx>
 					<B_vecEIx>0</B_vecEIx>
-					<C_vecEIx>500000</C_vecEIx>
+					<C_vecEIx>250000</C_vecEIx>
 
 					<A_vecGJt>0</A_vecGJt>
 					<B_vecGJt>0</B_vecGJt>
-					<C_vecGJt>500000</C_vecGJt>
+					<C_vecGJt>250000</C_vecGJt>
 				</stiffness>
 
 				<geometry>

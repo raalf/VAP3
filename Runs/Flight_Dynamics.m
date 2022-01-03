@@ -83,7 +83,7 @@ VEHI.vecPROPLOC_START = VEHI.vecPROPLOC;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 
 % save('HALE_Validation_10ms_Rigid.mat')
-FLAG.STIFFWING = 1;
+FLAG.STIFFWING = 0;
 
 OUTP.aero_iter = 1;
 if FLAG.STIFFWING == 0
@@ -165,40 +165,40 @@ tempFile = [tempName, '.mat'];
 save(tempFile)
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
 % load('HALE_Flex_Trim.mat')
-% SURF.matBEAMACC = [];
-% COND.valGUSTAMP = 1;
-% COND.valGUSTL = 50;
-% COND.valGUSTSTART = 40;
-% 
-% SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
-% 
-% COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-% COND.valSTIFFSTEPS = 15;
-% COND.valSTARTFORCES = 1;
-% FLAG.FLIGHTDYN = 1;
-% FLAG.STATICAERO = 0;
-% FLAG.STEADY = 0;
-% FLAG.RELAX = 0;
-% FLAG.GUSTMODE = 1;
-% FLAG.SAVETIMESTEP = 0;
-% 
-% VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
-% 
-% [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
-% 
-% COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
-% 
-% [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
-% 
-% save('G:\My Drive\PhD\Optimization\Sine_High_FlexSim.mat');
-% 
-% temp_gain = OUTP.vecZE_old;
-% 
-% clearvars -except temp_gain
-% load(tempFile)
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
-COND.valGUSTL = 50;
+% COND.valGUSTL = 50;
+COND.valGUSTSTART = 40;
+
+SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+
+COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+COND.valSTIFFSTEPS = 15;
+COND.valSTARTFORCES = 1;
+FLAG.FLIGHTDYN = 1;
+FLAG.STATICAERO = 0;
+FLAG.STEADY = 0;
+FLAG.RELAX = 0;
+FLAG.GUSTMODE = 2;
+FLAG.SAVETIMESTEP = 0;
+
+VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+
+[VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+
+COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+
+[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+
+% save('G:\My Drive\PhD\Optimization\Sine_High_FlexSim.mat');
+
+temp_gain = OUTP.vecZE_old;
+
+clearvars -except temp_gain tempFile
+load(tempFile)
+SURF.matBEAMACC = [];
+COND.valGUSTAMP = 1;
+% COND.valGUSTL = 25;
 COND.valGUSTSTART = 40;
 
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
@@ -227,4 +227,4 @@ gain = temp_gain(end) - OUTP.vecZE_old(end);
 
 delete(tempFile);
 
-save('G:\My Drive\PhD\Optimization\Sine_High_SLF.mat');
+% save('G:\My Drive\PhD\Optimization\Sine_High_SLF.mat');

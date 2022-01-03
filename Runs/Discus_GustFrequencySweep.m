@@ -2,8 +2,8 @@ clc
 clear
 warning off
 
-% cores = 32;
-% parpool(cores,'IdleTimeout',800)
+cores = 24;
+parpool(cores,'IdleTimeout',800)
 
 cd '..'
 
@@ -15,17 +15,15 @@ delete Optimization/paramhistory.txt
 
 delete Optimization/dvparamhistory.txt
 
-matEIx = [100000 500000 1500000];
-matGJt = [100000 500000 1500000];
-EA = [0.25 0.45 0.65];
-CG = [0.25 0.45 0.65];
+matEIx = [250000 500000 1000000];
+EA = 0.453;
+CG = 0.453;
+gustL = [25 50 75 100];
+gustMODE = [1 2];
 
-param_sweep = combvec(matEIx, matEIx, matGJt, matGJt, EA, CG);
+param_sweep = combvec(matEIx, EA, CG, gustL, gustMODE);
 
-% parfor kk = 1:size(param_sweep,2)
-for kk = 1:size(param_sweep,2)
-    
-kk = 34;
+parfor kk = 1:size(param_sweep,2)   
     
 fp3 = fopen('Optimization/dvparamhistory.txt','at');
 fprintf(fp3,'%g ', param_sweep(:,kk)');
@@ -50,10 +48,10 @@ OUTP.TRIMFAIL = 0;
 FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(2,kk)];
-INPU.matGJt_param = [param_sweep(3,kk); param_sweep(3,kk); param_sweep(4,kk)];
-INPU.vecEA_param = [param_sweep(5,kk); param_sweep(5,kk); param_sweep(5,kk)];
-INPU.vecCG_param = [param_sweep(6,kk); param_sweep(6,kk); param_sweep(6,kk)];
+INPU.matEIx_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(1,kk)];
+INPU.matGJt_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(1,kk)];
+INPU.vecEA_param = [param_sweep(2,kk); param_sweep(2,kk); param_sweep(2,kk)];
+INPU.vecCG_param = [param_sweep(3,kk); param_sweep(3,kk); param_sweep(3,kk)];
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -213,7 +211,7 @@ if OUTP.TRIMFAIL == 0
     % load('HALE_Flex_Trim.mat')
     SURF.matBEAMACC = [];
     COND.valGUSTAMP = 1;
-    COND.valGUSTL = 50;
+    COND.valGUSTL = param_sweep(4,kk);
     COND.valGUSTSTART = 40;
 
     SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
@@ -227,7 +225,7 @@ if OUTP.TRIMFAIL == 0
     FLAG.STATICAERO = 0;
     FLAG.STEADY = 0;
     FLAG.RELAX = 0;
-    FLAG.GUSTMODE = 2;
+    FLAG.GUSTMODE = param_sweep(5,kk);
     FLAG.SAVETIMESTEP = 0;
 
     VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -257,7 +255,7 @@ if OUTP.TRIMFAIL == 0
 
     SURF.matBEAMACC = [];
     COND.valGUSTAMP = 1;
-    COND.valGUSTL = 50;
+    COND.valGUSTL = param_sweep(4,kk);
     COND.valGUSTSTART = 40;
 
     COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);

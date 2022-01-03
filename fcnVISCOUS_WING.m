@@ -93,7 +93,7 @@ for i = 1:max(vecDVEWING)
     
     %% Wing/horizontal stabilizer lift and drag
     % Note that Re is compute with Vinf + Vind
-    vecREDIST(isCurWing)   = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
+    vecREDIST(isCurWing) = mean(vecV(rows),2).*2.*sum(vecDVEHVCRD(rows),2)./valKINV;
     % If fixed-lift is enabled, UINF is defined as unity.
     % Re values have to be scaled to have correct viscous results.
     if fixed_lift == 1
