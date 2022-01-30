@@ -21,13 +21,13 @@ end
 
 % Kinetic energy of wing elements and fuselage/tail system
 OUTP.ele_kinen_temp(:,valTIMESTEP) = 0.5.*[0; SURF.vecVEHMASS].*ele_vel.*ele_vel;
-OUTP.ele_kinen(valTIMESTEP,1) = sum(OUTP.ele_kinen_temp(:,valTIMESTEP),1);
+OUTP.ele_kinen(valTIMESTEP,1) = 2*sum(OUTP.ele_kinen_temp(:,valTIMESTEP),1)+ 0.5*sum(VEHI.vecFUSEMASS,1)*COND.vecVEHVINF*COND.vecVEHVINF;
 % OUTP.ele_kinen(valTIMESTEP,1) = trapz(SURF.matCENTER(idx1,2),OUTP.ele_kinen_temp(:,valTIMESTEP));
 % OUTP.fuse_kinen(valTIMESTEP,1) = 0.5.*VEHI.vecFUSEMASS.*fuse_vel.*fuse_vel;
 
 % Gravitational potential energy of wing elements and fuselage/tail system
 OUTP.ele_poten_temp(:,valTIMESTEP) = SURF.vecVEHMASS.*9.81.*SURF.vecWINGCG(:,3);
-OUTP.ele_poten(valTIMESTEP,1) = sum(OUTP.ele_poten_temp(:,valTIMESTEP),1);
+OUTP.ele_poten(valTIMESTEP,1) = 2*sum(OUTP.ele_poten_temp(:,valTIMESTEP),1) + sum(VEHI.vecFUSEMASS,1)*9.81*VEHI.vecFUSECG(:,3);
 % OUTP.fuse_poten(valTIMESTEP,1) = VEHI.vecFUSEMASS.*9.81.*VEHI.vecFUSECG(:,3);
 
 %% Calculate curvature of deflected wing
@@ -45,8 +45,8 @@ M = -INPU.matEIx(:,1).*curv;
 % V = (M(3:end) - M(1:end-2))./(2.*INPU.valDY(2:end));
 % V = [V; (3*M(end) - 4*M(end-1) + M(end-2))./(2.*INPU.valDY(end))];
 % V = [(-3*M(1) + 4*M(2) - M(3))./(2*INPU.valDY(1)); V];
-OUTP.vecFUSEV(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMFORCE);
-OUTP.vecFUSEM(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMMOM);
+% OUTP.vecFUSEV(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMFORCE);
+% OUTP.vecFUSEM(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMMOM);
 U = trapz(SURF.vecSTRUCTSPNDIST,(M.*M)./(2.*INPU.matEIx(:,1)));
 
 U = trapz(SURF.vecSTRUCTSPNDIST,((-INPU.matEIx(:,1).*curv).^2)./(2.*INPU.matEIx(:,1)));
@@ -62,12 +62,12 @@ for i = 2:length(curv)
     OUTP.ele_U_temp(i,valTIMESTEP) = trapz(SURF.vecSTRUCTSPNDIST(i-1:i,1),OUTP.temp_ele_U(i-1:i,valTIMESTEP));
 end
 
-OUTP.ele_U(valTIMESTEP,1) = sum(OUTP.ele_U_temp(:,valTIMESTEP),1);
+OUTP.ele_U(valTIMESTEP,1) = 2*sum(OUTP.ele_U_temp(:,valTIMESTEP),1);
 
 % OUTP.work(valTIMESTEP,1) = trapz(SURF.vecSTRUCTSPNDIST,OUTP.vecBEAMFORCE.*(OUTP.matDEFGLOB(valTIMESTEP,:)-OUTP.matDEFGLOB(valTIMESTEP-1,:))');
 
 %% Compute total energy (element approach)
-OUTP.tot_en(valTIMESTEP,1) = 2*OUTP.ele_U(valTIMESTEP,1) + 2*OUTP.ele_poten(valTIMESTEP,1) + 2*OUTP.ele_kinen(valTIMESTEP,1); % Total energy
+OUTP.tot_en(valTIMESTEP,1) = OUTP.ele_U(valTIMESTEP,1) + OUTP.ele_poten(valTIMESTEP,1) + OUTP.ele_kinen(valTIMESTEP,1); % Total energy
 
 OUTP.vecZE(valTIMESTEP,1) = OUTP.tot_en(valTIMESTEP,1)./(tot_mass*9.81); % Energy altitude
 

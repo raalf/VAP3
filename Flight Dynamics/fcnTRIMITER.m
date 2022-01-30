@@ -3,6 +3,9 @@ function [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnTRIMI
 tol = 100;
 
 iter = 1;
+if FLAG.VISCOUS == 0
+    OUTP.vecCD = OUTP.vecCDI;
+end
 
 CL(iter,1) = OUTP.vecCL(end);
 CM(iter,1) = OUTP.vecVEHCM(end);

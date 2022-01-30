@@ -67,7 +67,7 @@ CL_fwd = sum(nforce_fwd,1)./(qinf*vecAREA);
 
 figure(6969)
 hold on
-plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL(COND.valGUSTSTART:end),'-.b','linewidth',1.5)
+plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL(COND.valGUSTSTART:end),'--r','linewidth',1.5)
 % plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL_fwd(COND.valGUSTSTART:end),'-.r','linewidth',1.5)
 % plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,OUTP.vecCL(COND.valGUSTSTART:end),'-k','linewidth',1.5)
 % plot((1:COND.valMAXTIME).*COND.valDELTIME,OUTP.vecCL,'-b','linewidth',1.5)
@@ -76,8 +76,8 @@ grid on
 ylabel('C_l')
 xlabel('Time (s)')
 
-% Kussner_Function
+Kussner_Function
 
-% plot(t,Cl,'-k','linewidth',1.5)
+plot(t,Cl,'-k','linewidth',1.5)
 
-save('Sharp_Edge_m30.mat')
+% save('Sharp_Edge_m30.mat')

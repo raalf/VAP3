@@ -4,7 +4,7 @@ warning off
 
 addpath('Flight Dynamics')
 
-filename = 'inputs/Discus2c.vap';
+filename = 'inputs/HALE_new.vap';
 
 trim_iter = 1;
 
@@ -22,13 +22,20 @@ INPU.matGJt_param = [500000; 500000; 100000];
 INPU.vecEA_param = [0.65; 0.65; 0.65];
 INPU.vecCG_param = [0.25; 0.25; 0.25];
 
-% opthistory = importdata('C:\Users\Michael\Desktop\opthistory.txt');
+% load('C:\Users\Michael\Desktop\Optimum_SS.mat')
+% OUTP.matDEF = 0*OUTP.matDEF;
+% OUTP.matDEFGLOB = 0*OUTP.matDEFGLOB;
+% OUTP.matTWIST = 0*OUTP.matTWIST;
+% OUTP.matTWISTGLOB = 0*OUTP.matTWISTGLOB;
+
+% opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_sine.txt');
 % 
-% des = 34;
+% des = 394;
 % INPU.matEIx(:,1) = opthistory(des,4:22);
 % INPU.matGJt(:,1) = opthistory(des,23:41);
 % INPU.vecEA(:,1) = opthistory(des,42:60);
 % INPU.vecCG(:,1) = opthistory(des,61:79);
+
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -51,7 +58,7 @@ tol = 100;
 % compute the static aeroelastic deflections
 
 FLAG.TRIM = 0;
-FLAG.VISCOUS = 1;
+FLAG.VISCOUS = 0;
 FLAG.GUSTMODE = 0;
 
 % Increase number of stiff steps (steps before computing structural
@@ -64,6 +71,8 @@ COND.valSTARTFORCES = COND.valMAXTIME; % Only compute forces on last timestep
 SURF.vecELEVANGLE = 0;
 
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
+
+% FLAG.STRUCTURE = 0;
 
 % Initial trim iteration loop for rigid aircraft
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
@@ -157,7 +166,8 @@ end
 
 OUTP.aero_iter = 0;
 tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
-fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
+fprintf('\nVehicle trimmed. AoA = %.3f deg., Elev. Angle = %.3f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
+fprintf('\nDeflection = %.3f m, Twist = %.4f deg.\n\n',OUTP.matDEFGLOB(end,end),rad2deg(OUTP.matTWISTGLOB(end,end)))
 end
 % save('Discus_Rigid_Trim.mat')
 tempName = tempname(pwd);
@@ -179,7 +189,7 @@ FLAG.FLIGHTDYN = 1;
 FLAG.STATICAERO = 0;
 FLAG.STEADY = 0;
 FLAG.RELAX = 0;
-FLAG.GUSTMODE = 2;
+FLAG.GUSTMODE = 1;
 FLAG.SAVETIMESTEP = 0;
 
 VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -190,11 +200,12 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-% save('G:\My Drive\PhD\Optimization\Sine_High_FlexSim.mat');
+% save('G:\My Drive\PhD\Optimization\Sine_High_FlexSim_LowStruct.mat');
 
 temp_gain = OUTP.vecZE_old;
+temp_gain_2 = OUTP.vecZE;
 
-clearvars -except temp_gain tempFile
+clearvars -except temp_gain tempFile temp_gain_2
 load(tempFile)
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
@@ -204,6 +215,7 @@ COND.valGUSTSTART = 40;
 SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
 COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+% COND.valMAXTIME = 50;
 COND.valSTIFFSTEPS = 40;
 COND.valSTARTFORCES = 1;
 FLAG.FLIGHTDYN = 1;
@@ -223,8 +235,10 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
+sink_rate = COND.vecVEHVINF*sind(COND.vecVEHFPA);
+
 gain = temp_gain(end) - OUTP.vecZE_old(end);
 
 delete(tempFile);
 
-% save('G:\My Drive\PhD\Optimization\Sine_High_SLF.mat');
+save('G:\My Drive\PhD\Optimization\Sine_High_SLF.mat');

@@ -103,28 +103,28 @@ for valTIMESTEP = 1:COND.valMAXTIME
 %             OUTP.GlobForce(valTIMESTEP-1,:) = OUTP.GlobForce(valTIMESTEP-1,:) - m*SURF.matBEAMACC(valTIMESTEP-1,:);
         end
         
-%         if FLAG.STIFFWING == 0 && (valTIMESTEP > COND.valGUSTSTART && FLAG.GUSTMODE > 0)
-%             
+        if FLAG.STIFFWING == 0 && (valTIMESTEP > COND.valGUSTSTART && FLAG.GUSTMODE > 0)
+            
 %             [OUTP.BForceFuse(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForceFuse(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
 %             OUTP.BForceFuse(valTIMESTEP,3) = OUTP.BForceFuse(valTIMESTEP,3) - 2*OUTP.vecFUSEV(valTIMESTEP-1,1);
-%             
-%             [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
-%             
-% %             Mstruct = 2*OUTP.vecFUSEM(valTIMESTEP-1,1) + 2*OUTP.vecFUSEV(valTIMESTEP-1,1)*(INPU.vecVEHCG(1) - SURF.matBEAMLOC(1,1,valTIMESTEP-1));
-% %             [OUTP] = fcnTAILMOM(SURF, VEHI, OUTP, INPU, COND, FLAG);
-%             
-%             M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM;
-%             
-%             m = COND.vecVEHWEIGHT/g;
-%             mf = VEHI.vecWINGMASS(2) + sum(VEHI.vecFUSEMASS,1) + VEHI.vecPAYLMASS;
-%             
-% %             [t,y] = ode45(@(t,y) fcnFUSEDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForceFuse(valTIMESTEP,3),M(end),m,mf,g,VEHI.vecIYY),...
-% %                 [0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
-% %             VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:);
-%             
-%             [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,mf,g,VEHI.vecIYY),[0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
+            
+            [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
+            
+%             Mstruct = 2*OUTP.vecFUSEM(valTIMESTEP-1,1) + 2*OUTP.vecFUSEV(valTIMESTEP-1,1)*(INPU.vecVEHCG(1) - SURF.matBEAMLOC(1,1,valTIMESTEP-1));
+%             [OUTP] = fcnTAILMOM(SURF, VEHI, OUTP, INPU, COND, FLAG);
+            
+            M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM;
+            
+            m = COND.vecVEHWEIGHT/g;
+            mf = VEHI.vecWINGMASS(2) + sum(VEHI.vecFUSEMASS,1) + VEHI.vecPAYLMASS;
+            
+%             [t,y] = ode45(@(t,y) fcnFUSEDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForceFuse(valTIMESTEP,3),M(end),m,mf,g,VEHI.vecIYY),...
+%                 [0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
 %             VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:);
-%         else
+            
+            [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,mf,g,VEHI.vecIYY),[0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
+            VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:);
+        else
                          
             [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
         
@@ -135,7 +135,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
             [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,mf,g,VEHI.vecIYY),[0 COND.valDELTIME],[VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
             VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:);
             
-%         end
+        end
               
         % Vehicle velocity in the body-fixed frame
         VEHI.matVEHUVW(1) = VEHI.vecVEHDYN(valTIMESTEP,1);
@@ -153,6 +153,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         COND.vecVEHVINF = sqrt(sum(VEHI.matVEHUVW.^2)); % Vehicle Uinf magnitude
         OUTP.vecVEHVINF(valTIMESTEP,1) = COND.vecVEHVINF;
+        
     else
         VEHI.vecVEHDYN(valTIMESTEP,1) = VEHI.matVEHUVW(1);
         VEHI.vecVEHDYN(valTIMESTEP,2) = VEHI.matVEHUVW(3);
@@ -181,19 +182,23 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.vecVEHENERGY(valTIMESTEP,2) = 9.81*(OUTP.vecCGLOC(valTIMESTEP,3)-OUTP.vecCGLOC(1,3));
         OUTP.vecVEHENERGY(valTIMESTEP,3) = OUTP.vecVEHENERGY(valTIMESTEP,1) + OUTP.vecVEHENERGY(valTIMESTEP,2);
         
-%         if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1) || FLAG.FLIGHTDYN == 1
-        if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1)
+        if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1) || FLAG.FLIGHTDYN == 1
+%         if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1)
             % Calculate vehicle energy state
             [OUTP] = fcnVEHENERGY(INPU, COND, SURF, OUTP, VEHI, FLAG, valTIMESTEP);
         end
         
         if valTIMESTEP >= COND.valGUSTSTART
-            OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2 - OUTP.vecVEHVINF(COND.valGUSTSTART)^2)/(2*9.81) + OUTP.vecCGLOC(end,3) - OUTP.vecCGLOC(COND.valGUSTSTART,3);
+%             OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2 - OUTP.vecVEHVINF(COND.valGUSTSTART)^2)/(2*9.81) + OUTP.vecCGLOC(end,3) - OUTP.vecCGLOC(COND.valGUSTSTART,3);
+            OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2)/(2*9.81) + OUTP.vecCGLOC(end,3);
         end
         
         OUTP.vecTIPPITCH(valTIMESTEP,1) = SURF.vecDVEPITCH(INPU.vecN(1));
     else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
+                [ SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
+            SURF.vecDVELESWP, SURF.vecDVEMCSWP, SURF.vecDVETESWP, SURF.vecDVEAREA, SURF.matDVENORM, SURF.matVLST, SURF.matDVE, SURF.matCENTER, MISC.matNEWWAKE ] ...
+            = fcnVLST2DVEPARAM_NEW(SURF.matNPDVE, SURF.matNPVLST, MISC.matNEWWAKE, SURF.vecDVETE);
     end
     
     % Add in gust velocity if applicable
@@ -305,8 +310,10 @@ for valTIMESTEP = 1:COND.valMAXTIME
         if valTIMESTEP >= COND.valSTARTFORCES
             [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
             if FLAG.VISCOUS == 1
-                OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1) +...
-                    2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:) + (VEHI.valFUSEFPA*0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF).*VEHI.ddir(1,:);
+%                 OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1) +...
+%                     2*(sum(SURF.vecDPDIST(1).DPDIST,1) + sum(SURF.vecDPDIST(2).DPDIST,1)).*VEHI.ddir(1,:) + (VEHI.valFUSEFPA*0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF).*VEHI.ddir(1,:)...
+%                     + (1.064*0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*0.0045).*VEHI.ddir(1,:) + (0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCD(end)*(VISC.vecINTERF/100).*VEHI.ddir(1,:));
+                OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir) + 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCD(end).*VEHI.ddir(1,:);
             else
                 OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir + SURF.matDVEINDDRAG.*VEHI.ddir,1);
             end

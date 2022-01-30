@@ -4,10 +4,10 @@
 	<settings>
 		<relax>TRUE</relax>
 		<steady>TRUE</steady>
-		<maxtime>82</maxtime>
-		<delta_time>0.036576</delta_time>
+		<maxtime>163</maxtime>
+		<delta_time>0.002032</delta_time>
 		<start_forces>0</start_forces>
-		<stiff_wing>1</stiff_wing>
+		<stiff_wing>0</stiff_wing>
 		<fixed_lift>0</fixed_lift>
 		<gust_mode>2</gust_mode>
 		<gliding>FALSE</gliding>
@@ -16,9 +16,9 @@
 	<conditions>
 		<density>1.225</density>
 		<kin_viscosity>1.46e-05</kin_viscosity>
-		<gust_amplitude>0.01</gust_amplitude>
+		<gust_amplitude>0.1</gust_amplitude>
 		<gust_length>7.3152</gust_length>
-		<gust_start>4</gust_start>
+		<gust_start>15</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -26,7 +26,7 @@
 		<global_y>0</global_y>
 		<global_z>0</global_z>
 
-		<speed>10</speed>
+		<speed>100</speed>
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>
 
@@ -46,9 +46,10 @@
 			<symmetry>TRUE</symmetry>
 			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
+			<flexible>TRUE</flexible>
 			<triangular_elements>FALSE</triangular_elements>
 
-			<chordwise_elements>5</chordwise_elements>
+			<chordwise_elements>9</chordwise_elements>
 			<chordwise_spacing>NORMAL</chordwise_spacing>
 
 			<vehicle_x>0</vehicle_x>
@@ -56,7 +57,7 @@
 			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<spanwise_elements>7</spanwise_elements>
+				<spanwise_elements>12</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
 				<strip_airfoil>nan</strip_airfoil>
 				<section>
@@ -77,6 +78,47 @@
 				</section>	
 			</panel>
 		</wing>
+
+		<structure>
+			<conditions>
+				<valSDELTIME>0.0005</valSDELTIME>
+				<valNSELE>13</valNSELE>
+				<valSTIFFSTEPS>15</valSTIFFSTEPS>
+				<valSTAGGERSTEPS>66</valSTAGGERSTEPS>
+			</conditions>
+
+			<properties>
+				<stiffness>	
+					<A_vecEIx>0</A_vecEIx>
+					<B_vecEIx>0</B_vecEIx>
+					<C_vecEIx>9772210</C_vecEIx>
+
+					<A_vecGJt>0</A_vecGJt>
+					<B_vecGJt>0</B_vecGJt>
+					<C_vecGJt>987581</C_vecGJt>
+				</stiffness>
+
+				<geometry>
+					<A_vecEA>0</A_vecEA>
+					<B_vecEA>0</B_vecEA>
+					<C_vecEA>0.33</C_vecEA>
+					
+					<A_vecCG>0</A_vecCG>
+					<B_vecCG>0</B_vecCG>
+					<C_vecCG>0.43</C_vecCG>
+				</geometry>
+
+				<mass>
+					<A_vecJt>0</A_vecJt>
+					<B_vecJt>0</B_vecJt>
+					<C_vecJt>8.64</C_vecJt>
+
+					<A_vecLM>0</A_vecLM>
+					<B_vecLM>0</B_vecLM>
+					<C_vecLM>35.709</C_vecLM>
+				</mass>
+			</properties>
+		</structure>
 	</vehicle>				
 </VAP>
 

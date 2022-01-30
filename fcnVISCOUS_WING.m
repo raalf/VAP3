@@ -1,7 +1,7 @@
 function [valCL, valCD, valCM, valPREQ, valLD, valVINF, vecCMDIST, temp_CN, vecCDPDIST, temp_dist] = fcnVISCOUS_WING(valCL, valCDI, valAREA, valDENSITY, valKINV, vecDVENFREE, vecDVENIND, ...
     vecDVELFREE, vecDVELIND, vecDVESFREE, vecDVESIND, vecDVEPANEL, vecDVELE, vecDVEWING, vecN, vecM, vecDVEAREA, ...
     matCENTER, vecDVEHVCRD, cellAIRFOIL, flagPRINT, vecSYM, ...
-    valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, vecCMAC, valFUSEFPA)
+    valINTERF, vecDVEROLL, matUINF, matWUINF, matDVE, matVLST, valVEHVINF, fixed_lift, valVEHWEIGHT, vecCMAC, valFUSEFPA, temp_dist, valTIMESTEP)
 
 warning off
 
@@ -210,8 +210,8 @@ for i = 1:max(vecDVEWING)
     vecCNDIST(isCurWing) = vecCNDIST0(isCurWing).*(mean(vecV(rows),2).^2)/(valVEHVINF^2);
     
 %     temp_dist(i).LDIST = vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*0.395%vecAREADIST(isCurWing);
-    temp_dist(i).LDIST = vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing);
-    temp_dist(i).DPDIST = vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing);
+    temp_dist(i).LDIST(:,valTIMESTEP) = vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing);
+    temp_dist(i).DPDIST(:,valTIMESTEP) = vecCDPDIST(isCurWing).*mean(q_infandind(rows),2).*vecAREADIST(isCurWing);
     
     % Lift force per wing
     LPerWing(i) = sum(vecCNDIST(isCurWing).*cos(vecDVEROLL(vecLEDVEDIST(isCurWing))).*q_inf.*vecAREADIST(isCurWing));
@@ -247,7 +247,7 @@ dprof = sum(dprofPerWing);
 
 %% Total Drag
 
-dtot = di + dprof + valFUSEFPA*q_inf;
+dtot = di + dprof + valFUSEFPA*q_inf + 1.064*q_inf*0.0045;
 
 dint = dtot*(valINTERF/100);
 

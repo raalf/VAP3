@@ -17,8 +17,8 @@
 		<density>1.225</density>
 		<kin_viscosity>1.46e-05</kin_viscosity>
 		<gust_amplitude>1</gust_amplitude>
-		<gust_length>25</gust_length>
-		<gust_start>38</gust_start>
+		<gust_length>50</gust_length>
+		<gust_start>100</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -34,7 +34,7 @@
 
 		<speed>40</speed>
 		<weight>4314.438</weight>
-		<interference_drag>0</interference_drag>
+		<interference_drag>10</interference_drag>
 
 		<alpha>3.5</alpha>
 		<fpa>0</fpa>

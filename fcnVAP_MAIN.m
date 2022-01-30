@@ -6,7 +6,7 @@ if nargin == 0
     return
 end
 
-iter = 0;
+iter = 1;
 
 if nargin == 2
     %% Reading in geometry

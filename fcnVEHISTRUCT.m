@@ -1,6 +1,8 @@
 function [INPU, SURF, VEHI] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG, VEHI)
 %% Geometric Properties
 
+% INPU.valDY = repmat(0.5*INPU.vecSPAN/(INPU.valNSELE-1),INPU.valNSELE-1,1);
+
 % Find indices for flexible wing(s)
 SURF.idxFLEX = find(SURF.vecDVEWING == find(FLAG.vecFLEXIBLE == 1));
 SURF.idxTAIL = find(SURF.vecDVEWING == 2);
@@ -38,6 +40,8 @@ SURF.vecSPANDIST = SURF.matCENTER(matROWS{1}(:,1),2);
 SURF.vecSPANLOC = [0; SURF.matNPVLST(SURF.matNPDVE(matROWS{1}(:,1),2),2)];
 
 SURF.vecSTRUCTSPNDIST = SURF.vecSPANLOC;
+% SURF.vecSTRUCTSPNDIST = (0:valDY:0.5*INPU.vecSPAN)';
+% SURF.vecSTRUCTSPNDIST = (0:INPU.valDY(1):0.5*INPU.vecSPAN)';
 INPU.valDY = SURF.vecSPANLOC(2:end)-SURF.vecSPANLOC(1:end-1);
 INPU.valNSELE = length(SURF.vecSTRUCTSPNDIST);
 
@@ -76,6 +80,8 @@ end
 
 struct_edgecrd = interp1(SURF.vecSPANDIST,SURF.vecCRDDIST,SURF.vecSTRUCTSPNDIST,'linear','extrap'); % Chord dist. at structural nodes
 
+span_edgecrd = interp1(SURF.vecSPANDIST,SURF.vecCRDDIST,SURF.vecSPANLOC,'linear','extrap'); % Chord dist. at structural nodes
+
 % Use transformation matrix to determine X,Y,Z coordinates of aerodynamic
 % center based on DVE edge chord
 matCRDDIST = [struct_edgecrd, zeros(length(struct_edgecrd),2)]; % Chord vector at each DVE edge in local DVE frame (vector pointing from LE to TE)
@@ -83,12 +89,15 @@ matCRDDIST = [struct_edgecrd, zeros(length(struct_edgecrd),2)]; % Chord vector a
 SURF.matQTRCRD = fcnSTARGLOB(0.25*matCRDDIST,interp1(SURF.vecSPANDIST,SURF.vecDVEROLL(matROWS{1}(:,1)),SURF.vecSTRUCTSPNDIST,'linear','extrap'),...
     interp1(SURF.vecSPANDIST,SURF.vecDVEPITCH(matROWS{1}(:,1)),SURF.vecSTRUCTSPNDIST,'linear','extrap'),...
     interp1(SURF.vecSPANDIST,SURF.vecDVEYAW(matROWS{1}(:,1)),SURF.vecSTRUCTSPNDIST,'linear','extrap'));
+% SURF.matQTRCRD = fcnSTARGLOB(0.25*matCRDDIST,interp1(SURF.vecSPANDIST,SURF.vecDVEROLL(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...
+%     interp1(SURF.vecSPANDIST,SURF.vecDVEPITCH(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'),...
+%     interp1(SURF.vecSPANDIST,SURF.vecDVEYAW(matROWS{1}(:,1)),SURF.vecSPANLOC,'linear','extrap'));
 
 % DVE LE midpt coordinates
 tempLE = [SURF.matVLST(SURF.matDVE(ledves,1),:); SURF.matVLST(SURF.matDVE(ledves(end),2),:)]; 
 tempLE = (tempLE(1:end-1,:) + tempLE(2:end,:))./2;
 
-SURF.matAEROCNTR = interp1(SURF.vecSPANDIST,tempLE,SURF.vecSTRUCTSPNDIST,'linear','extrap') + SURF.matQTRCRD; % X, Y, Z location of aerodynamic center at structure nodes
+SURF.matAEROCNTR = interp1(SURF.vecSPANDIST,tempLE,SURF.vecSPANLOC,'linear','extrap') + SURF.matQTRCRD; % X, Y, Z location of aerodynamic center at structure nodes
 
 % Calculating mean aerodynamic chord at each spanwise station to use for
 % pitching moment calculations later on
@@ -106,6 +115,7 @@ tempDVEEDGECRD = repmat(tempDVEEDGECRD,1,2);
 taper_ratio = (tempDVEEDGECRD(idx2)./tempDVEEDGECRD(idx1))';
 
 SURF.vecMAC = (2/3)*tempDVEEDGECRD(idx1,1).*(1 + taper_ratio + taper_ratio.^2)./(1 + taper_ratio); % Vector of mean aerodynamic chord at each spanwise station
+SURF.vecMACSTRUCT = interp1(SURF.vecSPANDIST,SURF.vecMAC,SURF.vecSTRUCTSPNDIST,'linear','extrap');
 
 %% Structural Properties
 
@@ -161,9 +171,9 @@ SURF.matCG = interp1(SURF.vecSPANDIST,tempLE,SURF.vecSTRUCTSPNDIST,'linear','ext
 
 matLSM = SURF.matEA - SURF.matCG;
 
-matLSAC = SURF.matAEROCNTR - SURF.matEA;
+% matLSAC = SURF.matAEROCNTR - SURF.matEA;
 
-SURF.vecLSAC = sqrt(sum(matLSAC.^2,2));
+% SURF.vecLSAC = sqrt(sum(matLSAC.^2,2));
 
 SURF.vecLSM = -1.*sign(matLSM(:,1)).*sqrt(sum(matLSM.^2,2)); % If +ve --> EA is ahead of CG; If -ve --> EA is behind CG
 

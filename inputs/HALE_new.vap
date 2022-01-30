@@ -68,7 +68,7 @@
 			</CG>
 
 			<panel>
-				<spanwise_elements>14</spanwise_elements>
+				<spanwise_elements>22</spanwise_elements>
 				<strip_airfoil>NACA0012</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
@@ -140,7 +140,7 @@
 		<structure>
 			<conditions>
 				<valSDELTIME>0.0005</valSDELTIME>
-				<valNSELE>15</valNSELE>
+				<valNSELE>23</valNSELE>
 				<valSTIFFSTEPS>35</valSTIFFSTEPS>
 				<valSTAGGERSTEPS>66</valSTAGGERSTEPS>
 			</conditions>
@@ -159,7 +159,7 @@
 				<geometry>
 					<A_vecEA>0</A_vecEA>
 					<B_vecEA>0</B_vecEA>
-					<C_vecEA>0.55</C_vecEA>
+					<C_vecEA>0.25</C_vecEA>
 					
 					<A_vecCG>0</A_vecCG>
 					<B_vecCG>0</B_vecCG>

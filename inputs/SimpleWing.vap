@@ -2,7 +2,7 @@
 
 <VAP>
 	<settings>
-		<relax>TRUE</relax>
+		<relax>FALSE</relax>
 		<steady>TRUE</steady>
 		<maxtime>20</maxtime>
 		<delta_time>0.1</delta_time>
@@ -25,11 +25,11 @@
 		<global_y>0</global_y>
 		<global_z>0</global_z>
 
-		<speed>1</speed>
+		<speed>7</speed>
 		<weight>nan</weight>
 		<interference_drag>0</interference_drag>
 
-		<alpha>0.01</alpha>
+		<alpha>4</alpha>
 		<beta>0</beta>
 		<roll>0</roll>
 		<fpa>0</fpa>
@@ -47,7 +47,7 @@
 			<trimable>FALSE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
 
-			<chordwise_elements>10</chordwise_elements>
+			<chordwise_elements>5</chordwise_elements>
 			<chordwise_spacing>NORMAL</chordwise_spacing>
 
 			<vehicle_x>0</vehicle_x>
@@ -55,7 +55,7 @@
 			<vehicle_z>0</vehicle_z>
 
 			<panel>
-				<spanwise_elements>15</spanwise_elements>
+				<spanwise_elements>8</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
 				<strip_airfoil>nan</strip_airfoil>
 				<section>
@@ -63,7 +63,7 @@
 					<wing_y>-10</wing_y>
 					<wing_z>0</wing_z>
 					<chord>0.5</chord>
-					<twist>0</twist>
+					<twist>10</twist>
 					<camber_airfoil>NACA 0012</camber_airfoil>
 				</section>
 				<section>
@@ -71,7 +71,7 @@
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
 					<chord>1</chord>
-					<twist>0</twist>
+					<twist>10</twist>
 					<camber_airfoil>NACA 0012</camber_airfoil>
 				</section>
 				<section>
@@ -79,7 +79,7 @@
 					<wing_y>10</wing_y>
 					<wing_z>0</wing_z>
 					<chord>0.5</chord>
-					<twist>0</twist>
+					<twist>10</twist>
 					<camber_airfoil>NACA 0012</camber_airfoil>
 				</section>		
 			</panel>

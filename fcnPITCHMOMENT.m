@@ -209,7 +209,9 @@ for i = 1:INPU.valVEHICLES
 %             OUTP.vecCMDIST(isCurWing) = 0;
         end
         
-        if any(isnan(OUTP.vecCMDIST)) == 1
+        if FLAG.VISCOUS == 0
+            OUTP.vecCMDIST(isCurWing,1) = 0;
+        elseif any(isnan(OUTP.vecCMDIST)) == 1
             OUTP.vecCMDIST(isnan(OUTP.vecCMDIST)) = 0;
         end
         
