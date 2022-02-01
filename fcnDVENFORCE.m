@@ -72,6 +72,8 @@ tempb = cross(SURF.matUINF, s, 2);
 
 uxs = sqrt(sum(abs(tempb).^2,2));
 
+time_uxs(:,valTIMESTEP) = uxs;
+
 en = tempb.*repmat((1./uxs),1,3);
 
 len = size(nUINF,1);
@@ -125,9 +127,8 @@ vecDVEC = C;
 
 nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 
-
 %% Unsteady lift term with apparent mass
-lambda = 1; % Relaxation factor for dGammadt term
+lambda = 0; % Relaxation factor for dGammadt term
 
 GammaInt = SURF.GammaInt;
 dGammadt = SURF.dGammadt;

@@ -2,8 +2,8 @@ clc
 clear
 warning off
 
-% cores = 32;
-% parpool(cores,'IdleTimeout',800)
+cores = 32;
+parpool(cores,'IdleTimeout',800)
 
 cd '..'
 
@@ -15,17 +15,15 @@ delete Optimization/paramhistory.txt
 
 delete Optimization/dvparamhistory.txt
 
-matEIx = [100000 500000 1500000];
-matGJt = [100000 500000 1500000];
+matEIx = [100000 500000 1000000 1500000];
+matGJt = [100000 500000 1000000 1500000];
 EA = [0.25 0.45 0.65];
 CG = [0.25 0.45 0.65];
 
-param_sweep = combvec(matEIx, matEIx, matGJt, matGJt, EA, CG);
+param_sweep = combvec(matEIx, matGJt, EA, CG);
 
-% parfor kk = 1:size(param_sweep,2)
-for kk = 1:size(param_sweep,2)
-    
-kk = 34;
+parfor kk = 1:size(param_sweep,2)
+% for kk = 1:size(param_sweep,2)
     
 fp3 = fopen('Optimization/dvparamhistory.txt','at');
 fprintf(fp3,'%g ', param_sweep(:,kk)');
@@ -50,10 +48,10 @@ OUTP.TRIMFAIL = 0;
 FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(2,kk)];
-INPU.matGJt_param = [param_sweep(3,kk); param_sweep(3,kk); param_sweep(4,kk)];
-INPU.vecEA_param = [param_sweep(5,kk); param_sweep(5,kk); param_sweep(5,kk)];
-INPU.vecCG_param = [param_sweep(6,kk); param_sweep(6,kk); param_sweep(6,kk)];
+INPU.matEIx_param = param_sweep(1,kk);
+INPU.matGJt_param = param_sweep(2,kk);
+INPU.vecEA_param = param_sweep(3,kk);
+INPU.vecCG_param = param_sweep(4,kk);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
@@ -281,15 +279,21 @@ if OUTP.TRIMFAIL == 0
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
     gain(kk,1) = temp_gain - OUTP.vecZE_old(end);
+    gain_flex(kk,1) = temp_gain;
+    gain_slf(kk,1) = OUTP.vecZE_old(end);
 else
     gain(kk,1) = Inf;
+    gain_flex(kk,1) = Inf;
+    gain_slf(kk,1) = Inf;
 end
 catch
     gain(kk,1) = Inf;
+    gain_flex(kk,1) = Inf;
+    gain_slf(kk,1) = Inf;
 end
 
 fp2 = fopen('Optimization/paramhistory.txt','at');
-fprintf(fp2,'%g ', [gain(kk,1), param_sweep(:,kk)']);
+fprintf(fp2,'%g ', [gain(kk,1), gain_flex(kk,1), gain_slf(kk,1), param_sweep(:,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
 

@@ -11,9 +11,9 @@ addpath('Flight Dynamics')
 
 filename = 'inputs/Discus2c.vap';
 
-delete Optimization/paramhistory.txt
+delete Optimization/gustfreqhistory.txt
 
-delete Optimization/dvparamhistory.txt
+delete Optimization/dvgustfreqhistory.txt
 
 matEIx = [250000 500000 1000000];
 EA = 0.453;
@@ -25,7 +25,7 @@ param_sweep = combvec(matEIx, EA, CG, gustL, gustMODE);
 
 parfor kk = 1:size(param_sweep,2)   
     
-fp3 = fopen('Optimization/dvparamhistory.txt','at');
+fp3 = fopen('Optimization/dvgustfreqhistory.txt','at');
 fprintf(fp3,'%g ', param_sweep(:,kk)');
 fprintf(fp3,'\n');
 fclose(fp3);
@@ -286,7 +286,7 @@ catch
     gain(kk,1) = Inf;
 end
 
-fp2 = fopen('Optimization/paramhistory.txt','at');
+fp2 = fopen('Optimization/gustfreqhistory.txt','at');
 fprintf(fp2,'%g ', [gain(kk,1), param_sweep(:,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
