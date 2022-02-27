@@ -2,7 +2,7 @@ clc
 clear
 warning off
 
-cores = 32;
+cores = 64;
 parpool(cores,'IdleTimeout',800)
 
 cd '..'
@@ -15,10 +15,10 @@ delete Optimization/paramhistory.txt
 
 delete Optimization/dvparamhistory.txt
 
-matEIx = [100000 500000 1000000 1500000];
-matGJt = [100000 500000 1000000 1500000];
-EA = [0.25 0.45 0.65];
-CG = [0.25 0.45 0.65];
+matEIx = [100000 250000 500000 1000000 1500000];
+matGJt = [100000 250000 500000 1000000 1500000];
+EA = [0.2 0.3 0.4 0.5 0.6];
+CG = [0.2 0.3 0.4 0.5 0.6];
 
 param_sweep = combvec(matEIx, matGJt, EA, CG);
 
@@ -54,6 +54,27 @@ INPU.vecEA_param = param_sweep(3,kk);
 INPU.vecCG_param = param_sweep(4,kk);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
+
+CGX_loc = 0.55;
+Xnew = (CGX_loc*COND.vecVEHWEIGHT/9.81 - VEHI.vecWINGMASS(1)*VEHI.vecWINGCG(1,1))/sum(VEHI.vecFUSEMASS,1);
+[INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
+dX = INPU.vecVEHCG(1) - CGX_loc;
+
+VEHI.vecFUSELOC = [Xnew - VEHI.vecFUSEL/2,0,0];
+VEHI.vecFUSEMASS = 280.4158;
+VEHI.vecFUSELM = VEHI.vecFUSEMASS/VEHI.vecFUSEL;
+VEHI.valFUSEDX = VEHI.vecFUSEL/(VEHI.valNFELE-1);
+tempdx = [[0; cumsum(repmat(VEHI.valFUSEDX,VEHI.valNFELE-1,1))],zeros(VEHI.valNFELE,1),zeros(VEHI.valNFELE,1);];
+VEHI.vecFUSEBEAM = repmat(VEHI.vecFUSELOC,VEHI.valNFELE,1) + tempdx;
+
+VEHI.vecFUSEMASSLOC = (VEHI.vecFUSEBEAM(2:end,:) + VEHI.vecFUSEBEAM(1:end-1,:))./2;
+tempFUSELM = interp1(VEHI.vecFUSEBEAM(:,1),repmat(VEHI.vecFUSELM,VEHI.valNFELE,1),VEHI.vecFUSEMASSLOC(:,1));
+VEHI.vecFUSEMASS = tempFUSELM.*VEHI.valFUSEDX;
+VEHI.vecFUSECG = sum(VEHI.vecFUSEMASS.*(VEHI.vecFUSEMASSLOC-INPU.matVEHORIG),1)./(sum(VEHI.vecFUSEMASS,1)); % Fuse CG location relative to vehicle origin
+
+VEHI.vecFUSEBEAM = fcnGLOBSTAR(VEHI.vecFUSEBEAM, zeros(VEHI.valNFELE,1), repmat(deg2rad(-COND.vecVEHPITCH),VEHI.valNFELE,1), zeros(VEHI.valNFELE,1));
+VEHI.vecFUSEMASSLOC = fcnGLOBSTAR(VEHI.vecFUSEMASSLOC, zeros(VEHI.valNFELE-1,1), repmat(deg2rad(-COND.vecVEHPITCH),VEHI.valNFELE-1,1), zeros(VEHI.valNFELE-1,1));
+[INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
 
 COND.valSTIFFSTEPS = inf;
 
@@ -238,62 +259,63 @@ if OUTP.TRIMFAIL == 0
 
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-    temp_gain = OUTP.vecZE_old(end);
+    gain(kk,1) = OUTP.vecZE_gain(end);
 
     % load('temp_Flex_Trim.mat')
     % -------------------------------------------------------------------------
-    OUTP = temp.OUTP;
-    COND = temp.COND;
-    INPU = temp.INPU;
-    FLAG = temp.FLAG;
-    MISC = temp.MISC;
-    SURF = temp.SURF;
-    TRIM = temp.TRIM;
-    VEHI = temp.VEHI;
-    VISC = temp.VISC;
-    WAKE = temp.WAKE;
-
-    SURF.matBEAMACC = [];
-    COND.valGUSTAMP = 1;
-    COND.valGUSTL = 50;
-    COND.valGUSTSTART = 40;
-
-    COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-    COND.valSTIFFSTEPS = 15;
-    COND.valSTARTFORCES = 1;
-    FLAG.FLIGHTDYN = 1;
-    FLAG.STATICAERO = 0;
-    FLAG.STEADY = 0;
-    FLAG.RELAX = 0;
-    FLAG.GUSTMODE = 0;
-    FLAG.SAVETIMESTEP = 0;
-    FLAG.STIFFWING = 1;
-
-    VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
-
-    [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
-
-    COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
-
-
-    [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
-
-    gain(kk,1) = temp_gain - OUTP.vecZE_old(end);
-    gain_flex(kk,1) = temp_gain;
-    gain_slf(kk,1) = OUTP.vecZE_old(end);
+%     OUTP = temp.OUTP;
+%     COND = temp.COND;
+%     INPU = temp.INPU;
+%     FLAG = temp.FLAG;
+%     MISC = temp.MISC;
+%     SURF = temp.SURF;
+%     TRIM = temp.TRIM;
+%     VEHI = temp.VEHI;
+%     VISC = temp.VISC;
+%     WAKE = temp.WAKE;
+% 
+%     SURF.matBEAMACC = [];
+%     COND.valGUSTAMP = 1;
+%     COND.valGUSTL = 50;
+%     COND.valGUSTSTART = 40;
+% 
+%     COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+%     COND.valSTIFFSTEPS = 15;
+%     COND.valSTARTFORCES = 1;
+%     FLAG.FLIGHTDYN = 1;
+%     FLAG.STATICAERO = 0;
+%     FLAG.STEADY = 0;
+%     FLAG.RELAX = 0;
+%     FLAG.GUSTMODE = 0;
+%     FLAG.SAVETIMESTEP = 0;
+%     FLAG.STIFFWING = 1;
+% 
+%     VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+% 
+%     [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
+% 
+%     COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
+% 
+% 
+%     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
+% 
+%     gain(kk,1) = temp_gain - OUTP.vecZE_old(end);
+%     gain_flex(kk,1) = temp_gain;
+%     gain_slf(kk,1) = OUTP.vecZE_old(end);
 else
     gain(kk,1) = Inf;
-    gain_flex(kk,1) = Inf;
-    gain_slf(kk,1) = Inf;
+%     gain_flex(kk,1) = Inf;
+%     gain_slf(kk,1) = Inf;
 end
 catch
     gain(kk,1) = Inf;
-    gain_flex(kk,1) = Inf;
-    gain_slf(kk,1) = Inf;
+%     gain_flex(kk,1) = Inf;
+%     gain_slf(kk,1) = Inf;
 end
 
 fp2 = fopen('Optimization/paramhistory.txt','at');
-fprintf(fp2,'%g ', [gain(kk,1), gain_flex(kk,1), gain_slf(kk,1), param_sweep(:,kk)']);
+% fprintf(fp2,'%g ', [gain(kk,1), gain_flex(kk,1), gain_slf(kk,1), param_sweep(:,kk)']);
+fprintf(fp2,'%g ', [gain(kk,1), param_sweep(:,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
 

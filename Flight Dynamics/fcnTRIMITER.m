@@ -19,7 +19,7 @@ new_alpha(iter,1) = COND.vecVEHALPHA;
 new_fpa(iter,1) = COND.vecVEHFPA;
 new_pitch(iter,1) = COND.vecVEHPITCH;
 
-while max(abs(tol)) > 1e-3
+while max(abs(tol)) > 1e-5
       
     if iter > 2
         TRIM.Cmalpha = (CM(iter)-CM(iter-1))/deg2rad((new_alpha(iter)-new_alpha(iter-1)));

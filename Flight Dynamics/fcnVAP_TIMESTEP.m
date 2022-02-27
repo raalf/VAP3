@@ -186,11 +186,16 @@ for valTIMESTEP = 1:COND.valMAXTIME
 %         if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1)
             % Calculate vehicle energy state
             [OUTP] = fcnVEHENERGY(INPU, COND, SURF, OUTP, VEHI, FLAG, valTIMESTEP);
+            if valTIMESTEP > 1
+                sink_rate(valTIMESTEP,1) = (OUTP.vecZE(valTIMESTEP,2) - OUTP.vecZE(valTIMESTEP-1,2))/COND.valDELTIME;
+            end
         end
         
         if valTIMESTEP >= COND.valGUSTSTART
 %             OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2 - OUTP.vecVEHVINF(COND.valGUSTSTART)^2)/(2*9.81) + OUTP.vecCGLOC(end,3) - OUTP.vecCGLOC(COND.valGUSTSTART,3);
             OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2)/(2*9.81) + OUTP.vecCGLOC(end,3);
+%             OUTP.vecZE_gain(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1)-OUTP.vecZE_old(COND.valGUSTSTART,1)) - OUTP.valVS*(valTIMESTEP-COND.valGUSTSTART)*COND.valDELTIME;
+            OUTP.vecZE_gain(valTIMESTEP,1) = (OUTP.vecZE(valTIMESTEP,2)-OUTP.vecZE(COND.valGUSTSTART,2)) - OUTP.valVS*(valTIMESTEP-COND.valGUSTSTART)*COND.valDELTIME;
         end
         
         OUTP.vecTIPPITCH(valTIMESTEP,1) = SURF.vecDVEPITCH(INPU.vecN(1));
@@ -336,6 +341,18 @@ for valTIMESTEP = 1:COND.valMAXTIME
     
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)
         fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, 1)
+    end
+    
+    if FLAG.FLIGHTDYN == 1 && valTIMESTEP > COND.valGUSTSTART + ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME)
+%         dz_tol = abs(((OUTP.vecZE_gain(valTIMESTEP,1) - OUTP.vecZE_gain(valTIMESTEP-20,1))./OUTP.vecZE_gain(valTIMESTEP-20,1))*100);
+%         dz_tol = abs(((sink_rate(valTIMESTEP,1) - sink_rate(valTIMESTEP-20,1))./sink_rate(valTIMESTEP-20,1))*100);
+        OUTP.sink_mean = [movmean(sink_rate,[30 0]),movmean(sink_rate,[50 0]),movmean(sink_rate,[75 0])];
+        dz_tol = abs(((OUTP.sink_mean(valTIMESTEP,3) - OUTP.sink_mean(valTIMESTEP,1))./OUTP.sink_mean(valTIMESTEP,1))*100);
+
+%         dz_tol = abs(((sink_rate(valTIMESTEP,1) - sink_rate(valTIMESTEP-20,1))./sink_rate(valTIMESTEP-20,1))*100);
+        if dz_tol < 0.25
+            break;
+        end
     end
 end
 

@@ -2,8 +2,8 @@ clc
 clear
 warning off
 
-cores = 24;
-parpool(cores,'IdleTimeout',800)
+% cores = 24;
+% parpool(cores,'IdleTimeout',800)
 
 cd '..'
 
@@ -23,7 +23,8 @@ gustMODE = [1 2];
 
 param_sweep = combvec(matEIx, EA, CG, gustL, gustMODE);
 
-parfor kk = 1:size(param_sweep,2)   
+% parfor kk = 1:size(param_sweep,2)   
+for kk = 1:size(param_sweep,2)
     
 fp3 = fopen('Optimization/dvgustfreqhistory.txt','at');
 fprintf(fp3,'%g ', param_sweep(:,kk)');
@@ -48,10 +49,10 @@ OUTP.TRIMFAIL = 0;
 FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(1,kk)];
-INPU.matGJt_param = [param_sweep(1,kk); param_sweep(1,kk); param_sweep(1,kk)];
-INPU.vecEA_param = [param_sweep(2,kk); param_sweep(2,kk); param_sweep(2,kk)];
-INPU.vecCG_param = [param_sweep(3,kk); param_sweep(3,kk); param_sweep(3,kk)];
+INPU.matEIx_param = param_sweep(1,kk);
+INPU.matGJt_param = param_sweep(1,kk);
+INPU.vecEA_param = param_sweep(2,kk);
+INPU.vecCG_param = param_sweep(3,kk);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
