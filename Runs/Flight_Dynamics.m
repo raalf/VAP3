@@ -14,14 +14,14 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 % load('C:\Users\Michael\Desktop\Optimum_SS.mat')
-FLAG.OPT = 1;
+FLAG.OPT = 2;
 % FLAG.STRUCTURE = 0;
 COND.valMAXTRIMITER = 50;
 
-% INPU.matEIx_param = [100000; 100000; 1500000];
-% INPU.matGJt_param = [500000; 500000; 100000];
-% INPU.vecEA_param = [0.65; 0.65; 0.65];
-% INPU.vecCG_param = [0.25; 0.25; 0.25];
+INPU.matEIx_param = 100000;
+INPU.matGJt_param = 100000;
+INPU.vecEA_param = 0.4;
+INPU.vecCG_param = 0.3975;
 
 % load('C:\Users\Michael\Desktop\Optimum_SS.mat')
 % OUTP.matDEF = 0*OUTP.matDEF;
@@ -29,13 +29,13 @@ COND.valMAXTRIMITER = 50;
 % OUTP.matTWIST = 0*OUTP.matTWIST;
 % OUTP.matTWISTGLOB = 0*OUTP.matTWISTGLOB;
 
-opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_sine_new.txt');
-
-des = 1832;
-INPU.matEIx(:,1) = opthistory(des,4:22);
-INPU.matGJt(:,1) = opthistory(des,23:41);
-INPU.vecEA(:,1) = opthistory(des,42:60);
-INPU.vecCG(:,1) = opthistory(des,61:79);
+% opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_sine_new.txt');
+% 
+% des = 1832;
+% INPU.matEIx(:,1) = opthistory(des,4:22);
+% INPU.matGJt(:,1) = opthistory(des,23:41);
+% INPU.vecEA(:,1) = opthistory(des,42:60);
+% INPU.vecCG(:,1) = opthistory(des,61:79);
 
 % COND.vecVEHALPHA = 6;
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
@@ -242,6 +242,8 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
+delete(tempFile);
+
 % save('G:\My Drive\PhD\Optimization\Optimum Comparison\Sine_Polyhedral_FlexSim_4GustL.mat');
 
 % temp_gain = OUTP.vecZE_old;
@@ -281,6 +283,5 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 % 
 % gain = temp_gain(end) - OUTP.vecZE_old(end);
 % 
-% delete(tempFile);
 % 
-% save('G:\My Drive\PhD\Optimization\Optimum Comparison\Sine_Polyhedral_SLF_4GustL.mat');
+% save('G:\My Drive\PhD\Optimization\Parameter Sweep\Sine_Gust_Optimum.mat');

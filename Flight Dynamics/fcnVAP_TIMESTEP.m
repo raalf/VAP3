@@ -351,6 +351,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
 
 %         dz_tol = abs(((sink_rate(valTIMESTEP,1) - sink_rate(valTIMESTEP-20,1))./sink_rate(valTIMESTEP-20,1))*100);
         if dz_tol < 0.25
+            COND.valMAXTIME = valTIMESTEP;
             break;
         end
     end

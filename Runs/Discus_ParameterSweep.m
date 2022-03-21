@@ -9,7 +9,7 @@ cd '..'
 
 addpath('Flight Dynamics')
 
-filename = 'inputs/Discus2c.vap';
+filename = 'inputs/Discus2c_Rect.vap';
 
 delete Optimization/paramhistory.txt
 
@@ -234,6 +234,8 @@ if OUTP.TRIMFAIL == 0
     COND.valGUSTAMP = 1;
     COND.valGUSTL = 50;
     COND.valGUSTSTART = 40;
+    OUTP.valVS = COND.vecVEHVINF*sind(COND.vecVEHFPA);
+    sink_rate = OUTP.valVS;
 
     SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
@@ -246,7 +248,7 @@ if OUTP.TRIMFAIL == 0
     FLAG.STATICAERO = 0;
     FLAG.STEADY = 0;
     FLAG.RELAX = 0;
-    FLAG.GUSTMODE = 2;
+    FLAG.GUSTMODE = 1;
     FLAG.SAVETIMESTEP = 0;
 
     VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -304,18 +306,20 @@ if OUTP.TRIMFAIL == 0
 %     gain_slf(kk,1) = OUTP.vecZE_old(end);
 else
     gain(kk,1) = Inf;
+    sink_rate = Inf;
 %     gain_flex(kk,1) = Inf;
 %     gain_slf(kk,1) = Inf;
 end
 catch
     gain(kk,1) = Inf;
+    sink_rate = Inf;
 %     gain_flex(kk,1) = Inf;
 %     gain_slf(kk,1) = Inf;
 end
 
-fp2 = fopen('Optimization/paramhistory.txt','at');
+fp2 = fopen('Optimization/paramhistory_rect_sine.txt','at');
 % fprintf(fp2,'%g ', [gain(kk,1), gain_flex(kk,1), gain_slf(kk,1), param_sweep(:,kk)']);
-fprintf(fp2,'%g ', [gain(kk,1), param_sweep(:,kk)']);
+fprintf(fp2,'%g ', [gain(kk,1), sink_rate, param_sweep(:,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
 
