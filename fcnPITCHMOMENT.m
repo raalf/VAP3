@@ -83,8 +83,14 @@ deltaM_drag = [];
 %         deltaM = cross(SURF.vecPITCHARM,tot_force);
 %         deltaM = sum(deltaM(:,2),1);
 %         
-%         if j == 2
-%             OUTP.vecCMDIST(isCurWing) = OUTP.vecCMDIST(isCurWing)*0;
+% %         if j == 2
+% %             OUTP.vecCMDIST(isCurWing) = OUTP.vecCMDIST(isCurWing)*0;
+% %         end
+% 
+%         if FLAG.VISCOUS == 0
+%             OUTP.vecCMDIST(isCurWing,1) = 0;
+%         elseif any(isnan(OUTP.vecCMDIST)) == 1
+%             OUTP.vecCMDIST(isnan(OUTP.vecCMDIST)) = 0;
 %         end
 %         
 %         if any(isnan(OUTP.vecCMDIST)) == 1

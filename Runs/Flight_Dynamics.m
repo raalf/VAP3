@@ -4,7 +4,7 @@ warning off
 
 addpath('Flight Dynamics')
 
-filename = 'inputs/Discus2c.vap';
+filename = 'inputs/Discus2c_Rect.vap';
 
 trim_iter = 1;
 
@@ -19,9 +19,9 @@ FLAG.OPT = 2;
 COND.valMAXTRIMITER = 50;
 
 INPU.matEIx_param = 100000;
-INPU.matGJt_param = 100000;
-INPU.vecEA_param = 0.4;
-INPU.vecCG_param = 0.3975;
+INPU.matGJt_param = 1000000;
+INPU.vecEA_param = 0.45;
+INPU.vecCG_param = 0.45;
 
 % load('C:\Users\Michael\Desktop\Optimum_SS.mat')
 % OUTP.matDEF = 0*OUTP.matDEF;
@@ -40,7 +40,7 @@ INPU.vecCG_param = 0.3975;
 % COND.vecVEHALPHA = 6;
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
-CGX_loc = 0.55;
+CGX_loc = 0.4;
 Xnew = (CGX_loc*COND.vecVEHWEIGHT/9.81 - VEHI.vecWINGMASS(1)*VEHI.vecWINGCG(1,1))/sum(VEHI.vecFUSEMASS,1);
 [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
 dX = INPU.vecVEHCG(1) - CGX_loc;
@@ -99,7 +99,7 @@ tol = 100;
 % compute the static aeroelastic deflections
 
 FLAG.TRIM = 0;
-FLAG.VISCOUS = 1;
+FLAG.VISCOUS = 0;
 FLAG.GUSTMODE = 0;
 
 % Increase number of stiff steps (steps before computing structural
@@ -113,8 +113,6 @@ SURF.vecELEVANGLE = 0;
 
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
 
-% FLAG.STRUCTURE = 0;
-
 % Initial trim iteration loop for rigid aircraft
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
@@ -122,17 +120,11 @@ SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
 VEHI.vecPROPLOC_START = VEHI.vecPROPLOC;
 
-% fun = @(x)fcnTRIMOPT(x, FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
-% options = optimset('TolFun',1e-2);
-% nvars = 2;
-% x = fminsearch(fun,[5;0],options);
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnTRIMITER(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
 
-% tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 
-% save('HALE_Validation_10ms_Rigid.mat')
 FLAG.STIFFWING = 0;
 
 OUTP.aero_iter = 1;
@@ -148,9 +140,6 @@ while max(abs(tol)) > 0.01
     COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
     
     COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
-%     COND.valSTARTFORCES = COND.valMAXTIME; % Compute forces for last two timesteps
-    
-%     COND.valSTARTFORCES = 1;
     
     tol_aero = 100;
     tol_aero2 = 100;
@@ -210,28 +199,24 @@ tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPH
 fprintf('\nVehicle trimmed. AoA = %.3f deg., Elev. Angle = %.3f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 fprintf('\nDeflection = %.3f m, Twist = %.4f deg.\n\n',OUTP.matDEFGLOB(end,end),rad2deg(OUTP.matTWISTGLOB(end,end)))
 end
-% save('Discus_Rigid_Trim.mat')
-tempName = tempname(pwd);
-tempFile = [tempName, '.mat'];
-save(tempFile)
+
 %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
-% load('HALE_Flex_Trim.mat')
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
-% COND.valGUSTL = 50;
 COND.valGUSTSTART = 40;
 OUTP.valVS = COND.vecVEHVINF*sind(COND.vecVEHFPA);
 
-SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+SURF.matB = 0*[max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-COND.valMAXTIME = ceil((8*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+% COND.valMAXTIME = ceil((3*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+COND.valMAXTIME = 750;
 COND.valSTIFFSTEPS = 15;
 COND.valSTARTFORCES = 1;
 FLAG.FLIGHTDYN = 1;
 FLAG.STATICAERO = 0;
 FLAG.STEADY = 0;
 FLAG.RELAX = 0;
-FLAG.GUSTMODE = 1;
+FLAG.GUSTMODE = 2;
 FLAG.SAVETIMESTEP = 0;
 
 VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -242,46 +227,4 @@ COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0]
 
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-delete(tempFile);
-
-% save('G:\My Drive\PhD\Optimization\Optimum Comparison\Sine_Polyhedral_FlexSim_4GustL.mat');
-
-% temp_gain = OUTP.vecZE_old;
-% temp_gain_2 = OUTP.vecZE;
-% 
-% clearvars -except temp_gain tempFile temp_gain_2
-% load(tempFile)
-% SURF.matBEAMACC = [];
-% COND.valGUSTAMP = 1;
-% % COND.valGUSTL = 25;
-% COND.valGUSTSTART = 40;
-% 
-% SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
-% 
-% COND.valMAXTIME = ceil((4*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-% % COND.valMAXTIME = 50;
-% COND.valSTIFFSTEPS = 40;
-% COND.valSTARTFORCES = 1;
-% FLAG.FLIGHTDYN = 1;
-% FLAG.STATICAERO = 0;
-% FLAG.STEADY = 0;
-% FLAG.RELAX = 0;
-% FLAG.GUSTMODE = 0;
-% FLAG.SAVETIMESTEP = 0;
-% FLAG.STIFFWING = 1;
-% 
-% VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
-% 
-% [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
-% 
-% COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
-% 
-% 
-% [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
-% 
-% sink_rate = COND.vecVEHVINF*sind(COND.vecVEHFPA);
-% 
-% gain = temp_gain(end) - OUTP.vecZE_old(end);
-% 
-% 
-% save('G:\My Drive\PhD\Optimization\Parameter Sweep\Sine_Gust_Optimum.mat');
+% save('G:\My Drive\PhD\Optimization\Parameter Sweep\Cosine_ShortGust_Optimum.mat');

@@ -1,9 +1,9 @@
-function dydt = fcnLONGDYNAMICS(t,y,X,Z,M,m,mf,g,Iyy)
+function dydt = fcnLONGDYNAMICS(t,y,X,Z,M,m,g,Iyy)
 
 % System of differential equations for longitudinal motion
 
-% X - Resultant aerodynamic force in the X-direction (positive is forward)
-% Z - Resultant aerodynamic force in the Z-direction (positive is down)
+% X - Resultant aerodynamic force in the body X-direction (positive is forward)
+% Z - Resultant aerodynamic force in the body Z-direction (positive is down)
 % M - Resultant pitching moment (positive is nose up)
 % Iyy - Mass moment of inertia about the Y-axis
 

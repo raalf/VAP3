@@ -55,7 +55,7 @@ INPU.vecCG_param = param_sweep(4,kk);
 
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
-CGX_loc = 0.55;
+CGX_loc = 0.40;
 Xnew = (CGX_loc*COND.vecVEHWEIGHT/9.81 - VEHI.vecWINGMASS(1)*VEHI.vecWINGCG(1,1))/sum(VEHI.vecFUSEMASS,1);
 [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
 dX = INPU.vecVEHCG(1) - CGX_loc;
@@ -116,17 +116,10 @@ SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)
 SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
 VEHI.vecPROPLOC_START = VEHI.vecPROPLOC;
 
-% fun = @(x)fcnTRIMOPT(x, FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
-% options = optimset('TolFun',1e-2);
-% nvars = 2;
-% x = fminsearch(fun,[5;0],options);
-
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnTRIMITER(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
 
-% tail_angle = rad2deg(SURF.vecDVEPITCH(SURF.idxTAIL(1)) - deg2rad(COND.vecVEHALPHA))./TRIM.tau;
 fprintf('\nVehicle trimmed. AoA = %.2f deg., Elev. Angle = %.2f deg.\n\n',COND.vecVEHALPHA,SURF.vecELEVANGLE)
 
-% save('HALE_Validation_10ms_Rigid.mat')
 FLAG.STIFFWING = 0;
 
 OUTP.aero_iter = 1;
@@ -143,9 +136,6 @@ while max(abs(tol)) > 0.01
     COND.valSTIFFSTEPS = COND.valMAXTIME - 1;
     
     COND.valSTARTFORCES = COND.valMAXTIME - 2; % Compute forces for last two timesteps
-%     COND.valSTARTFORCES = COND.valMAXTIME; % Compute forces for last two timesteps
-    
-%     COND.valSTARTFORCES = 1;
     
     tol_aero = 100;
     tol_aero2 = 100;
@@ -215,7 +205,6 @@ end
 
 try
 if OUTP.TRIMFAIL == 0
-    % save('Discus_Rigid_Trim.mat')
     temp.OUTP = OUTP;
     temp.COND = COND;
     temp.INPU = INPU;
@@ -226,22 +215,17 @@ if OUTP.TRIMFAIL == 0
     temp.VEHI = VEHI;
     temp.VISC = VISC;
     temp.WAKE = WAKE;
-
-    % save('temp_Flex_Trim.mat')
+    
     %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
-    % load('HALE_Flex_Trim.mat')
     SURF.matBEAMACC = [];
     COND.valGUSTAMP = 1;
-    COND.valGUSTL = 50;
     COND.valGUSTSTART = 40;
     OUTP.valVS = COND.vecVEHVINF*sind(COND.vecVEHFPA);
     sink_rate = OUTP.valVS;
 
-    SURF.matB = [max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
+    SURF.matB = 0*[max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-    % valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
     COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-    % COND.valMAXTIME = 465;
     COND.valSTIFFSTEPS = 15;
     COND.valSTARTFORCES = 1;
     FLAG.FLIGHTDYN = 1;
@@ -257,72 +241,22 @@ if OUTP.TRIMFAIL == 0
 
     COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
 
-    % OUTP.vecFUSEREACTION = sum(OUTP.vecBEAMFORCE(2:end).*INPU.valDY,1);
-
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
     gain(kk,1) = OUTP.vecZE_gain(end);
 
-    % load('temp_Flex_Trim.mat')
-    % -------------------------------------------------------------------------
-%     OUTP = temp.OUTP;
-%     COND = temp.COND;
-%     INPU = temp.INPU;
-%     FLAG = temp.FLAG;
-%     MISC = temp.MISC;
-%     SURF = temp.SURF;
-%     TRIM = temp.TRIM;
-%     VEHI = temp.VEHI;
-%     VISC = temp.VISC;
-%     WAKE = temp.WAKE;
-% 
-%     SURF.matBEAMACC = [];
-%     COND.valGUSTAMP = 1;
-%     COND.valGUSTL = 50;
-%     COND.valGUSTSTART = 40;
-% 
-%     COND.valMAXTIME = ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-%     COND.valSTIFFSTEPS = 15;
-%     COND.valSTARTFORCES = 1;
-%     FLAG.FLIGHTDYN = 1;
-%     FLAG.STATICAERO = 0;
-%     FLAG.STEADY = 0;
-%     FLAG.RELAX = 0;
-%     FLAG.GUSTMODE = 0;
-%     FLAG.SAVETIMESTEP = 0;
-%     FLAG.STIFFWING = 1;
-% 
-%     VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
-% 
-%     [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
-% 
-%     COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
-% 
-% 
-%     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
-% 
-%     gain(kk,1) = temp_gain - OUTP.vecZE_old(end);
-%     gain_flex(kk,1) = temp_gain;
-%     gain_slf(kk,1) = OUTP.vecZE_old(end);
 else
     gain(kk,1) = Inf;
     sink_rate = Inf;
-%     gain_flex(kk,1) = Inf;
-%     gain_slf(kk,1) = Inf;
 end
 catch
     gain(kk,1) = Inf;
     sink_rate = Inf;
-%     gain_flex(kk,1) = Inf;
-%     gain_slf(kk,1) = Inf;
 end
 
 fp2 = fopen('Optimization/paramhistory_rect_sine.txt','at');
-% fprintf(fp2,'%g ', [gain(kk,1), gain_flex(kk,1), gain_slf(kk,1), param_sweep(:,kk)']);
 fprintf(fp2,'%g ', [gain(kk,1), sink_rate, param_sweep(:,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
-
-% delete temp_Flex_Trim.mat;
 
 end

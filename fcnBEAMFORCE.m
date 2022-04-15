@@ -63,111 +63,17 @@ SURF.vecDVEC = C';
 liftperspan = COND.valDENSITY.*(A(SURF.vecWINGTYPE == 1)' - B(SURF.vecWINGTYPE == 1)'.*SURF.vecDVEHVSPN(SURF.vecWINGTYPE == 1) +...
     C(SURF.vecWINGTYPE == 1)'.*SURF.vecDVEHVSPN(SURF.vecWINGTYPE == 1).*SURF.vecDVEHVSPN(SURF.vecWINGTYPE == 1)).*uxs(SURF.vecWINGTYPE == 1).*SURF.matNORMDIR(SURF.vecWINGTYPE == 1,:);
 
+% Beam aerodynamic force per unit length
 for i = 1:size(rows,1)
     f_aero(i,:) = sum(liftperspan(rows(i,:),:),1);
 end
-f_aero = [f_aero; [0,0,0]];
-
-% f_aero(1:end-1,:) = fcnGLOBSTAR(f_aero(1:end-1,:),SURF.vecDVEROLL(ledves(isCurWing)),SURF.vecDVEPITCH(ledves(isCurWing)),SURF.vecDVEYAW(ledves(isCurWing)));
-
-% liftperspan = sum(liftperspan(rows),2).*SURF.matNORMDIR(SURF.vecWINGTYPE(rows(:,1) == 1),:);
+f_aero = [f_aero; [0,0,0]]; % Zero lift at beam tip
 
 %--------------------------------------------------------------------------
-
-etastar = ((SURF.vecDVEHVSPN(SURF.vecWINGTYPE == 1).^2).*SURF.vecDVEB(SURF.vecWINGTYPE == 1))./(3*SURF.vecDVEA(SURF.vecWINGTYPE == 1) + (SURF.vecDVEHVSPN(SURF.vecWINGTYPE == 1).^2).*SURF.vecDVEC(SURF.vecWINGTYPE == 1));
-% etastar_avg = mean(etastar(rows),2); % Force location offset due to parabolic distribution
-
-% Aerodynamic force is located at the leading edge midpoint of each lifting
-% line
-etastar_glob = fcnSTARGLOB([zeros(size(etastar,1),1),etastar,zeros(size(etastar,1),1)],SURF.vecDVEROLL(SURF.vecWINGTYPE == 1),SURF.vecDVEPITCH(SURF.vecWINGTYPE == 1),SURF.vecDVEYAW(SURF.vecWINGTYPE == 1)); % Force location offset due to parabolic distribution
-% force_loc = (SURF.matVLST(SURF.matDVE(rows,1),:) + SURF.matVLST(SURF.matDVE(rows,2),:))./2 + etastar_glob;
-force_loc = SURF.matVLST(SURF.matDVE(rows,1),:);
-
-% Move forces to DVE left edge
-% delta2 = etastar_glob + SURF.vecDVEHVSPN(SURF.vecWINGTYPE == 1).*s(SURF.vecWINGTYPE == 1,:);
-% force_loc = force_loc - delta2;
-% force_loc = [force_loc; SURF.matVLST(SURF.matDVE(rows(end,:),2),:)];
-% [ledves, ~, ~] = find(SURF.vecDVELE(SURF.idxFLEX) > 0);
-% [tedves, ~, ~] = find(SURF.vecDVETE(SURF.idxFLEX) > 0);
-% 
-% lepanels = SURF.vecDVEPANEL(ledves);
-% 
-% % Determine DVEs in each spanwise station
-% for i = 1:length(find(FLAG.vecFLEXIBLE == 1))
-% 
-% 	idxdve = ledves(SURF.vecDVEWING(ledves) == i);
-% 	idxpanel = lepanels(SURF.vecDVEWING(ledves) == i);
-% 
-%     m = INPU.vecM(idxpanel);
-%     if any(m - m(1))
-%         disp('Problem with wing chordwise elements.');
-%         break
-%     end
-%     m = m(1);
-% 
-%     tempm = repmat(INPU.vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel),1);
-%     
-%     matROWS{i} = repmat(idxdve,1,m) + double(tempm);
-% 
-% end
-% tempLE = [SURF.matVLST(SURF.matDVE(ledves,1),:); SURF.matVLST(SURF.matDVE(ledves(end),2),:)]; 
-% tempLE = (tempLE(1:end-1,:) + tempLE(2:end,:))./2;
-% struct_edgecrd = interp1(SURF.vecSPANDIST,SURF.vecCRDDIST,SURF.vecSTRUCTSPNDIST,'linear','extrap'); % Chord dist. at structural nodes
-% tempEA = [INPU.vecEA.*struct_edgecrd(:,1), zeros(length(INPU.vecEA),2)]; % Distance to EA from LE in local coordinates
-% SURF.matEA = fcnSTARGLOB(tempEA,interp1(SURF.vecSPANDIST,SURF.vecDVEROLL(matROWS{1}(:,1)),SURF.vecSTRUCTSPNDIST,'linear','extrap'),...
-%     interp1(SURF.vecSPANDIST,SURF.vecDVEPITCH(matROWS{1}(:,1)),SURF.vecSTRUCTSPNDIST,'linear','extrap'),...
-%     interp1(SURF.vecSPANDIST,SURF.vecDVEYAW(matROWS{1}(:,1)),SURF.vecSTRUCTSPNDIST,'linear','extrap')); % Transform to global coordinates
-
-% SURF.matEA = interp1(SURF.vecSPANDIST,tempLE,SURF.vecSTRUCTSPNDIST,'linear','extrap') + SURF.matEA; % Add LE coordinates to have absolute location
-
-% aero_cntr = interp1(SURF.matAEROCNTR(:,2),SURF.matAEROCNTR,SURF.matEA(:,2),'linear','extrap');
-% CMDIST = interp1(SURF.matAEROCNTR(1:end-1,2),OUTP.vecCMDIST(1:INPU.vecN(1)),SURF.matEA(:,2),'linear','extrap');
-
-delta = SURF.matAEROCNTR - SURF.matBEAMLOC(:,:,valTIMESTEP-1);
-% delta = aero_cntr - SURF.matEA;
-% f_aero = interp1(SURF.matAEROCNTR(:,2),f_aero,SURF.matEA(:,2),'linear','extrap');
-% dvenorm = interp1(SURF.matAEROCNTR(1:end-1,2),SURF.matDVENORM(ledves(isCurWing),:),SURF.matEA(:,2),'linear','extrap');
+delta = SURF.matAEROCNTR - SURF.matBEAMLOC(:,:,valTIMESTEP-1); % Moment arm between aerodynamic center and beam axis
 OUTP.DEBUG.delta(:,:,valTIMESTEP) = delta;
-% % % % delta = force_loc(1:end-INPU.vecM(1),:) - repmat(SURF.matBEAMLOC(1:end-1,:,valTIMESTEP-1),INPU.vecM(1),1);
 mom_aero = cross(delta(1:end-1,:),dot(f_aero(1:end-1,:),SURF.matDVENORM(ledves(isCurWing),:),2).*SURF.matDVENORM(ledves(isCurWing),:))...
     + [zeros(length(delta)-1,1) 0.5.*COND.valDENSITY.*COND.vecVEHVINF.*COND.vecVEHVINF.*SURF.vecMAC.*SURF.vecMAC.*OUTP.vecCMDIST(1:length(delta)-1) zeros(length(delta)-1,1)];
-% mom_aero = cross(delta,dot(f_aero,dvenorm,2).*dvenorm)...
-%     + [zeros(length(delta),1) 0.5.*COND.valDENSITY.*COND.vecVEHVINF.*COND.vecVEHVINF.*SURF.vecMACSTRUCT.*SURF.vecMACSTRUCT.*CMDIST zeros(length(delta),1)];
-% mom_aero = fcnGLOBSTAR(mom_aero,SURF.vecDVEROLL(ledves(isCurWing)),SURF.vecDVEPITCH(ledves(isCurWing)),SURF.vecDVEYAW(ledves(isCurWing)));
-% % % % mom_couple = cross(delta,liftperspan);
-
-% % % % for i = 1:size(rows,1)
-% % % %     f_aero(i,:) = sum(liftperspan(rows(i,:),:),1);
-% % % %     mom_aero(i,:) = sum(mom_couple(rows(i,:),:),1);
-% % % % end
-% % % % f_aero = [f_aero; [0,0,0]];
-% % % % mom_aero = fcnGLOBSTAR(mom_aero,SURF.vecDVEROLL(ledves(isCurWing)),SURF.vecDVEPITCH(ledves(isCurWing)),SURF.vecDVEYAW(ledves(isCurWing)));
-
-% mom_couple = mom_couple + 0*mom_couple2;
-
-% aero_force = [aero_force; zeros(INPU.vecM(1),3)];
-% beam_force = [beam_force; zeros(INPU.vecM(1),1)];
-
-% deltaF = mom_couple(:,1)./force_loc(:,2);
-% deltaF(rows(2,:)) = deltaF(rows(2,:)) + mom_couple(rows(1,:),1)./force_loc(rows(2,:),2);
-
-% deltaF(rows(1,:)) = 0;
-% aero_force(:,3) = aero_force(:,3) + deltaF;
-% beam_force = beam_force + deltaF;
-
-% OUTP.vecLIFTDIST = dot(aero_force(1:end-INPU.vecM(1),:),SURF.matNORMDIR(SURF.vecWINGTYPE == 1,:),2);
-% OUTP.vecLIFTDIST = beam_force;
-% OUTP.vecLIFTDIST = [sum(OUTP.vecLIFTDIST(rows),2); 0];
-
-if FLAG.STATICAERO == 0
-%     f_appmass = 0*(pi/4)*COND.valDENSITY.*SURF.vecCRDDIST.*SURF.vecCRDDIST.*(dot(cross(SURF.matBEAMVEL(1:end-1,:,end),SURF.matBEAMOMEGA(:,:,valTIMESTEP-1)),SURF.matNORMDIR(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2)...
-%     - dot(SURF.matBEAMACC(1:end-1,:,valTIMESTEP-1),SURF.matNORMDIR(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2)).*SURF.matNORMDIR(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:); % Apparent mass loads on beam
-else
-    f_appmass = zeros(INPU.valNSELE-1,3);
-end
-
-% beamforce = dot(liftperspan,SURF.matNORMDIR(SURF.vecWINGTYPE == 1,:),2);
-% beamforce = [sum(beamforce(rows),2); 0];
 
 if FLAG.FLIGHTDYN == 1
     f_inertial = INPU.vecLM(1:end-1).*(repmat([0,0,-9.81],INPU.valNSELE-1,1) - SURF.matBEAMACC(valTIMESTEP-1,:)); % Force due to beam inertia and gravity loads
@@ -179,25 +85,13 @@ else
     
     deltamom = SURF.matBEAMCGLOC(:,:,valTIMESTEP-1) - SURF.matBEAMLOC(:,:,valTIMESTEP-1);
     mom_inertial = cross(deltamom(1:end-1,:),f_inertial);
-%     mom_inertial = fcnGLOBSTAR(mom_inertial,SURF.vecDVEROLL(ledves(isCurWing)),SURF.vecDVEPITCH(ledves(isCurWing)),SURF.vecDVEYAW(ledves(isCurWing)));
 end
 
-OUTP.vecBEAMFORCE = f_aero(1:end-1,:) + f_inertial;
+OUTP.vecBEAMFORCE = f_aero(1:end-1,:) + f_inertial; % Beam force is sum of aerodynamic and inertial loads
 
-% bendmom_delta = SURF.matBEAMLOC(end,:,valTIMESTEP-1) - SURF.matAEROCNTR(1:end-1,:);
-% OUTP.vecBEAMBENDMOM = cross(bendmom_delta,OUTP.vecBEAMFORCE);
-OUTP.vecBEAMFORCE = [dot(OUTP.vecBEAMFORCE,SURF.matDVENORM(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2); 0];
-% OUTP.vecBEAMFORCE = [dot(OUTP.vecBEAMFORCE,dvenorm(1:end-1,:),2); 0];
+OUTP.vecBEAMFORCE = [dot(OUTP.vecBEAMFORCE,SURF.matDVENORM(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2); 0]; % Beam force normal to beam
+OUTP.vecBEAMMOM = [dot(mom_aero + mom_inertial,s(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2); 0]; % Beam moment along spanwise axis
 
-% spnvec = interp1(SURF.matCENTER(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,2),s(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),SURF.matEA(:,2),'linear','extrap');
-
-OUTP.vecBEAMMOM = [dot(mom_aero + mom_inertial,s(SURF.vecDVELE(SURF.vecDVEWING == 1) == 1,:),2); 0];
-% OUTP.vecBEAMMOM = [dot(mom_aero(1:end-1,:) + mom_inertial,spnvec(1:end-1,:),2); 0];
-% OUTP.matAPPLOAD(:,:,valTIMESTEP) = [OUTP.vecBEAMFORCE, OUTP.vecBEAMMOM];
-% OUTP.matFINERT(:,:,valTIMESTEP) = f_inertial;
-% OUTP.matMOMINERT(:,:,valTIMESTEP) = mom_inertial;
-% OUTP.matDELTAMOM(:,:,valTIMESTEP) = deltamom;
-% OUTP.matDELTA(:,:,valTIMESTEP) = delta;
 
 
 end

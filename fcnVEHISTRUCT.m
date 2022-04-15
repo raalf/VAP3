@@ -181,7 +181,7 @@ SURF.vecLSM = -1.*sign(matLSM(:,1)).*sqrt(sum(matLSM.^2,2)); % If +ve --> EA is 
 
 % Compute wing mass and CG location in aeordynamic coordinate system
 SURF.vecVEHMASS = interp1(SURF.vecSTRUCTSPNDIST,INPU.vecLM,SURF.matCENTER(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1,2)).*(2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)); % Wing mass values at each DVE control point y-location
-
+SURF.vecWINGIYY = interp1(SURF.vecSTRUCTSPNDIST,INPU.vecJT,SURF.matCENTER(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1,2)).*(2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)); % Wing inertia values at each DVE control point y-location
 SURF.vecWINGCG = interp1(SURF.vecSTRUCTSPNDIST,SURF.matCG,SURF.matCENTER(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1,2)); % Wing CG location at each DVE control point y-location
 
 

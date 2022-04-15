@@ -128,7 +128,7 @@ vecDVEC = C;
 nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 
 %% Unsteady lift term with apparent mass
-lambda = 0; % Relaxation factor for dGammadt term
+lambda = 1; % Relaxation factor for dGammadt term
 
 GammaInt = SURF.GammaInt;
 dGammadt = SURF.dGammadt;

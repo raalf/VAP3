@@ -5,7 +5,7 @@
 		<relax>FALSE</relax>
 		<steady>TRUE</steady>
 		<maxtime>35</maxtime>
-		<delta_time>0.03333333</delta_time>
+		<delta_time>0.03333</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
@@ -15,10 +15,10 @@
 
 	<conditions>
 		<density>1.225</density>
-		<kin_viscosity>1.6e-04</kin_viscosity>
+		<kin_viscosity>1.46e-5</kin_viscosity>
 		<gust_amplitude>1</gust_amplitude>
-		<gust_length>57</gust_length>
-		<gust_start>38</gust_start>
+		<gust_length>50</gust_length>
+		<gust_start>40</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -32,7 +32,7 @@
 			<z>0.0</z>
 		</vehicle_CG>
 
-		<speed>15</speed>
+		<speed>10</speed>
 		<weight>767.6325</weight>
 		<interference_drag>0</interference_drag>
 
@@ -68,14 +68,14 @@
 			</CG>
 
 			<panel>
-				<spanwise_elements>22</spanwise_elements>
+				<spanwise_elements>14</spanwise_elements>
 				<strip_airfoil>NACA0012</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
 					<chord>1</chord>
-					<twist>0</twist>
+					<twist>-2</twist>
 					<camber_airfoil>NACA0012</camber_airfoil>
 				</section>
 				<section>
@@ -83,7 +83,7 @@
 					<wing_y>16</wing_y>
 					<wing_z>0</wing_z>
 					<chord>1</chord>
-					<twist>0</twist>
+					<twist>-2</twist>
 					<camber_airfoil>NACA0012</camber_airfoil>
 				</section>	
 			</panel>
@@ -95,14 +95,14 @@
 			<incidence>0</incidence>
 			<trimable>TRUE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
-			<mass>2.25</mass>
+			<mass>0</mass>
 
 			<chordwise_elements>3</chordwise_elements>
 			<chordwise_spacing>NORMAL</chordwise_spacing>
 
-			<vehicle_x>10</vehicle_x>
+			<vehicle_x>4.2</vehicle_x>
 			<vehicle_y>0</vehicle_y>
-			<vehicle_z>2.5</vehicle_z>
+			<vehicle_z>0</vehicle_z>
 
 			<CG>
 				<x>10.25</x>
@@ -111,9 +111,9 @@
 			</CG>	
 
 			<trimorigin>
-				<x>10</x>
+				<x>4.2</x>
 				<y>0</y>
-				<z>2.5</z>
+				<z>0</z>
 			</trimorigin>
 
 			<panel>
@@ -140,7 +140,7 @@
 		<structure>
 			<conditions>
 				<valSDELTIME>0.0005</valSDELTIME>
-				<valNSELE>23</valNSELE>
+				<valNSELE>15</valNSELE>
 				<valSTIFFSTEPS>35</valSTIFFSTEPS>
 				<valSTAGGERSTEPS>66</valSTAGGERSTEPS>
 			</conditions>
@@ -179,18 +179,18 @@
 		</structure>
 
 		<fuselage>
-			<mass>2</mass>
-			<length>10</length>
+			<mass>54.25</mass>
+			<length>0.001</length>
 			<valNFELE>10</valNFELE>
 			<start_loc>
-				<x>0.25</x>
+				<x>0.4</x>
 				<y>0</y>
 				<z>0</z>
 			</start_loc>
 		</fuselage>
 
 		<payload>
-			<mass>50</mass>
+			<mass>0</mass>
 
 			<CG>
 				<x>0.25</x>

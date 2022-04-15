@@ -1,7 +1,7 @@
 clc
 clear
 
-cores = 32;
+cores = 64;
 parpool(cores,'IdleTimeout',800)
 
 delete ../../Optimization/opthistory.txt
@@ -22,9 +22,3 @@ IntCon = [];
 options = optimoptions('ga', 'Display', 'iter','InitialPopulationMatrix',seeds,'PopulationSize',200,'UseParallel',true,'MaxGenerations',1000, 'StallGenLimit',50,'MutationFcn','mutationadaptfeasible',...
     'CreationFcn','gacreationlinearfeasible','CrossoverFcn',@crossoverintermediate);
 [x,fval,exitflag,output,population,scores] = ga({@fcnOBJECTIVE, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir},nvars,A,b,[],[],lb,ub,[],IntCon,options);
-
-% options = optimoptions('surrogateopt', 'Display', 'iter','InitialPoints',seeds,'MinSurrogatePoints',200,'UseParallel',true,'MaxFunctionEvaluations',6000);
-% [x,fval,exitflag,output,trials] = surrogateopt(@fcnOBJECTIVE_SURR,lb,ub,IntCon,A,b,[],[],options);
-
-% options = optimoptions('patternsearch','Display', 'iter', 'UseParallel', true, 'MaxIterations', 6000,'UseCompleteSearch',true,'UseCompletePoll',true,'PollMethod','GSSPositiveBasis2N');
-% [x,fval,exitflag,output] = patternsearch({@fcnOBJECTIVE, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir},seeds(1,:),A,b,[],[],lb,ub,IntCon,options);

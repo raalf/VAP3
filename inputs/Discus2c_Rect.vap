@@ -45,7 +45,7 @@
 
 		<ref_area>11.36</ref_area>
 		<ref_span>18</ref_span>
-		<ref_cmac>0.75</ref_cmac>
+		<ref_cmac>0.631</ref_cmac>
 
 		<wing>
 			<symmetry>TRUE</symmetry>
@@ -92,7 +92,7 @@
 		<wing>
 			<type>HSTAB</type>
 			<symmetry>TRUE</symmetry>
-			<incidence>-2</incidence>
+			<incidence>0</incidence>
 			<trimable>TRUE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
 			<mass>0</mass>
@@ -124,11 +124,11 @@
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.532</chord>
+					<chord>0.425</chord>
 					<twist>0</twist>
 				</section>	
 				<section>
-					<wing_x>0.075</wing_x>
+					<wing_x>0</wing_x>
 					<wing_y>0.685</wing_y>
 					<wing_z>0</wing_z>
 					<chord>0.425</chord>
@@ -140,17 +140,17 @@
 				<spanwise_spacing>NORMAL</spanwise_spacing>
 				<strip_airfoil>DU92</strip_airfoil>
 				<section>
-					<wing_x>0.075</wing_x>
+					<wing_x>0</wing_x>
 					<wing_y>0.685</wing_y>
 					<wing_z>0</wing_z>
 					<chord>0.425</chord>
 					<twist>0</twist>
 				</section>
 				<section>
-					<wing_x>0.168</wing_x>
+					<wing_x>0</wing_x>
 					<wing_y>1.152</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.311</chord>
+					<chord>0.425</chord>
 					<twist>0</twist>
 				</section>
 			</panel>
@@ -159,17 +159,17 @@
 				<spanwise_spacing>NORMAL</spanwise_spacing>
 				<strip_airfoil>DU92</strip_airfoil>
 				<section>
-					<wing_x>0.168</wing_x>
+					<wing_x>0</wing_x>
 					<wing_y>1.152</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.311</chord>
+					<chord>0.425</chord>
 					<twist>0</twist>
 				</section>
 				<section>
-					<wing_x>0.271</wing_x>
+					<wing_x>0</wing_x>
 					<wing_y>1.25</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.2</chord>
+					<chord>0.425</chord>
 					<twist>0</twist>
 				</section>		
 			</panel>
@@ -187,11 +187,11 @@
 				<stiffness>	
 					<A_vecEIx>0</A_vecEIx>
 					<B_vecEIx>0</B_vecEIx>
-					<C_vecEIx>250000</C_vecEIx>
+					<C_vecEIx>100000</C_vecEIx>
 
 					<A_vecGJt>0</A_vecGJt>
 					<B_vecGJt>0</B_vecGJt>
-					<C_vecGJt>250000</C_vecGJt>
+					<C_vecGJt>100000</C_vecGJt>
 				</stiffness>
 
 				<geometry>
@@ -211,14 +211,14 @@
 
 					<A_vecLM>0</A_vecLM>
 					<B_vecLM>0</B_vecLM>
-					<C_vecLM>8.95</C_vecLM>
+					<C_vecLM>9.012</C_vecLM>
 				</mass>
 			</properties>
 		</structure>
 
 		<fuselage>
 			<mass>280.4158</mass>
-			<length>0.1</length>
+			<length>0.0001</length>
 			<valNFELE>10</valNFELE>
 			<flat_plate_area>0.019</flat_plate_area>
 			<start_loc>
