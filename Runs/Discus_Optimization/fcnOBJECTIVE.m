@@ -10,7 +10,7 @@ cd(home_dir)
 cd '../../'
 
 % Write design variable history to file
-fp2 = fopen('Optimization/dvhistory.txt','at');
+fp2 = fopen('Optimization/dvhistory_sine.txt','at');
 fprintf(fp2,'%g ', design_var);
 fprintf(fp2,'\n');
 fclose(fp2);
@@ -222,7 +222,7 @@ end
     
 
 if nargin ~= 0
-    fp2 = fopen('Optimization/opthistory.txt','at');
+    fp2 = fopen('Optimization/opthistory_sine.txt','at');
     fprintf(fp2,'%g ', [out, design_var, struct]);
     fprintf(fp2,'\n');
     fclose(fp2);

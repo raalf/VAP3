@@ -178,7 +178,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
 %         if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1)
             % Calculate vehicle energy state
             [OUTP] = fcnVEHENERGY(INPU, COND, SURF, OUTP, VEHI, FLAG, valTIMESTEP);
-            if valTIMESTEP > COND.valGUSTSTART
+            if valTIMESTEP >= COND.valGUSTSTART
                 OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2)/(2*9.81) + OUTP.vecCGLOC(end,3);
                 OUTP.vecZE_gain(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1)-OUTP.vecZE_old(COND.valGUSTSTART,1)) - OUTP.valVS*(valTIMESTEP-COND.valGUSTSTART)*COND.valDELTIME;
                 sink_rate(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1) - OUTP.vecZE_old(valTIMESTEP-1,1))/COND.valDELTIME;

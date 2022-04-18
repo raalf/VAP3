@@ -4,8 +4,8 @@ clear
 cores = 64;
 parpool(cores,'IdleTimeout',800)
 
-delete ../../Optimization/opthistory.txt
-delete ../../Optimization/dvhistory.txt
+delete ../../Optimization/opthistory_sine.txt
+delete ../../Optimization/dvhistory_sine.txt
 
 warning off
 

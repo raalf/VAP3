@@ -2,18 +2,18 @@ clc
 clear
 warning off
 
-cores = 64;
-parpool(cores,'IdleTimeout',800)
+% cores = 64;
+% parpool(cores,'IdleTimeout',800)
 
 cd '..'
 
 addpath('Flight Dynamics')
 
-filename = 'inputs/Discus2c_Rect.vap';
+filename = 'inputs/Discus2c.vap';
 
-delete Optimization/paramhistory.txt
+delete Optimization/paramhistory_cosine.txt
 
-delete Optimization/dvparamhistory.txt
+delete Optimization/dvparamhistory_cosine.txt
 
 matEIx = [100000 250000 500000 1000000 1500000];
 matGJt = [100000 250000 500000 1000000 1500000];
@@ -22,10 +22,10 @@ CG = [0.2 0.3 0.4 0.5 0.6];
 
 param_sweep = combvec(matEIx, matGJt, EA, CG);
 
-parfor kk = 1:size(param_sweep,2)
-% for kk = 1:size(param_sweep,2)
+% parfor kk = 1:size(param_sweep,2)
+for kk = 1:size(param_sweep,2)
     
-fp3 = fopen('Optimization/dvparamhistory.txt','at');
+fp3 = fopen('Optimization/dvparamhistory_cosine.txt','at');
 fprintf(fp3,'%g ', param_sweep(:,kk)');
 fprintf(fp3,'\n');
 fclose(fp3);
@@ -232,7 +232,7 @@ if OUTP.TRIMFAIL == 0
     FLAG.STATICAERO = 0;
     FLAG.STEADY = 0;
     FLAG.RELAX = 0;
-    FLAG.GUSTMODE = 1;
+    FLAG.GUSTMODE = 2;
     FLAG.SAVETIMESTEP = 0;
 
     VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -254,7 +254,7 @@ catch
     sink_rate = Inf;
 end
 
-fp2 = fopen('Optimization/paramhistory_rect_sine.txt','at');
+fp2 = fopen('Optimization/paramhistory_cosine.txt','at');
 fprintf(fp2,'%g ', [gain(kk,1), sink_rate, param_sweep(:,kk)']);
 fprintf(fp2,'\n');
 fclose(fp2);
