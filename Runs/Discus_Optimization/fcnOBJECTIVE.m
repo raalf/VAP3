@@ -74,6 +74,8 @@ COND.valSTARTFORCES = COND.valMAXTIME; % Only compute forces on last timestep
 
 SURF.vecELEVANGLE = 0;
 
+SURF.center_dist = cumsum((2*SURF.vecDVEHVSPN(SURF.vecDVELE(SURF.vecWINGTYPE==1)==1)))-SURF.vecDVEHVSPN(1);
+
 % Initial trim iteration loop for rigid aircraft
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
 [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
@@ -177,14 +179,13 @@ if OUTP.TRIMFAIL == 0
     %% Perform full flight-dynamic simulation on trimmed/deformed aircraft
     SURF.matBEAMACC = [];
     COND.valGUSTAMP = 1;
-    COND.valGUSTL = 50;
     COND.valGUSTSTART = 40;
-    FLAG.STIFFWING = 0;
+    OUTP.valVS = COND.vecVEHVINF*sind(COND.vecVEHFPA);
+    sink_rate = OUTP.valVS;
 
     SURF.matB = 0*[max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-    valTBOOM = SURF.matVLST(SURF.matDVE(SURF.idxTAIL(1),1),1) - SURF.matVLST(SURF.matDVE(SURF.idxFLEX(1),1),1);
-    COND.valMAXTIME = ceil((COND.valGUSTL + valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
+    COND.valMAXTIME = ceil((10*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
     COND.valSTIFFSTEPS = 15;
     COND.valSTARTFORCES = 1;
     FLAG.FLIGHTDYN = 1;
@@ -213,17 +214,18 @@ if OUTP.TRIMFAIL == 0
 else
     out = Inf;
     struct = Inf;
-    
+    sink_rate = Inf;
 end
 catch
     out = Inf;
     struct = Inf;
+    sink_rate = Inf;
 end
     
 
 if nargin ~= 0
     fp2 = fopen('Optimization/opthistory_sine.txt','at');
-    fprintf(fp2,'%g ', [out, design_var, struct]);
+    fprintf(fp2,'%g ', [out, sink_rate, design_var, struct]);
     fprintf(fp2,'\n');
     fclose(fp2);
 end
