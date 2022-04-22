@@ -43,7 +43,6 @@ INPU.vecCG_param = 0.45;
 CGX_loc = 0.4;
 Xnew = (CGX_loc*COND.vecVEHWEIGHT/9.81 - VEHI.vecWINGMASS(1)*VEHI.vecWINGCG(1,1))/sum(VEHI.vecFUSEMASS,1);
 [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
-dX = INPU.vecVEHCG(1) - CGX_loc;
 
 VEHI.vecFUSELOC = [Xnew - VEHI.vecFUSEL/2,0,0];
 VEHI.vecFUSEMASS = 280.4158;

@@ -1,4 +1,4 @@
-function [out] = fcnOBJECTIVE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
+function [out] = fcnOBJECTIVE_COSINE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
 
 N_bendstiff = 19;
 N_torstiff = 19;
@@ -10,7 +10,7 @@ cd(home_dir)
 cd '../../'
 
 % Write design variable history to file
-fp2 = fopen('Optimization/dvhistory_sine.txt','at');
+fp2 = fopen('Optimization/dvhistory_cosine.txt','at');
 fprintf(fp2,'%g ', design_var);
 fprintf(fp2,'\n');
 fclose(fp2);
@@ -212,7 +212,7 @@ if OUTP.TRIMFAIL == 0
     FLAG.STATICAERO = 0;
     FLAG.STEADY = 0;
     FLAG.RELAX = 0;
-    FLAG.GUSTMODE = 1;
+    FLAG.GUSTMODE = 2;
     FLAG.SAVETIMESTEP = 0;
 
     VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
@@ -244,7 +244,7 @@ end
     
 
 if nargin ~= 0
-    fp2 = fopen('Optimization/opthistory_sine.txt','at');
+    fp2 = fopen('Optimization/opthistory_cosine.txt','at');
     fprintf(fp2,'%g ', [out, sink_rate, design_var, struct]);
     fprintf(fp2,'\n');
     fclose(fp2);

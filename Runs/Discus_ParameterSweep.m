@@ -22,8 +22,8 @@ CG = [0.2 0.3 0.4 0.5 0.6];
 
 param_sweep = combvec(matEIx, matGJt, EA, CG);
 
-% parfor kk = 1:size(param_sweep,2)
-for kk = 1:size(param_sweep,2)
+parfor kk = 1:size(param_sweep,2)
+% for kk = 1:size(param_sweep,2)
     
 fp3 = fopen('Optimization/dvparamhistory_sine.txt','at');
 fprintf(fp3,'%g ', param_sweep(:,kk)');

@@ -1,4 +1,4 @@
-function [out] = fcnOBJECTIVE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
+function [out] = fcnOBJECTIVE_SINE(design_var, N_bendstiff, N_torstiff, N_elasticaxis, N_massaxis, home_dir)
 
 N_bendstiff = 19;
 N_torstiff = 19;

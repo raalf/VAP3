@@ -7,9 +7,9 @@ i = 1;
 
 while i <= totalPopSize
     
-    % Creates random stiffness values between minimum and 1,000,000 Nm2
+    % Creates random stiffness values between minimum and 1,500,000 Nm2
     minEI = lb(1);
-    EI(1) = minEI + (1e6-minEI)*rand(1);
+    EI(1) = minEI + (1.5e6-minEI)*rand(1);
     
     % Making sure EI follows relative change constraints
     for j = 2:N_bendstiff
@@ -17,7 +17,7 @@ while i <= totalPopSize
     end
     
     minGJ = lb(N_bendstiff+1);
-    GJ(1) = minGJ + (1e6-minGJ)*rand(1);
+    GJ(1) = minGJ + (1.5e6-minGJ)*rand(1);
     
     % Making sure GJ follows relative change constraints
     for j = 2:N_torstiff
