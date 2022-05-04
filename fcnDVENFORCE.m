@@ -128,20 +128,15 @@ vecDVEC = C;
 nfree = ((A .*2 .* SURF.vecDVEHVSPN'+  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN') .*uxs')';
 
 %% Unsteady lift term with apparent mass
-lambda = 1; % Relaxation factor for dGammadt term
+lambda = 1; % Relaxation factor for dGammadt term (always leave at 1. Don't touch it. Don't even think about it.)
 
 GammaInt = SURF.GammaInt;
 dGammadt = SURF.dGammadt;
 GammaInt(:,valTIMESTEP) = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)); % Integrated circulation across DVE
-% GammaInt = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)).*(2*SURF.vecDVEHVCRD); % Integrated circulation across DVE
-% GammaInt(:,valTIMESTEP) = ((A' .*2 .* SURF.vecDVEHVSPN +  C'./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)); % Integrated circulation across DVE
 
 if valTIMESTEP > 2 && FLAG.STEADY == 0
     
     dGammadt(:,valTIMESTEP) = lambda.*(GammaInt(:,valTIMESTEP) - GammaInt(:,valTIMESTEP-1))./COND.valDELTIME + (1-lambda).*SURF.dGammadt(:,valTIMESTEP-1); % Time rate of change of circulation
-%     dGammadt = lambda.*(GammaInt - SURF.gamma_old)./COND.valDELTIME + (1-lambda).*SURF.dGammadt; % Time rate of change of circulation
-%     dGammadt(:,valTIMESTEP) = lambda.*(3*GammaInt(:,valTIMESTEP) - 4*GammaInt(:,valTIMESTEP-1)+GammaInt(:,valTIMESTEP-2))./(2*COND.valDELTIME) + (1-lambda).*SURF.dGammadt(:,valTIMESTEP-1); % Time rate of change of circulation
-%     dGammadt = zeros(size(SURF.vecDVEHVSPN,1),1); 
     
 else
     

@@ -43,15 +43,6 @@ timestep_folder = 'timestep_data\';
 % Solving for wing coefficients
 [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
 
-% Computing structure distributions if data exists
-% try 
-% %     [INPU, SURF] = fcnVEHISTRUCT(COND, INPU, SURF, FLAG);
-% %     [INPU, SURF] = fcnSTRUCTDIST(INPU, SURF, FLAG); 
-%     FLAG.STRUCTURE = 1; % Create flag if structure data exists
-% catch
-%     FLAG.STRUCTURE = 0; 
-% end
-
 n = 1;
 COND.valGUSTTIME = 1;
 SURF.gust_vel_old = zeros(SURF.valNELE,1);
@@ -175,28 +166,27 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.vecVEHENERGY(valTIMESTEP,3) = OUTP.vecVEHENERGY(valTIMESTEP,1) + OUTP.vecVEHENERGY(valTIMESTEP,2);
         
         if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1) || FLAG.FLIGHTDYN == 1
-%         if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1)
             % Calculate vehicle energy state
             [OUTP] = fcnVEHENERGY(INPU, COND, SURF, OUTP, VEHI, FLAG, valTIMESTEP);
             if valTIMESTEP >= COND.valGUSTSTART
-                OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2)/(2*9.81) + OUTP.vecCGLOC(end,3);
-                OUTP.vecZE_gain(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1)-OUTP.vecZE_old(COND.valGUSTSTART,1)) - OUTP.valVS*(valTIMESTEP-COND.valGUSTSTART)*COND.valDELTIME;
-                sink_rate(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1) - OUTP.vecZE_old(valTIMESTEP-1,1))/COND.valDELTIME;
+                OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2)/(2*9.81) + OUTP.vecCGLOC(end,3); % Vehicle specific energy
+                OUTP.vecZE_gain(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1)-OUTP.vecZE_old(COND.valGUSTSTART,1)) - OUTP.valVS*(valTIMESTEP-COND.valGUSTSTART)*COND.valDELTIME; % Energy gain relative to steady-state sink rate
+                sink_rate(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1) - OUTP.vecZE_old(valTIMESTEP-1,1))/COND.valDELTIME; % Compute sink rate using energy altitude; this will converge when vehicle reaches steady-state
             end
         end
-        
-        OUTP.vecTIPPITCH(valTIMESTEP,1) = SURF.vecDVEPITCH(INPU.vecN(1));
     else
         [SURF, INPU, MISC, VISC] = fcnMOVESURFACE(INPU, VEHI, MISC, COND, SURF, VISC);
                 [ SURF.vecDVEHVSPN, SURF.vecDVEHVCRD, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
             SURF.vecDVELESWP, SURF.vecDVEMCSWP, SURF.vecDVETESWP, SURF.vecDVEAREA, SURF.matDVENORM, SURF.matVLST, SURF.matDVE, SURF.matCENTER, MISC.matNEWWAKE ] ...
             = fcnVLST2DVEPARAM_NEW(SURF.matNPDVE, SURF.matNPVLST, MISC.matNEWWAKE, SURF.vecDVETE);
+        
+        % Add in gust velocity if applicable (only needed when no structure
+        % data is used)
+        if FLAG.GUSTMODE > 0
+            [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
+        end   
+
     end
-    
-    % Add in gust velocity if applicable
-%     if FLAG.GUSTMODE > 0
-%         [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
-%     end   
     
     [matD, SURF.matCOLLPTS] = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG, valTIMESTEP);
     
@@ -221,15 +211,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         if valTIMESTEP > 1
             OUTP.DEBUG.vecWKGAM(size(OUTP.DEBUG.vecWKGAM,1)+1:size(WAKE.vecWKGAM,1),valTIMESTEP-1) = 0;
         end
-        
-%         %% Rebuilding and solving wing resultant        
-%         [vecR] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
-%         [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
-% 
-%         %% Creating and solving WD-Matrix
-%         [matWD, WAKE.vecWR] = fcnWDWAKE([1:WAKE.valWNELE]', WAKE.matWADJE, WAKE.vecWDVEHVSPN, WAKE.vecWDVESYM, WAKE.vecWDVETIP, WAKE.vecWKGAM, INPU.vecN);
-%         [WAKE.matWCOEFF] = fcnSOLVEWD(matWD, WAKE.vecWR, WAKE.valWNELE, WAKE.vecWKGAM, WAKE.vecWDVEHVSPN);
-            
+                   
         %% Iteration Block #1
         if iter == true
             delt = 1;
@@ -258,7 +240,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
                 OUTP.DEBUG.matUINF(:,:,valTIMESTEP) = SURF.matUINF;
 %                 disp(delt)
             end
-        else
+        else % Normal wake solving procedure without iterations (iteration method is a little sus in VAP)
             %% Rebuilding and solving wing resultant  
             [vecR,w_wake] = fcnRWING(valTIMESTEP, SURF, WAKE, FLAG);
             [SURF.matCOEFF] = fcnSOLVED(matD, vecR, SURF.valNELE);
@@ -298,6 +280,8 @@ for valTIMESTEP = 1:COND.valMAXTIME
         %% Forces
         if valTIMESTEP >= COND.valSTARTFORCES
             [INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP] = fcnFORCES(valTIMESTEP, FLAG, INPU, COND, MISC, VISC, WAKE, VEHI, SURF, OUTP);
+            
+            % Sum forces in the global (inertial) frame
             if FLAG.VISCOUS == 1
                 OUTP.GlobForce(valTIMESTEP,:) = 2*COND.valDENSITY*sum(dot(SURF.matDVEIFORCE,VEHI.ldir,2).*VEHI.ldir) + 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*OUTP.vecCD(end).*VEHI.ddir(1,:);
             else
@@ -321,6 +305,10 @@ for valTIMESTEP = 1:COND.valMAXTIME
         fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, 1)
     end
     
+    % Compute convergence criteria for gust simulation. Take moving average
+    % of sink rate computed from energy altitude change and compare it to
+    % the steady-state sink rate. When these are within 0.05%, end the
+    % simulation
     if FLAG.FLIGHTDYN == 1 && valTIMESTEP > COND.valGUSTSTART + ceil((COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME)
         OUTP.sink_mean = [movmean(sink_rate,[50 0]),movmean(sink_rate,[100 0]),movmean(sink_rate,[150 0])];
         dz_tol = abs(((OUTP.sink_mean(valTIMESTEP,3) - OUTP.valVS)./OUTP.valVS)*100);
@@ -334,6 +322,7 @@ end
 
 [OUTP] = fcnOUTPUT(COND, FLAG, INPU, SURF, OUTP, valTIMESTEP);
 
+% Output viscous corrections for CL and CD
 if FLAG.PRINT == 1 && FLAG.PREVIEW == 0
     fprintf('VISCOUS CORRECTIONS => CLv = %0.4f \tCD = %0.4f \n', OUTP.vecCLv(end,:), OUTP.vecCD(end,:))
     fprintf('\n');

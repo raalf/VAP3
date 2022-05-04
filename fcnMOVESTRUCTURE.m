@@ -17,7 +17,7 @@ if (valTIMESTEP <= COND.valSTIFFSTEPS && FLAG.FLIGHTDYN == 0) || (FLAG.STIFFWING
         end
     end
         
-    if valTIMESTEP < 5
+    if valTIMESTEP < 5 % Build up wake before allowing flexible wing to move
         [SURF, INPU, MISC, VISC, OUTP, VEHI] = fcnSTIFFWING(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, valTIMESTEP);
     else
         [SURF, MISC, COND, INPU, VEHI, OUTP] = fcnMOVEFLEXVEHI2(COND, SURF, OUTP, INPU, MISC, FLAG, VEHI, TRIM, valTIMESTEP);

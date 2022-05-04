@@ -223,7 +223,7 @@ if OUTP.TRIMFAIL == 0
 
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
 
-    out = OUTP.vecZE_gain(end,1);
+    out = -OUTP.vecZE_gain(end,1);
     
     [~,idxMAXdef] = max(OUTP.matDEFGLOB(:,end));
     [~,idxMAXtwist] = max(OUTP.matTWISTGLOB(:,end));
@@ -233,19 +233,17 @@ if OUTP.TRIMFAIL == 0
     
 else
     out = Inf;
-    struct = Inf;
     sink_rate = Inf;
 end
 catch
     out = Inf;
-    struct = Inf;
     sink_rate = Inf;
 end
     
 
 if nargin ~= 0
     fp2 = fopen('Optimization/opthistory_cosine.txt','at');
-    fprintf(fp2,'%g ', [out, sink_rate, design_var, struct]);
+    fprintf(fp2,'%g ', [-out, sink_rate, design_var]);
     fprintf(fp2,'\n');
     fclose(fp2);
 end

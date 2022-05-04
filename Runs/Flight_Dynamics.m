@@ -4,7 +4,7 @@ warning off
 
 addpath('Flight Dynamics')
 
-filename = 'inputs/Discus2c_Rect.vap';
+filename = 'inputs/Discus2c.vap';
 
 trim_iter = 1;
 
@@ -14,14 +14,16 @@ TRIM = [];
 % Initialize variables and read in geometry
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP] = fcnVAPSTART(filename,VAP_IN);
 % load('C:\Users\Michael\Desktop\Optimum_SS.mat')
-FLAG.OPT = 2;
+FLAG.OPT = 2; % Flag to load existing optimization data (1), parametric sweep data (2) or use input file data (0)
 % FLAG.STRUCTURE = 0;
 COND.valMAXTRIMITER = 50;
 
-INPU.matEIx_param = 100000;
-INPU.matGJt_param = 1000000;
-INPU.vecEA_param = 0.45;
-INPU.vecCG_param = 0.45;
+% Parametric sweep data to load (assumes constant properties across the
+% span)
+INPU.matEIx_param = 250000;
+INPU.matGJt_param = 250000;
+INPU.vecEA_param = 0.2;
+INPU.vecCG_param = 0.2;
 
 % load('C:\Users\Michael\Desktop\Optimum_SS.mat')
 % OUTP.matDEF = 0*OUTP.matDEF;
@@ -29,6 +31,7 @@ INPU.vecCG_param = 0.45;
 % OUTP.matTWIST = 0*OUTP.matTWIST;
 % OUTP.matTWISTGLOB = 0*OUTP.matTWISTGLOB;
 
+% Load in optimization case if wanting to run locally
 % opthistory = importdata('G:\My Drive\PhD\Optimization\opthistory_sine_new.txt');
 % 
 % des = 1832;
@@ -37,15 +40,17 @@ INPU.vecCG_param = 0.45;
 % INPU.vecEA(:,1) = opthistory(des,42:60);
 % INPU.vecCG(:,1) = opthistory(des,61:79);
 
-% COND.vecVEHALPHA = 6;
+% Initialize DVE parameters
 [FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP, MISC, matD, vecR, n] = fcnVAPINIT_FLEX(FLAG, COND, VISC, INPU, VEHI, WAKE, SURF, OUTP);
 
+% Fix vehicle CG to a specific x-location (comment 47-65 out if not fixing
+% CG location)
 CGX_loc = 0.4;
 Xnew = (CGX_loc*COND.vecVEHWEIGHT/9.81 - VEHI.vecWINGMASS(1)*VEHI.vecWINGCG(1,1))/sum(VEHI.vecFUSEMASS,1);
 [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
 
 VEHI.vecFUSELOC = [Xnew - VEHI.vecFUSEL/2,0,0];
-VEHI.vecFUSEMASS = 280.4158;
+VEHI.vecFUSEMASS = sum(VEHI.vecFUSEMASS,1); % Turn fuse mass from distributed to point mass
 VEHI.vecFUSELM = VEHI.vecFUSEMASS/VEHI.vecFUSEL;
 VEHI.valFUSEDX = VEHI.vecFUSEL/(VEHI.valNFELE-1);
 tempdx = [[0; cumsum(repmat(VEHI.valFUSEDX,VEHI.valNFELE-1,1))],zeros(VEHI.valNFELE,1),zeros(VEHI.valNFELE,1);];
@@ -59,25 +64,6 @@ VEHI.vecFUSECG = sum(VEHI.vecFUSEMASS.*(VEHI.vecFUSEMASSLOC-INPU.matVEHORIG),1).
 VEHI.vecFUSEBEAM = fcnGLOBSTAR(VEHI.vecFUSEBEAM, zeros(VEHI.valNFELE,1), repmat(deg2rad(-COND.vecVEHPITCH),VEHI.valNFELE,1), zeros(VEHI.valNFELE,1));
 VEHI.vecFUSEMASSLOC = fcnGLOBSTAR(VEHI.vecFUSEMASSLOC, zeros(VEHI.valNFELE-1,1), repmat(deg2rad(-COND.vecVEHPITCH),VEHI.valNFELE-1,1), zeros(VEHI.valNFELE-1,1));
 [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
-
-
-% [ VEHI.matGLOBUVW, VEHI.matVEHROT, VEHI.matVEHROTRATE, MISC.matCIRORIG] = fcnINITVEHICLE( COND.vecVEHVINF, INPU.matVEHORIG, COND.vecVEHALPHA, COND.vecVEHBETA, COND.vecVEHFPA, COND.vecVEHROLL, COND.vecVEHTRK, VEHI.vecVEHRADIUS );
-% pitch_rot = rad2deg(VEHI.matVEHROT(2)) - COND.vecVEHPITCH;
-% COND.vecVEHPITCH = rad2deg(VEHI.matVEHROT(2)); 
-% VEHI.matVEHROT(2) = deg2rad(pitch_rot);
-% [SURF.matVLST, SURF.matCENTER, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNPVLST, INPU.vecVEHCG, SURF.matEALST, SURF.vecWINGCG, VEHI.vecPAYLCG, VEHI.vecFUSEMASSLOC, VEHI.vecWINGCG(2:end,:), VEHI.vecBFRAME, SURF.matAEROCNTR] = fcnROTVEHICLEFLEX( SURF.matDVE, SURF.matNPDVE, SURF.matVLST, SURF.matCENTER,...
-%     INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, VEHI.matVEHROT, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH,...
-%     SURF.matNPVLST, INPU.vecVEHCG, SURF.matEALST, SURF.vecWINGCG, VEHI.vecPAYLCG, VEHI.vecFUSEMASSLOC, VEHI.vecWINGCG(2:end,:), VEHI.vecBFRAME, SURF.matAEROCNTR);
-% 
-% [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
-%     SURF.vecDVELESWP, SURF.vecDVEMCSWP, SURF.vecDVETESWP, SURF.vecDVEAREA, SURF.matDVENORM, ~, ~, ~] ...
-%     = fcnVLST2DVEPARAM(SURF.matNPDVE, SURF.matNPVLST);
-% 
-% SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:) - repmat(INPU.matVEHORIG(1,:),1,1);
-% dcm = angle2dcm(VEHI.matVEHROT(1,3), VEHI.matVEHROT(1,1), VEHI.matVEHROT(1,2), 'ZXY');
-% SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:)*dcm;
-% SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:) + repmat(INPU.matVEHORIG(1,:),1,1);
-
 
 COND.valSTIFFSTEPS = inf;
 
@@ -96,9 +82,8 @@ tol = 100;
 % Initial trim iteration
 % Find trimmed conditions for rigid aircraft. These loads are used to
 % compute the static aeroelastic deflections
-
 FLAG.TRIM = 0;
-FLAG.VISCOUS = 0;
+FLAG.VISCOUS = 0; % Turn viscous calcs on (1) or off (0)
 FLAG.GUSTMODE = 0;
 
 % Increase number of stiff steps (steps before computing structural
@@ -203,27 +188,25 @@ end
 SURF.matBEAMACC = [];
 COND.valGUSTAMP = 1;
 COND.valGUSTSTART = 40;
-OUTP.valVS = COND.vecVEHVINF*sind(COND.vecVEHFPA);
+OUTP.valVS = COND.vecVEHVINF*sind(COND.vecVEHFPA); % Steady-state sink rate
 
 SURF.matB = 0*[max(max(INPU.matEIx(:,1)))*8.333e-5; max(max(INPU.matGJt(:,1)))*1.6667e-4];
 
-% COND.valMAXTIME = ceil((3*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART);
-COND.valMAXTIME = 750;
-COND.valSTIFFSTEPS = 15;
-COND.valSTARTFORCES = 1;
-FLAG.FLIGHTDYN = 1;
+COND.valMAXTIME = ceil((5*COND.valGUSTL + SURF.valTBOOM)/COND.vecVEHVINF/COND.valDELTIME + COND.valGUSTSTART); % Max time is 5 gust lengths
+% COND.valMAXTIME = 750;
+COND.valSTIFFSTEPS = 15; % Don't compute structure deflections for 15 timesteps
+COND.valSTARTFORCES = 1; % Start force calcs at timestep 1
+FLAG.FLIGHTDYN = 1; % Flight dynamics model on (1) or off (0)
 FLAG.STATICAERO = 0;
-FLAG.STEADY = 0;
-FLAG.RELAX = 0;
-FLAG.GUSTMODE = 2;
+FLAG.STEADY = 0; % Steady (1) or unsteady (2) aerodynamics
+FLAG.RELAX = 0; % Don't set this to 1 unless you want to have a bad time
+FLAG.GUSTMODE = 2; % Sine (1), 1-cosine (2), sharp-edge (3) or no gust (0)
 FLAG.SAVETIMESTEP = 0;
 
-VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH);
+VEHI.vecVEHDYN(1:COND.valSTIFFSTEPS,4) = deg2rad(COND.vecVEHPITCH); % Initial conditions for flight-dynamic model
 
 [VEHI.matVEHUVW] = fcnGLOBSTAR(VEHI.matGLOBUVW, 0, pi+deg2rad(COND.vecVEHPITCH), 0);
 
 COND.start_loc = repmat([-COND.valGUSTSTART*COND.valDELTIME*COND.vecVEHVINF,0,0],size(SURF.matCENTER,1),1, size(SURF.matCENTER,3)); % Location (in meters) in global frame where gust starts
 
-[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 1);
-
-% save('G:\My Drive\PhD\Optimization\Parameter Sweep\Cosine_ShortGust_Optimum.mat');
+[OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);

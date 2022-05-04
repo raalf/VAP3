@@ -6,6 +6,8 @@ function [COND, INPU, OUTP, MISC, SURF, FLAG, TRIM, VEHI] = fcnFLEXVEHI(INPU, CO
 % regardless if flight dynamics are being calculated.
 if (valTIMESTEP > COND.valSTIFFSTEPS && FLAG.FLIGHTDYN == 1) || (valTIMESTEP > COND.valSTIFFSTEPS && FLAG.FLIGHTDYN == 0 && FLAG.STATICAERO == 0)
     
+    % Compute structural response over stagger step range with current aero
+    % forces
     COND.valSTAGGERSTEPS = floor(COND.valDELTIME/COND.valSDELTIME);
     for tempTIME = 1:COND.valSTAGGERSTEPS
         [OUTP] = fcnELASTICWING_STAGGER(OUTP, INPU, SURF, COND, VEHI, FLAG, valTIMESTEP, tempTIME);
@@ -89,10 +91,6 @@ end
 % New non-planar trailing edge vertices (used to calculate matWADJE)
 MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,1) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,4),:);
 MISC.matNPNEWWAKE(1:length(find(SURF.vecDVETE(SURF.idxFLEX) == 3)),:,2) = SURF.matNPVLST(SURF.matNPDVE(SURF.vecDVETE(SURF.idxFLEX)>0,3),:);
-
-% if valTIMESTEP > COND.valSTIFFSTEPS + 1 || (valTIMESTEP >= COND.valSTIFFSTEPS && FLAG.FLIGHTDYN == 1)
-%     [SURF.matUINF] = fcnFLEXUINF(SURF.matCENTER_old, SURF.matCENTER, COND.valDELTIME, COND.valSTAGGERSTEPS);
-% end
 
 % Add in gust velocities to SURF.matUINF if convergence tolerance is met
 if (FLAG.FLIGHTDYN == 1 && valTIMESTEP >= COND.valSTIFFSTEPS + 1)  || (FLAG.FLIGHTDYN == 0 && valTIMESTEP > COND.valSTIFFSTEPS + 1) || COND.valGUSTTIME > 1
