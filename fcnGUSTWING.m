@@ -1,4 +1,4 @@
-function [matUINF, gust_vel, gust_vel_old] = fcnGUSTWING(matUINF,valGUSTAMP,valGUSTL,flagGUSTMODE,valDELTIME,valUINF,valGUSTSTART,fpg,gust_vel_old, start_loc)
+function [matUINF, gust_vel, gust_vel_old] = fcnGUSTWING(matUINF,valGUSTAMP,valGUSTL,flagGUSTMODE,valDELTIME,valUINF,valGUSTSTART,fpg,gust_vel_old,start_loc,valTIMESTEP,matGUSTFIELD,vk_gust)
 
 % This function modifies matUINF to model a sinusoidal gust.
 
@@ -49,6 +49,21 @@ elseif flagGUSTMODE == 3
         matUINF(idx2,3) = matUINF(idx2,3) + (gust_vel);
         gust_vel_old(idx2) = gust_vel;
     end
+    
+elseif flagGUSTMODE == 4
+    
+    if any(idx1) > 0
+        for i = 1:size(matGUSTFIELD,1)
+            delx_vk_temp(:,:,i) = repmat(matGUSTFIELD(i,1),size(fpg,1),1) - fpg(:,1);
+            delx_vk(:,:,i) = delx_vk_temp(:,:,i)./(matGUSTFIELD(1,1)-matGUSTFIELD(2,1));
+        end
+        [idx_vk_row,idx_vk_col] = find(delx_vk > 0 & delx_vk < 1);
+        idx_vk = find(delx_vk > 0 & delx_vk < 1);
+        
+        gust_vel(idx_vk_row) = vk_gust(idx_vk);
+        matUINF(idx_vk_row,3) = matUINF(idx_vk_row,3) + (gust_vel(idx_vk_row));
+    end
+    
 else
     
     disp('No gust mode exists for entered value')

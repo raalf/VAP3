@@ -2,8 +2,8 @@ clc
 clear
 warning off
 
-cores = 64;
-parpool(cores,'IdleTimeout',800)
+% cores = 64;
+% parpool(cores,'IdleTimeout',800)
 
 cd '..'
 

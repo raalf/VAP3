@@ -105,7 +105,7 @@ if (FLAG.FLIGHTDYN == 1 && valTIMESTEP >= COND.valSTIFFSTEPS + 1)  || (FLAG.FLIG
         
         [SURF.matUINF] = fcnFLEXUINF(SURF.matCENTER_t, SURF.matCENTER, COND.valDELTIME, valTIMESTEP);
         SURF.matUINF(:,1) = -VEHI.matGLOBUVW(1);
-        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME_old,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
+        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME_old,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc,valTIMESTEP,SURF.matGUSTFIELD,SURF.vk_gust);
         OUTP.matGUSTVEL(:,valTIMESTEP) = SURF.gust_vel_old;
         COND.valGUSTTIME = COND.valGUSTTIME + 1;
         
@@ -114,7 +114,7 @@ if (FLAG.FLIGHTDYN == 1 && valTIMESTEP >= COND.valSTIFFSTEPS + 1)  || (FLAG.FLIG
         % Add elastic velocities as well as gust velocity
         [SURF.matUINF] = fcnFLEXUINF(SURF.matCENTER_t, SURF.matCENTER, COND.valDELTIME, valTIMESTEP);
         SURF.matUINF(:,1) = -VEHI.matGLOBUVW(1);
-        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME_old,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc);
+        [SURF.matUINF, SURF.gust_vel_old] = fcnGUSTWING(SURF.matUINF,COND.valGUSTAMP,COND.valGUSTL,FLAG.GUSTMODE,COND.valDELTIME_old,COND.vecVEHVINF,COND.valGUSTSTART,SURF.matCENTER,SURF.gust_vel_old,COND.start_loc,valTIMESTEP,SURF.matGUSTFIELD,SURF.vk_gust);
         OUTP.matGUSTVEL(:,valTIMESTEP) = SURF.gust_vel_old;
         COND.valGUSTTIME = COND.valGUSTTIME + 1;
        

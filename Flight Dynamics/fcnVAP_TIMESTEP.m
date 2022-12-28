@@ -110,7 +110,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
             m = COND.vecVEHWEIGHT/g;
             [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,g,VEHI.vecIYY),[0 COND.valDELTIME],...
-                [VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]);
+                [VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]); % Solve flight dynamic ODEs
             VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:);
             
         end
@@ -303,6 +303,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
     
     if FLAG.GIF == 1 % Creating GIF (output to GIF/ folder by default)
         fcnGIF(valTIMESTEP, FLAG, SURF, VISC, WAKE, COND, INPU, 1)
+        close(3);
     end
     
     % Compute convergence criteria for gust simulation. Take moving average

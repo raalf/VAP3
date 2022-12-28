@@ -9,7 +9,7 @@
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>2</gust_mode>
+		<gust_mode>4</gust_mode>
 		<gliding>TRUE</gliding>
 	</settings>
 
@@ -18,7 +18,7 @@
 		<kin_viscosity>1.46e-05</kin_viscosity>
 		<gust_amplitude>1</gust_amplitude>
 		<gust_length>50</gust_length>
-		<gust_start>100</gust_start>
+		<gust_start>40</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -267,11 +267,11 @@
 				<stiffness>	
 					<A_vecEIx>0</A_vecEIx>
 					<B_vecEIx>0</B_vecEIx>
-					<C_vecEIx>250000</C_vecEIx>
+					<C_vecEIx>500000</C_vecEIx>
 
 					<A_vecGJt>0</A_vecGJt>
 					<B_vecGJt>0</B_vecGJt>
-					<C_vecGJt>250000</C_vecGJt>
+					<C_vecGJt>500000</C_vecGJt>
 				</stiffness>
 
 				<geometry>
