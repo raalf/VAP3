@@ -45,15 +45,15 @@ tempm = repmat(INPU.vecN(idxpanel), 1, m).*repmat([0:m-1],length(idxpanel~=0),1)
 
 rows = repmat(idxdve,1,m) + uint16(tempm);
 
-nforce = (SURF.nfree(rows(1,:),:) + SURF.nind(rows(1,:),:));
-vecAREA = sum(sum(SURF.vecDVEAREA(rows(1,:)),2),1);
+nforce = (SURF.nfree(rows(5,:),:) + SURF.nind(rows(5,:),:));
+vecAREA = sum(sum(SURF.vecDVEAREA(rows(5,:)),2),1);
 qinf = 0.5*COND.vecVEHVINF*COND.vecVEHVINF;
 CL = sum(nforce,1)./(qinf*vecAREA);
 
 [SURF.nfree] = fcnUNSTEADYWRAPPER(SURF.nfree,[COND.vecVEHVINF,0,0],SURF.vecDVEHVCRD,INPU.vecAREA,SURF.GammaInt,...
     COND.valMAXTIME,COND.valGUSTSTART,COND.valDELTIME,INPU.vecSYM,COND.vecVEHBETA,SURF.en_t);
 
-nforce_fwd = (SURF.nfree(rows(1,:),:) + SURF.nind(rows(1,:),:));
+nforce_fwd = (SURF.nfree(rows(5,:),:) + SURF.nind(rows(5,:),:));
 CL_fwd = sum(nforce_fwd,1)./(qinf*vecAREA);
 
 % OUTP.vecCL = OUTP.vecCL.*((AR+2)/AR);
@@ -68,16 +68,18 @@ CL_fwd = sum(nforce_fwd,1)./(qinf*vecAREA);
 figure(6969)
 hold on
 % Kussner_Function
-% plot(t,Cl,'-k','linewidth',1.5)
-% plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL(COND.valGUSTSTART:end),'-.b','linewidth',1.5)
-plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL_fwd(COND.valGUSTSTART:end),'--r','linewidth',1.5)
-plot((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME,CL(COND.valGUSTSTART:end),':m','linewidth',1.5)
+% plot(s,Clk,'-k','linewidth',1.5)
+s2 = 2*((COND.valGUSTSTART:COND.valMAXTIME).*COND.valDELTIME - COND.valGUSTSTART*COND.valDELTIME);
+plot(s2./2,CL(COND.valGUSTSTART:end),'-.b','linewidth',1.5)
+% plot(s2,CL_fwd(COND.valGUSTSTART:end),'--r','linewidth',1.5)
+% plot(s2,CL(COND.valGUSTSTART:end),':m','linewidth',1.5)
 % plot((1:COND.valMAXTIME).*COND.valDELTIME,OUTP.vecCL,'-b','linewidth',1.5)
 box on
 grid on
 grid minor
 ylabel('C_l')
-xlabel('Time (s)')
+% xlabel('Distance Traversed Through Gust in Semi-Chords (b)')
+% ylim([0 0.4])
 
 
 % save('Sharp_Edge_m30.mat')

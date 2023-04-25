@@ -133,10 +133,11 @@ lambda = 1; % Relaxation factor for dGammadt term (always leave at 1. Don't touc
 GammaInt = SURF.GammaInt;
 dGammadt = SURF.dGammadt;
 GammaInt(:,valTIMESTEP) = ((SURF.matCOEFF(:,1) .*2 .* SURF.vecDVEHVSPN +  SURF.matCOEFF(:,3)./3.*2.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN.*SURF.vecDVEHVSPN)); % Integrated circulation across DVE
+% GammaInt(:,valTIMESTEP) = ((A .*2 .* SURF.vecDVEHVSPN' +  C./3.*2.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN'.*SURF.vecDVEHVSPN')); % Integrated circulation across DVE
 
 if valTIMESTEP > 2 && FLAG.STEADY == 0
     
-    dGammadt(:,valTIMESTEP) = lambda.*(GammaInt(:,valTIMESTEP) - GammaInt(:,valTIMESTEP-1))./COND.valDELTIME + (1-lambda).*SURF.dGammadt(:,valTIMESTEP-1); % Time rate of change of circulation
+    dGammadt(:,valTIMESTEP) = (lambda.*(GammaInt(:,valTIMESTEP) - GammaInt(:,valTIMESTEP-1))./COND.valDELTIME + (1-lambda).*SURF.dGammadt(:,valTIMESTEP-1)).*(2*SURF.vecDVEHVCRD); % Time rate of change of circulation
     
 else
     
@@ -146,7 +147,7 @@ end
 
 if valTIMESTEP > 1 && FLAG.STEADY == 0
     
-    nfree = nfree + dGammadt(:,valTIMESTEP).*(2*SURF.vecDVEHVCRD); % Add apparent mass term to freestream normal force
+    nfree = nfree + dGammadt(:,valTIMESTEP); % Add apparent mass term to freestream normal force
     
 end
 

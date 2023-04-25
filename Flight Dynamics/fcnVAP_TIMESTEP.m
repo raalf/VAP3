@@ -53,7 +53,7 @@ SURF.GammaInt = [];
 %% Timestepping
 for valTIMESTEP = 1:COND.valMAXTIME
     %% Timestep to solution
-    %   Move wing
+    %   Move vehicle based on flight dynamics/structure response
     %   Generate new wake elements
     %   Create and solve WD-Matrix for new elements
     %   Solve wing D-Matrix with wake-induced velocities
@@ -89,32 +89,18 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.vecVEHALPHA(valTIMESTEP,1) = COND.vecVEHALPHA;
         COND.vecVEHFPA = -atand(VEHI.matGLOBUVW(3)/VEHI.matGLOBUVW(1));
         OUTP.vecVEHFPA(valTIMESTEP,1) = COND.vecVEHFPA;
-        
-        if FLAG.STIFFWING == 0 && (valTIMESTEP > COND.valGUSTSTART && FLAG.GUSTMODE > 0)
-                      
-            [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
-                       
-            M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM; % Total aircraft pitching moment
+                              
+        [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
+
+        M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM; % Total aircraft pitching moment
+
+        m = COND.vecVEHWEIGHT/g; % Aircraft mass
+
+        [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,g,VEHI.vecIYY),[0 COND.valDELTIME],...
+            [VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]); % Solve flight dynamic ODEs
+        VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:); % Store ODE result (u, w, pitch rate, pitch)
             
-            m = COND.vecVEHWEIGHT/g; % Aircraft mass
-                                   
-            [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,g,VEHI.vecIYY),[0 COND.valDELTIME],...
-                [VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]); % Solve flight dynamic ODEs
-            VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:); % Store ODE result
-            
-        else
-                         
-            [OUTP.BForce(valTIMESTEP,:)] = fcnGLOBSTAR(OUTP.GlobForce(valTIMESTEP-1,:), 0, pi+VEHI.vecVEHDYN(valTIMESTEP-1,4), 0); % Rotation of force in earth frame to body frame
-        
-            M(valTIMESTEP,1) = 0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA*INPU.vecCMAC*OUTP.vecVEHCM; % Total aircraft pitching moment
-        
-            m = COND.vecVEHWEIGHT/g;
-            [t,y] = ode23t(@(t,y) fcnLONGDYNAMICS(t,y,OUTP.BForce(valTIMESTEP,1),OUTP.BForce(valTIMESTEP,3),M(end),m,g,VEHI.vecIYY),[0 COND.valDELTIME],...
-                [VEHI.matVEHUVW(1) VEHI.matVEHUVW(3) VEHI.vecVEHDYN(valTIMESTEP-1,3) VEHI.vecVEHDYN(valTIMESTEP-1,4)]); % Solve flight dynamic ODEs
-            VEHI.vecVEHDYN(valTIMESTEP,:) = y(end,:);
-            
-        end
-        
+      
         OUTP.vecCM(valTIMESTEP,1) = OUTP.vecVEHCM; % Store vehicle CM
               
         % Vehicle velocity in the body-fixed frame
@@ -128,7 +114,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         OUTP.vecVEHORIG(valTIMESTEP,1) = INPU.matVEHORIG(3);
         
         if valTIMESTEP > 3
-            SURF.matBEAMACC(valTIMESTEP,:) = (OUTP.matGLOBUVW(valTIMESTEP,:) - OUTP.matGLOBUVW(valTIMESTEP-1,:))./COND.valDELTIME;
+            SURF.matBEAMACC(valTIMESTEP,:) = (OUTP.matGLOBUVW(valTIMESTEP,:) - OUTP.matGLOBUVW(valTIMESTEP-1,:))./COND.valDELTIME; % Compute aircraft accelerations for structural inertial forces
         end
         
         COND.vecVEHVINF = sqrt(sum(VEHI.matVEHUVW.^2)); % Vehicle Uinf magnitude
@@ -152,11 +138,11 @@ for valTIMESTEP = 1:COND.valMAXTIME
         [SURF, INPU, COND, MISC, VISC, OUTP, FLAG, TRIM, VEHI, n] = fcnMOVESTRUCTURE(INPU, VEHI, MISC, COND, SURF, VISC, FLAG, OUTP, TRIM, valTIMESTEP, n);
         [INPU, SURF, VEHI, COND] = fcnMASSDIST(INPU, VEHI, SURF, COND); % Recompute mass properties of vehicle
         OUTP.vecCGLOC(valTIMESTEP,:) = INPU.vecVEHCG;
-        VEHI.vecIYYt(valTIMESTEP,1) = VEHI.vecIYY;
         
+        % Track CG location over time
         tempCG = fcnGLOBSTAR(OUTP.vecCGLOC(valTIMESTEP,:),0,VEHI.vecVEHDYN(valTIMESTEP,4),0);
         tempORIG = fcnGLOBSTAR(INPU.matVEHORIG,0,VEHI.vecVEHDYN(valTIMESTEP,4),0);
-        OUTP.vecCGLOC_pC(valTIMESTEP,:) = tempCG(1) - tempORIG(1);
+        OUTP.vecCGLOC_pC(valTIMESTEP,:) = tempCG(1) - tempORIG(1); % CG location as percent of root chord
         VEHI.vecFUSECG_t(valTIMESTEP,:) = VEHI.vecFUSECG;
         OUTP.vecWINGCG(valTIMESTEP,:) = VEHI.vecWINGCG(1,:);
         
@@ -167,7 +153,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
         
         if (FLAG.STIFFWING == 0 && FLAG.FLIGHTDYN == 1) || FLAG.FLIGHTDYN == 1
             % Calculate vehicle energy state
-            [OUTP] = fcnVEHENERGY(INPU, COND, SURF, OUTP, VEHI, FLAG, valTIMESTEP);
+            [OUTP] = fcnVEHENERGY(INPU, COND, SURF, OUTP, VEHI, FLAG, valTIMESTEP); % Function for computing vehicle energy state in different ways (not used anymore)
             if valTIMESTEP >= COND.valGUSTSTART
                 OUTP.vecZE_old(valTIMESTEP,1) = (OUTP.vecVEHVINF(end)^2)/(2*9.81) + OUTP.vecCGLOC(end,3); % Vehicle specific energy
                 OUTP.vecZE_gain(valTIMESTEP,1) = (OUTP.vecZE_old(valTIMESTEP,1)-OUTP.vecZE_old(COND.valGUSTSTART,1)) - OUTP.valVS*(valTIMESTEP-COND.valGUSTSTART)*COND.valDELTIME; % Energy gain relative to steady-state sink rate
@@ -188,6 +174,7 @@ for valTIMESTEP = 1:COND.valMAXTIME
 
     end
     
+    % Apply kinematic condition
     [matD, SURF.matCOLLPTS] = fcnKINCON(matD(1:(size(matD,1)*(2/3)),:), SURF, INPU, FLAG, valTIMESTEP);
     
     %% Generating new wake elements

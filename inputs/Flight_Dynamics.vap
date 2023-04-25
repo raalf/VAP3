@@ -3,21 +3,22 @@
 <VAP>
 	<settings>
 		<relax>FALSE</relax>
-		<steady>FALSE</steady>
-		<maxtime>30</maxtime>
-		<delta_time>0.011</delta_time>
+		<steady>TRUE</steady>
+		<maxtime>35</maxtime>
+		<delta_time>0.0101</delta_time>
 		<start_forces>0</start_forces>
 		<stiff_wing>1</stiff_wing>
 		<fixed_lift>0</fixed_lift>
-		<gust_mode>3</gust_mode>
+		<gust_mode>4</gust_mode>
+		<gliding>TRUE</gliding>
 	</settings>
 
 	<conditions>
 		<density>1.225</density>
 		<kin_viscosity>1.46e-05</kin_viscosity>
-		<gust_amplitude>1.5</gust_amplitude>
-		<gust_length>15</gust_length>
-		<gust_start>190</gust_start>
+		<gust_amplitude>1</gust_amplitude>
+		<gust_length>50</gust_length>
+		<gust_start>40</gust_start>
 	</conditions>
 
 	<vehicle>
@@ -26,32 +27,33 @@
 		<global_z>0</global_z>
 
 		<vehicle_CG>
-			<x>0.137</x>
+			<x>0.3538</x>
 			<y>0</y>
-			<z>0.004</z>
+			<z>0.0</z>
 		</vehicle_CG>
 
-		<speed>12</speed>
-		<weight>121.84</weight>
-		<interference_drag>0</interference_drag>
+		<speed>40</speed>
+		<weight>4314.438</weight>
+		<interference_drag>10</interference_drag>
 
-		<alpha>0</alpha>
+		<alpha>3.5</alpha>
+		<fpa>0</fpa>
 		<beta>0</beta>
 		<roll>0</roll>
-		<fpa>0</fpa>
 		<track>0</track>
 		<radius>nan</radius>
 
-		<ref_area>2.481</ref_area>
-		<ref_span>6.28</ref_span>
-		<ref_cmac>0.395</ref_cmac>
+		<ref_area>10</ref_area>
+		<ref_span>20</ref_span>
+		<ref_cmac>0.75</ref_cmac>
 
 		<wing>
 			<symmetry>TRUE</symmetry>
-			<incidence>5.5</incidence>
+			<incidence>0</incidence>
 			<trimable>FALSE</trimable>
 			<flexible>TRUE</flexible>
 			<triangular_elements>FALSE</triangular_elements>
+			<mass>24</mass>
 
 			<chordwise_elements>3</chordwise_elements>
 
@@ -59,109 +61,202 @@
 			<vehicle_y>0</vehicle_y>
 			<vehicle_z>0</vehicle_z>
 
+			<CG>
+				<x>0.5</x>
+				<y>0</y>
+				<z>0</z>
+			</CG>
+
 			<panel>
-				<spanwise_elements>15</spanwise_elements>
-				<strip_airfoil>RAALF-B8</strip_airfoil>
+				<spanwise_elements>4</spanwise_elements>
+				<strip_airfoil>HQ47</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.395</chord>
-					<twist>4.5</twist>
+					<chord>0.854</chord>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
 				</section>
 				<section>
 					<wing_x>0</wing_x>
-					<wing_y>3.14</wing_y>
+					<wing_y>2.5</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.395</chord>
-					<twist>4.5</twist>
+					<chord>0.75</chord>
+					<twist>-3.57</twist>
 					<camber_airfoil>RAALF-B8</camber_airfoil>
-				</section>	
+				</section>
+			</panel>
+			<panel>
+				<spanwise_elements>9</spanwise_elements>
+				<strip_airfoil>HQ47</strip_airfoil>
+				<section>
+					<wing_x>0</wing_x>
+					<wing_y>2.5</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.75</chord>
+					<twist>-3.57</twist>
+					<camber_airfoil>RAALF-B8</camber_airfoil>
+				</section>
+				<section>
+					<wing_x>0.15</wing_x>
+					<wing_y>10</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.4</chord>
+					<twist>-3.57</twist>
+					<camber_airfoil>RAALF-B8</camber_airfoil>
+				</section>
 			</panel>
 		</wing>
 
 		<wing>
 			<type>HSTAB</type>
 			<symmetry>TRUE</symmetry>
-			<incidence>0</incidence>
+			<incidence>-2</incidence>
 			<trimable>TRUE</trimable>
 			<triangular_elements>FALSE</triangular_elements>
+			<mass>0</mass>
 
 			<chordwise_elements>3</chordwise_elements>
 			<chordwise_spacing>NORMAL</chordwise_spacing>
 
-			<vehicle_x>1.76</vehicle_x>
+			<vehicle_x>4.5</vehicle_x>
 			<vehicle_y>0</vehicle_y>
-			<vehicle_z>0.02</vehicle_z>
+			<vehicle_z>1</vehicle_z>
+
+			<CG>
+				<x>4.5</x>
+				<y>0</y>
+				<z>1</z>
+			</CG>	
 
 			<trimorigin>
-				<x>1.82</x>
+				<x>4.5</x>
 				<y>0</y>
-				<z>0.02</z>
+				<z>1</z>
 			</trimorigin>
 
 			<panel>
-				<spanwise_elements>8</spanwise_elements>
+				<spanwise_elements>2</spanwise_elements>
 				<spanwise_spacing>NORMAL</spanwise_spacing>
-				<strip_airfoil>HT14</strip_airfoil>
+				<strip_airfoil>DU92</strip_airfoil>
 				<section>
 					<wing_x>0</wing_x>
 					<wing_y>0</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.245</chord>
+					<chord>0.5</chord>
 					<twist>0</twist>
 				</section>	
 				<section>
-					<wing_x>0</wing_x>
+					<wing_x>0.075</wing_x>
 					<wing_y>0.5</wing_y>
 					<wing_z>0</wing_z>
-					<chord>0.245</chord>
+					<chord>0.4</chord>
 					<twist>0</twist>
-				</section>	
+				</section>
+			</panel>
+			<panel>
+				<spanwise_elements>2</spanwise_elements>
+				<spanwise_spacing>NORMAL</spanwise_spacing>
+				<strip_airfoil>DU92</strip_airfoil>
+				<section>
+					<wing_x>0.075</wing_x>
+					<wing_y>0.5</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.4</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<wing_x>0.168</wing_x>
+					<wing_y>1</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.275</chord>
+					<twist>0</twist>
+				</section>
+			</panel>
+			<panel>
+				<spanwise_elements>1</spanwise_elements>
+				<spanwise_spacing>NORMAL</spanwise_spacing>
+				<strip_airfoil>DU92</strip_airfoil>
+				<section>
+					<wing_x>0.168</wing_x>
+					<wing_y>1</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.275</chord>
+					<twist>0</twist>
+				</section>
+				<section>
+					<wing_x>0.271</wing_x>
+					<wing_y>1.25</wing_y>
+					<wing_z>0</wing_z>
+					<chord>0.2</chord>
+					<twist>0</twist>
+				</section>		
 			</panel>
 		</wing>
 
 		<structure>
 			<conditions>
-				<valSDELTIME>0.00005</valSDELTIME>
-				<valNSELE>20</valNSELE>
-				<valSTIFFSTEPS>15</valSTIFFSTEPS>
-				<valSTAGGERSTEPS>10</valSTAGGERSTEPS>
+				<valSDELTIME>0.0005</valSDELTIME>
+				<valNSELE>14</valNSELE>
+				<valSTIFFSTEPS>35</valSTIFFSTEPS>
+				<valSTAGGERSTEPS>66</valSTAGGERSTEPS>
 			</conditions>
 
 			<properties>
 				<stiffness>	
 					<A_vecEIx>0</A_vecEIx>
 					<B_vecEIx>0</B_vecEIx>
-					<C_vecEIx>25000</C_vecEIx>
+					<C_vecEIx>500000</C_vecEIx>
 
 					<A_vecGJt>0</A_vecGJt>
 					<B_vecGJt>0</B_vecGJt>
-					<C_vecGJt>25000</C_vecGJt>
+					<C_vecGJt>500000</C_vecGJt>
 				</stiffness>
 
 				<geometry>
 					<A_vecEA>0</A_vecEA>
 					<B_vecEA>0</B_vecEA>
-					<C_vecEA>0.5</C_vecEA>
+					<C_vecEA>0.453</C_vecEA>
 					
 					<A_vecCG>0</A_vecCG>
 					<B_vecCG>0</B_vecCG>
-					<C_vecCG>0.2</C_vecCG>
+					<C_vecCG>0.453</C_vecCG>
 				</geometry>
 
 				<mass>
 					<A_vecJt>0</A_vecJt>
 					<B_vecJt>0</B_vecJt>
-					<C_vecJt>10.0</C_vecJt>
+					<C_vecJt>1.125</C_vecJt>
 
 					<A_vecLM>0</A_vecLM>
 					<B_vecLM>0</B_vecLM>
-					<C_vecLM>1.0</C_vecLM>
+					<C_vecLM>8.95</C_vecLM>
 				</mass>
 			</properties>
 		</structure>
+
+		<fuselage>
+			<mass>280.4158</mass>
+			<length>0.1</length>
+			<valNFELE>10</valNFELE>
+			<flat_plate_area>0.019</flat_plate_area>
+			<start_loc>
+				<x>0.2796</x>
+				<y>0</y>
+				<z>0</z>
+			</start_loc>
+		</fuselage>
+
+		<payload>
+			<mass>0</mass>
+
+			<CG>
+				<x>0</x>
+				<y>0</y>
+				<z>0</z>
+			</CG>
+		</payload>
 
 	</vehicle>				
 </VAP>

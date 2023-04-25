@@ -12,7 +12,7 @@ CM(iter,1) = OUTP.vecVEHCM(end);
 
 CZ(iter,1) = OUTP.GlobForce(end,3)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
 CX(iter,1) = OUTP.GlobForce(end,1)/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
-CZtrim = COND.vecVEHWEIGHT/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA);
+CZtrim = COND.vecVEHWEIGHT/(0.5*COND.valDENSITY*COND.vecVEHVINF*COND.vecVEHVINF*INPU.vecAREA); % Target trim coefficient for Z force
 
 new_tail(iter,1) = SURF.vecELEVANGLE;
 new_alpha(iter,1) = COND.vecVEHALPHA;
@@ -26,7 +26,8 @@ while max(abs(tol)) > 1e-5
     end
     
     iter = iter + 1;   
-            
+    
+    % Compute new alpha, fpa and elevator angle for trim iteration
     if iter > 2
 %         new_alpha(iter,1) = COND.vecVEHALPHA + (COND.CLtrim-OUTP.vecCL(end))/((CL(iter-1)-CL(iter-2))/(new_alpha(iter-1)-new_alpha(iter-2)));
         new_alpha(iter,1) = COND.vecVEHALPHA + (CZtrim-CZ(iter-1,1))/((CZ(iter-1)-CZ(iter-2))/(new_alpha(iter-1)-new_alpha(iter-2)));
@@ -48,7 +49,7 @@ while max(abs(tol)) > 1e-5
     
     [SURF] = fcnTAILTRIM(SURF, FLAG, COND, TRIM.tau*deg2rad(new_tail(iter,1)-SURF.vecELEVANGLE), 1);
 
-    alpha_rot = new_alpha(iter,1) - COND.vecVEHALPHA;
+%     alpha_rot = new_alpha(iter,1) - COND.vecVEHALPHA;
 %     pitch_rot = new_pitch(iter,1) - VEHI.vecVEHPITCH;
 
     COND.vecVEHALPHA = new_alpha(iter,1);
@@ -60,34 +61,43 @@ while max(abs(tol)) > 1e-5
     end
     COND.vecVEHFPA = new_fpa(iter,1);
 %     VEHI.vecVEHPITCH = new_pitch(iter,1);
-
+    
+    % Rotate vehicle based on new computed conditions
     [ VEHI.matGLOBUVW, VEHI.matVEHROT, VEHI.matVEHROTRATE, MISC.matCIRORIG] = fcnINITVEHICLE( COND.vecVEHVINF, INPU.matVEHORIG, COND.vecVEHALPHA, COND.vecVEHBETA, COND.vecVEHFPA, COND.vecVEHROLL, COND.vecVEHTRK, VEHI.vecVEHRADIUS );
     pitch_rot = rad2deg(VEHI.matVEHROT(2)) - COND.vecVEHPITCH;
     COND.vecVEHPITCH = rad2deg(VEHI.matVEHROT(2)); 
     VEHI.matVEHROT(2) = deg2rad(pitch_rot);
     
+    % Recompute DVE properties
     if FLAG.STRUCTURE == 1
         [SURF.matVLST, SURF.matCENTER, INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNPVLST, INPU.vecVEHCG, SURF.matEALST, SURF.vecWINGCG, VEHI.vecPAYLCG, VEHI.vecFUSEMASSLOC, VEHI.vecWINGCG(2:end,:), VEHI.vecBFRAME, SURF.matAEROCNTR] = fcnROTVEHICLEFLEX( SURF.matDVE, SURF.matNPDVE, SURF.matVLST, SURF.matCENTER,...
             INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, VEHI.matVEHROT, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH,...
             SURF.matNPVLST, INPU.vecVEHCG, SURF.matEALST, SURF.vecWINGCG, VEHI.vecPAYLCG, VEHI.vecFUSEMASSLOC, VEHI.vecWINGCG(2:end,:), VEHI.vecBFRAME, SURF.matAEROCNTR);
-    else
-        [SURF.matVLST, SURF.matCENTER,...
-            INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNTVLST, VEHI.vecBFRAME] = fcnROTVEHICLE( SURF.matDVE, SURF.matNPDVE, SURF.matVLST, ...
-            SURF.matCENTER, INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, ...
-            VEHI.matVEHROT, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH, SURF.matNTVLST, VEHI.vecBFRAME);
-    end
-
-    [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
+        
+            [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
         SURF.vecDVELESWP, SURF.vecDVEMCSWP, SURF.vecDVETESWP, SURF.vecDVEAREA, SURF.matDVENORM, ~, ~, ~] ...
         = fcnVLST2DVEPARAM(SURF.matNPDVE, SURF.matNPVLST);
+    
+    else
+        [SURF.matVLST, SURF.matCENTER,...
+            INPU.matROTORHUBGLOB, INPU.matROTORAXIS, SURF.matNPVLST, VEHI.vecBFRAME, INPU.vecVEHCG] = fcnROTVEHICLE( SURF.matDVE, SURF.matNPDVE, SURF.matVLST, ...
+            SURF.matCENTER, INPU.valVEHICLES, SURF.vecDVEVEHICLE, INPU.matVEHORIG, ...
+            VEHI.matVEHROT, INPU.matROTORHUB, INPU.matROTORAXIS, VEHI.vecROTORVEH, SURF.matNPVLST, VEHI.vecBFRAME, INPU.vecVEHCG);
+            
+        [ ~, ~, SURF.vecDVEROLL, SURF.vecDVEPITCH, SURF.vecDVEYAW,...
+            SURF.vecDVELESWP, SURF.vecDVEMCSWP, SURF.vecDVETESWP, SURF.vecDVEAREA, SURF.matDVENORM, ~, ~, ~] ...
+            = fcnVLST2DVEPARAM(SURF.matNPDVE, SURF.matNPVLST);
+    end
 
+    
     SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:) - repmat(INPU.matVEHORIG(1,:),1,1);
     dcm = angle2dcm(VEHI.matVEHROT(1,3), VEHI.matVEHROT(1,1), VEHI.matVEHROT(1,2), 'ZXY');
     SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:)*dcm;
     SURF.matTRIMORIG(2,:) = SURF.matTRIMORIG(2,:) + repmat(INPU.matVEHORIG(1,:),1,1);
 
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnVAP_TIMESTEP(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC, 0);
-
+    
+    % Reset vehicle back to origin
     [OUTP, COND, INPU, FLAG, MISC, SURF, TRIM, VEHI, VISC, WAKE] = fcnRESETVEHI(FLAG, COND, VISC, INPU, TRIM, VEHI, WAKE, SURF, OUTP, MISC);
     
     CL(iter,1) = OUTP.vecCL(end);
@@ -98,7 +108,7 @@ while max(abs(tol)) > 1e-5
     
 %     tol = [(COND.CLtrim - OUTP.vecCL(end))*(COND.CLtrim - OUTP.vecCL(end)); OUTP.vecVEHCM(end)*OUTP.vecVEHCM(end)];
 %     tol = [(CZtrim - CZ(iter,1))*(CZtrim - CZ(iter,1)); OUTP.vecVEHCM(end)*OUTP.vecVEHCM(end)];
-    tol = [(CZtrim - CZ(iter,1))/(CZtrim); OUTP.vecVEHCM(end); CX(iter,1)];
+    tol = [(CZtrim - CZ(iter,1))/(CZtrim); OUTP.vecVEHCM(end); CX(iter,1)]; % Determine relative tolerance of trim computation
     
     SURF.vecELEVANGLE = new_tail(iter);
     

@@ -1,8 +1,8 @@
 clc
 clear
 
-cores = 64;
-parpool(cores,'IdleTimeout',800)
+% cores = 64;
+% parpool(cores,'IdleTimeout',800)
 
 delete ../../Optimization/opthistory_sine.txt
 delete ../../Optimization/dvhistory_sine.txt

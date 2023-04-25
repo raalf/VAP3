@@ -13,7 +13,6 @@ SURF.matAEROCNTR = SURF.matAEROCNTR - trans;
 end
 VEHI.vecWINGCG = VEHI.vecWINGCG - trans;
 VEHI.vecPAYLCG = VEHI.vecPAYLCG - trans;
-VEHI.vecPROPLOC = VEHI.vecPROPLOC - trans;
 SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) = SURF.matTRIMORIG(FLAG.vecTRIMABLE == 1,:) - trans;
 
 SURF.matCENTER = SURF.matCENTER - trans;
