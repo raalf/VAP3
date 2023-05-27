@@ -9,7 +9,7 @@ function [matUINF, gust_vel, gust_vel_old] = fcnGUSTWING(matUINF,valGUSTAMP,valG
 if flagGUSTMODE ~= 0
 delx = start_loc - fpg; % Distance between DVE points and gust starting point
 
-idx1 = delx(:,1) >= 0 & delx(:,1) <= 3*valGUSTL;
+idx1 = delx(:,1) >= 0 & delx(:,1) <= valGUSTL;
 idx2 = find(idx1 > 0);
 
 idx3 = delx(:,1) >= 0 & delx(:,1) < 0.25*valGUSTL;
