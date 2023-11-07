@@ -20,7 +20,7 @@ This markdown file holds information and records of VAP 3, development of a new 
 	- `delta_time` Inteval of each time step (second)
 	- `start_force` Timestep number to begin force calculations
 	- `stiff_wing` (1 | 0) Toggle on (1) or off (0) structure model
-	- `fixed_lift` (1 | 0) Toggle fixed lift where lift = weight and freestream is calcualted
+	- `fixed_lift` (true | false) Toggle fixed lift where lift = weight and freestream is calcualted
 	- `gust_mode` Select gust mode, 0 - No gust, 1 - Sine wave gust, 2 - 1-cosine gust, 3 - Sharp edge gust
 
 ### Condition
@@ -38,7 +38,7 @@ This markdown file holds information and records of VAP 3, development of a new 
 	- `global_z` Z position of the entire vehicle
 	- `weight` Weight of vehicle (N)
 	- `interference_drag` Percent of interference drag (often due to fuselage)
-	- `speed` Freestream velocity of the vehicle (m/s)
+	- `speed` Freestream velocity of the vehicle (m/s). Set to 'nan' when doing fixed-lift analysis
 	- `alpha` Overall angle of attack of the entire vehicle (deg)
 	- `beta` Overall angle of sideslip of the entire vehicle (deg)
 	- `roll` Overall angle of roll of the entire vehicle (deg)
